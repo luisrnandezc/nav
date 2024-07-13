@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>NAV | Aviation Academy</title>
+        <link href="{% static 'styles.css' %}" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="slides-container">
+            <div class="slides" id="first">
+                <div class="inner-bottom">
+                    <h1 class="main-header">NAV Aviation Academy</h1>
+                    <p class="small-description">Vuela con nosotros</p>
+                    <button>Contáctanos</button>
+                </div>
+            </div>
+            <div class="slider-divisor"></div>
+            <div class="flex-box-container">
+                <div class="flex-box">
+                    <h3 class="box-title">Instalaciones</h3>
+                    <div class="box-text">Box 1</div>
+                </div>
+                <div class="flex-box">
+                    <h3 class="box-title">Simuladores</h3>
+                    <div class="box-text">Box 2</div>
+                </div>
+                <div class="flex-box">
+                    <h3 class="box-title">Instructores</h3>
+                    <div class="box-text">Box 3</div>
+                </div>
+            </div>
+            <div class="slider-divisor"></div>
+            <div class="slides" id="second">
+                <div class="inner-bottom">
+                    <h1 class="main-header">Cursos</h1>
+                    <p class="small-description">PP | HVI | PC | TLA</p>
+                    <button>Saber más</button>
+                </div>
+            </div>
+            <div class="slider-divisor"></div>
+            <div class="slides" id="third">
+                <div class="inner-bottom">
+                    <h1 class="main-header">Cursos especiales</h1>
+                    <p class="small-description">PBN | RVSM | UPRT</p>
+                    <button>Saber más</button>
+                </div>
+            </div>
+            <div class="slider-divisor"></div>
+            <div class="slides" id="fourth">
+                <div class="inner-bottom">
+                    <h1 class="main-header">PAA</h1>
+                    <p class="small-description">Programa de Aptitud Aeronáutica</p>
+                    <button>Inscríbete</button>              
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

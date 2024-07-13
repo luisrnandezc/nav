@@ -64,14 +64,14 @@ html, body {
     align-items: left;
 }
 
-h1 {
+.main-header {
     font-size: 3.0rem;
     letter-spacing: 5px;
     text-align: left;
     line-height: 75px;
 }
 
-p.small-description {
+.header-description {
     font-size: 2.0rem;
     margin-top: 0px;
     margin-bottom: 50px;
@@ -87,7 +87,15 @@ button {
     border: 2px solid #ffffff;
     background-color: transparent;
     text-transform: uppercase;
-    letter-spacing: 5px;
+    letter-spacing: 3px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: rgb(232, 71, 40);
+    color: #ffffff;
+    border: 2px solid #ffffff;
 }
 
 .flex-box-container {
@@ -100,30 +108,33 @@ button {
 }
 
 .flex-box {
+    height: 100%;
     margin: 20px;
     margin-top: 50px;
     margin-bottom: 50px;
     padding: 20px;
     width: 30%;
     letter-spacing: 5px;
-    line-height: 250px;
-    border-width: 2px;
+    border-width: 2px;rgb(232, 71, 40);
     border-style: solid;
-    border-color: rgb(232, 71, 40);
+    border-color: 
     border-radius: 20px;
 }
 
 .box-title {
-    height: 100px;
-    line-height: 100%;
+    /* height: 50px; */
+    /* line-height: 100%; */
     font-size: 1.2rem;
     letter-spacing: 5px;
     color: #ffffff;
 }
 
-.box-text {
-    font-size: 1.0rem;
-    letter-spacing: 5px;
+.box-text p {
+    font-size: 0.75rem;
+    line-height: 2.5;
+    letter-spacing: 1px;
+    font-weight: lighter;
+    text-align: justify;
     color: #ffffff;
 }
 
@@ -136,12 +147,24 @@ button {
 /* Responsive design */
 
 @media screen and (max-width: 1200px) {
+    .main-header {
+        font-size: 2.5rem;
+    }
+    .header-description {
+        font-size: 1.5rem;
+    }
     .flex-box {
         width: 45%;
     }
 }
 
 @media screen and (max-width: 850px) {
+    .main-header {
+        font-size: 2.0rem;
+    }
+    .header-description {
+        font-size: 1.0rem;
+    }
     .flex-box-container {
         flex-direction: column;
         align-content: center;

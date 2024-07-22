@@ -80,7 +80,7 @@ html, body {
 }
 
 button {
-    font-size: 1rem;
+    font-size: 1.0rem;
     display: block;
     margin: 0px;
     padding: 10px;
@@ -96,6 +96,45 @@ button {
     background-color: rgb(232, 71, 40);
     color: #ffffff;
     border: 2px solid #ffffff;
+}
+
+.inline-buttons {
+    display: flex;
+    margin-bottom: 50px;
+}
+
+.inline-button {
+    font-size: 2.0rem;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    background-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+#b1, #b5 {
+    padding-right: 30px;
+}
+
+#b2, #b3, #b6 {
+    padding-right: 30px;
+    padding-left: 30px;
+}
+
+#b4, #b7 {
+    padding-left: 30px;
+}
+
+.inline-button:hover {
+    color: rgb(232, 71, 40);
+}
+
+.inline-separator {
+    width: 3px;
+    background-color: #ffffff;
 }
 
 .flex-box-container {
@@ -115,24 +154,22 @@ button {
     padding: 20px;
     width: 30%;
     letter-spacing: 5px;
-    border-width: 2px;rgb(232, 71, 40);
+    border-width: 2px;
     border-style: solid;
-    border-color: 
+    border-color: #ffffff;
     border-radius: 20px;
 }
 
 .box-title {
-    /* height: 50px; */
-    /* line-height: 100%; */
     font-size: 1.2rem;
-    letter-spacing: 5px;
-    color: #ffffff;
+    letter-spacing: 3.0px;
+    color: rgb(232, 71, 40);
 }
 
 .box-text p {
     font-size: 0.75rem;
     line-height: 2.5;
-    letter-spacing: 1px;
+    letter-spacing: 1.0px;
     font-weight: lighter;
     text-align: justify;
     color: #ffffff;

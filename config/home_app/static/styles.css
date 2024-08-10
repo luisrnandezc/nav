@@ -19,6 +19,72 @@ html, body {
     padding: 0px;
 }
 
+/* Navigation menu */
+
+.nav-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 100px;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: -100px;
+    background-color: transparent;
+    z-index: 1;
+}
+
+.logo {
+    margin: 0px;
+    padding: 10px;
+}
+
+.logo-button {
+    margin: 0px;
+    padding: 0px;
+    border: none;
+}
+
+img {
+    margin: 0px;
+    padding: 0px;
+    height: 50px;
+}
+
+nav li {
+    margin: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: inline-block;
+    list-style: none;
+}
+
+ul {
+    margin: 0px;
+    padding: 10px;
+}
+
+nav > ul {
+    padding-top: 0px;
+}
+
+.nav-item {
+    margin: 0px;
+    padding: 0px;
+    color: #ffffff;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(232, 71, 40);
+}
+
+/* Main website content */
+
 .slides-container {
     text-align: center;
     text-transform: uppercase;

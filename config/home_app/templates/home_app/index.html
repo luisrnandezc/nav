@@ -10,27 +10,28 @@
 
     <body>
         <div class="slides-container">
-            <div class="nav-header">
-                <div class="logo">
+            <nav class="nav-menu">
+                <div class="logo-container">
                     <button class="logo-button">
-                        <img src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
+                        <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
                     </button>
                 </div>
-                <nav>
-                    <ul>
-                        <li><a class="nav-item" href="#nosotros">Nosotros</a></li>
-                        <li><a class="nav-item" href="#cursos">Cursos</a></li>
-                        <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
-                        <li><a class="nav-item" href="#contacto">Contacto</a></li>
-                    </ul>
-                </nav>
-                <nav>
-                    <ul>
-                        <li><a class="nav-item" href="#signup">Sign up</a></li>
-                        <li><a class="nav-item" href="#login">Log in</a></li>
-                    </ul>
-                </nav>
-            </div>
+                <ul>
+                    <li><a class="nav-item" href="#nosotros">Nosotros</a></li>
+                    <li><a class="nav-item" href="#cursos">Cursos</a></li>
+                    <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
+                    <li><a class="nav-item" href="#contacto">Contacto</a></li>
+                </ul>
+                <ul>
+                    <li><a class="nav-item" href="#signup">Sign up</a></li>
+                    <li><a class="nav-item" href="#login">Log in</a></li>
+                </ul>
+                <div class="burger-menu">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+            </nav>
             <div class="slides" id="first">
                 <div class="inner-bottom">
                     <h1 class="main-header">NAV Aviation Academy</h1>
@@ -113,5 +114,6 @@
                 </div>
             </div>
         </div>
+        <script src="{% static 'dynamics.js' %}"></script>
     </body>
 </html>

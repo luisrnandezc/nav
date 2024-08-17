@@ -227,27 +227,50 @@ button {
 /* Footer design */
 
 footer {
-    background-color: #333; /* Dark background color */
-    color: #fff;            /* White text color */
-    padding: 20px;          /* Add some padding */
-    text-align: center;     /* Center the text */
+    background-color: #000000;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.footer-section {
+    flex: 1;
+    text-align: center;
+}
+
+footer * {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+footer p {
+    color: rgb(128, 128, 128);
 }
 
 footer a {
-    color: #fff;            /* White color for links */
-    text-decoration: none;  /* Remove underline from links */
+    text-decoration: none; 
 }
 
 footer a:hover {
-    text-decoration: underline; /* Underline on hover */
+    text-decoration: underline;
 }
 
-.footer-content p {
-    margin: 5px 0;          /* Add some space between paragraphs */
+.footer-container p {
+    margin: 0 5px;
 }
 
 
-/* Responsive design */
+/* Main website responsive design */
 
 @media screen and (max-width: 1200px) {
     .main-header {
@@ -284,6 +307,18 @@ footer a:hover {
 
     .inline-button {
         font-size: 1.5rem;
+    }
+
+    footer * {
+        font-size: 0.4rem;
+    }
+    
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-section {
+        margin: 10px 0;
     }
 }
 

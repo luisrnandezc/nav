@@ -10,23 +10,21 @@
 
     <body>
         <div class="slides-container">
-            <nav class="nav-menu">
-                <div class="logo-container">
-                    <button class="logo-button">
+            <nav class="navbar" id="navbar">
+                <div class="logo">
+                    <a class="image-link" href="">
                         <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
-                    </button>
+                    </a>
                 </div>
-                <ul>
+                <ul class="nav-links">
                     <li><a class="nav-item" href="#nosotros">Nosotros</a></li>
                     <li><a class="nav-item" href="#cursos">Cursos</a></li>
                     <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
                     <li><a class="nav-item" href="#contacto">Contacto</a></li>
-                </ul>
-                <ul>
                     <li><a class="nav-item" href="#signup">Sign up</a></li>
                     <li><a class="nav-item" href="#login">Log in</a></li>
                 </ul>
-                <div class="burger-menu">
+                <div class="burger">
                     <div class="line1"></div>
                     <div class="line2"></div>
                     <div class="line3"></div>
@@ -34,45 +32,9 @@
             </nav>
             <div class="slides" id="first">
                 <div class="inner-bottom">
-                    <h1 class="main-header">NAV Aviation Academy</h1>
-                    <p class="header-description">Vuela con nosotros</p>
-                    <button class="button">Contáctanos</button>
-                </div>
-            </div>
-            <div class="slider-divisor"></div>
-            <div class="flex-box-container">
-                <div class="flex-box">
-                    <h3 class="box-title">Instructores</h3>
-                    <div class="box-text">
-                        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
-                        ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
-                        Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate
-                        eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-                        </p>
-                        </div>
-                </div>
-                <div class="flex-box">
-                    <h3 class="box-title">Simuladores</h3>
-                    <div class="box-text">
-                        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
-                        ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
-                        Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate
-                        eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-                        </p>
-                    </div>
-                </div>
-                <div class="flex-box">
-                    <h3 class="box-title">Cursos</h3>
-                    <div class="box-text">
-                        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
-                        ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
-                        Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate
-                        eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-                        </p>
-                    </div>
+                    <h1 class="main-header"><span class="main-header" style="color: rgb(232, 71, 40);">NAV </span>Aviation Academy</h1>
+                    <p class="header-description" id="first-description">Más alto, más lejos</p>
+                    <button class="button">Conócenos</button>
                 </div>
             </div>
             <div class="slider-divisor"></div>
@@ -88,11 +50,22 @@
                         <div class="inline-separator"></div>
                         <button class="inline-button" id="b4">TLA</button>
                     </div>
-                    <button class="button">Saber más</button>
+                    <button class="button">Inscríbete</button>
+                </div>
+            </div>
+            <div class="slides" id="third">
+                <div class="inner-bottom">
+                    <h1 class="main-header">Simuladores</h1>
+                    <div class="inline-buttons">
+                        <button class="inline-button" id="b1">FSTD Nivel III</button>
+                        <div class="inline-separator"></div>
+                        <button class="inline-button" id="b2">737-800</button>
+                    </div>
+                    <button class="button">Entrena</button>
                 </div>
             </div>
             <div class="slider-divisor"></div>
-            <div class="slides" id="third">
+            <div class="slides" id="fourth">
                 <div class="inner-bottom">
                     <h1 class="main-header">Cursos especiales</h1>
                     <div class="inline-buttons">
@@ -106,11 +79,11 @@
                 </div>
             </div>
             <div class="slider-divisor"></div>
-            <div class="slides" id="fourth">
+            <div class="slides" id="fifth">
                 <div class="inner-bottom">
                     <h1 class="main-header">PAA</h1>
                     <p class="header-description">Programa de Aptitud Aeronáutica</p>
-                    <button class="button">Inscríbete</button>              
+                    <button class="button">Saber más</button>              
                 </div>
             </div>
         </div>

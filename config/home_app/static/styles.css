@@ -21,69 +21,62 @@ html, body {
 
 /* Navigation menu */
 
-.nav-menu {
-    width: 100%;
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-    height: 100px;
-    padding: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-    margin-bottom: -100px;
-    background-color: transparent;
-    z-index: 1;
-}
-
-.logo-container {
-    margin: 0px;
-    padding: 10px;
-}
-
-.logo-button {
-    margin: 0px;
-    padding: 0px;
-    border: none;
-}
-
-.logo-img {
-    margin: 0px;
-    padding: 0px;
+    position: fixed;
+    width: 100%;
     height: 50px;
+    padding: 10px 20px 10px 20px;
+    margin-bottom: -50px;
+    background-color: rgb(20, 31, 53, 0.7);
+    z-index: 1;
+    backdrop-filter: blur(15px);
+    transition: transform 0.3s ease;
 }
 
-nav li {
-    margin: 0px;
-    padding-left: 10px;
-    padding-right: 10px;
-    display: inline-block;
+nav.hidden {
+    transform: translateY(-100%);
+}
+
+.nav-links {
+    padding: 0px;
+    margin-left: auto;
     list-style: none;
 }
 
-ul {
-    margin: 0px;
-    padding: 10px;
+.nav-links li {
+    display: inline-block;
+    padding: 0px 10px 0px 10px;
 }
 
-nav > ul {
-    padding-top: 0px;
-}
-
-.nav-item {
-    margin: 0px;
-    padding: 0px;
-    color: #ffffff;
-    font-size: 0.75rem;
+.nav-links a {
+    font-size: 0.65rem;
     letter-spacing: 3px;
     text-decoration: none;
 }
 
-a:hover {
+nav ul li a:hover {
     color: rgb(232, 71, 40);
 }
 
-.burger-menu {
+.logo-button {
+    border: none;
+}
+
+.logo-img {
+    height: 25px;
+}
+
+.image-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.burger {
     display: none;
 }
 
@@ -118,22 +111,27 @@ a:hover {
 }
 
 #first {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(./img/wing.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(./img/wing.jpg);
     background-size: cover;
 }
 
 #second {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(./img/737sunset.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(./img/737panel.jpg);
     background-size: cover;
 }
 
 #third {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(./img/cockpit_view.jpeg);
+    background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)), url(./img/cockpit_view.jpeg);
     background-size: cover;
 }
 
 #fourth {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(./img/wingview.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/archer.jpg);
+    background-size: cover;
+}
+
+#fifth {
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(./img/wingview.jpg);
     background-size: cover;
 }
 
@@ -166,18 +164,19 @@ button {
     display: block;
     margin: 0px;
     padding: 10px;
-    border: 2px solid #ffffff;
-    background-color: transparent;
+    border: 0px solid #ffffff;
+    background-color: rgba(0, 0, 0, 0.25);
     text-transform: uppercase;
     letter-spacing: 3px;
     transition: 0.3s;
     cursor: pointer;
+    border-radius: 5px;
 }
 
 .button:hover {
     background-color: rgb(232, 71, 40);
     color: #ffffff;
-    border: 2px solid #ffffff;
+    border: 0px solid #ffffff;
 }
 
 .inline-buttons {
@@ -219,46 +218,8 @@ button {
     background-color: #ffffff;
 }
 
-.flex-box-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    text-align: center;
-    background-color: rgb(20, 31, 53);
-}
-
-.flex-box {
-    height: 100%;
-    margin: 20px;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    padding: 20px;
-    width: 30%;
-    letter-spacing: 5px;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #ffffff;
-    border-radius: 20px;
-}
-
-.box-title {
-    font-size: 1.2rem;
-    letter-spacing: 3.0px;
-    color: rgb(232, 71, 40);
-}
-
-.box-text p {
-    font-size: 0.75rem;
-    line-height: 2.5;
-    letter-spacing: 1.0px;
-    font-weight: lighter;
-    text-align: justify;
-    color: #ffffff;
-}
-
 .slider-divisor {
-    height: 5px;
+    height: 1px;
     background-color: rgb(232, 71, 40);
 }
 
@@ -297,53 +258,64 @@ button {
     .box-text {
         font-size: 0.75rem;
     }
-}
 
-
-/* Navigation menu responsive design */
-
-@media screen and (max-width: 920px) {
-
-    .nav-item {
-        font-size: 0.5rem;
+    .inline-button {
+        font-size: 1.5rem;
     }
 }
 
-@media screen and (max-width: 770px) {
 
-    .nav-item {
-        position: absolute;
+/* Navbar responsive design */
+
+@media screen and (max-width: 1001px) {
+
+    .navbar {
+        background-color: transparent;
+        backdrop-filter: blur(0px);
+        border: none;
+    }
+
+    .nav-links {
+        position: fixed;
         right: 0;
-        height: 92vh;
-        top: 0vh;
-        background-color: #333;
+        height: 120vh;
+        top: -20px;
+        background-color: rgba(12, 23, 44, 0.7);
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 50%;
+        width: 250px;
         transform: translateX(100%);
         transition: transform 0.5s ease-in;
+        padding: 85px 0px 0px 25px;
+        backdrop-filter: blur(15px);
     }
 
-    .nav-item li {
+    .nav-links li {
         opacity: 0;
+        margin-right: auto;
+        padding: 10px;
     }
 
-    .burger-menu {
+    .burger {
         display: block;
         cursor: pointer;
     }
 
-    .burger-menu div {
+    .burger div {
         width: 25px;
         height: 3px;
         background-color: white;
         margin: 5px;
-        transition: all 0.3s ease;
+        transition:  all 0.3s ease;
     }
 
     .nav-active {
         transform: translateX(0);
+    }
+
+    .nav-links.nav-active {
+        border-left: 1px solid rgba(12, 23, 44);
     }
 
     @keyframes navLinkFade {
@@ -355,7 +327,7 @@ button {
         }
     }
 
-    .nav-item li {
+    .nav-links li {
         animation: navLinkFade 0.5s ease forwards 0.5s;
     }
 }

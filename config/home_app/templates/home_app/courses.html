@@ -1,0 +1,77 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>NAV | Cursos</title>
+        <link href="{% static 'styles.css' %}" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="slides-container">
+            <nav class="navbar" id="navbar">
+                <div class="logo">
+                    <a class="image-link" href="{% url 'index' %}">
+                        <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
+                    </a>
+                </div>
+                <ul class="nav-links">
+                    <li><a class="nav-item" href="#nosotros">Nosotros</a></li>
+                    <li><a class="nav-item" href="{% url 'courses' %}">Cursos</a></li>
+                    <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
+                    <li><a class="nav-item" href="#contacto">Contacto</a></li>
+                    <li><a class="nav-item" href="#signup">Sign up</a></li>
+                    <li><a class="nav-item" href="#login">Log in</a></li>
+                </ul>
+                <div class="burger">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+            </nav>
+            <div class="slides" id="first">
+                <div class="inner-bottom">
+                    <h1 class="main-header">Piloto privado</h1>
+                    <p class="header-description" id="first-description">Descripción PP</p>
+                    <button class="button">Pensum</button>
+                </div>
+            </div>
+            <div class="slides" id="first">
+                <div class="inner-bottom">
+                    <h1 class="main-header">Vuelo instrumental</h1>
+                    <p class="header-description" id="first-description">Descripción HVI</p>
+                    <button class="button">Pensum</button>
+                </div>
+            </div>
+            <div class="slides" id="first">
+                <div class="inner-bottom">
+                    <h1 class="main-header">Piloto comercial</h1>
+                    <p class="header-description" id="first-description">Descripción PC</p>
+                    <button class="button">Pensum</button>
+                </div>
+            </div>
+            <div class="slides" id="first">
+                <div class="inner-bottom">
+                    <h1 class="main-header">Piloto TLA</h1>
+                    <p class="header-description" id="first-description">Descripción TLA</p>
+                    <button class="button">Pensum</button>
+                </div>
+            </div>
+        </div>
+        <script src="{% static 'dynamics.js' %}"></script>
+        <footer>
+            <div class="footer-container">
+                <div class="footer-section">
+                    <p>&copy; 2024 NAV Aviation Academy</p>
+                </div>
+                <div class="footer-section">
+                    <p><a href="#">Políticas de Privacidad</a></p>
+                </div>
+                <div class="footer-section">
+                    <p><a href="mailto:luisrnandezc@gmail.com">Contacto</a></p>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -12,13 +12,13 @@
         <div class="slides-container">
             <nav class="navbar" id="navbar">
                 <div class="logo">
-                    <a class="image-link" href="">
+                    <a class="image-link" href="{% url 'index' %}">
                         <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
                     </a>
                 </div>
                 <ul class="nav-links">
                     <li><a class="nav-item" href="#nosotros">Nosotros</a></li>
-                    <li><a class="nav-item" href="#cursos">Cursos</a></li>
+                    <li><a class="nav-item" href="{% url 'courses' %}">Cursos</a></li>
                     <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
                     <li><a class="nav-item" href="#contacto">Contacto</a></li>
                     <li><a class="nav-item" href="#signup">Sign up</a></li>

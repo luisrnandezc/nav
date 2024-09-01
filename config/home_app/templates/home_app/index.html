@@ -9,7 +9,8 @@
     </head>
 
     <body>
-        <div class="slides-container">
+        <div class="main-container">
+            <!--Navigation bar-->
             <nav class="navbar" id="navbar">
                 <div class="logo">
                     <a class="image-link" href="{% url 'index' %}">
@@ -30,6 +31,7 @@
                     <div class="line3"></div>
                 </div>
             </nav>
+            <!--Main content-->
             <div class="slides" id="first">
                 <div class="inner-bottom">
                     <h1 class="main-header"><span class="main-header" style="color: rgb(232, 71, 40);">NAV </span>Aviation Academy</h1>
@@ -88,6 +90,7 @@
             </div>
         </div>
         <script src="{% static 'dynamics.js' %}"></script>
+        <!--Footer-->
         <footer>
             <div class="footer-container">
                 <div class="footer-section">

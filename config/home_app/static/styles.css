@@ -238,26 +238,24 @@ button {
     display: flex;
     flex-direction: column;
     position: relative;
-    height: 100%;
+    justify-content: center;
+    height: 100vh;
 }
 
-.content-section#section1 {
-    align-items: center;
+.content-section#section2 {
+    height: 100%;
 }
 
 .course-slide {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    margin-left: 25%;
-    margin-top: 0px;
-    padding-bottom: 25px;
+    background-color: rgba(0, 0, 0, 0);
     height: 100vh;
     opacity: 0.5;
-    transform: translateX(500px);
-    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+    transform: translateX(0px);
+    transition: transform 1.0s ease-out, opacity 1.0s ease-out;
 }
 
 .course-slide.visible {
@@ -265,40 +263,42 @@ button {
     transform: translateX(0);
   }
 
-#pp-slide {
-    margin-top: 0px;
+.course-img-box {
+    display: flex;
+    padding: 20px;
+    margin: 20px;
+}
+
+.course-img {
+    max-width:600px;
+    max-height: 555px;
+    width: auto;
+    height: auto;
+}
+
+.course-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    padding: 20px;
+    margin: 20px;
 }
 
 .course-title {
     font-size: 2.0rem;
     letter-spacing: 3px;
-    margin-top: 25px;
-}
-
-.course-info {
-    display: flex;
-    flex-direction: row;
-    margin: 30px 0px 30px 0px;
-    padding: 0px 50px 0px 50px;
-}
-
-.course-img {
-    display: block;
-    max-width:500px;
-    max-height:460px;
-    width: auto;
-    height: auto;
+    margin: 25px 0px 25px 0px;
 }
 
 .course-description {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Renogare-Regular", "Arial", sans-serif;
     text-transform: lowercase;
     text-align: justify;
     font-size: 1.0rem;
-    line-height: 2.0rem;
-    letter-spacing: 1px;
-    width: 50%;
-    margin: 0px 0px 0px 50px;
+    line-height: 2.5rem;
+    letter-spacing: 0.5px;
+    width: 100%;
 }
 
 .course-description::first-letter {

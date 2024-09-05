@@ -26,7 +26,7 @@ window.addEventListener('scroll', () => {
     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // For Mobile or negative scrolling
 });
 
-// Sideways entrance effecr for the course page.
+// Sideways entrance effect for the course page.
 document.addEventListener('scroll', function() {
     const slides = document.querySelectorAll('.course-slide');
     const windowHeight = window.innerHeight;

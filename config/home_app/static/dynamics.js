@@ -26,24 +26,44 @@ window.addEventListener('scroll', () => {
     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // For Mobile or negative scrolling
 });
 
-// Sideways entrance effect for the course page.
-document.addEventListener('scroll', function() {
-    const slides = document.querySelectorAll('.course-slide');
-    const windowHeight = window.innerHeight;
-    const centerScreen = windowHeight / 2;
+// Fade-in Side-in effect for the course page.
+const scrollElements = document.querySelectorAll(".course-img");
 
-    slides.forEach(slide => {
-      const rect = slide.getBoundingClientRect();
-      const slideCenter = rect.top + rect.height / 2;
-      const distanceFromCenter = Math.abs(centerScreen - slideCenter);
-      
-      if (rect.top < window.innerHeight && rect.bottom > 0) {
-        slide.classList.add('visible');
-        const opacity = Math.max(0, 1 - distanceFromCenter / centerScreen);
-        slide.style.opacity = opacity;
-      } else {
-        slide.classList.remove('visible');
-        slide.style.opacity = 1;
-      }
-    });
+const elementInView = (el, dividend = 1) => {
+  const elementTop = el.getBoundingClientRect().top;
+
+  return (
+    elementTop <=
+    (window.innerHeight || document.documentElement.clientHeight) / dividend
+  );
+};
+
+const elementOutofView = (el) => {
+  const elementTop = el.getBoundingClientRect().top;
+
+  return (
+    elementTop > (window.innerHeight || document.documentElement.clientHeight)
+  );
+};
+
+const displayScrollElement = (element) => {
+  element.classList.add("scrolled");
+};
+
+const hideScrollElement = (element) => {
+  element.classList.remove("scrolled");
+};
+
+const handleScrollAnimation = () => {
+  scrollElements.forEach((el) => {
+    if (elementInView(el, 1.25)) {
+      displayScrollElement(el);
+    } else if (elementOutofView(el)) {
+      hideScrollElement(el)
+    }
+  })
+}
+
+window.addEventListener("scroll", () => { 
+  handleScrollAnimation();
 });

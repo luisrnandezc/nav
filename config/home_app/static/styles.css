@@ -19,6 +19,7 @@ html, body {
     padding: 0px;
 }
 
+
 /* Navigation menu */
 
 .navbar {
@@ -91,6 +92,7 @@ nav ul li a:hover {
 .toggle .line3 {
     transform: rotate(45deg) translate(-5px, -6px);
 }
+
 
 /* Main website content */
 
@@ -268,7 +270,7 @@ button {
     width: auto;
     height: auto;
     opacity: 0;
-    transition: opacity 1.5s;
+    transition: opacity 3.0s;
 }
 
 .course-img.scrolled {
@@ -297,6 +299,12 @@ button {
     width: 50%;
     padding: 20px;
     margin: 20px;
+    opacity: 0;
+    transition: opacity 3.0s;
+}
+
+.course-info.scrolled {
+    opacity: 1;
 }
 
 .course-title {
@@ -318,6 +326,22 @@ button {
 .course-description::first-letter {
     text-transform: uppercase;
 }
+
+.scrolled.slide-right {
+    animation: slide-in-right 1.0s ease-in-out both;
+}
+
+@keyframes slide-in-right {
+    0% {
+      transform: translateX(100px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+}
+
 
 /* Footer design */
 

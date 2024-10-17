@@ -21,8 +21,6 @@
                     <li><a class="nav-item" href="#nosotros">Nosotros</a></li>
                     <li><a class="nav-item" href="{% url 'courses' %}">Cursos</a></li>
                     <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
-                    <li><a class="nav-item" href="#contacto">Contacto</a></li>
-                    <li><a class="nav-item" href="#signup">Sign up</a></li>
                     <li><a class="nav-item" href="#login">Log in</a></li>
                 </ul>
                 <div class="burger">
@@ -34,7 +32,9 @@
             <!--Main content-->
             <div class="background">
                 <div class="content-section" id="section1">
-                    <h2>Inicio del próximo curso</h2>
+                    <h2>Próximo curso: Piloto Privado (matutino)</h2>
+                    <p>Inicio: 2 de diciembre de 2024</p>
+                    <button class="course-sign-up">Inscríbete</button>
                 </div>
                 <div class="slider-divisor"></div>
                 <div class="content-section" id="section2">
@@ -45,28 +45,34 @@
                         <div class="course-info slide-right">
                             <h1 class="course-title">Piloto privado</h1>
                             <p class="course-description">
-                                Este curso está diseñado para aquellos que buscan volar por placer y disfrutar
-                                de la aviación recreativa. Además, es el primer paso fundamental para quienes
-                                aspiran a convertirse en pilotos profesionales. Aprende los fundamentos del vuelo,
-                                navegación, y seguridad aérea, y comienza tu aventura en el mundo de la aviación.
+                                Vuela por placer y disfruta de la aviación recreativa.
+                                <ul class="course-bullets">
+                                    <li class="course-bullet">13 materias</li>
+                                    <li class="course-bullet">300 horas académicas</li>
+                                    <li class="course-bullet">X horas de simulador</li>
+                                    <li class="course-bullet">40 horas de vuelo</li>
+                                </ul>
                             </p>
-                            <button class="button">Más información</button>
+                            <button class="course-button">Más información</button>
                         </div>
                     </div>
                     <div class="slider-divisor"></div>
                     <div class="course-slide" id="pc-slide">
                         <div class="course-img-box">
-                            <img class="course-img slide-left" src="{% static 'img/encore2.jpg' %}" alt="Cessna Encore">
+                            <img class="course-img slide-left" src="{% static 'img/m2.jpg' %}" alt="Cessna Encore">
                         </div>
                         <div class="course-info slide-right">
                             <h1 class="course-title">Piloto comercial</h1>
                             <p class="course-description">
-                                Este curso está orientado a quienes desean transformar su pasión por volar en una
-                                carrera profesional. Te preparará con conocimientos avanzados en técnicas de vuelo,
-                                gestión de aeronaves, y normativas de aviación, llevándote un paso más cerca de convertirte
-                                en un piloto comercial certificado y abrirte a un mundo de oportunidades en la industria aérea.
+                                Transforma tu pasión por volar en una carrera profesional.
+                                <ul class="course-bullets">
+                                    <li class="course-bullet">9 materias</li>
+                                    <li class="course-bullet">170 horas académicas</li>
+                                    <li class="course-bullet">X horas de simulador</li>
+                                    <li class="course-bullet">X horas de vuelo</li>
+                                </ul>
                             </p>
-                            <button class="button">Más información</button>
+                            <button class="course-button">Más información</button>
                         </div>
                     </div>
                     <div class="slider-divisor"></div>
@@ -77,14 +83,15 @@
                         <div class="course-info slide-right">
                             <h1 class="course-title">Piloto TLA</h1>
                             <p class="course-description">
-                                El curso de Piloto de Línea Aérea es el pináculo de la formación en aviación, dirigido a
-                                pilotos comerciales que desean alcanzar el más alto nivel de certificación. Este programa
-                                intensivo te preparará para las exigencias y responsabilidades de pilotar aeronaves de
-                                transporte en rutas comerciales, con un enfoque en la gestión avanzada de vuelo, operaciones
-                                complejas, y toma de decisiones en entornos críticos. Es la clave para abrir las puertas a
-                                una carrera en las principales aerolíneas del mundo.
+                                Inicia tu carrera profesional como Piloto de Línea Aérea.
+                                <ul class="course-bullets">
+                                    <li class="course-bullet">7 materias</li>
+                                    <li class="course-bullet">100 horas académicas</li>
+                                    <li class="course-bullet">X horas de simulador</li>
+                                    <li class="course-bullet">X horas de vuelo</li>
+                                </ul>
                             </p>
-                            <button class="button">Más información</button>
+                            <button class="course-button">Más información</button>
                         </div>
                     </div>
                     <script src="{% static 'dynamics.js' %}"></script>

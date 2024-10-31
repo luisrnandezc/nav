@@ -123,7 +123,7 @@ nav ul li a:hover {
 }
 
 #third {
-    background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)), url(./img/sim1.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)), url(./img/sim2.jpg);
     background-size: cover;
 }
 

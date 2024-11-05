@@ -250,19 +250,57 @@ button {
 }
 
 .next-course-container {
-    width: 92.5%;
-    justify-content: right;
-    margin-right: 0;
-    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.25);
+    width: 100%;
+    height: 100%;
+}
+
+.next-course-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.next-course-header {
+    font-size: 5.0rem;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 .next-course-title {
-    font-size: 2.0rem;
-    color: #d9dad8;
+    font-size: 2.5rem;
+    color: lightgray;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .next-course-date {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
+    color: lightgray;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.next-course-time {
+    font-size: 2.5rem;
+    color: lightgray;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.course-sign-up {
+    margin-top: 20px;
+}
+
+.course-sign-up:hover {
+    background-color: rgb(232, 71, 40);
+    color: #ffffff;
+    border: 0px solid #ffffff;
 }
 
 .content-section#section2 {

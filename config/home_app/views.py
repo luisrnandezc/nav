@@ -6,5 +6,9 @@ def index(request):
     return render(request, "home_app/index.html")
 
 
+def about(request):
+    return render(request, "home_app/about.html")
+
+
 def courses(request):
     return render(request, "home_app/courses.html")

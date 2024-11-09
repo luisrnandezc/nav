@@ -458,11 +458,13 @@ ul.course-bullets, li.course-bullet {
 #about-2 {
     background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw3.jpg);
     background-size: cover;
+    background-position: center;
 }
 
 #about-3 {
     background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw2.jpg);
     background-size: cover;
+    background-position: center;
 }
 
 .about-header {

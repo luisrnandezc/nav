@@ -100,7 +100,7 @@ nav ul li a:hover {
     flex-direction: column;
     position: relative;
     height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/archer.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/generic1.jpg);
     background-size: cover;
     background-attachment: fixed;
     background-repeat: no-repeat;
@@ -111,15 +111,17 @@ nav ul li a:hover {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #000000;
-    background-size: cover;
 }
 
 #top-header {
     font-size: 3.0rem;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    
+    margin: 50px;
+    text-align: center;
+    line-height: 100px;
+}
+
+.header-description {
+    font-size: 3.0rem;
 }
 
 .content-section#section-2 {
@@ -180,6 +182,8 @@ nav ul li a:hover {
     margin: 20px;
     opacity: 0;
     transition: opacity 3.0s;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 25px;
 }
 
 .course-info.scrolled {
@@ -187,6 +191,7 @@ nav ul li a:hover {
 }
 
 .course-title {
+    color: #F2CB91;
     font-size: 2.0rem;
     letter-spacing: 3px;
     margin: 25px 0px 25px 0px;
@@ -199,6 +204,10 @@ nav ul li a:hover {
     line-height: 2.0rem;
     letter-spacing: 1.5px;
     width: 100%;
+}
+
+.course-description-word {
+    color: #F2CB91
 }
 
 ul.course-bullets, li.course-bullet {
@@ -326,6 +335,10 @@ footer a:hover {
 
 @media screen and (max-width: 850px) {
 
+    .course-info {
+        width: 75%;
+    }
+
     footer * {
         font-size: 0.4rem;
     }
@@ -337,6 +350,26 @@ footer a:hover {
 
     .footer-section {
         margin: 10px 0;
+    }
+}
+
+@media screen and (max-width: 550px) {
+
+    #top-header {
+        font-size: 2.0rem;
+    }
+
+    .header-description {
+        font-size: 2.0rem;
+    }
+
+    .course-info {
+        width: 100%;
+    }
+
+    .course-button {
+        font-size: 0.75rem;
+        width: 75%;
     }
 }
 

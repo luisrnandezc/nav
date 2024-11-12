@@ -19,7 +19,6 @@ html, body {
     padding: 0px;
 }
 
-
 /* Navigation menu */
 
 .navbar {
@@ -31,7 +30,7 @@ html, body {
     height: 50px;
     padding: 10px 20px 10px 20px;
     margin-bottom: -50px;
-    background-color: rgba(20, 31, 53, 0.70);
+    background-color: rgba(20, 31, 53, 0.75);
     z-index: 1;
     backdrop-filter: blur(15px);
     transition: transform 0.3s ease;
@@ -92,7 +91,6 @@ nav ul li a:hover {
 .toggle .line3 {
     transform: rotate(45deg) translate(-5px, -6px);
 }
-
 
 /* Main website content */
 
@@ -225,253 +223,6 @@ button {
     background-color: rgb(232, 71, 40);
 }
 
-.courses-background {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    height: 100%;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/bw10.jpg);
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.content-section {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    justify-content: center;
-    height: 100vh;
-}
-
-.content-section#section1 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(./img/bw8.jpg);
-    background-size: cover;
-}
-
-.next-course-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.25);
-    width: 100%;
-    height: 100%;
-}
-
-.next-course-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.next-course-header {
-    font-size: 5.0rem;
-    margin-top: 50px;
-    margin-bottom: 50px;
-}
-
-.next-course-title {
-    font-size: 2.5rem;
-    color: lightgray;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.next-course-date {
-    font-size: 2.5rem;
-    color: lightgray;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.next-course-time {
-    font-size: 2.5rem;
-    color: lightgray;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.course-sign-up {
-    margin-top: 20px;
-}
-
-.course-sign-up:hover {
-    background-color: rgb(232, 71, 40);
-    color: #ffffff;
-    border: 0px solid #ffffff;
-}
-
-.content-section#section2 {
-    height: 100%;
-}
-
-.course-slide {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0);
-    height: 100vh;
-    opacity: 1;
-}
-
-.course-img-box {
-    display: flex;
-    padding: 20px;
-    margin: 20px;
-}
-
-.course-img {
-    max-width:600px;
-    max-height: 555px;
-    width: auto;
-    height: auto;
-    opacity: 0;
-    transition: opacity 3.0s;
-}
-
-.course-img.scrolled {
-    opacity: 1;
-}
-
-.scrolled.slide-left {
-    animation: slide-in-left 1.0s ease-in-out both;
-}
-
-@keyframes slide-in-left {
-    0% {
-      transform: translateX(-100px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-}
-
-.course-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 50%;
-    padding: 20px;
-    margin: 20px;
-    opacity: 0;
-    transition: opacity 3.0s;
-}
-
-.course-info.scrolled {
-    opacity: 1;
-}
-
-.course-title {
-    font-size: 2.0rem;
-    letter-spacing: 3px;
-    margin: 25px 0px 25px 0px;
-}
-
-.course-description {
-    font-family: "Renogare-Regular", "Arial", sans-serif;
-    text-align: justify;
-    font-size: 1.0rem;
-    line-height: 2.0rem;
-    letter-spacing: 1.5px;
-    width: 100%;
-}
-
-ul.course-bullets, li.course-bullet {
-    font-family: "Renogare-Regular", "Arial", sans-serif;
-    text-align: left;
-    font-size: 1.0rem;
-    line-height: 2.0rem;
-    letter-spacing: 5.0px;
-    width: 100%;
-}
-
-.course-button {
-    font-size: 1.0rem;
-    margin: 0px;
-    padding: 10px;
-    border: 0px solid #ffffff;
-    background-color: rgba(0, 0, 0, 0.25);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    transition: 0.3s;
-    cursor: pointer;
-    border-radius: 5px;
-    width: 40%;
-    justify-content: center;
-    align-items: center;
-}
-
-.course-button:hover {
-    background-color: rgb(232, 71, 40);
-    color: #ffffff;
-    border: 0px solid #ffffff;
-}
-
-.scrolled.slide-right {
-    animation: slide-in-right 1.0s ease-in-out both;
-}
-
-@keyframes slide-in-right {
-    0% {
-      transform: translateX(100px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-}
-
-.content-section#section3 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(./img/bw7.jpg);
-    background-size: cover;
-}
-
-.about-background {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    height: 100%;
-    background-color: #000000;
-}
-
-.about-content {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 100vh;
-    justify-content: center;
-    align-items: center;
-}
-
-#about-1 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw1.jpg);
-    background-size: cover;
-}
-
-#about-2 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw3.jpg);
-    background-size: cover;
-    background-position: center;
-}
-
-#about-3 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw2.jpg);
-    background-size: cover;
-    background-position: center;
-}
-
-.about-header {
-    font-size: 3.0rem;
-    width: 50%;
-}
-
 /* Footer design */
 
 footer {
@@ -517,7 +268,6 @@ footer a:hover {
     margin: 0 5px;
 }
 
-
 /* Main website responsive design */
 
 @media screen and (max-width: 1200px) {
@@ -533,42 +283,31 @@ footer a:hover {
     .flex-box {
         width: 45%;
     }
-
-    .course-title {
-        font-size: 1.5rem;
-    }
-
-    .course-description {
-        font-size: 0.75rem;
-    }
-
-    li.course-bullet {
-        font-size: 0.75rem;
-    }
-
-    .course-button {
-        font-size: 0.75rem;
-        width: 50%;
-    }
 }
 
 @media screen and (max-width: 850px) {
+
     .main-header {
         font-size: 2.0rem;
     }
+
     .header-description {
         font-size: 1.0rem;
     }
+
     .flex-box-container {
         flex-direction: column;
         align-content: center;
     }
+
     .flex-box {
         width: 90%;
     }
+
     .box-title {
         font-size: 1rem;
     }
+
     .box-text {
         font-size: 0.75rem;
     }
@@ -580,16 +319,16 @@ footer a:hover {
     footer * {
         font-size: 0.4rem;
     }
-    
+
     .footer-container {
         flex-direction: column;
         text-align: center;
     }
+
     .footer-section {
         margin: 10px 0;
     }
 }
-
 
 /* Navbar responsive design */
 

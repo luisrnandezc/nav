@@ -9,83 +9,81 @@
     </head>
 
     <body>
-        <div class="main-container">
-            <!--Navigation bar-->
-            <nav class="navbar" id="navbar">
-                <div class="logo">
-                    <a class="image-link" href="{% url 'index' %}">
-                        <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
-                    </a>
-                </div>
-                <ul class="nav-links">
-                    <li><a class="nav-item" href="{% url 'about' %}">Nosotros</a></li>
-                    <li><a class="nav-item" href="{% url 'courses' %}">Cursos</a></li>
-                    <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
-                    <li><a class="nav-item" href="#cpa">CPA</a></li>
-                    <li><a class="nav-item" href="#login">Log in</a></li>
-                </ul>
-                <div class="burger">
-                    <div class="line1"></div>
-                    <div class="line2"></div>
-                    <div class="line3"></div>
-                </div>
-            </nav>
-            <!--Main content-->
-            <div class="slides" id="first">
-                <div class="inner-bottom">
-                    <h1 class="main-header"><span class="main-header" style="color: rgb(232, 71, 40);">NAV </span>Aviation Academy</h1>
-                    <p class="header-description" id="first-description">Más alto, más lejos</p>
-                    <button class="button">Conócenos</button>
-                </div>
+        <!--navbar-->
+        <nav class="navbar" id="navbar">
+            <div class="logo">
+                <a class="image-link" href="{% url 'index' %}">
+                    <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
+                </a>
             </div>
-            <div class="slider-divisor"></div>
-            <div class="slides" id="second">
-                <div class="inner-bottom">
-                    <h1 class="main-header">Cursos</h1>
-                    <div class="inline-buttons">
-                        <button class="inline-button" id="b1">PP</button>
-                        <div class="inline-separator"></div>
-                        <button class="inline-button" id="b2">HVI</button>
-                        <div class="inline-separator"></div>
-                        <button class="inline-button" id="b3">PC</button>
-                        <div class="inline-separator"></div>
-                        <button class="inline-button" id="b4">TLA</button>
-                    </div>
-                    <button class="button">Inscríbete</button>
-                </div>
+            <ul class="nav-links">
+                <li><a class="nav-item" href="{% url 'about' %}">Nosotros</a></li>
+                <li><a class="nav-item" href="{% url 'courses' %}">Cursos</a></li>
+                <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
+                <li><a class="nav-item" href="#cpa">CPA</a></li>
+                <li><a class="nav-item" href="#login">Log in</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
             </div>
-            <div class="slides" id="third">
-                <div class="inner-bottom">
-                    <h1 class="main-header">Simuladores</h1>
-                    <div class="inline-buttons">
-                        <button class="inline-button" id="b1">FSTD Nivel III</button>
-                        <div class="inline-separator"></div>
-                        <button class="inline-button" id="b2">737-800</button>
-                    </div>
-                    <button class="button">Entrena</button>
-                </div>
+        </nav>
+        <!--main webpage content-->
+        <div class="slides" id="first">
+            <div class="inner-bottom">
+                <h1 class="main-header"><span class="main-header" style="color: rgb(232, 71, 40);">NAV </span>Aviation Academy</h1>
+                <p class="header-description" id="first-description">Más alto, más lejos</p>
+                <button class="button">Conócenos</button>
             </div>
-            <div class="slider-divisor"></div>
-            <div class="slides" id="fourth">
-                <div class="inner-bottom">
-                    <h1 class="main-header">Cursos especiales</h1>
-                    <div class="inline-buttons">
-                        <button class="inline-button" id="b5">PBN</button>
-                        <div class="inline-separator"></div>
-                        <button class="inline-button" id="b6">RVSM</button>
-                        <div class="inline-separator"></div>
-                        <button class="inline-button" id="b7">UPRT</button>
-                    </div>
-                    <button class="button">Saber más</button>
+        </div>
+        <div class="slider-divisor"></div>
+        <div class="slides" id="second">
+            <div class="inner-bottom">
+                <h1 class="main-header">Cursos</h1>
+                <div class="inline-buttons">
+                    <button class="inline-button" id="b1">PP</button>
+                    <div class="inline-separator"></div>
+                    <button class="inline-button" id="b2">HVI</button>
+                    <div class="inline-separator"></div>
+                    <button class="inline-button" id="b3">PC</button>
+                    <div class="inline-separator"></div>
+                    <button class="inline-button" id="b4">TLA</button>
                 </div>
+                <button class="button">Inscríbete</button>
             </div>
-            <div class="slider-divisor"></div>
-            <div class="slides" id="fifth">
-                <div class="inner-bottom">
-                    <h1 class="main-header">CPA</h1>
-                    <p class="header-description">Curso Propedéutico Aeronáutico</p>
-                    <button class="button">Saber más</button>              
+        </div>
+        <div class="slides" id="third">
+            <div class="inner-bottom">
+                <h1 class="main-header">Simuladores</h1>
+                <div class="inline-buttons">
+                    <button class="inline-button" id="b1">FSTD Nivel III</button>
+                    <div class="inline-separator"></div>
+                    <button class="inline-button" id="b2">737-800</button>
                 </div>
+                <button class="button">Entrena</button>
+            </div>
+        </div>
+        <div class="slider-divisor"></div>
+        <div class="slides" id="fourth">
+            <div class="inner-bottom">
+                <h1 class="main-header">Cursos especiales</h1>
+                <div class="inline-buttons">
+                    <button class="inline-button" id="b5">PBN</button>
+                    <div class="inline-separator"></div>
+                    <button class="inline-button" id="b6">RVSM</button>
+                    <div class="inline-separator"></div>
+                    <button class="inline-button" id="b7">UPRT</button>
+                </div>
+                <button class="button">Saber más</button>
+            </div>
+        </div>
+        <div class="slider-divisor"></div>
+        <div class="slides" id="fifth">
+            <div class="inner-bottom">
+                <h1 class="main-header">CPA</h1>
+                <p class="header-description">Curso Propedéutico Aeronáutico</p>
+                <button class="button">Saber más</button>              
             </div>
         </div>
         <script src="{% static 'dynamics.js' %}"></script>

@@ -17,9 +17,10 @@ html, body {
     height: 100%;
     margin: 0px;
     padding: 0px;
+    text-transform: uppercase;
 }
 
-/* Navigation menu */
+/* navbar */
 
 .navbar {
     display: flex;
@@ -92,14 +93,9 @@ nav ul li a:hover {
     transform: rotate(45deg) translate(-5px, -6px);
 }
 
-/* Main website content */
+/* main webpage content */
 
-.main-container {
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.about-background {
+.content-section {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -116,13 +112,36 @@ nav ul li a:hover {
     align-items: center;
 }
 
+#section-1 {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/bw1.jpg);
+    background-size: cover;
+}
+
+.about-title {
+    justify-content: left;
+    padding-right: 100px;
+    margin-right: 50px;
+    margin-left: 75px;
+}
+
+.about-header {
+    font-size: 3.0rem;
+    width: 100%;
+}
+
+.about-text {
+    margin-left: 200px;
+    margin-right: 100px;
+    justify-content: justify;
+}
+
 #about-1 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw1.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw7.jpg);
     background-size: cover;
 }
 
 #about-2 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw3.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw4.jpg);
     background-size: cover;
     background-position: center;
 }
@@ -133,17 +152,12 @@ nav ul li a:hover {
     background-position: center;
 }
 
-.about-header {
-    font-size: 3.0rem;
-    width: 50%;
-}
-
 .slider-divisor {
     height: 1px;
     background-color: rgb(232, 71, 40);
 }
 
-/* Footer design */
+/* footer */
 
 footer {
     background-color: #000000;
@@ -188,7 +202,7 @@ footer a:hover {
     margin: 0 5px;
 }
 
-/* Main website responsive design */
+/* main webage responsive design */
 
 @media screen and (max-width: 1200px) {
 }
@@ -209,7 +223,7 @@ footer a:hover {
     }
 }
 
-/* Navbar responsive design */
+/* navbar responsive design */
 
 @media screen and (max-width: 1001px) {
 

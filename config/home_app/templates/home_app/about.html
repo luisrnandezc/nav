@@ -9,44 +9,71 @@
     </head>
 
     <body>
-        <div class="main-container">
-            <!--Navigation bar-->
-            <nav class="navbar" id="navbar">
-                <div class="logo">
-                    <a class="image-link" href="{% url 'index' %}">
-                        <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
-                    </a>
+        <!--navbar-->
+        <nav class="navbar" id="navbar">
+            <div class="logo">
+                <a class="image-link" href="{% url 'index' %}">
+                    <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a class="nav-item" href="{% url 'about' %}">Nosotros</a></li>
+                <li><a class="nav-item" href="{% url 'courses' %}">Cursos</a></li>
+                <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
+                <li><a class="nav-item" href="#cpa">CPA</a></li>
+                <li><a class="nav-item" href="#login">Log in</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+        <!--main webpage content-->
+        <div class="content-section" id="section-1">
+
+        </div>
+        <div class="slider-divisor"></div>
+        <div class="content-section" id="section-2">
+            <div class="about-content" id="about-1">
+                <div class="about-title">
+                    <h3 class="about-header">Misión</h3>
                 </div>
-                <ul class="nav-links">
-                    <li><a class="nav-item" href="{% url 'about' %}">Nosotros</a></li>
-                    <li><a class="nav-item" href="{% url 'courses' %}">Cursos</a></li>
-                    <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
-                    <li><a class="nav-item" href="#cpa">CPA</a></li>
-                    <li><a class="nav-item" href="#login">Log in</a></li>
-                </ul>
-                <div class="burger">
-                    <div class="line1"></div>
-                    <div class="line2"></div>
-                    <div class="line3"></div>
+                <div>
+                    <p class="about-text">Formar pilotos integrales para la aviación moderna.</p>
                 </div>
-            </nav>
-            <!--Main content-->
-            <div class="about-background">
-                <div class="about-content" id="about-1">
+            </div>
+            <div class="about-content" id="about-2">
+                <div class="about-title">
                     <h3 class="about-header">Visión</h3>
-                    <p class="about-text">Aviadores modernos para la aviación moderna.</p>
                 </div>
-                <div class="slider-divisor"></div>
-                <div class="about-content" id="about-2">
-                    <h3 class="about-header">Filosofía</h3>
-                    <p class="about-text">La seguridad operacional como valor fundamental.</p>
+                <div>
+                    <p class="about-text">Definir un nuevo estándar para la formación de aviadores venezolanos.</p>
                 </div>
-                <div class="slider-divisor"></div>
-                <div class="about-content" id="about-3">
-                    <h3 class="about-header">Enseñanza</h3>
-                    <p class="about-text">Elevar el nivel de exigencia por encima del promedio.</p>
+            </div>
+            <div class="about-content" id="about-3">
+                <div class="about-title">
+                    <h3 class="about-header">Valores</h3>
+                </div>
+                <div>
+                    <p class="about-text">Seguridad operacional, integridad profesional y mejora continua.</p>
                 </div>
             </div>
         </div>
+        <script src="{% static 'dynamics.js' %}"></script>
+        <!--footer-->
+        <footer>
+            <div class="footer-container">
+                <div class="footer-section">
+                    <p>&copy; 2024 NAV Aviation Academy</p>
+                </div>
+                <div class="footer-section">
+                    <p><a href="#">Políticas de Privacidad</a></p>
+                </div>
+                <div class="footer-section">
+                    <p><a href="mailto:luisrnandezc@gmail.com">Contacto</a></p>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>

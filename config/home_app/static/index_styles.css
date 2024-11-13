@@ -17,6 +17,7 @@ html, body {
     height: 100%;
     margin: 0px;
     padding: 0px;
+    text-transform: uppercase;
 }
 
 /* Navigation menu */
@@ -92,12 +93,7 @@ nav ul li a:hover {
     transform: rotate(45deg) translate(-5px, -6px);
 }
 
-/* Main website content */
-
-.main-container {
-    text-align: center;
-    text-transform: uppercase;
-}
+/* main webpage content */
 
 .slides {
     position: relative;

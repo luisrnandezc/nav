@@ -103,6 +103,11 @@ nav ul li a:hover {
     background-color: #000000;
 }
 
+#section-1 {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/bw1.jpg);
+    background-size: cover;
+}
+
 .about-content {
     display: flex;
     flex-direction: row;
@@ -110,46 +115,56 @@ nav ul li a:hover {
     height: 100vh;
     justify-content: center;
     align-items: center;
+    position: relative;
+    overflow: hidden;
 }
 
-#section-1 {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/bw1.jpg);
-    background-size: cover;
+.about-content .about-title,
+.about-content .about-text {
+    position: relative;
+    z-index: 1;
 }
 
 .about-title {
-    justify-content: left;
-    padding-right: 100px;
+    width: 25vw;
     margin-right: 50px;
-    margin-left: 75px;
 }
 
 .about-header {
     font-size: 3.0rem;
     width: 100%;
+    text-align: right;
 }
 
 .about-text {
-    margin-left: 200px;
-    margin-right: 100px;
-    justify-content: justify;
+    width: 75vw;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.about-p {
+    text-align: center;
 }
 
 #about-1 {
     background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw7.jpg);
+    background-position: -500px center;
     background-size: cover;
+    background-repeat: repeat;
 }
 
 #about-2 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw4.jpg);
-    background-size: cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/bw4.jpg);
     background-position: center;
+    background-size: cover;
+    background-repeat: repeat;
 }
 
 #about-3 {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75)), url(./img/bw2.jpg);
-    background-size: cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw2.jpg);
     background-position: center;
+    background-size: cover;
+    background-repeat: repeat;
 }
 
 .slider-divisor {

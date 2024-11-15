@@ -131,6 +131,10 @@ nav ul li a:hover {
     animation: top-header 1s ease-in forwards;
 }
 
+#aviation {
+    color: rgb(232, 71, 40);
+}
+
 .about-content {
     display: flex;
     flex-direction: row;

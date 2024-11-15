@@ -104,8 +104,31 @@ nav ul li a:hover {
 }
 
 #section-1 {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/bw1.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/yv3202.jpg);
     background-size: cover;
+    background-position: center;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes top-header {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.top-header {
+    font-size: 5.0rem;
+    align-items: center;
+    text-align: center;
+    line-height: 10.0rem;
+    margin-left: 75px;
+    margin-right: 75px;
+    opacity: 0;
+    animation: top-header 1s ease-in forwards;
 }
 
 .about-content {
@@ -148,7 +171,7 @@ nav ul li a:hover {
 
 #about-1 {
     background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw7.jpg);
-    background-position: -500px center;
+    background-position: center;
     background-size: cover;
     background-repeat: repeat;
 }

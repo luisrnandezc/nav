@@ -26,7 +26,7 @@ window.addEventListener('scroll', () => {
 });
 
 // 3) fade-in Side-in effect for the course page.
-const scrollElements = document.querySelectorAll(".course-img,.course-info");
+const scrollElements = document.querySelectorAll(".course-img,.course-info,.about-p");
 
 const elementInView = (el, dividend = 1) => {
   const elementTop = el.getBoundingClientRect().top;

@@ -104,7 +104,7 @@ nav ul li a:hover {
 }
 
 #section-1 {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/yv3202.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw10.jpg);
     background-size: cover;
     background-position: center;
     justify-content: center;
@@ -204,12 +204,53 @@ nav ul li a:hover {
 }
 
 #p1 {
+    font-size: 0.75rem;
     letter-spacing: 2px;
-    line-height: 3.0rem;
+    line-height: 4.0rem;
     width: 50vw;
     margin-left: auto;
     margin-right: 100px;
     text-align: justify;
+}
+
+.scrolled.slide-left {
+    animation: slide-in-left 2.5s ease-in-out both;
+}
+
+@keyframes slide-in-left {
+    0% {
+      transform: translateX(-300px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+}
+
+#p2 {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    line-height: 4.0rem;
+    width: 50vw;
+    margin-left: 100px;
+    margin-right: auto;
+    text-align: justify;
+}
+
+.scrolled.slide-right {
+    animation: slide-in-right 2.5s ease-in-out both;
+}
+
+@keyframes slide-in-right {
+    0% {
+      transform: translateX(300px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0px);
+      opacity: 1;
+    }
 }
 
 .orange-word-1 {
@@ -217,6 +258,7 @@ nav ul li a:hover {
 }
 
 .orange-word-2 {
+    font-size: 0.75rem;
     color:rgb(232, 71, 40);
     letter-spacing: 2.0px;
 }

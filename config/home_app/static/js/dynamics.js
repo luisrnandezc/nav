@@ -15,14 +15,14 @@ window.addEventListener('scroll', () => {
     let currentScroll = window.scrollY || document.documentElement.scrollTop;
     
     if (currentScroll > lastScrollTop) {
-        // Scroll down
+        // scroll down
         navbar.classList.add('hidden');
     } else {
-        // Scroll up
+        // scroll up
         navbar.classList.remove('hidden');
     }
     
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // For Mobile or negative scrolling
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // for Mobile or negative scrolling
 });
 
 // 3) fade-in Side-in effect for the course page.
@@ -79,42 +79,73 @@ document.addEventListener("scroll", function() {
     isScrolling = true;
 });
 
-// Function to update background positions
+// function to update background positions
 function updateBackgrounds() {
     document.querySelectorAll(".about-content").forEach((element, index) => {
         const direction = index % 2 === 0 ? 1 : -1;
 
-        // Additional offset for the first div (move it slightly to the left)
-        const extraOffset = index === 0 ? -75 : 0; // Adjust the first background 50px to the left
+        // additional offset for the first div (move it slightly to the left)
+        const extraOffset = index === 0 ? -75 : 0; // adjust the first background 50px to the left
 
-        // Apply the momentum offset with direction and additional offset
+        // apply the momentum offset with direction and additional offset
         const horizontalMovement = (momentumOffset + (scrollPosition - lastScrollY) * 0.1 + extraOffset) * direction;
         
         element.style.backgroundPosition = `${horizontalMovement}px center`;
     });
 }
 
-// Smooth deceleration effect
+// smooth deceleration effect
 function smoothScrollEffect() {
     if (isScrolling) {
-        // Calculate the velocity based on the scroll delta
+        // calculate the velocity based on the scroll delta
         velocity = (scrollPosition - lastScrollY) * 0.1;
-        momentumOffset += velocity; // Update momentum offset with current velocity
-        lastScrollY = scrollPosition; // Update last scroll position
+        momentumOffset += velocity; // update momentum offset with current velocity
+        lastScrollY = scrollPosition; // update last scroll position
         updateBackgrounds();
         isScrolling = false;
     } else {
-        // Gradually decrease velocity when scrolling stops
-        velocity *= 0.985; // Deceleration factor, adjust for a slower or faster stop
-        momentumOffset += velocity; // Update momentumOffset based on decelerated velocity
+        // gradually decrease velocity when scrolling stops
+        velocity *= 0.985; // deceleration factor, adjust for a slower or faster stop
+        momentumOffset += velocity; // update momentumOffset based on decelerated velocity
         updateBackgrounds();
 
         if (Math.abs(velocity) < 0.01) {
-            velocity = 0; // Stop completely when velocity is very low
+            velocity = 0; // stop completely when velocity is very low
         }
     }
     requestAnimationFrame(smoothScrollEffect);
 }
 
-// Start the animation loop
+// start the animation loop
 smoothScrollEffect();
+
+// 5) slideshow for the about page.
+
+let slideIndex = 1;
+showSlides(slideIndex);
+
+// next/previous controls
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+// thumbnail image controls
+function currentSlide(n) {
+  showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+  let i;
+  let slides = document.getElementsByClassName("slides");
+  let dots = document.getElementsByClassName("dot");
+  if (n > slides.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";
+  dots[slideIndex-1].className += " active";
+} 

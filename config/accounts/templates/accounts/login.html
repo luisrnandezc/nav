@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Flight Scheduling</title>
+    <link href="{% static 'login_styles.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="logo-container">
+      <img
+        class="logo-img"
+        src="{% static 'img/nav_logo_original.png' %}"
+        alt="Logo"
+      />
+    </div>
+    <div class="form-container">
+      <form class="form" action="/accounts/login/" method="post">
+        {% csrf_token %} {{ form }}
+        <div class="submit-button-container">
+          <button class="submit-button">Submit</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

@@ -17,23 +17,23 @@
         alt="Logo"
       />
     </div>
-    {% if form.errors %}
-    <p>
-        Your username and password didn't match. 
-        Please try again.
-    </p>
-    {% else %}
-        <p>Please, use the following form to log-in:</p>
-    {% endif %}
+    <div class="error-message-container">
+      {% if messages %}
+        {% for message in messages %}
+          <p class="error-message">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
     <div class="form-container">
       <form action="{% url 'accounts:login' %}" method="post">
         {% csrf_token %} 
         {{ form }}
         <input type="hidden" name="next" value="{{ next }}" />
         <div class="submit-button-container">
-          <button type="submit">Log-in</button>
+          <button class='login-button' type="submit">Login</button>
         </div>
       </form>
     </div>
+
   </body>
 </html>

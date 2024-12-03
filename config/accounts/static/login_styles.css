@@ -29,6 +29,17 @@ body {
   width: auto;
 }
 
+.error-message-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-message {
+  text-transform: none;
+  color: #ff0000;
+}
+
 .form-container {
   display: flex;
   align-items: top;
@@ -47,4 +58,8 @@ body {
   align-items: center;
   justify-content: center;
   margin-top: 10px;
+}
+
+.login-button {
+  width: 75px;
 }

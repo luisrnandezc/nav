@@ -6,15 +6,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Dashboard</title>
-    <link href="{% static 'dashboard_styles.css' %}" rel="stylesheet" />
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
   </head>
 
   <body>
-    <div class="grid-container">
-        <div class="one">One</div>
-        <div class="two">Two</div>
-        <div class="three">Three</div>
-        <div class="four">Four</div>
+    <div class="main-container">
+        <div class="dashboard-container">
+            <div class="left-column">
+                <div class="dashboard-square">Balance</div>
+                <div class="dashboard-square">Académico</div>
+            </div>
+            <div class="right-column">
+                <div class="dashboard-square">Mis Datos</div>
+                <div class="dashboard-square">Agenda tu vuelo</div>
+            </div>
+        </div>
     </div>
   </body>
 </html>

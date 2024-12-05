@@ -17,7 +17,11 @@
                 <div class="dashboard-square">Académico</div>
             </div>
             <div class="right-column">
-                <div class="dashboard-square">Mis Datos</div>
+                <div class="dashboard-square">
+                  <a href="{% url 'accounts:password_change' %}">
+                    <button>Actualizar datos</button>
+                  </a>
+                </div>
                 <div class="dashboard-square">Agenda tu vuelo</div>
             </div>
         </div>

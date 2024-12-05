@@ -1,9 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
 from django.shortcuts import render
 from .forms import LoginForm
-from django.contrib.auth.decorators import login_required
     
 
 def user_login(request):
@@ -19,7 +17,7 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return render(request, 'accounts/dashboard.html')
+                    return render(request, 'dashboard/dashboard.html')
                 else:
                     messages.error(request, 'Cuenta inactiva.')
             else:
@@ -29,15 +27,5 @@ def user_login(request):
     return render(request, 'accounts/login.html', {'form': form})
 
 
-@login_required
-def user_dashboard(request):
-    return render(
-        request,
-        'account/dashboard.html',
-        {'section': 'dashboard'}
-        )
-
-
 def user_logout(request):
     return render(request, 'accounts/logout.html')
-

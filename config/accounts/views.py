@@ -5,22 +5,20 @@ from .forms import LoginForm
 from django.contrib.auth.views import PasswordChangeView
 from .forms import CustomPasswordChangeForm
 from django.contrib.auth.password_validation import password_validators_help_texts
-    
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
 
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            user = authenticate(
-                request,
-                username=cd['username'],
-                password=cd['password']
-            )
+            user = authenticate(request, username=cd['username'], password=cd['password'])
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return render(request, 'dashboard/dashboard.html')
+                    return redirect('dashboard:dashboard')
                 else:
                     messages.error(request, 'Cuenta inactiva.')
             else:
@@ -31,6 +29,7 @@ def user_login(request):
 
 
 def user_logout(request):
+    logout(request)
     return render(request, 'accounts/logout.html')
 
 

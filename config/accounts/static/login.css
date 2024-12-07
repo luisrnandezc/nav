@@ -14,6 +14,7 @@ body {
   margin: 0px;
   padding: 0px;
   text-transform: uppercase;
+  background-color: #222222;
 }
 
 .logo-container {
@@ -22,6 +23,7 @@ body {
   justify-content: center;
   height: 45%;
   padding: 40px;
+  margin-top: 40px;
 }
 
 .logo-img {
@@ -45,21 +47,43 @@ body {
   align-items: top;
   justify-content: center;
   height: 55%;
-  padding: 40px;
+  padding: 0px;
 }
 
 .form-field {
   margin-top: 5px;
   margin-bottom: 5px;
+  font-size: 1.25rem;
+}
+
+label {
+  display: inline-block;
+  color: #ffffff;
+  line-height: 50px;
+  margin-right: 15px;
+  font-size: 1.25rem;
+  width: 7.0rem;
 }
 
 .submit-button-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .submit-button {
+  text-transform: uppercase;
+  font-size: 1.25rem;
   width: 75px;
+  height: 30px;
+  border-radius: 3px;
+}
+
+.submit-button:hover {
+  background-color: rgb(232, 71, 40);
+  color: #ffffff;
+  border: 0px solid #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
 }

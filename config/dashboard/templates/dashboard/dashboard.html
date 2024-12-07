@@ -11,31 +11,36 @@
 
   <body>
     <div class="main-container">
-        <div class="dashboard-container">
-            <div class="left-column">
-              <div class="dashboard-square">Balance</div>
-              <div class="dashboard-square">
-                <h1 class="square-header">Académico</h1>
-                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                  <img class="logo-img" src="{% static 'img/transcript.png' %}" alt="Transcript">
-                </a>
-              </div>
+      <div class="user-data">
+        <h1>Bienvenido, {{ username }}!</h1>
+        <p>Tu email es: {{ email }}</p>
+        <a href="{% url 'accounts:logout' %}">Cerrar sesión</a>
+      </div>
+      <div class="dashboard-container">
+          <div class="left-column">
+            <div class="dashboard-square">Balance</div>
+            <div class="dashboard-square">
+              <h1 class="square-header">Académico</h1>
+              <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                <img class="logo-img" src="{% static 'img/transcript.png' %}" alt="Transcript">
+              </a>
             </div>
-            <div class="right-column">
-              <div class="dashboard-square">
-                <h1 class="square-header">Tus datos</h1>
-                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                  <img class="logo-img" src="{% static 'img/user.png' %}" alt="User">
-                </a>
-              </div>
-              <div class="dashboard-square">
-                <h1 class="square-header">Agenda tu vuelo</h1>
-                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                  <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Airplane">
-                </a>
-              </div>
+          </div>
+          <div class="right-column">
+            <div class="dashboard-square">
+              <h1 class="square-header">Tus datos</h1>
+              <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                <img class="logo-img" src="{% static 'img/user.png' %}" alt="User">
+              </a>
             </div>
-        </div>
+            <div class="dashboard-square">
+              <h1 class="square-header">Agenda tu vuelo</h1>
+              <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Airplane">
+              </a>
+            </div>
+          </div>
+      </div>
     </div>
   </body>
 </html>

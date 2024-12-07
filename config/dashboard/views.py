@@ -3,4 +3,9 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def dashboard(request):
-    return render(request, "dashboard/dashboard.html", {'section': 'dashboard'})
+    user = request.user
+    context = {
+        'username': user.username,
+        'email': user.email,
+    }
+    return render(request, "dashboard/dashboard.html", context)

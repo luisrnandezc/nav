@@ -13,16 +13,27 @@
     <div class="main-container">
         <div class="dashboard-container">
             <div class="left-column">
-                <div class="dashboard-square">Balance</div>
-                <div class="dashboard-square">Académico</div>
+              <div class="dashboard-square">Balance</div>
+              <div class="dashboard-square">
+                <h1 class="square-header">Académico</h1>
+                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                  <img class="logo-img" src="{% static 'img/transcript.png' %}" alt="Transcript">
+                </a>
+              </div>
             </div>
             <div class="right-column">
-                <div class="dashboard-square">
-                  <a href="{% url 'accounts:password_change' %}">
-                    <button>Actualizar datos</button>
-                  </a>
-                </div>
-                <div class="dashboard-square">Agenda tu vuelo</div>
+              <div class="dashboard-square">
+                <h1 class="square-header">Tus datos</h1>
+                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                  <img class="logo-img" src="{% static 'img/user.png' %}" alt="User">
+                </a>
+              </div>
+              <div class="dashboard-square">
+                <h1 class="square-header">Agenda tu vuelo</h1>
+                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                  <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Airplane">
+                </a>
+              </div>
             </div>
         </div>
     </div>

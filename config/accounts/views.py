@@ -2,6 +2,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render
 from .forms import LoginForm
+from django.contrib.auth.views import PasswordChangeView
+from .forms import CustomPasswordChangeForm
+from django.contrib.auth.password_validation import password_validators_help_texts
     
 
 def user_login(request):
@@ -29,3 +32,14 @@ def user_login(request):
 
 def user_logout(request):
     return render(request, 'accounts/logout.html')
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    form_class = CustomPasswordChangeForm
+    template_name = 'registration/password_change_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['password_validators_help_texts'] = password_validators_help_texts()
+        return context
+

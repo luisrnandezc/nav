@@ -110,3 +110,26 @@ class Instructor(models.Model):
     
     def __str__(self):
         return f'{self.user.username} [ID: {self.instructor_id}] ({self.instructor_type})'
+    
+
+class Staff(models.Model):
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    staff_id = models.PositiveBigIntegerField(
+        verbose_name='Identificación',
+        unique=True,
+        validators=[MinValueValidator(1)],
+        help_text='Número de cédula o pasaporte sin puntos o guiones.'
+    )
+
+    class Meta:
+        db_table = 'staff_db'
+        ordering = ['staff_id']
+        verbose_name = 'Staff'
+        verbose_name_plural = 'Staff'
+
+    
+    def __str__(self):
+        return f'{self.user.username} [ID: {self.staff_id}])'
+    

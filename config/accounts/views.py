@@ -18,7 +18,7 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return redirect('dashboard:dashboard')
+                    return redirect('dashboard:student_dashboard')
                 else:
                     messages.error(request, 'Cuenta inactiva.')
             else:

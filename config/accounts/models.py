@@ -2,7 +2,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.urls import reverse
+from django.core.exceptions import ValidationError
 
 
 class Student(models.Model):
@@ -62,17 +62,41 @@ class Student(models.Model):
         verbose_name='Número de Curso'
     )
 
+    balance = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=0.00, 
+        verbose_name='Balance para Línea de Vuelo'
+    )
+
     class Meta:
         db_table = 'students_db'
         ordering = ['student_id']
         verbose_name = 'Student'
         verbose_name_plural = 'Students'
 
-    
     def __str__(self):
         return f'{self.user.username} [ID: {self.student_id}] ({self.student_type} - {self.student_course_type})'
     
-
+    def clean(self):
+        """
+        Custom validation for the 'balance' field.
+        If the student is not a 'flying' student, the balance must be zero.
+        """
+        if self.student_type == self.GROUND and self.balance != 0:
+            raise ValidationError({
+                'balance': 'Balance must be zero for ground students.'
+            })
+    
+    def save(self, *args, **kwargs):
+        """
+        Override the save method to ensure the balance is reset to 0
+        when the student type is changed from 'flying' to 'ground'.
+        """
+        if self.student_type == self.GROUND:
+            self.balance = 0.00
+        super().save(*args, **kwargs)
+        
 
 class Instructor(models.Model):
 

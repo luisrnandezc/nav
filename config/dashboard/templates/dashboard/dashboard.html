@@ -11,8 +11,8 @@
 
   <body>
     <div class="main-container">
-      <div class="user-data">
-        <h1>Bienvenido, {{ username }}!</h1>
+      <div class="data-container">
+        <h1 class="data-header">Bienvenido {{ first_name }}!</h1>
         <p>Tu email es: {{ email }}</p>
         <a href="{% url 'accounts:logout' %}">Cerrar sesión</a>
       </div>

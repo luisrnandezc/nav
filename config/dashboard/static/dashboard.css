@@ -22,11 +22,36 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    padding: 50px;
+  }
+
+  .data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: start;
+    padding: 25px;
+    margin-left: 100px;
+    height: 100%;
+    width: 40%;
+  }
+
+  .data-header {
+    font-size: 3.0rem;
+    text-align: center;
   }
 
   .dashboard-container {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    height: 100%;
+    width: 60%;
+  }
+
+  .left-column, .right-column {
+    display: flex;
+    flex-direction: column;
   }
 
   .dashboard-square {
@@ -36,10 +61,11 @@
     justify-content: center;
     width: 300px;
     height: 300px;
-    margin: 25px;
+    padding: 10px;
+    margin: 10px;
     color: #ffffff;
     border: 3px solid #e84728;;
-    border-radius: 10px;
+    border-radius: 25px;
   }
 
   .square-header {

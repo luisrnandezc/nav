@@ -34,6 +34,7 @@ class Student(models.Model):
     student_id = models.PositiveBigIntegerField(
         verbose_name='Identificación',
         unique=True,
+        primary_key=True,
         validators=[MinValueValidator(1)],
         help_text='Número de cédula o pasaporte sin puntos o guiones.'
     )
@@ -78,6 +79,13 @@ class Student(models.Model):
     def __str__(self):
         return f'{self.user.username} [ID: {self.student_id}] ({self.student_type} - {self.student_course_type})'
     
+    def get_total_flying_time(self):
+        """
+        Calculate total flight time from the FlightLog table.
+        """
+        total_time = self.flightlog_set.aggregate(models.Sum('flight_hours'))['flight_hours__sum'] or 0
+        return total_time
+
     def clean(self):
         """
         Custom validation for the 'balance' field.
@@ -114,6 +122,7 @@ class Instructor(models.Model):
     instructor_id = models.PositiveBigIntegerField(
         verbose_name='Identificación',
         unique=True,
+        primary_key=True,
         validators=[MinValueValidator(1)],
         help_text='Número de cédula o pasaporte sin puntos o guiones.'
     )
@@ -143,6 +152,7 @@ class Staff(models.Model):
     staff_id = models.PositiveBigIntegerField(
         verbose_name='Identificación',
         unique=True,
+        primary_key=True,
         validators=[MinValueValidator(1)],
         help_text='Número de cédula o pasaporte sin puntos o guiones.'
     )
@@ -156,4 +166,15 @@ class Staff(models.Model):
     
     def __str__(self):
         return f'{self.user.username} [ID: {self.staff_id}])'
+    
+
+class FlightLog(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, to_field='student_id')
+    flight_date = models.DateTimeField(auto_now_add=True)
+    flight_hours = models.DecimalField(max_digits=5, decimal_places=2)
+
+    instructor = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f'Flight on {self.flight_date} - {self.flight_hours} hrs'
     

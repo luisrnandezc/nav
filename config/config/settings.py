@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'accounts',
     'website',
     'dashboard',
+    'fms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

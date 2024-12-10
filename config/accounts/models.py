@@ -31,43 +31,43 @@ class Student(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    student_id = models.PositiveBigIntegerField(
+    student_id = models.PositiveIntegerField(
         verbose_name='Identificación',
         unique=True,
         primary_key=True,
-        validators=[MinValueValidator(1)],
-        help_text='Número de cédula o pasaporte sin puntos o guiones.'
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        help_text='Número de cédula o pasaporte sin puntos o guiones.',
     )
 
     student_type = models.CharField(
         max_length=6, 
         choices=STUDENT_TYPES, 
         default='ground', 
-        verbose_name='Tipo de Estudiante'
+        verbose_name='Tipo de Estudiante',
     )
     
     student_age = models.PositiveIntegerField(
         validators=[MinValueValidator(16), MaxValueValidator(100)], 
-        verbose_name='Edad'
+        verbose_name='Edad',
     )
     
     student_course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPES, 
         default='pp', 
-        verbose_name='Curso'
+        verbose_name='Curso',
     )
     
     student_course_number = models.PositiveIntegerField(
         validators=[MinValueValidator(1)], 
-        verbose_name='Número de Curso'
+        verbose_name='Número de Curso',
     )
 
     balance = models.DecimalField(
         max_digits=10, 
         decimal_places=2, 
         default=0.00, 
-        verbose_name='Balance para Línea de Vuelo'
+        verbose_name='Balance para Línea de Vuelo',
     )
 
     class Meta:
@@ -119,19 +119,19 @@ class Instructor(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    instructor_id = models.PositiveBigIntegerField(
+    instructor_id = models.PositiveIntegerField(
         verbose_name='Identificación',
         unique=True,
         primary_key=True,
-        validators=[MinValueValidator(1)],
-        help_text='Número de cédula o pasaporte sin puntos o guiones.'
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        help_text='Número de cédula o pasaporte sin puntos o guiones.',
     )
 
     instructor_type = models.CharField(
         max_length=6, 
         choices=INSTRUCTOR_TYPES, 
         default='ground', 
-        verbose_name='Tipo de Instructor'
+        verbose_name='Tipo de Instructor',
     )
 
     class Meta:
@@ -149,32 +149,20 @@ class Staff(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    staff_id = models.PositiveBigIntegerField(
+    staff_id = models.PositiveIntegerField(
         verbose_name='Identificación',
         unique=True,
         primary_key=True,
-        validators=[MinValueValidator(1)],
-        help_text='Número de cédula o pasaporte sin puntos o guiones.'
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        help_text='Número de cédula o pasaporte sin puntos o guiones.',
     )
 
     class Meta:
         db_table = 'staff_db'
         ordering = ['staff_id']
         verbose_name = 'Staff'
-        verbose_name_plural = 'Staff'
+        verbose_name_plural = 'Staff',
 
     
     def __str__(self):
         return f'{self.user.username} [ID: {self.staff_id}])'
-    
-
-class FlightLog(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, to_field='student_id')
-    flight_date = models.DateTimeField(auto_now_add=True)
-    flight_hours = models.DecimalField(max_digits=5, decimal_places=2)
-
-    instructor = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f'Flight on {self.flight_date} - {self.flight_hours} hrs'
-    

@@ -1,5 +1,4 @@
 from django.db import models
-from accounts.models import Student, Instructor
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class FlightLog(models.Model):
@@ -35,10 +34,16 @@ class FlightLog(models.Model):
     )
 
     # TODO: this must be obtained from the FlightEvaluation form.
-    student_first_name = models.CharField(max_length=50)
+    student_first_name = models.CharField(
+        max_length=50,
+        default='none',
+    )
 
     # TODO: this must be obtained from the FlightEvaluation form.
-    student_last_name = models.CharField(max_length=50)
+    student_last_name = models.CharField(
+        max_length=50,
+        default='none',
+    )
 
     # TODO: this must be obtained from the FlightEvaluation form.
     instructor_id = models.PositiveIntegerField(
@@ -46,34 +51,39 @@ class FlightLog(models.Model):
     )
 
     # TODO: this must be obtained from the FlightEvaluation form.
-    instructor_first_name = models.CharField(max_length=50)
+    instructor_first_name = models.CharField(
+        max_length=50,
+        default='none',
+    )
 
     # TODO: this must be obtained from the FlightEvaluation form.
-    instructor_last_name = models.CharField(max_length=50)
-
-    # TODO: this must be obtained from the FlightEvaluation form.
-    hours_flown = models.DecimalField(
-        max_digits=5, 
-        decimal_places=2,
+    instructor_last_name = models.CharField(
+        max_length=50,
+        default='none',
     )
 
     # TODO: this must be obtained from the FlightEvaluation form.
     course_type = models.CharField(
         max_length=10, 
         choices=COURSE_TYPE_CHOICES,
+        default='none',
     )
 
     # TODO: this must be obtained from the FlightEvaluation form.
     flight_rules = models.CharField(
         max_length=10, 
         choices=FLIGHT_RULES_CHOICES,
+        default='none',
     )
 
     # TODO: this must be obtained from the FlightEvaluation form.
     solo_flight = models.BooleanField()
 
     # TODO: this must be obtained from the FlightEvaluation form.
-    session_number = models.CharField()
+    session_number = models.CharField(
+        max_length=5,
+        default='none',
+    )
 
     # TODO: this must be obtained from the FlightEvaluation form.
     session_flight_hours = models.DecimalField(
@@ -88,12 +98,16 @@ class FlightLog(models.Model):
     )
 
     # TODO: this must be obtained from the FlightEvaluation form.
-    aircraft_registration = models.CharField(max_length=6)
+    aircraft_registration = models.CharField(
+        max_length=6,
+        default='none',
+    )
 
     # TODO: this must be obtained from the FlightEvaluation form.
     session_grade = models.CharField(
         max_length=2, 
         choices=SESSION_GRADE_CHOICES,
+        default='none',
     )
 
     # TODO: this must be obtained from the FlightEvaluation form.
@@ -155,9 +169,17 @@ class FlightEvaluation(models.Model):
         validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
     )
 
-    instructor_first_name = models.CharField(max_length=50) # TODO: this could be extracted from current session. 
+    # TODO: this could be extracted from current session.
+    instructor_first_name = models.CharField(
+        max_length=50,
+        default='none',
+    )  
 
-    instructor_last_name = models.CharField(max_length=50) # TODO: this could be extracted from current session.
+    # TODO: this could be extracted from current session.
+    instructor_last_name = models.CharField(
+        max_length=50,
+        default='none',
+    ) 
 
     instructor_license_type = models.CharField(
         max_length=10,
@@ -171,9 +193,15 @@ class FlightEvaluation(models.Model):
         validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
     )
 
-    student_first_name = models.CharField(max_length=50)
+    student_first_name = models.CharField(
+        max_length=50,
+        default='none',
+    )
 
-    student_last_name = models.CharField(max_length=50)
+    student_last_name = models.CharField(
+        max_length=50,
+        default='none',
+    )
 
     # TODO: This field require some validation.
     student_license_number = models.PositiveIntegerField()
@@ -181,16 +209,22 @@ class FlightEvaluation(models.Model):
     course_type = models.CharField(
         max_length=10, 
         choices=COURSE_TYPE_CHOICES,
+        default='none',
     )
 
     flight_rules = models.CharField(
         max_length=10, 
         choices=FLIGHT_RULES_CHOICES,
+        default='none',
     )
 
     solo_flight = models.BooleanField()
 
-    session_number = models.CharField()
+    # TODO: this field required revision.
+    session_number = models.CharField(
+        max_length=5,
+        default='none',
+    )
 
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
@@ -202,11 +236,15 @@ class FlightEvaluation(models.Model):
         decimal_places=2,
     )
 
-    aircraft_registration = models.CharField(max_length=6)
+    aircraft_registration = models.CharField(
+        max_length=6,
+        default='none',
+    )
 
     session_grade = models.CharField(
-        max_length=2, 
+        max_length=2,
         choices=SESSION_GRADE_CHOICES,
+        default='none',
     )
 
     notes = models.TextField(blank=True, null=True)

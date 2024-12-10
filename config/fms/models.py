@@ -104,6 +104,15 @@ class FlightLog(models.Model):
     
 
 class FlightEvaluation(models.Model):
+    """
+    Flight Evaluation Model
+
+    This model receives data directly from the FlightEvaluation form.
+    It generates flight session records that are used to generate pdf
+    files and serve as a digital backup of flight training sessions.
+
+    # TODO: add remaining flight training test parameters.
+    """
 
     # TODO: check this infomation with NAV.
     INSTRUCTOR_LICENSE_TYPE_CHOICES = [

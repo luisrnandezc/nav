@@ -39,16 +39,16 @@ class Student(models.Model):
         help_text='Número de cédula o pasaporte sin puntos o guiones.',
     )
 
+    student_age = models.PositiveIntegerField(
+        validators=[MinValueValidator(16), MaxValueValidator(100)], 
+        verbose_name='Edad',
+    )
+
     student_type = models.CharField(
         max_length=6, 
         choices=STUDENT_TYPES, 
         default='ground', 
         verbose_name='Tipo de Estudiante',
-    )
-    
-    student_age = models.PositiveIntegerField(
-        validators=[MinValueValidator(16), MaxValueValidator(100)], 
-        verbose_name='Edad',
     )
     
     student_course_type = models.CharField(
@@ -63,7 +63,7 @@ class Student(models.Model):
         verbose_name='Número de Curso',
     )
 
-    balance = models.DecimalField(
+    student_balance = models.DecimalField(
         max_digits=10, 
         decimal_places=2, 
         default=0.00, 
@@ -91,7 +91,7 @@ class Student(models.Model):
         Custom validation for the 'balance' field.
         If the student is not a 'flying' student, the balance must be zero.
         """
-        if self.student_type == self.GROUND and self.balance != 0:
+        if self.student_type == self.GROUND and self.student_balance != 0:
             raise ValidationError({
                 'balance': 'Balance must be zero for ground students.'
             })
@@ -102,7 +102,7 @@ class Student(models.Model):
         when the student type is changed from 'flying' to 'ground'.
         """
         if self.student_type == self.GROUND:
-            self.balance = 0.00
+            self.student_balance = 0.00
         super().save(*args, **kwargs)
         
 
@@ -111,10 +111,12 @@ class Instructor(models.Model):
     # Instructor Types
     GROUND = 'ground'
     FLYING = 'flying'
+    DUAL = 'dual'
 
     INSTRUCTOR_TYPES = [
         (GROUND, 'Tierra'),
-        (FLYING, 'Vuelo')
+        (FLYING, 'Vuelo'),
+        (DUAL, 'Dual'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)

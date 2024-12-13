@@ -38,8 +38,8 @@ def student_dashboard(request):
             'user': user,
             'user_profile': staff_profile,
         }
-        return render(request, "dashboard/staff_dashboard.html", context)
+        return render(request, "dashboard/student_dashboard.html", context) # TODO: eventually this should render a staff dashboard.
     except Staff.DoesNotExist:
         pass
 
-    return render(request, "dashboard/error_dashboard.html", context)
+    return render(request, "dashboard/student_dashboard.html", context)

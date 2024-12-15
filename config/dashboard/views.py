@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from accounts.models import Student, Instructor, Staff
 
 @login_required
-def student_dashboard(request):
+def dashboard(request):
     user = request.user
     student_profile = None
     instructor_profile = None
@@ -38,8 +38,9 @@ def student_dashboard(request):
             'user': user,
             'user_profile': staff_profile,
         }
-        return render(request, "dashboard/student_dashboard.html", context) # TODO: eventually this should render a staff dashboard.
+        return render(request, "dashboard/staff_dashboard.html", context) # TODO: eventually this should render a staff dashboard.
     except Staff.DoesNotExist:
         pass
 
+    # TODO: this last render should redirect to an invalid user profile page.
     return render(request, "dashboard/student_dashboard.html", context)

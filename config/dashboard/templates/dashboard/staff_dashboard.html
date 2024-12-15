@@ -6,23 +6,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Dashboard</title>
-    <link href="{% static 'student_dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'staff_dashboard.css' %}" rel="stylesheet" />
   </head>
 
   <body>
     <div class="main-container">
       <div class="data-container">
         <div class="data-header">
-          <h1>Bienvenido</h1>
+          <h1>Staff</h1>
         </div>
         <div class="user-data">
           <p>Nombres: {{ user.first_name }}</p>
           <p>Apellidos: {{ user.last_name }}</p>
           <p>Usuario: {{ user.username }}</p>
-          <p>ID: {{ user_profile.student_id }}</p>
+          <p>ID: {{ user_profile.staff_id }}</p>
           <p>Email: {{ user.email }}</p>
-          <p>Curso: {{ user_profile.student_course_type }}-{{ user_profile.student_course_number }}</p>
-          <p>Fase: {{ user_profile.student_phase }}</p>
         </div>
         <div class="buttons">
           <div class="button-container">

@@ -53,13 +53,21 @@
     line-height: 1.75rem;
   }
 
-  .submit-button-container {
+  .buttons {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
   }
+
+  .button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 25px 0px 25px;
+  }
   
-  .submit-button {
+  .button {
     text-transform: uppercase;
     font-size: 1.25rem;
     width: 200px;
@@ -69,12 +77,16 @@
     border-radius: 3px;
   }
   
-  .submit-button:hover {
+  .button:hover {
     background-color: rgb(232, 71, 40);
     color: #ffffff;
     border: 3px solid #ffffff;
     border-radius: 3px;
     cursor: pointer;
+  }
+
+  #password-change {
+    font-size: 1.0rem;
   }
 
   .dashboard-container {

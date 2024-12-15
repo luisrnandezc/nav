@@ -17,7 +17,7 @@ class StudentInline(admin.StackedInline):
             'fields': ('student_id', 'student_age')
         }),
         ('Información Académica', {
-            'fields': ('student_type', 'student_course_type', 'student_course_number', 'student_balance')
+            'fields': ('student_phase', 'student_course_type', 'student_course_number', 'student_balance')
         })
     )
 

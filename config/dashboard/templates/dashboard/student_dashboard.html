@@ -12,15 +12,22 @@
   <body>
     <div class="main-container">
       <div class="data-container">
-        <h1 class="data-header">Bienvenido</h1>
-        <p>Nombres: {{user.first_name }}</p>
-        <p>Apellidos: {{ user.last_name }}</p>
-        <p>Usuario: {{user.username }}</p>
-        <p>Email: {{ user.email }}</p>
-        <p>Curso: {{ user_profile.student_course_type }}-{{ user_profile.student_course_number }}</p>
-        <p>Tipo de estudiante: {{ user_profile.student_type }}</p>
+        <div class="data-header">
+          <h1>Bienvenido</h1>
+        </div>
+        <div class="user-data">
+          <p>Nombres: {{ user.first_name }}</p>
+          <p>Apellidos: {{ user.last_name }}</p>
+          <p>Usuario: {{ user.username }}</p>
+          <p>ID: {{ user_profile.student_id }}</p>
+          <p>Email: {{ user.email }}</p>
+          <p>Curso: {{ user_profile.student_course_type }}-{{ user_profile.student_course_number }}</p>
+          <p>Tipo de estudiante: {{ user_profile.student_phase }}</p>
+        </div>
         <div class="submit-button-container">
-          <button class='submit-button' type="submit">Cerrar sesión</button>
+          <a href="{% url 'accounts:logout' %}">
+            <button class='submit-button' type="submit">Cerrar sesión</button>
+          </a>
         </div>
       </div>
       <div class="dashboard-container">

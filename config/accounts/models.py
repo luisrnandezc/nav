@@ -8,12 +8,12 @@ from django.core.exceptions import ValidationError
 class Student(models.Model):
 
     # Student Types
-    GROUND = 'ground'
-    FLYING = 'flying'
+    GROUND = 'Tierra'
+    FLYING = 'Línea de vuelo'
 
-    STUDENT_TYPES = [
+    STUDENT_PHASE = [
         (GROUND, 'Tierra'),
-        (FLYING, 'Vuelo')
+        (FLYING, 'Línea de vuelo'),
     ]
 
     # Course Types
@@ -26,7 +26,7 @@ class Student(models.Model):
         (COURSE_PP, 'PP'),
         (COURSE_HVI, 'HVI'),
         (COURSE_PC, 'PC'),
-        (COURSE_TLA, 'TLA')
+        (COURSE_TLA, 'TLA'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -44,11 +44,11 @@ class Student(models.Model):
         verbose_name='Edad',
     )
 
-    student_type = models.CharField(
-        max_length=6, 
-        choices=STUDENT_TYPES, 
-        default='ground', 
-        verbose_name='Tipo de Estudiante',
+    student_phase = models.CharField(
+        max_length=20, 
+        choices=STUDENT_PHASE, 
+        default=GROUND,
+        verbose_name='Fase de entrenamiento',
     )
     
     student_course_type = models.CharField(
@@ -77,7 +77,7 @@ class Student(models.Model):
         verbose_name_plural = 'Students'
 
     def __str__(self):
-        return f'{self.user.username} [ID: {self.student_id}] ({self.student_type} - {self.student_course_type})'
+        return f'{self.user.username} [ID: {self.student_id}] ({self.student_phase} - {self.student_course_type})'
     
     def get_total_flying_time(self):
         """
@@ -91,9 +91,9 @@ class Student(models.Model):
         Custom validation for the 'balance' field.
         If the student is not a 'flying' student, the balance must be zero.
         """
-        if self.student_type == self.GROUND and self.student_balance != 0:
+        if self.student_phase == self.GROUND and self.student_balance != 0:
             raise ValidationError({
-                'balance': 'Balance must be zero for ground students.'
+                'student_balance': 'Balance must be zero for ground students.'
             })
     
     def save(self, *args, **kwargs):
@@ -101,7 +101,7 @@ class Student(models.Model):
         Override the save method to ensure the balance is reset to 0
         when the student type is changed from 'flying' to 'ground'.
         """
-        if self.student_type == self.GROUND:
+        if self.student_phase == self.GROUND:
             self.student_balance = 0.00
         super().save(*args, **kwargs)
         
@@ -109,13 +109,13 @@ class Student(models.Model):
 class Instructor(models.Model):
 
     # Instructor Types
-    GROUND = 'ground'
-    FLYING = 'flying'
-    DUAL = 'dual'
+    GROUND = 'Tierra'
+    FLYING = 'Línea de vuelo'
+    DUAL = 'Dual'
 
     INSTRUCTOR_TYPES = [
         (GROUND, 'Tierra'),
-        (FLYING, 'Vuelo'),
+        (FLYING, 'Línea de vuelo'),
         (DUAL, 'Dual'),
     ]
 
@@ -130,7 +130,7 @@ class Instructor(models.Model):
     )
 
     instructor_type = models.CharField(
-        max_length=6, 
+        max_length=20, 
         choices=INSTRUCTOR_TYPES, 
         default='ground', 
         verbose_name='Tipo de Instructor',

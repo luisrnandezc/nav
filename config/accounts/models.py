@@ -8,11 +8,11 @@ from django.core.exceptions import ValidationError
 class Student(models.Model):
 
     # Student Types
-    GROUND = 'Tierra'
+    GROUND = 'Escuela en tierra'
     FLYING = 'Línea de vuelo'
 
     STUDENT_PHASE = [
-        (GROUND, 'Tierra'),
+        (GROUND, 'Escuela e tierra'),
         (FLYING, 'Línea de vuelo'),
     ]
 
@@ -54,7 +54,7 @@ class Student(models.Model):
     student_course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPES, 
-        default='pp', 
+        default=COURSE_PP, 
         verbose_name='Curso',
     )
     
@@ -109,12 +109,12 @@ class Student(models.Model):
 class Instructor(models.Model):
 
     # Instructor Types
-    GROUND = 'Tierra'
+    GROUND = 'Escuela en tierra'
     FLYING = 'Línea de vuelo'
     DUAL = 'Dual'
 
     INSTRUCTOR_TYPES = [
-        (GROUND, 'Tierra'),
+        (GROUND, 'Escuela en tierra'),
         (FLYING, 'Línea de vuelo'),
         (DUAL, 'Dual'),
     ]
@@ -132,7 +132,7 @@ class Instructor(models.Model):
     instructor_type = models.CharField(
         max_length=20, 
         choices=INSTRUCTOR_TYPES, 
-        default='ground', 
+        default=GROUND, 
         verbose_name='Tipo de Instructor',
     )
 

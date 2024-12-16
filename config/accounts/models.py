@@ -8,11 +8,11 @@ from django.core.exceptions import ValidationError
 class Student(models.Model):
 
     # Student Types
-    GROUND = 'Escuela en tierra'
-    FLYING = 'Línea de vuelo'
+    GROUND = 'tierra'
+    FLYING = 'vuelo'
 
     STUDENT_PHASE = [
-        (GROUND, 'Escuela e tierra'),
+        (GROUND, 'Escuela en tierra'),
         (FLYING, 'Línea de vuelo'),
     ]
 
@@ -109,9 +109,9 @@ class Student(models.Model):
 class Instructor(models.Model):
 
     # Instructor Types
-    GROUND = 'Escuela en tierra'
-    FLYING = 'Línea de vuelo'
-    DUAL = 'Dual'
+    GROUND = 'tierra'
+    FLYING = 'vuelo'
+    DUAL = 'dual'
 
     INSTRUCTOR_TYPES = [
         (GROUND, 'Escuela en tierra'),

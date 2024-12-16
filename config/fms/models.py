@@ -181,6 +181,7 @@ class FlightEvaluation(models.Model):
         default='none',
     ) 
 
+    # TODO: this field should be added to the user registration form.
     instructor_license_type = models.CharField(
         max_length=10,
         choices=INSTRUCTOR_LICENSE_TYPE_CHOICES,
@@ -201,6 +202,13 @@ class FlightEvaluation(models.Model):
     student_last_name = models.CharField(
         max_length=50,
         default='none',
+    )
+
+    # TODO: this field should be added to the user registration form.
+    student_license_type = models.CharField(
+        max_length=10,
+        choices=STUDENT_LICENSE_TYPE_CHOICES,
+        default='none'
     )
 
     # TODO: This field require some validation.

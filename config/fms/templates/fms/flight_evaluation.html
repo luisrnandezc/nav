@@ -1,0 +1,22 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Evaluación de vuelo</title>
+    <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="main-container">
+        <h1>Submit Flight Evaluation</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+  </body>
+</html>

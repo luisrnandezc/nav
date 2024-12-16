@@ -21,6 +21,7 @@
           <p>Usuario: {{ user.username }}</p>
           <p>ID: {{ user_profile.instructor_id }}</p>
           <p>Email: {{ user.email }}</p>
+          <P>Función: {{ user_profile.instructor_type }}</P>
         </div>
         <div class="buttons">
           <div class="button-container">
@@ -39,14 +40,16 @@
           <div class="left-column">
 
             <div class="dashboard-square">
-              <h1 class="square-header">Balance</h1>
-              <p>{{ user_profile.student_balance }}</p>
+              <h1 class="square-header">Cargar notas</h1>
+              <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                <img class="logo-img" src="{% static 'img/addGrade.png' %}" alt="Transcript">
+              </a>
             </div>
 
             <div class="dashboard-square">
-              <h1 class="square-header">Académico</h1>
-              <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                <img class="logo-img" src="{% static 'img/transcript.png' %}" alt="Transcript">
+              <h1 class="square-header">Cargar vuelo</h1>
+              <a class="image-link" href="{% url 'fms:flight_evaluation' %}">
+                <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Transcript">
               </a>
             </div>
           </div>
@@ -61,9 +64,9 @@
             </div>
 
             <div class="dashboard-square">
-              <h1 class="square-header">Agenda tu vuelo</h1>
+              <h1 class="square-header">Calendario de vuelos</h1>
               <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Airplane">
+                <img class="logo-img" src="{% static 'img/calendar.png' %}" alt="Airplane">
               </a>
             </div>
 

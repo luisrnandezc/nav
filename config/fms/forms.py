@@ -14,6 +14,28 @@ class FlightEvaluationForm(forms.ModelForm):
             'aircraft_registration', 'session_grade',
         ]
 
+        labels = {
+            'instructor_id': 'Número de cédula',
+            'instructor_first_name': 'Nombre',
+            'instructor_last_name': 'Apellido',
+            'instructor_license_type': 'Tipo de licencia',
+            'instructor_license_number': 'Número de licencia',
+            'student_id': 'Número de cédula',
+            'student_first_name': 'Nombre',
+            'student_last_name': 'Apellido',
+            'student_license_type': 'Tipo de licencia',
+            'student_license_number': 'Número de licencia',
+            'course_type': 'Curso',
+            'flight_rules': 'Reglas de vuelo',
+            'solo_flight': 'Vuelo solo',
+            'session_number': 'Número de sesión',
+            'session_letter': 'Repetición de la sesión',
+            'accumulated_flight_hours': 'Horas de vuelo acumuladas',
+            'session_flight_hours': 'Horas de vuelo de la sesión',
+            'aircraft_registration': 'Registro de la aeronave',
+            'session_grade': 'Calificación de la sesión',
+        }
+
         widgets = {
             'instructor_id': forms.NumberInput(attrs={'class': 'form-field'}),
             'instructor_first_name': forms.TextInput(attrs={'class': 'form-field'}),

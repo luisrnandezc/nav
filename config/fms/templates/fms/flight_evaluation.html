@@ -11,11 +11,71 @@
 
   <body>
     <div class="main-container">
-      <h1>Submit Flight Evaluation</h1>
+      <h1 class="main-header">Evaluación de vuelo</h1>
       <form class="form-container" method="post">
         {% csrf_token %}
-        {{ form }}
-        <button type="submit">Submit</button>
+
+        <!-- {{ form.as_p }} -->
+
+        <h1 class="subsection-header">Sección 1: Datos del instructor</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.instructor_id.label_tag }}
+                {{ form.instructor_id }}
+              </div>
+              <div class="form-row">
+                {{ form.instructor_first_name.label_tag }}
+                {{ form.instructor_first_name }}
+              </div>
+              <div class="form-row">
+                {{ form.instructor_last_name.label_tag }}
+                {{ form.instructor_last_name }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.instructor_license_type.label_tag }}
+                {{ form.instructor_license_type }}
+              </div>
+              <div class="form-row">
+                {{ form.instructor_license_number.label_tag }}
+                {{ form.instructor_license_number }}
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <div class="student-data collapsible-section">
+
+          <div class="left-column">
+
+          </div>
+  
+          <div class="right-column">
+  
+          </div>
+
+        </div>
+
+        <div class="session-data collapsible-section">
+
+          <div class="left-column">
+
+          </div>
+  
+          <div class="right-column">
+  
+          </div>
+          
+        </div>
+
+        <div class="submit-button-container">
+          <button class="submit-button" type="submit">Enviar</button>
+        </div>
+ 
       </form>
     </div>
   </body>

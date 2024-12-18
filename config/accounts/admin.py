@@ -14,10 +14,13 @@ class StudentInline(admin.StackedInline):
     extra = 0  # No extra blank forms
     fieldsets = (
         ('Información Personal', {
-            'fields': ('student_id', 'student_age')
+            'fields': ('student_id', 'student_age', 'student_gender')
         }),
         ('Información Académica', {
-            'fields': ('student_phase', 'student_course_type', 'student_course_number', 'student_balance')
+            'fields': ('student_phase', 'student_course_type',
+                       'student_course_number', 'student_license_type',
+                       'student_balance',
+            )
         })
     )
 
@@ -35,7 +38,7 @@ class InstructorInline(admin.StackedInline):
             'fields': ('instructor_id',)
         }),
         ('Información Académica', {
-            'fields': ('instructor_type',)
+            'fields': ('instructor_type', 'instructor_license_type')
         })
     )
 

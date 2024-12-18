@@ -3,11 +3,11 @@ from .forms import FlightEvaluationForm
 
 def submit_flight_evaluation(request):
     if request.method == 'POST':
-        form = FlightEvaluationForm(request.POST)
+        form = FlightEvaluationForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()
             return redirect('dashboard:dashboard')
-    else:
-        form = FlightEvaluationForm()
+    else:  
+        form = FlightEvaluationForm(user=request.user)
     
     return render(request, 'fms/flight_evaluation.html', {'form': form})

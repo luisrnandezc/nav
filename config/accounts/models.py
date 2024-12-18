@@ -7,7 +7,18 @@ from django.core.exceptions import ValidationError
 
 class Student(models.Model):
 
-    # Student Types
+    # Student gender
+    MALE = 'm'
+    FEMALE = 'f'
+    OTHER = 'O'
+
+    STUDENT_GENDER = [
+        (MALE, 'M'),
+        (FEMALE, 'F'),
+        (OTHER, 'Otro'),
+    ]
+
+    # Student phase
     GROUND = 'tierra'
     FLYING = 'vuelo'
 
@@ -16,7 +27,7 @@ class Student(models.Model):
         (FLYING, 'Línea de vuelo'),
     ]
 
-    # Course Types
+    # Course type
     COURSE_PP = 'pp'
     COURSE_HVI = 'hvi'
     COURSE_PC = 'pc'
@@ -27,6 +38,21 @@ class Student(models.Model):
         (COURSE_HVI, 'HVI'),
         (COURSE_PC, 'PC'),
         (COURSE_TLA, 'TLA'),
+    ]
+
+    # Student license
+    LICENSE_NA = 'na'
+    LICENSE_AP = 'ap'
+    LICENSE_PP = 'pp'
+    LICENSE_PC = 'pc'
+    LICENSE_TLA = 'tla'
+
+    LICENSE_TYPES = [
+        (LICENSE_NA, 'N/A'),
+        (LICENSE_AP, 'AP'),
+        (LICENSE_PP, 'PP'),
+        (LICENSE_PC, 'PC'),
+        (LICENSE_TLA, 'TLA'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -42,6 +68,13 @@ class Student(models.Model):
     student_age = models.PositiveIntegerField(
         validators=[MinValueValidator(16), MaxValueValidator(100)], 
         verbose_name='Edad',
+    )
+
+    student_gender = models.CharField(
+        max_length=1, 
+        choices=STUDENT_GENDER, 
+        default=MALE,
+        verbose_name='Género',
     )
 
     student_phase = models.CharField(
@@ -61,6 +94,13 @@ class Student(models.Model):
     student_course_number = models.PositiveIntegerField(
         validators=[MinValueValidator(1)], 
         verbose_name='Número de Curso',
+    )
+
+    student_license_type = models.CharField(
+        max_length=3,
+        choices=LICENSE_TYPES,
+        default=LICENSE_AP,
+        verbose_name='Tipo de licencia',
     )
 
     student_balance = models.DecimalField(
@@ -108,7 +148,7 @@ class Student(models.Model):
 
 class Instructor(models.Model):
 
-    # Instructor Types
+    # Instructor type
     GROUND = 'tierra'
     FLYING = 'vuelo'
     DUAL = 'dual'
@@ -117,6 +157,17 @@ class Instructor(models.Model):
         (GROUND, 'Escuela en tierra'),
         (FLYING, 'Línea de vuelo'),
         (DUAL, 'Dual'),
+    ]
+
+    # Instructor license
+    LICENSE_NA = 'na'
+    LICENSE_PC = 'pc'
+    LICENSE_TLA = 'tla'
+
+    LICENSE_TYPES = [
+        (LICENSE_NA, 'N/A'),
+        (LICENSE_PC, 'PC'),
+        (LICENSE_TLA, 'TLA'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -134,6 +185,13 @@ class Instructor(models.Model):
         choices=INSTRUCTOR_TYPES, 
         default=GROUND, 
         verbose_name='Tipo de Instructor',
+    )
+
+    instructor_license_type = models.CharField(
+        max_length=3,
+        choices=LICENSE_TYPES,
+        default=LICENSE_PC,
+        verbose_name='Tipo de licencia',
     )
 
     class Meta:

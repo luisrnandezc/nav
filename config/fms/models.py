@@ -128,67 +128,125 @@ class FlightEvaluation(models.Model):
     # TODO: add remaining flight training test parameters.
     """
 
-    # TODO: check this infomation with NAV.
-    INSTRUCTOR_LICENSE_TYPE_CHOICES = [
-        ('type1', 'Tipo 1'),
-        ('type2', 'Tipo 2'),
-        ('type3', 'Tipo 3'),
+    #region CHOICES DEFINITIONS
+
+    # License types
+    LICENSE_AP = 'ap'
+    LICENSE_PP = 'pp'
+    LICENSE_PC = 'pc'
+    LICENSE_TLA = 'tla'
+
+    INSTRUCTOR_LICENSE_CHOICES = [ 
+        (LICENSE_PC, 'PC'),
+        (LICENSE_TLA, 'TLA'),
     ]
 
-    # TODO: check this infomation with NAV.
-    STUDENT_LICENSE_TYPE_CHOICES = [
-        ('type1', 'Tipo 1'),
-        ('type2', 'Tipo 2'),
-        ('type3', 'Tipo 3'),
+    STUDENT_LICENSE_CHOICES = [
+        (LICENSE_AP, 'AP'),
+        (LICENSE_PP, 'PP'),
+        (LICENSE_PC, 'PC'),
+        (LICENSE_TLA, 'TLA'),
     ]
+
+    # Course types
+    COURSE_PP = 'pp'
+    COURSE_HVI = 'hvi'
+    COURSE_PC = 'pc'
+    COURSE_TLA = 'tla'
 
     COURSE_TYPE_CHOICES = [
-        ('pp', 'PP'),
-        ('hvi', 'HVI'),
-        ('pc', 'PC'),
-        ('tla', 'TLA'),
+        (COURSE_PP, 'PP'),
+        (COURSE_HVI, 'HVI'),
+        (COURSE_PC, 'PC'),
+        (COURSE_TLA, 'TLA'),
     ]
+
+    # Flight rules
+    VFR = 'vfr'
+    IFR = 'ifr'
+    DUAL = 'dual'
 
     FLIGHT_RULES_CHOICES = [
-        ('vfr', 'VFR'),
-        ('ifr', 'IFR'),
-        ('dual', 'Dual'),
+        (VFR, 'VFR'),
+        (IFR, 'IFR'),
+        (DUAL, 'Dual'),
     ]
+
+    # Solo flight
+    YES = 'y'
+    NO = 'n'
+
+    SOLO_FLIGHT_CHOICES = [
+        (YES, 'Y'),
+        (NO, 'N'),
+    ]
+
+    # Flight session grades
+    STANDARD = 's'
+    NON_STANDARD = 'ns'
+    NOT_EVALUATED = 'ne'
 
     SESSION_GRADE_CHOICES = [
-        ('s', 'S'),
-        ('ns', 'NS'),
-        ('ne', 'NE'),
+        (STANDARD, 'S'),
+        (NON_STANDARD, 'NS'),
+        (NOT_EVALUATED, 'NE'),
     ]
 
-    flight_date = models.DateTimeField(auto_now_add=True)
+    # Session number
+    def generate_choices():
+        choices = []
+        for i in range(1, 21):
+            choices.append((i, i))
+        return choices
+    
+    # Session letter
+    SESSION_LETTER_CHOICES = [
+        ('', ''),
+        ('a', 'A'),
+        ('b', 'B'),
+        ('e', 'E'),
+    ]
 
-    # TODO: this could be extracted from current session. Maybe it must be added
-    # first to the instructor registration form.
+    # Aircraft registration
+    YV1111 = 'yv1111'
+    YV2222 = 'yv2222'
+
+    AIRCRAFT_REG = [
+        (YV1111, 'YV1111'),
+        (YV2222, 'YV2222'),
+    ]
+
+    #endregion
+
+    #region INSTRUCTOR DATA
+
     instructor_id = models.PositiveIntegerField(
         validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
     )
 
-    # TODO: this could be extracted from current session.
     instructor_first_name = models.CharField(
         max_length=50,
-        default='none',
-    )  
-
-    # TODO: this could be extracted from current session.
-    instructor_last_name = models.CharField(
-        max_length=50,
-        default='none',
-    ) 
-
-    # TODO: this field should be added to the user registration form.
-    instructor_license_type = models.CharField(
-        max_length=10,
-        choices=INSTRUCTOR_LICENSE_TYPE_CHOICES,
+        default='',
     )
 
-    # TODO: This field require some validation.
-    instructor_license_number = models.PositiveIntegerField()
+    instructor_last_name = models.CharField(
+        max_length=50,
+        default='',
+    )
+
+    instructor_license_type = models.CharField(
+        max_length=3,
+        choices=INSTRUCTOR_LICENSE_CHOICES,
+        default=LICENSE_PC,
+    )
+
+    instructor_license_number = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
+    )
+    
+    #endregion
+
+    #region STUDENT DATA
 
     student_id = models.PositiveIntegerField(
         validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
@@ -196,42 +254,58 @@ class FlightEvaluation(models.Model):
 
     student_first_name = models.CharField(
         max_length=50,
-        default='none',
+        default='',
     )
 
     student_last_name = models.CharField(
         max_length=50,
-        default='none',
+        default='',
     )
 
-    # TODO: this field should be added to the user registration form.
     student_license_type = models.CharField(
-        max_length=10,
-        choices=STUDENT_LICENSE_TYPE_CHOICES,
-        default='none'
+        max_length=3,
+        choices=STUDENT_LICENSE_CHOICES,
+        default=LICENSE_AP,
     )
 
-    # TODO: This field require some validation.
-    student_license_number = models.PositiveIntegerField()
+    student_license_number = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
+    )
 
     course_type = models.CharField(
         max_length=10, 
         choices=COURSE_TYPE_CHOICES,
-        default='none',
+        default=COURSE_PP,
     )
+
+    #endregion
+
+    #region FLIGHT INFORMATION
+
+    flight_date = models.DateTimeField(auto_now_add=True)
 
     flight_rules = models.CharField(
-        max_length=10, 
+        max_length=4, 
         choices=FLIGHT_RULES_CHOICES,
-        default='none',
+        default=VFR,
     )
 
-    solo_flight = models.BooleanField()
+    solo_flight = models.CharField(
+        max_length=3,
+        choices=SOLO_FLIGHT_CHOICES,
+        default=YES,
+    )
 
-    # TODO: this field required revision.
     session_number = models.CharField(
-        max_length=5,
-        default='none',
+        max_length=3,
+        choices=generate_choices,
+        default='1',
+    )
+
+    session_letter = models.CharField(
+        max_length=1,
+        choices=SESSION_LETTER_CHOICES,
+        default='',
     )
 
     accumulated_flight_hours = models.DecimalField(
@@ -246,14 +320,17 @@ class FlightEvaluation(models.Model):
 
     aircraft_registration = models.CharField(
         max_length=6,
-        default='none',
+        choices=AIRCRAFT_REG,
+        default=YV1111,
     )
 
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
-        default='none',
+        default=NOT_EVALUATED,
     )
+
+    #endregion
 
     notes = models.TextField(blank=True, null=True)
 

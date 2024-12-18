@@ -42,7 +42,7 @@
 
   .subsection-header {
     color: #ffffff;
-    margin: 50px 0px 25px 0px;
+    margin: 40px 0px 25px 0px;
     text-decoration: underline solid 2px rgb(232, 71, 40);
     text-underline-offset: 10px;
     align-self: center;
@@ -52,6 +52,8 @@
     width: 100%;
     background-color: transparent;
     cursor: pointer;
+    align-items: center;
+    justify-content: center;
   }
 
   summary {
@@ -65,6 +67,7 @@
     align-items: flex-start;
     justify-content: center;
     width: 100%;
+    margin-top: 25px;
   }
 
   .left-column,

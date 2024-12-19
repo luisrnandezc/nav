@@ -196,7 +196,7 @@ class FlightEvaluation(models.Model):
     def generate_choices():
         choices = []
         for i in range(1, 21):
-            choices.append((i, i))
+            choices.append((str(i), str(i)))
         return choices
     
     # Session letter
@@ -305,6 +305,8 @@ class FlightEvaluation(models.Model):
     session_letter = models.CharField(
         max_length=1,
         choices=SESSION_LETTER_CHOICES,
+        blank=True,
+        null=True,
         default='',
     )
 

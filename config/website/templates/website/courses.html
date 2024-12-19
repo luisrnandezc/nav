@@ -11,25 +11,7 @@
     <body>
         <div class="main-container">
             <!--navbar-->
-            <nav class="navbar" id="navbar">
-                <div class="logo">
-                    <a class="image-link" href="{% url 'index' %}">
-                        <img class="logo-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}" alt="Logo">
-                    </a>
-                </div>
-                <ul class="nav-links">
-                    <li><a class="nav-item" href="{% url 'about' %}">Nosotros</a></li>
-                    <li><a class="nav-item" href="{% url 'courses' %}">Cursos</a></li>
-                    <li><a class="nav-item" href="#simuladores">Simuladores</a></li>
-                    <li><a class="nav-item" href="#cpa">CPA</a></li>
-                    <li><a class="nav-item" href="{% url 'accounts:login' %}">Log in</a></li>
-                </ul>
-                <div class="burger">
-                    <div class="line1"></div>
-                    <div class="line2"></div>
-                    <div class="line3"></div>
-                </div>
-            </nav>
+            {% include 'navbar.html' %}
             <!--main webpage content-->
             <div class="content-section" id="section-1">
                 <h3 id="top-header">Tu futuro en la aviación empieza <span class="header-description" style="color: #F2CB91">aquí</span></h3>

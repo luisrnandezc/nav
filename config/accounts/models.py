@@ -7,9 +7,11 @@ from django.core.exceptions import ValidationError
 
 class Student(models.Model):
 
+    #region CHOICE DEFINITIONS
+
     # Student gender
-    MALE = 'm'
-    FEMALE = 'f'
+    MALE = 'M'
+    FEMALE = 'F'
     OTHER = 'O'
 
     STUDENT_GENDER = [
@@ -19,8 +21,8 @@ class Student(models.Model):
     ]
 
     # Student phase
-    GROUND = 'tierra'
-    FLYING = 'vuelo'
+    GROUND = 'TIERRA'
+    FLYING = 'VUELO'
 
     STUDENT_PHASE = [
         (GROUND, 'Escuela en tierra'),
@@ -28,10 +30,10 @@ class Student(models.Model):
     ]
 
     # Course type
-    COURSE_PP = 'pp'
-    COURSE_HVI = 'hvi'
-    COURSE_PC = 'pc'
-    COURSE_TLA = 'tla'
+    COURSE_PP = 'PP'
+    COURSE_HVI = 'HVI'
+    COURSE_PC = 'PC'
+    COURSE_TLA = 'TLA'
 
     COURSE_TYPES = [
         (COURSE_PP, 'PP'),
@@ -41,11 +43,11 @@ class Student(models.Model):
     ]
 
     # Student license
-    LICENSE_NA = 'na'
-    LICENSE_AP = 'ap'
-    LICENSE_PP = 'pp'
-    LICENSE_PC = 'pc'
-    LICENSE_TLA = 'tla'
+    LICENSE_NA = 'NA'
+    LICENSE_AP = 'AP'
+    LICENSE_PP = 'PP'
+    LICENSE_PC = 'PC'
+    LICENSE_TLA = 'TLA'
 
     LICENSE_TYPES = [
         (LICENSE_NA, 'N/A'),
@@ -54,6 +56,10 @@ class Student(models.Model):
         (LICENSE_PC, 'PC'),
         (LICENSE_TLA, 'TLA'),
     ]
+
+    #endregion
+
+    #region MODEL FIELDS
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -110,6 +116,8 @@ class Student(models.Model):
         verbose_name='Balance para Línea de Vuelo',
     )
 
+    #endregion
+
     class Meta:
         db_table = 'students_db'
         ordering = ['student_id']
@@ -148,10 +156,12 @@ class Student(models.Model):
 
 class Instructor(models.Model):
 
+    #region CHOICE DEFINITIONS
+
     # Instructor type
-    GROUND = 'tierra'
-    FLYING = 'vuelo'
-    DUAL = 'dual'
+    GROUND = 'TIERRA'
+    FLYING = 'VUELO'
+    DUAL = 'DUAL'
 
     INSTRUCTOR_TYPES = [
         (GROUND, 'Escuela en tierra'),
@@ -160,15 +170,19 @@ class Instructor(models.Model):
     ]
 
     # Instructor license
-    LICENSE_NA = 'na'
-    LICENSE_PC = 'pc'
-    LICENSE_TLA = 'tla'
+    LICENSE_NA = 'NA'
+    LICENSE_PC = 'PC'
+    LICENSE_TLA = 'TLA'
 
     LICENSE_TYPES = [
         (LICENSE_NA, 'N/A'),
         (LICENSE_PC, 'PC'),
         (LICENSE_TLA, 'TLA'),
     ]
+
+    #endregion
+
+    #region MODEL FIELDS
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -193,6 +207,8 @@ class Instructor(models.Model):
         default=LICENSE_PC,
         verbose_name='Tipo de licencia',
     )
+
+    #endregion
 
     class Meta:
         db_table = 'instructors_db'

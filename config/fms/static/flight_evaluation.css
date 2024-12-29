@@ -107,8 +107,10 @@
     text-transform: uppercase;
     font-size: 1.25rem;
     width: 125px;
-    height: 30px;
+    height: 40px;
     border-radius: 3px;
+    color: #ffffff;
+    background-color: transparent;
   }
   
   .submit-button:hover {

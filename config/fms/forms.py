@@ -8,7 +8,7 @@ class FlightEvaluationForm(forms.ModelForm):
             'instructor_id', 'instructor_first_name', 'instructor_last_name',
             'instructor_license_type', 'instructor_license_number',
             'student_id', 'student_first_name', 'student_last_name',
-            'student_license_type', 'student_license_number', 'course_type',
+            'student_license_type', 'course_type',
             'flight_rules', 'solo_flight', 'session_number', 'session_letter',
             'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration', 'session_grade',
         ]
@@ -23,7 +23,6 @@ class FlightEvaluationForm(forms.ModelForm):
             'student_first_name': 'Nombre',
             'student_last_name': 'Apellido',
             'student_license_type': 'Tipo de licencia',
-            'student_license_number': 'Número de licencia',
             'course_type': 'Curso',
             'flight_rules': 'Reglas de vuelo',
             'solo_flight': 'Vuelo solo',
@@ -45,7 +44,6 @@ class FlightEvaluationForm(forms.ModelForm):
             'student_first_name': forms.TextInput(attrs={'class': 'form-field'}),
             'student_last_name': forms.TextInput(attrs={'class': 'form-field'}),
             'student_license_type': forms.Select(attrs={'class': 'form-field'}),
-            'student_license_number': forms.NumberInput(attrs={'class': 'form-field'}),
             'course_type': forms.Select(attrs={'class': 'form-field'}),
             'flight_rules': forms.Select(attrs={'class': 'form-field'}),
             'solo_flight': forms.Select(attrs={'class': 'form-field'}),
@@ -68,3 +66,11 @@ class FlightEvaluationForm(forms.ModelForm):
             self.fields['instructor_last_name'].initial = user.last_name
             self.fields['instructor_license_type'].initial = profile.instructor_license_type
             self.fields['instructor_license_number'].initial = profile.instructor_id
+
+    def save(self, commit=True):
+        """Override the save method to copy user_id to user_license_number."""
+        instance = super().save(commit=False)  # Don't save yet, so we can modify the instance
+        instance.student_license_number = instance.student_id  # Copy value from user_id
+        if commit:
+            instance.save()
+        return instance

@@ -10,108 +10,175 @@ class FlightLog(models.Model):
     to track and monitor students' flight training progress.
     """
 
+    #region CHOICES DEFINITIONS
+
+    # Course types
+    COURSE_PP = 'PP'
+    COURSE_HVI = 'HVI'
+    COURSE_PC = 'PC'
+    COURSE_TLA = 'TLA'
+
     COURSE_TYPE_CHOICES = [
-        ('pp', 'PP'),
-        ('hvi', 'HVI'),
-        ('pc', 'PC'),
-        ('tla', 'TLA'),
+        (COURSE_PP, 'PP'),
+        (COURSE_HVI, 'HVI'),
+        (COURSE_PC, 'PC'),
+        (COURSE_TLA, 'TLA'),
     ]
+
+    # Flight rules
+    VFR = 'VFR'
+    IFR = 'IFR'
+    DUAL = 'DUAL'
 
     FLIGHT_RULES_CHOICES = [
-        ('vfr', 'VFR'),
-        ('ifr', 'IFR'),
-        ('dual', 'Dual'),
+        (VFR, 'VFR'),
+        (IFR, 'IFR'),
+        (DUAL, 'Dual'),
     ]
+
+    # Solo flight
+    YES = 'Y'
+    NO = 'N'
+
+    SOLO_FLIGHT_CHOICES = [
+        (YES, 'Y'),
+        (NO, 'N'),
+    ]
+
+    # Session number
+    def generate_choices():
+        choices = []
+        for i in range(1, 21):
+            choices.append((str(i), str(i)))
+        return choices
+    
+    # Session letter
+    SESSION_LETTER_CHOICES = [
+        ('', ''),
+        ('A', 'A'),
+        ('B', 'B'),
+        ('E', 'E'),
+    ]
+
+    # Flight session grades
+    STANDARD = 'S'
+    NON_STANDARD = 'SN'
+    NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
-        ('s', 'Standard'),
-        ('ns', 'Non-standard'),
+        (STANDARD, 'S'),
+        (NON_STANDARD, 'NS'),
+        (NOT_EVALUATED, 'NE'),
     ]
 
-    # TODO: this must be obtained from the FlightEvaluation form.
+    # Aircraft registration
+    YV1111 = 'YV1111'
+    YV2222 = 'YV2222'
+
+    AIRCRAFT_REG = [
+        (YV1111, 'YV1111'),
+        (YV2222, 'YV2222'),
+    ]
+
+    #endregion
+
+    #region STUDENT DATA
+
     student_id = models.PositiveIntegerField(
         validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
     student_first_name = models.CharField(
         max_length=50,
-        default='none',
+        default='',
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
     student_last_name = models.CharField(
         max_length=50,
-        default='none',
+        default='',
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
+    course_type = models.CharField(
+        max_length=3, 
+        choices=COURSE_TYPE_CHOICES,
+        default=COURSE_PP,
+    )
+
+    #endregion
+
+    #region INSTRUCTOR DATA
+
     instructor_id = models.PositiveIntegerField(
         validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
     instructor_first_name = models.CharField(
         max_length=50,
-        default='none',
+        default='',
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
     instructor_last_name = models.CharField(
         max_length=50,
-        default='none',
+        default='',
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
-    course_type = models.CharField(
-        max_length=10, 
-        choices=COURSE_TYPE_CHOICES,
-        default='none',
-    )
+    #endregion
 
-    # TODO: this must be obtained from the FlightEvaluation form.
+    #region SESSION DATA
+
+    flight_date = models.DateTimeField(auto_now_add=True)
+
     flight_rules = models.CharField(
-        max_length=10, 
+        max_length=4, 
         choices=FLIGHT_RULES_CHOICES,
-        default='none',
+        default=VFR,
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
-    solo_flight = models.BooleanField()
+    solo_flight = models.CharField(
+        max_length=3,
+        choices=SOLO_FLIGHT_CHOICES,
+        default=YES,
+    )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
     session_number = models.CharField(
-        max_length=5,
-        default='none',
+        max_length=3,
+        choices=generate_choices,
+        default='1',
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
+    session_letter = models.CharField(
+        max_length=1,
+        choices=SESSION_LETTER_CHOICES,
+        blank=True,
+        null=True,
+        default='',
+    )
+
+    accumulated_flight_hours = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2,
+    )
+
     session_flight_hours = models.DecimalField(
         max_digits=5, 
         decimal_places=2,
     )
 
-    # TODO: this is computed dynamically in the FlightEvaluation model.
-    total_flight_hours = models.DecimalField(
-        max_digits=5, 
-        decimal_places=2,
-    )
-
-    # TODO: this must be obtained from the FlightEvaluation form.
     aircraft_registration = models.CharField(
         max_length=6,
-        default='none',
+        choices=AIRCRAFT_REG,
+        default=YV1111,
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
     session_grade = models.CharField(
-        max_length=2, 
+        max_length=2,
         choices=SESSION_GRADE_CHOICES,
-        default='none',
+        default=NOT_EVALUATED,
     )
 
-    # TODO: this must be obtained from the FlightEvaluation form.
-    notes = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=False)
+
+    #endregion
 
     def __str__(self):
         return f'Flight data: {self.flight_date} - {self.flight_hours} hrs'
@@ -131,10 +198,10 @@ class FlightEvaluation(models.Model):
     #region CHOICES DEFINITIONS
 
     # License types
-    LICENSE_AP = 'ap'
-    LICENSE_PP = 'pp'
-    LICENSE_PC = 'pc'
-    LICENSE_TLA = 'tla'
+    LICENSE_AP = 'AP'
+    LICENSE_PP = 'PP'
+    LICENSE_PC = 'PC'
+    LICENSE_TLA = 'TLA'
 
     INSTRUCTOR_LICENSE_CHOICES = [ 
         (LICENSE_PC, 'PC'),
@@ -149,10 +216,10 @@ class FlightEvaluation(models.Model):
     ]
 
     # Course types
-    COURSE_PP = 'pp'
-    COURSE_HVI = 'hvi'
-    COURSE_PC = 'pc'
-    COURSE_TLA = 'tla'
+    COURSE_PP = 'PP'
+    COURSE_HVI = 'HVI'
+    COURSE_PC = 'PC'
+    COURSE_TLA = 'TLA'
 
     COURSE_TYPE_CHOICES = [
         (COURSE_PP, 'PP'),
@@ -162,9 +229,9 @@ class FlightEvaluation(models.Model):
     ]
 
     # Flight rules
-    VFR = 'vfr'
-    IFR = 'ifr'
-    DUAL = 'dual'
+    VFR = 'VFR'
+    IFR = 'IFR'
+    DUAL = 'DUAL'
 
     FLIGHT_RULES_CHOICES = [
         (VFR, 'VFR'),
@@ -173,8 +240,8 @@ class FlightEvaluation(models.Model):
     ]
 
     # Solo flight
-    YES = 'y'
-    NO = 'n'
+    YES = 'Y'
+    NO = 'N'
 
     SOLO_FLIGHT_CHOICES = [
         (YES, 'Y'),
@@ -182,9 +249,9 @@ class FlightEvaluation(models.Model):
     ]
 
     # Flight session grades
-    STANDARD = 's'
-    NON_STANDARD = 'ns'
-    NOT_EVALUATED = 'ne'
+    STANDARD = 'S'
+    NON_STANDARD = 'SN'
+    NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
         (STANDARD, 'S'),
@@ -202,14 +269,14 @@ class FlightEvaluation(models.Model):
     # Session letter
     SESSION_LETTER_CHOICES = [
         ('', ''),
-        ('a', 'A'),
-        ('b', 'B'),
-        ('e', 'E'),
+        ('A', 'A'),
+        ('B', 'B'),
+        ('E', 'E'),
     ]
 
     # Aircraft registration
-    YV1111 = 'yv1111'
-    YV2222 = 'yv2222'
+    YV1111 = 'YV1111'
+    YV2222 = 'YV2222'
 
     AIRCRAFT_REG = [
         (YV1111, 'YV1111'),
@@ -273,14 +340,14 @@ class FlightEvaluation(models.Model):
     )
 
     course_type = models.CharField(
-        max_length=10, 
+        max_length=3, 
         choices=COURSE_TYPE_CHOICES,
         default=COURSE_PP,
     )
 
     #endregion
 
-    #region FLIGHT INFORMATION
+    #region SESSION DATA
 
     flight_date = models.DateTimeField(auto_now_add=True)
 
@@ -293,7 +360,7 @@ class FlightEvaluation(models.Model):
     solo_flight = models.CharField(
         max_length=3,
         choices=SOLO_FLIGHT_CHOICES,
-        default=YES,
+        default=NO,
     )
 
     session_number = models.CharField(
@@ -332,9 +399,7 @@ class FlightEvaluation(models.Model):
         default=NOT_EVALUATED,
     )
 
-    #endregion
-
-    notes = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=False)
 
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""
@@ -343,3 +408,4 @@ class FlightEvaluation(models.Model):
     def __str__(self):
         return f'Flight data: {self.flight_date} - {self.flight_hours} hrs'
 
+    #endregion

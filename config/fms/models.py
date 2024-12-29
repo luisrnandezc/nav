@@ -126,7 +126,11 @@ class FlightLog(models.Model):
 
     #region SESSION DATA
 
-    flight_date = models.DateTimeField(auto_now_add=True)
+    flight_date = models.DateTimeField(
+        auto_now_add=True,
+        null=True,
+        blank=True,
+    )
 
     flight_rules = models.CharField(
         max_length=4, 
@@ -157,11 +161,13 @@ class FlightLog(models.Model):
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
         decimal_places=2,
+        default=0.00,
     )
 
     session_flight_hours = models.DecimalField(
         max_digits=5, 
         decimal_places=2,
+        default=0.00,
     )
 
     aircraft_registration = models.CharField(
@@ -176,7 +182,10 @@ class FlightLog(models.Model):
         default=NOT_EVALUATED,
     )
 
-    notes = models.TextField(blank=False)
+    notes = models.TextField(
+        blank=False,
+        default='',
+    )
 
     #endregion
 
@@ -380,11 +389,13 @@ class FlightEvaluation(models.Model):
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
         decimal_places=2,
+        default=0.00,
     )
 
     session_flight_hours = models.DecimalField(
         max_digits=5, 
         decimal_places=2,
+        default=0.00,
     )
 
     aircraft_registration = models.CharField(

@@ -126,11 +126,7 @@ class FlightLog(models.Model):
 
     #region SESSION DATA
 
-    flight_date = models.DateTimeField(
-        auto_now_add=True,
-        null=True,
-        blank=True,
-    )
+    flight_date = models.DateTimeField(auto_now_add=True)
 
     flight_rules = models.CharField(
         max_length=4, 
@@ -182,10 +178,7 @@ class FlightLog(models.Model):
         default=NOT_EVALUATED,
     )
 
-    notes = models.TextField(
-        blank=False,
-        default='',
-    )
+    notes = models.TextField(blank=False)
 
     #endregion
 
@@ -200,8 +193,6 @@ class FlightEvaluation(models.Model):
     This model receives data directly from the FlightEvaluation form.
     It generates flight session records that are used to generate pdf
     files and serve as a digital backup of flight training sessions.
-
-    # TODO: add remaining flight training test parameters.
     """
 
     #region CHOICES DEFINITIONS

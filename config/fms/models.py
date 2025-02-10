@@ -37,12 +37,12 @@ class FlightLog(models.Model):
     ]
 
     # Solo flight
-    YES = 'Y'
     NO = 'N'
+    YES = 'Y'
 
     SOLO_FLIGHT_CHOICES = [
-        (YES, 'Y'),
         (NO, 'N'),
+        (YES, 'Y'),
     ]
 
     # Session number
@@ -62,7 +62,7 @@ class FlightLog(models.Model):
 
     # Flight session grades
     STANDARD = 'S'
-    NON_STANDARD = 'SN'
+    NON_STANDARD = 'NS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
@@ -240,17 +240,17 @@ class FlightEvaluation(models.Model):
     ]
 
     # Solo flight
-    YES = 'Y'
     NO = 'N'
-
+    YES = 'Y'
+ 
     SOLO_FLIGHT_CHOICES = [
-        (YES, 'Y'),
         (NO, 'N'),
+        (YES, 'Y'),
     ]
 
     # Flight session grades
     STANDARD = 'S'
-    NON_STANDARD = 'SN'
+    NON_STANDARD = 'NS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
@@ -285,34 +285,6 @@ class FlightEvaluation(models.Model):
 
     #endregion
 
-    #region INSTRUCTOR DATA
-
-    instructor_id = models.PositiveIntegerField(
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
-    )
-
-    instructor_first_name = models.CharField(
-        max_length=50,
-        default='',
-    )
-
-    instructor_last_name = models.CharField(
-        max_length=50,
-        default='',
-    )
-
-    instructor_license_type = models.CharField(
-        max_length=3,
-        choices=INSTRUCTOR_LICENSE_CHOICES,
-        default=LICENSE_PC,
-    )
-
-    instructor_license_number = models.PositiveIntegerField(
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
-    )
-    
-    #endregion
-
     #region STUDENT DATA
 
     student_id = models.PositiveIntegerField(
@@ -345,6 +317,34 @@ class FlightEvaluation(models.Model):
         default=COURSE_PP,
     )
 
+    #endregion
+
+    #region INSTRUCTOR DATA
+
+    instructor_id = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
+    )
+
+    instructor_first_name = models.CharField(
+        max_length=50,
+        default='',
+    )
+
+    instructor_last_name = models.CharField(
+        max_length=50,
+        default='',
+    )
+
+    instructor_license_type = models.CharField(
+        max_length=3,
+        choices=INSTRUCTOR_LICENSE_CHOICES,
+        default=LICENSE_PC,
+    )
+
+    instructor_license_number = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
+    )
+    
     #endregion
 
     #region SESSION DATA

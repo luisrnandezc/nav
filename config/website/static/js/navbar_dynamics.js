@@ -8,19 +8,18 @@ burger.addEventListener('click', () => {
 })
 
 // navbar scrolling-hide effect.
-let lastScrollTop = 0;
-const navbar = document.getElementById('navbar');
+document.addEventListener('DOMContentLoaded', () => {
+    let lastScrollY = window.scrollY;
+    const navbar = document.querySelector('.navbar'); // Navbar element
 
-window.addEventListener('scroll', () => {
-    let currentScroll = window.scrollY || document.documentElement.scrollTop;
-    
-    if (currentScroll > lastScrollTop) {
-        // scroll down
-        navbar.classList.add('hidden');
-    } else {
-        // scroll up
-        navbar.classList.remove('hidden');
-    }
-    
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // for Mobile or negative scrolling
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > lastScrollY) {
+            // Scrolling down, hide navbar
+            navbar.classList.add('hidden');
+        } else {
+            // Scrolling up, show navbar
+            navbar.classList.remove('hidden');
+        }
+        lastScrollY = window.scrollY;
+    });
 });

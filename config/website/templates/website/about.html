@@ -5,7 +5,10 @@
     <head>
         <meta charset="UTF-8">
         <title>NAV | Nosotros</title>
+        <link href="{% static 'navbar.css' %}" rel="stylesheet"> 
         <link href="{% static 'about.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+        <link href="{% static 'footer.css' %}" rel="stylesheet"> 
     </head>
 
     <body>
@@ -13,7 +16,8 @@
         {% include 'navbar.html' %}
         <!--main webpage content-->
         <div class="content-section" id="section-1">
-            <h3 class="top-header">Un nuevo concepto en <span class="top-header" id="aviation">aviación</span></h3>
+            <h1 class="top-header">NAV</h1>
+            <h6 class="sub-top-header">Un nuevo <span class="sub-top-header" id="aviation">concepto</span> en aviación</h3>
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-2">
@@ -22,7 +26,7 @@
                     <h3 class="about-header">Misión</h3>
                 </div>
                 <div class="about-text">
-                    <p class="about-p">Formar pilotos <span class="orange-word-1">integrales</span> para la aviación moderna.</p>
+                    <p class="about-p">Formar pilotos <span class="color-word-1">integrales</span> para la aviación moderna.</p>
                 </div>
             </div>
             <div class="about-content" id="about-2">
@@ -30,7 +34,7 @@
                     <h3 class="about-header">Visión</h3>
                 </div>
                 <div class="about-text">
-                    <p class="about-p">Definir un nuevo <span class="orange-word-1">estándar</span> para la formación de aviadores venezolanos.</p>
+                    <p class="about-p">Definir un nuevo <span class="color-word-1">estándar</span> para la formación de aviadores venezolanos.</p>
                 </div>
             </div>
             <div class="about-content" id="about-3">
@@ -38,46 +42,55 @@
                     <h3 class="about-header">Valores</h3>
                 </div>
                 <div class="about-text">
-                    <p class="about-p">Seguridad <span class="orange-word-1">operacional</span>, 
-                        integridad <span class="orange-word-1">profesional</span> 
-                        y mejora <span class="orange-word-1">continua</span>.</p>
+                    <p class="about-p">Seguridad <span class="color-word-1">operacional</span>, 
+                        integridad <span class="color-word-1">profesional</span> 
+                        y mejora <span class="color-word-1">continua</span>.</p>
                 </div>
             </div>
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-3">
-            <p class="about-p slide-left" id="p1">
-                NAV Aviation Academy nace con el propósito de establecer un <span class="orange-word-2">estándar superior</span> para la formación
-                de aviadores venezolanos, ofreciendo una preparación <span class="orange-word-2">integral</span> adaptada a la industria
+            <p class="about-p fadein-p" id="p1">
+                NAV Aviation Academy nace con el propósito de establecer un <span class="color-word-2">estándar superior</span> para la formación
+                de aviadores venezolanos, ofreciendo una preparación <span class="color-word-2">integral</span> adaptada a la industria
                 aeronaútica moderna.
-                Nuestro objetivo es formar pilotos <span class="orange-word-2">altamente capacitados</span>, comprometidos con la
+                Nuestro objetivo es formar pilotos <span class="color-word-2">altamente capacitados</span>, comprometidos con la
                 seguridad operacional, la excelencia profesional y la mejora continua.
                 Gracias al diseño e implementación de un programa de entrenamiento riguroso, estamos comprometidos a convertirnos
-                en la <span class="orange-word-2">referencia absoluta</span> para la formación de pilotos recreativos y comerciales en Venezuela.
+                en la <span class="color-word-2">referencia absoluta</span> para la formación de pilotos recreativos y comerciales en Venezuela.
             </p>
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-4">
-            <h3 class="top-header">Instalaciones</h3>
+            <!-- Slider main container -->
+            <div class="swiper">
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide office-slide">
+                        <h1>Hola</h1>
+                    </div>
+                    <div class="swiper-slide"><img src="{% static 'img/office/off3.jpg' %}" alt="Office 1"></div>
+                    <div class="swiper-slide"><img src="{% static 'img/office/off6.jpg' %}" alt="Office 2"></div>
+                    <div class="swiper-slide"><img src="{% static 'img/office/off14.jpg' %}" alt="Office 3"></div>
+                </div>
+                <!-- If we need pagination -->
+                <div class="swiper-pagination"></div>
+            
+                <!-- If we need navigation buttons -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+
+            </div>    
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-5">
             <h3 class="top-header">Flota</h3>
         </div>
         <script src="{% static 'js/about_dynamics.js' %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+        <script src="{% static 'js/navbar_dynamics.js' %}"></script>
         <!--footer-->
-        <footer>
-            <div class="footer-container">
-                <div class="footer-section">
-                    <p>&copy; 2024 NAV Aviation Academy</p>
-                </div>
-                <div class="footer-section">
-                    <p><a href="#">Políticas de Privacidad</a></p>
-                </div>
-                <div class="footer-section">
-                    <p><a href="mailto:luisrnandezc@gmail.com">Contacto</a></p>
-                </div>
-            </div>
-        </footer>
+        {% include 'footer.html' %}
     </body>
 </html>

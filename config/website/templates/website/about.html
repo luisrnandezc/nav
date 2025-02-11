@@ -26,7 +26,7 @@
                     <h3 class="about-header">Misión</h3>
                 </div>
                 <div class="about-text">
-                    <p class="about-p">Formar pilotos <span class="color-word-1">integrales</span> para la aviación moderna.</p>
+                    <p>Formar pilotos <span class="color-word-1">integrales</span> para la aviación moderna.</p>
                 </div>
             </div>
             <div class="about-content" id="about-2">
@@ -34,7 +34,7 @@
                     <h3 class="about-header">Visión</h3>
                 </div>
                 <div class="about-text">
-                    <p class="about-p">Definir un nuevo <span class="color-word-1">estándar</span> para la formación de aviadores venezolanos.</p>
+                    <p>Definir un nuevo <span class="color-word-1">estándar</span> para la formación de aviadores venezolanos.</p>
                 </div>
             </div>
             <div class="about-content" id="about-3">
@@ -42,7 +42,7 @@
                     <h3 class="about-header">Valores</h3>
                 </div>
                 <div class="about-text">
-                    <p class="about-p">Seguridad <span class="color-word-1">operacional</span>, 
+                    <p>Seguridad <span class="color-word-1">operacional</span>,
                         integridad <span class="color-word-1">profesional</span> 
                         y mejora <span class="color-word-1">continua</span>.</p>
                 </div>
@@ -50,7 +50,7 @@
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-3">
-            <p class="about-p fadein-p" id="p1">
+            <p class="fadein-p" id="p1">
                 NAV Aviation Academy nace con el propósito de establecer un <span class="color-word-2">estándar superior</span> para la formación
                 de aviadores venezolanos, ofreciendo una preparación <span class="color-word-2">integral</span> adaptada a la industria
                 aeronaútica moderna.
@@ -62,13 +62,13 @@
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-4">
-            <!-- Slider main container -->
+            <!-- Swiper main container -->
             <div class="swiper">
                 <!-- Additional required wrapper -->
                 <div class="swiper-wrapper">
                     <!-- Slides -->
                     <div class="swiper-slide office-slide">
-                        <h1>Hola</h1>
+                        <h1>Contamos con <span class="color-word-1">instalaciones y equipos</span> del más alto nivel.</h1>
                     </div>
                     <div class="swiper-slide"><img src="{% static 'img/office/off3.jpg' %}" alt="Office 1"></div>
                     <div class="swiper-slide"><img src="{% static 'img/office/off6.jpg' %}" alt="Office 2"></div>
@@ -76,21 +76,20 @@
                 </div>
                 <!-- If we need pagination -->
                 <div class="swiper-pagination"></div>
-            
                 <!-- If we need navigation buttons -->
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-button-next"></div>
-
             </div>    
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-5">
             <h3 class="top-header">Flota</h3>
         </div>
-        <script src="{% static 'js/about_dynamics.js' %}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        <script src="{% static 'js/navbar_dynamics.js' %}"></script>
         <!--footer-->
         {% include 'footer.html' %}
+        <!--javascript-->
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+        <script src="{% static 'js/about_dynamics.js' %}"></script>
+        <script src="{% static 'js/navbar_dynamics.js' %}"></script>
     </body>
 </html>

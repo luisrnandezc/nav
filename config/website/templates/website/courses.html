@@ -5,7 +5,9 @@
     <head>
         <meta charset="UTF-8">
         <title>NAV | Cursos</title>
+        <link href="{% static 'navbar.css' %}" rel="stylesheet"> 
         <link href="{% static 'courses.css' %}" rel="stylesheet">
+        <link href="{% static 'footer.css' %}" rel="stylesheet"> 
     </head>
 
     <body>
@@ -118,20 +120,9 @@
                     </div>
                 </div>
                 <script src="{% static 'js/courses_dynamics.js' %}"></script>
+                <script src="{% static 'js/navbar_dynamics.js' %}"></script>
                 <!--footer-->
-                <footer>
-                    <div class="footer-container">
-                        <div class="footer-section">
-                            <p>&copy; 2024 NAV Aviation Academy</p>
-                        </div>
-                        <div class="footer-section">
-                            <p><a href="#">Políticas de Privacidad</a></p>
-                        </div>
-                        <div class="footer-section">
-                            <p><a href="mailto:luisrnandezc@gmail.com">Contacto</a></p>
-                        </div>
-                    </div>
-                </footer>
+                {% include 'footer.html' %}
             </div>
     </body>
 </html>

@@ -20,81 +20,7 @@ html, body {
     text-transform: uppercase;
 }
 
-/* navbar */
-
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    width: 100%;
-    height: 50px;
-    padding: 10px 20px 10px 20px;
-    margin-bottom: 0px;
-    background-color: rgba(20, 31, 53, 0.75);
-    z-index: 2;
-    backdrop-filter: blur(15px);
-    transition: transform 0.3s ease;
-}
-
-nav.hidden {
-    transform: translateY(-100%);
-}
-
-.nav-links {
-    padding: 0px;
-    margin-left: auto;
-    list-style: none;
-}
-
-.nav-links li {
-    display: inline-block;
-    padding: 0px 10px 0px 10px;
-}
-
-.nav-links a {
-    font-size: 0.65rem;
-    letter-spacing: 3px;
-    text-decoration: none;
-}
-
-nav ul li a:hover {
-    color: #e84728;
-}
-
-.logo-button {
-    border: none;
-}
-
-.logo-img {
-    height: 25px;
-}
-
-.image-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-}
-
-.burger {
-    display: none;
-}
-
-.toggle .line1 {
-    transform: rotate(-45deg) translate(-5px, 6px);
-}
-
-.toggle .line2 {
-    opacity: 0;
-}
-
-.toggle .line3 {
-    transform: rotate(45deg) translate(-5px, -6px);
-}
-
 /* main webpage content */
-
 .content-section {
     display: flex;
     flex-direction: column;
@@ -103,15 +29,7 @@ nav ul li a:hover {
     background-color: #000000;
 }
 
-#section-1 {
-    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw10.jpg);
-    background-size: cover;
-    background-position: center;
-    justify-content: center;
-    align-items: center;
-}
-
-@keyframes top-header {
+@keyframes fadeIn {
     from {
         opacity: 0;
     }
@@ -120,19 +38,34 @@ nav ul li a:hover {
     }
 }
 
+#section-1 {
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw1.jpg);
+    background-size: cover;
+    background-position: center;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-in forwards;
+}
+
 .top-header {
     font-size: 5.0rem;
     align-items: center;
     text-align: center;
-    line-height: 10.0rem;
+    line-height: 1.0rem;
     margin-left: 75px;
     margin-right: 75px;
-    opacity: 0;
-    animation: top-header 1s ease-in forwards;
+
+}
+
+.sub-top-header {
+    font-size: 1.0rem;
+    align-items: center;
+    text-align: center;
 }
 
 #aviation {
-    color: rgb(232, 71, 40);
+    color: #247AFD;
 }
 
 .about-content {
@@ -169,8 +102,15 @@ nav ul li a:hover {
     margin-right: 50px;
 }
 
-.about-p {
+.fadein-p {
     text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease-in;
+}
+
+.fadein-p.show {
+    visibility: visible;
+    animation: fadeIn 1.5s ease-in forwards;
 }
 
 #about-1 {
@@ -223,150 +163,61 @@ nav ul li a:hover {
     text-align: justify;
 }
 
-.orange-word-1 {
-    color:rgb(232, 71, 40);
+.color-word-1 {
+    color: #247AFD;
 }
 
-.orange-word-2 {
+.color-word-2 {
     font-size: 0.75rem;
-    color:rgb(232, 71, 40);
+    color: #247AFD;
     letter-spacing: 2.0px;
 }
 
 .slider-divisor {
     height: 1px;
-    background-color: rgb(232, 71, 40);
+    background-color: #247AFD;
 }
 
-/* footer */
-
-footer {
-    background-color: #000000;
-    padding: 20px;
-    text-align: center;
+.office-slide {
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw12.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    justify-content: center;
+    align-items: center;
 }
 
-.footer-container {
+.swiper {
+    width: 100%;
+    height: 100%; /* Adjust height as needed */
+    margin: auto;
+}
+  
+.swiper-slide {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    width: 50%;
-    margin: 0 auto;
+}
+  
+.swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
 }
 
-.footer-section {
-    flex: 1;
-    text-align: center;
-}
-
-footer * {
-    font-size: 0.6rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-footer p {
-    color: rgb(128, 128, 128);
-}
-
-footer a {
-    text-decoration: none; 
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-.footer-container p {
-    margin: 0 5px;
+.swiper-button-next,
+.swiper-button-prev {
+  color: white !important;
 }
 
 /* main webage responsive design */
-
 @media screen and (max-width: 1200px) {
 }
 
 @media screen and (max-width: 850px) {
 
-    footer * {
-        font-size: 0.4rem;
-    }
-    
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .footer-section {
-        margin: 10px 0;
-    }
-}
-
-/* navbar responsive design */
-
-@media screen and (max-width: 1001px) {
-
-    .navbar {
-        background-color: transparent;
-        backdrop-filter: blur(0px);
-        border: none;
-    }
-
-    .nav-links {
-        position: fixed;
-        right: 0;
-        height: 120vh;
-        top: -20px;
-        background-color: rgba(12, 23, 44, 0.7);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 250px;
-        transform: translateX(100%);
-        transition: transform 0.5s ease-in;
-        padding: 85px 0px 0px 25px;
-        backdrop-filter: blur(15px);
-    }
-
-    .nav-links li {
-        opacity: 0;
-        margin-right: auto;
-        padding: 10px;
-    }
-
-    .burger {
-        display: block;
-        cursor: pointer;
-    }
-
-    .burger div {
-        width: 25px;
-        height: 3px;
-        background-color: white;
-        margin: 5px;
-        transition:  all 0.3s ease;
-    }
-
-    .nav-active {
-        transform: translateX(0);
-    }
-
-    .nav-links.nav-active {
-        border-left: 1px solid rgba(12, 23, 44);
-    }
-
-    @keyframes navLinkFade {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-
-    .nav-links li {
-        animation: navLinkFade 0.5s ease forwards 0.5s;
+    .sub-top-header {
+        font-size: 0.75rem;
     }
 }

@@ -76,3 +76,42 @@ function smoothScrollEffect() {
 
 // start the animation loop
 smoothScrollEffect();
+
+// Fade in effect for the about paragraph.
+document.addEventListener("DOMContentLoaded", function () {
+    const paragraph = document.querySelector(".fadein-p");
+
+    if (!paragraph) {
+        console.error("Element with class 'about-p' not found!");
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                paragraph.classList.add("show");
+                observer.unobserve(paragraph); // Stop observing after animation
+            }
+        });
+    }, { threshold: 0.1 });
+
+    observer.observe(paragraph);
+});
+
+// Carrusel effect activation.
+const swiper = new Swiper('.swiper', {
+    // Optional parameters
+    direction: 'horizontal',
+    loop: true,
+  
+    // If we need pagination
+    pagination: {
+      el: '.swiper-pagination',
+    },
+  
+    // Navigation arrows
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+});  

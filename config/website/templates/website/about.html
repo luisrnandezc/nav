@@ -16,8 +16,8 @@
         {% include 'navbar.html' %}
         <!--main webpage content-->
         <div class="content-section" id="section-1">
-            <h1 class="top-header">NAV</h1>
-            <h6 class="sub-top-header">Un nuevo <span class="sub-top-header" id="aviation">concepto</span> en aviación</h3>
+            <h1 class="header1">NAV</h1>
+            <h6 class="sub-header1">Un nuevo <span class="sub-header1" id="aviation">concepto</span> en aviación</h3>
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-2">
@@ -67,12 +67,21 @@
                 <!-- Additional required wrapper -->
                 <div class="swiper-wrapper">
                     <!-- Slides -->
-                    <div class="swiper-slide office-slide">
-                        <h1>Contamos con <span class="color-word-1">instalaciones y equipos</span> del más alto nivel.</h1>
+                    <div class="swiper-slide" id="first-slide">
+                        <div class="blurry-box hidden">
+                            <h1 class="blurry-header">Instalaciones <span class="blurry-header color-word-1">modernas</span></h1>
+                        </div>
                     </div>
-                    <div class="swiper-slide"><img src="{% static 'img/office/off3.jpg' %}" alt="Office 1"></div>
-                    <div class="swiper-slide"><img src="{% static 'img/office/off6.jpg' %}" alt="Office 2"></div>
-                    <div class="swiper-slide"><img src="{% static 'img/office/off14.jpg' %}" alt="Office 3"></div>
+                    <div class="swiper-slide" id="second-slide">
+                        <div class="blurry-box">
+                            <h1 class="blurry-header">Simuladores <span class="blurry-header color-word-1">avanzados</span></h1>
+                        </div>
+                    </div>
+                    <div class="swiper-slide" id="third-slide">
+                        <div class="blurry-box">
+                            <h1 class="blurry-header">Instructores <span class="blurry-header color-word-1">expertos</span></h1>
+                        </div>
+                    </div>
                 </div>
                 <!-- If we need pagination -->
                 <div class="swiper-pagination"></div>
@@ -83,7 +92,25 @@
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-5">
-            <h3 class="top-header">Flota</h3>
+            <div class="fleet-box">
+                <div class="model-box">3D MODEL OR IMAGE</div>
+            </div>
+            <div class="fleet-box">
+                <ul class="performance-list">
+                    <li class="list-point"><span class="color-word-3">Modelo:</span> Piper PA28-161</li>
+                    <li class="list-point"><span class="color-word-3">Motor:</span> Lycoming O-320-D3G</li>
+                    <li class="list-point"><span class="color-word-3">Peso vacío:</span> 1353 lb</li>
+                    <li class="list-point"><span class="color-word-3">Carga útil:</span> 972 lb</li>
+                    <li class="list-point"><span class="color-word-3">MTOW:</span> 2325 lb</li>
+                    <li class="list-point"><span class="color-word-3">Distancia de despegue:</span> 975 ft</li>
+                    <li class="list-point"><span class="color-word-3">Distancia de aterrizaje:</span> 595 ft</li>
+                    <li class="list-point"><span class="color-word-3">Rata de ascenso:</span> 710 fpm</li>
+                    <li class="list-point"><span class="color-word-3">Velocidad de crucero:</span> 118 kts</li>
+                    <li class="list-point"><span class="color-word-3">Velocidad máxima:</span> 127 kts</li>
+                    <li class="list-point"><span class="color-word-3">Rango:</span> 590 nm lb</li>
+                    <li class="list-point"><span class="color-word-3">Techo de servicio:</span> 14.000 ft</li>
+                </ul>
+            </div>
         </div>
         <!--footer-->
         {% include 'footer.html' %}

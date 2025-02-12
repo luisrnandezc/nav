@@ -114,4 +114,17 @@ const swiper = new Swiper('.swiper', {
       nextEl: '.swiper-button-next',
       prevEl: '.swiper-button-prev',
     },
-});  
+});
+
+// Right to left fadein effecto for the blurry box.
+// Detect when the div comes into view
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+        }
+    });
+});
+
+// Select all elements to animate
+document.querySelectorAll(".hidden").forEach((el) => observer.observe(el));

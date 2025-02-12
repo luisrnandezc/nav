@@ -48,7 +48,7 @@ html, body {
     animation: fadeIn 1.5s ease-in forwards;
 }
 
-.top-header {
+.header1 {
     font-size: 5.0rem;
     align-items: center;
     text-align: center;
@@ -58,7 +58,7 @@ html, body {
 
 }
 
-.sub-top-header {
+.sub-header1 {
     font-size: 1.0rem;
     align-items: center;
     text-align: center;
@@ -171,9 +171,35 @@ html, body {
     z-index: 0;
 }
 
-.office-slide {
+#first-slide {
     display: flex;
-    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.85)), url(./img/bw12.jpg);
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw12.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    justify-content: center;
+    align-items: center;
+}
+
+#second-slide {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/737sim/sim10bw.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    justify-content: center;
+    align-items: center;
+}
+
+#third-slide {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/lecture.png);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -204,6 +230,87 @@ html, body {
 .swiper-button-next,
 .swiper-button-prev {
   color: white !important;
+}
+
+.blurry-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 15%;
+    width: 35%;
+    background-color: rgb(0, 0, 0, 0.5);
+    backdrop-filter: blur(7.5px);
+    margin-left: auto;
+    margin-right: 75px;
+    margin-bottom: 125px;
+    margin-top: auto;
+    border: solid #ffffff;
+}
+
+.blurry-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    margin: 0px;
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateX(50px); /* Start slightly to the right */
+    transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+.show {
+    opacity: 1;
+    transform: translateX(0); /* Moves to the normal position */
+}
+
+#section-5 {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw10.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: repeat;
+}
+
+.fleet-description {
+    margin-right: 50px;
+}
+
+.fleet-box {
+    width: 30%;
+    margin-right: 75px;
+    margin-left: auto;
+    background-color: rgb(0, 0, 0, 0.5);
+    backdrop-filter: blur(7.5px);
+    border: solid #ffffff;
+}
+
+.model-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.performance-list {
+    line-height: 3.0rem;
+}
+
+ul li {
+    font-size: 0.75rem;
+    letter-spacing: 3.0px;
+}
+
+.color-word-3 {
+    font-size: 0.75rem;
+    letter-spacing: 3.0px;
+    color: #247AFD;
 }
 
 /* main webage responsive design */

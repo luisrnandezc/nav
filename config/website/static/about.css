@@ -65,7 +65,7 @@ html, body {
 }
 
 #aviation {
-    color: #247AFD;
+    color: #e84728;
 }
 
 .about-content {
@@ -153,12 +153,12 @@ html, body {
 }
 
 .color-word-1 {
-    color: #247AFD;
+    color: #e84728;
 }
 
 .color-word-2 {
     font-size: 0.75rem;
-    color: #247AFD;
+    color: #e84728;
     letter-spacing: 2.0px;
 }
 
@@ -295,7 +295,7 @@ html, body {
 #viewer-container {
     width: 60%;
     height: 80%;
-    margin-left: 75px;
+    margin-left: 50px;
 }
 
 .performance-list {
@@ -310,7 +310,7 @@ ul li {
 .color-word-3 {
     font-size: 0.75rem;
     letter-spacing: 3.0px;
-    color: #247AFD;
+    color: #e84728;
 }
 
 /* main webage responsive design */

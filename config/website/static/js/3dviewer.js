@@ -10,7 +10,8 @@ const renderer = new THREE.WebGLRenderer({ canvas, alpha: true }); // alpha = tr
 renderer.setClearColor(0x000000, 0);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, container.clientWidth / container.clientHeight, 0.1, 1000 );
-camera.position.z = 7;
+camera.position.set(0, 3, 7);
+camera.lookAt(0, 0, 0);
 
 const light = new THREE.AmbientLight(0xffffff, 5);
 scene.add(light);

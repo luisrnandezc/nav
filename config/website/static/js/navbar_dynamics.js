@@ -9,17 +9,17 @@ burger.addEventListener('click', () => {
 
 // navbar scrolling-hide effect.
 document.addEventListener('DOMContentLoaded', () => {
-    let lastScrollY = window.scrollY;
-    const navbar = document.querySelector('.navbar'); // Navbar element
+    let navbarLastScrollY = window.scrollY;
+    const navbar = document.querySelector('.navbar');
 
     window.addEventListener('scroll', () => {
-        if (window.scrollY > lastScrollY) {
+        if (window.scrollY > navbarLastScrollY) {
             // Scrolling down, hide navbar
-            navbar.classList.add('hidden');
+            navbar.classList.add('navbar-hidden');
         } else {
             // Scrolling up, show navbar
-            navbar.classList.remove('hidden');
+            navbar.classList.remove('navbar-hidden');
         }
-        lastScrollY = window.scrollY;
+        navbarLastScrollY = window.scrollY;
     });
 });

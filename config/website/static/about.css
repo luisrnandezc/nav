@@ -291,11 +291,13 @@ html, body {
     border: solid #ffffff;
 }
 
-.model-box {
+#viewer-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 400px;
+    width: 600px;
 }
 
 .performance-list {

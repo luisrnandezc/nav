@@ -1,31 +1,4 @@
-// 1) navbar burger animation
-const burger = document.querySelector('.burger');
-const navLinks = document.querySelector('.nav-links');
-
-burger.addEventListener('click', () => {
-    navLinks.classList.toggle('nav-active');
-    burger.classList.toggle('toggle');
-})
-
-// 2) navbar scrolling-hide effect.
-let lastScrollTop = 0;
-const navbar = document.getElementById('navbar');
-
-window.addEventListener('scroll', () => {
-    let currentScroll = window.scrollY || document.documentElement.scrollTop;
-    
-    if (currentScroll > lastScrollTop) {
-        // scroll down
-        navbar.classList.add('hidden');
-    } else {
-        // scroll up
-        navbar.classList.remove('hidden');
-    }
-    
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // for Mobile or negative scrolling
-});
-
-// 3) lateral movement effect for the about page.
+// lateral movement effect for the about page.
 let scrollPosition = 0;
 let lastScrollY = 0;
 let momentumOffset = 0;
@@ -116,7 +89,8 @@ const swiper = new Swiper('.swiper', {
     },
 });
 
-// Right to left fadein effecto for the blurry box.
+// Right to left fadein effect for the blurry box.
+
 // Detect when the div comes into view
 const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

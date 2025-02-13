@@ -100,7 +100,7 @@ button {
 }
 
 .button:hover {
-    background-color: rgb(232, 71, 40);
+    background-color: #e84728;
     color: #ffffff;
     border: 0px solid #ffffff;
 }

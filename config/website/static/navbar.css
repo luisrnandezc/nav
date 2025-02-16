@@ -72,7 +72,7 @@ nav ul li a:hover {
 }
 
 /* Navbar responsive design */
-@media screen and (max-width: 1001px) {
+@media screen and (max-width: 1000px) {
 
     .navbar {
         background-color: transparent;
@@ -134,5 +134,16 @@ nav ul li a:hover {
 
     .nav-links li {
         animation: navLinkFade 0.5s ease forwards 0.5s;
+    }
+
+    a.nav-item {
+        font-size: 1.25rem;
+    }
+}
+
+@media screen and (max-width: 600px) {
+
+    a.nav-item {
+        font-size: 1.75rem;
     }
 }

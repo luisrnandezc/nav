@@ -106,25 +106,78 @@
         </div>
         <div class="slider-divisor"></div>
         <div class="content-section" id="section-5">
-            <div id="viewer-container">
-                <canvas id="3d-viewer"></canvas>
+
+            <!-- Swiper main container -->
+            <div class="swiper">
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide" class="pa28">
+                        <div id="fleet-description">
+                            <h1><span class="highlight">Nuestra flota</span></h1>
+                            <p class="fadein-p">En NAV Aviation Academy contamos con dos aeronaves Piper: el 
+                                <span class="highlight">PA-28-161</span> y el <span class="highlight">PA-28-235</span>.
+                                Reconocidos por su confiabilidad, estabilidad y características de vuelo favorables, 
+                                ambos modelos son ampliamente utilizados en centros de instrucción alrededor del mundo. 
+                                El Piper PA-28-161 es ideal para la formación básica, gracias a su
+                                <span class="highlight">estabilidad y facilidad de operación</span>,
+                                mientras que el Piper PA-28-235, con su motor más potente, ofrece una experiencia 
+                                ideal para desarrollar habilidades en <span class="highlight">aeronaves de mayor rendimiento</span>.
+                                En combinación, ambos equipos ofrecen un entorno seguro y versátil para cada una
+                                de las etapas de formación.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="swiper-slide" class="pa28">
+                        <div id="viewer-container-1">
+                            <canvas id="3d-viewer-1"></canvas>
+                        </div>
+                        <div class="performance-box hidden">
+                            <ul class="performance-list">
+                                <li><span class="highlight">Modelo:</span> Piper PA28-161</li>
+                                <li><span class="highlight">Motor:</span> Lycoming O-320-D3G</li>
+                                <li><span class="highlight">Peso vacío:</span> 1353 lb</li>
+                                <li><span class="highlight">Carga útil:</span> 972 lb</li>
+                                <li><span class="highlight">MTOW:</span> 2325 lb</li>
+                                <li><span class="highlight">Distancia de despegue:</span> 975 ft</li>
+                                <li><span class="highlight">Distancia de aterrizaje:</span> 595 ft</li>
+                                <li><span class="highlight">Rata de ascenso:</span> 710 fpm</li>
+                                <li><span class="highlight">Velocidad de crucero:</span> 118 kts</li>
+                                <li><span class="highlight">Velocidad máxima:</span> 127 kts</li>
+                                <li><span class="highlight">Rango:</span> 590 nm</li>
+                                <li><span class="highlight">Techo de servicio:</span> 14.000 ft</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="swiper-slide" class="pa28">
+                        <div id="viewer-container-2">
+                            <canvas id="3d-viewer-2"></canvas>
+                        </div>
+                        <div class="performance-box hidden">
+                            <ul class="performance-list">
+                                <li><span class="highlight">Modelo:</span> Piper PA28-235</li>
+                                <li><span class="highlight">Motor:</span> Lycoming O-540-B4B5</li>
+                                <li><span class="highlight">Peso vacío:</span> 1722 lb</li>
+                                <li><span class="highlight">Carga útil:</span> 1278 lb</li>
+                                <li><span class="highlight">MTOW:</span> 3000 lb</li>
+                                <li><span class="highlight">Distancia de despegue:</span> 600 ft</li>
+                                <li><span class="highlight">Distancia de aterrizaje:</span> 550 ft</li>
+                                <li><span class="highlight">Rata de ascenso:</span> 825 fpm</li>
+                                <li><span class="highlight">Velocidad de crucero:</span> 135 kts</li>
+                                <li><span class="highlight">Velocidad máxima:</span> 144 kts</li>
+                                <li><span class="highlight">Rango:</span> 745 nm</li>
+                                <li><span class="highlight">Techo de servicio:</span> 15.500 ft</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- If we need pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- If we need navigation buttons -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
             </div>
-            <div class="performance-box hidden">
-                <ul class="performance-list">
-                    <li><span class="highlight">Modelo:</span> Piper PA28-161</li>
-                    <li><span class="highlight">Motor:</span> Lycoming O-320-D3G</li>
-                    <li><span class="highlight">Peso vacío:</span> 1353 lb</li>
-                    <li><span class="highlight">Carga útil:</span> 972 lb</li>
-                    <li><span class="highlight">MTOW:</span> 2325 lb</li>
-                    <li><span class="highlight">Distancia de despegue:</span> 975 ft</li>
-                    <li><span class="highlight">Distancia de aterrizaje:</span> 595 ft</li>
-                    <li><span class="highlight">Rata de ascenso:</span> 710 fpm</li>
-                    <li><span class="highlight">Velocidad de crucero:</span> 118 kts</li>
-                    <li><span class="highlight">Velocidad máxima:</span> 127 kts</li>
-                    <li><span class="highlight">Rango:</span> 590 nm</li>
-                    <li><span class="highlight">Techo de servicio:</span> 14.000 ft</li>
-                </ul>
-            </div>
+
         </div>
         <!--footer-->
         {% include 'footer.html' %}

@@ -52,9 +52,9 @@ smoothScrollEffect();
 
 // Fade in effect for the about paragraph.
 document.addEventListener("DOMContentLoaded", function () {
-    const paragraph = document.querySelector(".fadein-p");
+    const paragraphs = document.querySelectorAll(".fadein-p");
 
-    if (!paragraph) {
+    if (!paragraphs) {
         console.error("Element with class 'about-p' not found!");
         return;
     }
@@ -62,13 +62,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                paragraph.classList.add("show");
-                observer.unobserve(paragraph); // Stop observing after animation
+                entry.target.classList.add("show");
+                observer.unobserve(entry.target); // Stop observing after animation
             }
         });
     }, { threshold: 0.1 });
 
-    observer.observe(paragraph);
+    paragraphs.forEach((paragraph) => observer.observe(paragraph));
 });
 
 // Carrusel effect activation.

@@ -11,10 +11,10 @@
     </head>
 
     <body>
+        <!--navbar-->
+        {% include 'website/navbar.html' %}
+        <!--main webpage content-->
         <div class="main-container">
-            <!--navbar-->
-            {% include 'website/navbar.html' %}
-            <!--main webpage content-->
             <div class="content-section" id="section-1">
                 <img class="header-img" src="{% static 'img/nav_logo_horizontal_small_orange.png' %}">
                 <h3 id="top-header">Tu futuro en la aviación empieza <span class="header-description highlight">aquí</span></h3>
@@ -107,10 +107,11 @@
                         <button class="course-button">Más información</button>
                     </div>
                 </div>
-                <script src="{% static 'js/navbar_dynamics.js' %}"></script>
-                <script src="{% static 'js/courses_dynamics.js' %}"></script>
-                <!--footer-->
-                {% include 'website/footer.html' %}
             </div>
+        <!--footer-->
+        {% include 'website/footer.html' %}
+        <!--Javascript-->
+        <script src="{% static 'js/navbar_dynamics.js' %}"></script>
+        <script src="{% static 'js/courses_dynamics.js' %}"></script>
     </body>
 </html>

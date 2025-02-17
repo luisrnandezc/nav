@@ -391,7 +391,7 @@ ul li {
         line-height: 7.0rem !important;
     }
 
-    #viewer-container {
+    #viewer-container-1, #viewer-container-2{
         display: none;
     }
 

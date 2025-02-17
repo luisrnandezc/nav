@@ -7,7 +7,7 @@
 * {
     font-family: "Renogare-Regular", "Arial", sans-serif;
     color: #dadada;
-    font-size: calc(0.7vw + 0.7vh);
+    font-size: 1vw;
     letter-spacing: 10px;
     box-sizing: border-box;
 }

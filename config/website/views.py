@@ -12,3 +12,7 @@ def about(request):
 
 def courses(request):
     return render(request, "website/courses.html")
+
+
+def cpa(request):
+    return render(request, "website/cpa.html")

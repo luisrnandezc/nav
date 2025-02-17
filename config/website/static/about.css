@@ -31,6 +31,11 @@ html, body {
     }
 }
 
+.slider-divisor {
+    height: 1px;
+    background-color: #247AFD;
+}
+
 .content-section {
     display: flex;
     flex-direction: column;
@@ -147,11 +152,6 @@ html, body {
     margin-left: auto;
     margin-right: 100px;
     text-align: justify;
-}
-
-.slider-divisor {
-    height: 1px;
-    background-color: #247AFD;
 }
 
 #section-4 {

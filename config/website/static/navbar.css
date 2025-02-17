@@ -1,4 +1,8 @@
 /* Main styling for the navbar */
+.navbar * {
+    font-size: 10px !important;
+}
+
 .navbar {
     display: flex;
     justify-content: space-between;

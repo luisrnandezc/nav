@@ -7,7 +7,7 @@
 * {
     font-family: "Renogare-Regular", "Arial", sans-serif;
     color: #dadada;
-    font-size: 1vw;
+    font-size: calc(0.7vw + 0.7vh);
     letter-spacing: 10px;
     box-sizing: border-box;
 }
@@ -18,15 +18,52 @@ html, body {
     margin: 0px;
     padding: 0px;
     text-transform: uppercase;
+    background-color:#000000;
 }
 
 /* main webpage content */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-left {
+    0% {
+      transform: translateX(-100px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+}
+
+@keyframes slide-in-right {
+    0% {
+      transform: translateX(100px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+}
+
+.slider-divisor {
+    height: 1px;
+    background-color: rgb(232, 71, 40);
+}
+
 .content-section {
     display: flex;
     flex-direction: column;
     position: relative;
     height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/generic1.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/747cruise.jpg);
     background-size: cover;
     background-attachment: fixed;
     background-repeat: no-repeat;
@@ -37,10 +74,16 @@ html, body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    animation: fadeIn 1.0s ease-in forwards;
+}
+
+.header-img {
+    width: auto;
+    height: 40vh;
 }
 
 #top-header {
-    font-size: 3.0rem;
+    font-size: 1.25rem;
     margin: 50px;
     text-align: center;
     line-height: 100px;
@@ -64,46 +107,17 @@ html, body {
     opacity: 1;
 }
 
-.course-img-box {
-    display: flex;
-    padding: 20px;
-    margin: 20px;
-    display: none;
-}
-
-.course-img {
-    max-width:600px;
-    max-height: 555px;
-    width: auto;
-    height: auto;
-    opacity: 0;
-    transition: opacity 3.0s;
-}
-
-.course-img.scrolled {
-    opacity: 1;
-}
-
 .scrolled.slide-left {
     animation: slide-in-left 1.0s ease-in-out both;
 }
 
-@keyframes slide-in-left {
-    0% {
-      transform: translateX(-100px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-}
-
-.course-info {
+.course-box {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     width: 50%;
+    height: 75%;
     padding: 20px;
     margin: 20px;
     opacity: 0;
@@ -112,12 +126,19 @@ html, body {
     border-radius: 25px;
 }
 
-.course-info.scrolled {
+.course-box.scrolled {
     opacity: 1;
 }
 
+.info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .course-title {
-    color: #F2CB91;
+    color: #247AFD;
     font-size: 2.0rem;
     letter-spacing: 3px;
     margin: 25px 0px 25px 0px;
@@ -128,19 +149,15 @@ html, body {
     text-align: justify;
     font-size: 1.0rem;
     line-height: 2.0rem;
-    letter-spacing: 1.5px;
+    letter-spacing: 3.0px;
     width: 100%;
-}
-
-.course-description-word {
-    color: #F2CB91
 }
 
 ul.course-bullets, li.course-bullet {
     font-family: "Renogare-Regular", "Arial", sans-serif;
     text-align: left;
     font-size: 1.0rem;
-    line-height: 2.0rem;
+    line-height: 3.5rem;
     letter-spacing: 5.0px;
     width: 100%;
 }
@@ -152,7 +169,7 @@ ul.course-bullets, li.course-bullet {
     border: 0px solid #ffffff;
     background-color: rgba(0, 0, 0, 0.25);
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 3.0px;
     transition: 0.3s;
     cursor: pointer;
     border-radius: 5px;
@@ -171,25 +188,16 @@ ul.course-bullets, li.course-bullet {
     animation: slide-in-right 1.0s ease-in-out both;
 }
 
-@keyframes slide-in-right {
-    0% {
-      transform: translateX(100px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-}
-
 .content-section#section-3 {
     background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(./img/bw7.jpg);
     background-size: cover;
 }
 
-.slider-divisor {
-    height: 1px;
-    background-color: rgb(232, 71, 40);
+.highlight {
+    color: #247AFD;
+    line-height: inherit;
+    font-size: inherit;  
+    letter-spacing: inherit;
 }
 
 /* main webpage responsive design */
@@ -215,12 +223,39 @@ ul.course-bullets, li.course-bullet {
 
 @media screen and (max-width: 850px) {
 
-    .course-info {
+    .header-img {
+        width: auto;
+        height: 25vh;
+    }
+
+    .course-box {
         width: 75%;
+    }
+
+    .course-title {
+        font-size: 1.75rem;
+    }
+
+    .course-description {
+        font-size: 1.0rem;
+    }
+
+    li.course-bullet {
+        font-size: 1.0rem;
+    }
+
+    .course-button {
+        font-size: 1.0rem;
+        width: 50%;
     }
 }
 
 @media screen and (max-width: 550px) {
+
+    .header-img {
+        width: auto;
+        height: 10vh;
+    }
 
     #top-header {
         font-size: 2.0rem;
@@ -230,12 +265,12 @@ ul.course-bullets, li.course-bullet {
         font-size: 2.0rem;
     }
 
-    .course-info {
+    .course-box {
         width: 100%;
     }
 
     .course-button {
-        font-size: 0.75rem;
+        font-size: 1.0rem;
         width: 75%;
     }
 }

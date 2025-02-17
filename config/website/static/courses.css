@@ -233,19 +233,19 @@ ul.course-bullets, li.course-bullet {
     }
 
     .course-title {
-        font-size: 1.75rem;
+        font-size: 2.0rem;
     }
 
     .course-description {
-        font-size: 1.0rem;
+        font-size: 1.25rem;
     }
 
     li.course-bullet {
-        font-size: 1.0rem;
+        font-size: 1.25rem;
     }
 
     .course-button {
-        font-size: 1.0rem;
+        font-size: 1.25rem;
         width: 50%;
     }
 }
@@ -258,19 +258,38 @@ ul.course-bullets, li.course-bullet {
     }
 
     #top-header {
-        font-size: 2.0rem;
+        font-size: 2.5rem;
+    }
+
+    .course-title {
+        font-size: 2.5rem;
     }
 
     .header-description {
-        font-size: 2.0rem;
+        font-size: 2.5rem;
     }
 
     .course-box {
         width: 100%;
     }
 
+    .course-description {
+        font-size: 2.0rem;
+        line-height: 5.0rem;
+    }
+
+    .course-bullets {
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    li.course-bullet {
+        font-size: 2.0rem;
+        line-height: 5.0rem;
+    }
+
     .course-button {
-        font-size: 1.0rem;
-        width: 75%;
+        font-size: 2.0rem;
+        width: 50%;
     }
 }

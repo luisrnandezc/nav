@@ -21,6 +21,11 @@ html, body {
 }
 
 /* main webpage content */
+.slider-divisor {
+    height: 1px;
+    background-color: #e84728;
+}
+
 .slides {
     position: relative;
     width: 100%;
@@ -142,11 +147,6 @@ button {
 .inline-separator {
     width: 3px;
     background-color: #ffffff;
-}
-
-.slider-divisor {
-    height: 1px;
-    background-color: #e84728;
 }
 
 /* main webpage responsive design */

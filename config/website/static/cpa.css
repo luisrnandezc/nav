@@ -17,41 +17,66 @@ html, body {
     height: 100%;
     margin: 0px;
     padding: 0px;
-    line-height: 1.6;
     text-transform: uppercase;
-    background-color:#000000;
+    background-color:#ffffff;
 }
 
 /* main webpage content */
-header, section {
-    padding: 2.0rem;
-    text-align: center;
+.slider-divisor {
+    height: 1px;
+    background-color: #e84728;
 }
 
-header {
+header, section {
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: #001f3f;
-    color: #fff;
-    height: 100vh;
 }
 
-p, h1 {
-    width: 75%;
+header {
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/classroom.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #ffffff;
 }
 
 section {
-    height: 100vh;
     background-color: #ffffff;
+}
+
+p, h1, h2 {
+    text-align: center;
+    color: #ffffff;
+    width: 75%;
+    letter-spacing: 5px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+h1 {
+    font-size: 3.0rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+}
+
+p {
+    font-size: 0.75rem;
+    letter-spacing: 1.75px;
 }
 
 .cta-button {
     display: inline-block;
-    margin-top: 1rem;
+    margin-top: 25px;
+    margin-bottom: 25px;
     padding: 0.8rem 1.5rem;
-    background: #ff6f00;
+    background: #e84728;
     color: white;
     text-decoration: none;
     border-radius: 8px;
@@ -59,19 +84,48 @@ section {
 }
 
 .cta-button:hover {
-    background: #e65c00;
+    background: #ff934c;
 }
 
-.benefits, .details {
+.contents-description {
+    color: #141f35;
+    font-size: 1.0rem;
+    letter-spacing: 5px;
+    text-align: justify;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 75%;
+}
+
+.benefits, .contents, .details {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 2rem;
 }
 
+.contents {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.content {
+    color: #141f35;
+}
+
+.benefit {
+    color: #141f35;
+}
+
 .benefit, .detail-item {
     max-width: 300px;
     text-align: left;
+}
+
+#target-audience {
+    color: #000000;
 }
 
 footer {

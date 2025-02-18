@@ -33,7 +33,7 @@ html, body {
 
 .slider-divisor {
     height: 1px;
-    background-color: #247AFD;
+    background-color: #e84728;
 }
 
 .content-section {
@@ -45,7 +45,7 @@ html, body {
 }
 
 #section-1 {
-    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw1.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/bw1.jpg);
     background-size: cover;
     background-position: center;
     justify-content: center;
@@ -115,28 +115,28 @@ html, body {
 }
 
 #about-1 {
-    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw7.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/bw7.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: repeat;
 }
 
 #about-2 {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/bw4.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/bw4.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: repeat;
 }
 
 #about-3 {
-    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw2.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/bw2.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: repeat;
 }
 
 #section-3 {
-    background: linear-gradient(to left, black 40%, rgba(0, 0, 0, 0)), url(./img/bw3.jpg);
+    background: linear-gradient(to left, rgba(20, 31, 53) 30%, rgba(20, 31, 53, 0.75)), url(./img/bw3.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: repeat;
@@ -162,7 +162,7 @@ html, body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(./img/bw12.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/bw12.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -174,7 +174,7 @@ html, body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/737sim/sim10bw.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/737sim/sim10bw.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -186,7 +186,7 @@ html, body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/lecture.png);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/lecture.png);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -220,7 +220,7 @@ html, body {
     align-items: center;
     height: 15%;
     width: 35%;
-    background-color: rgb(0, 0, 0, 0.5);
+    background-color: rgba(20, 31, 53, 0.5);
     backdrop-filter: blur(7.5px);
     margin-left: auto;
     margin-right: 75px;
@@ -254,7 +254,7 @@ html, body {
 
 #section-5 {
     z-index: 0;
-    background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url(./img/bw10.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/bw10.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: repeat;
@@ -301,7 +301,7 @@ html, body {
     height: 80%;
     margin-right: 75px;
     margin-left: auto;
-    background-color: rgb(0, 0, 0, 0.5);
+    background-color: rgba(20, 31, 53, 0.75);
     backdrop-filter: blur(7.5px);
     border: solid #888888;
 }

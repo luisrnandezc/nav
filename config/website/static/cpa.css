@@ -22,6 +22,8 @@ html, body {
 }
 
 /* main webpage content */
+
+/* General styles */
 .slider-divisor {
     height: 1px;
     background-color: #e84728;
@@ -33,42 +35,7 @@ header, section {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-header {
-    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/classroom.jpg);
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-position: center;
-    color: #ffffff;
-}
-
-section {
     background-color: #ffffff;
-}
-
-p, h1, h2 {
-    text-align: center;
-    color: #ffffff;
-    width: 75%;
-    letter-spacing: 5px;
-    margin-top: 25px;
-    margin-bottom: 25px;
-}
-
-h1 {
-    font-size: 3.0rem;
-}
-
-h2 {
-    font-size: 1.5rem;
-    color: #e84728;
-}
-
-p {
-    font-size: 0.75rem;
-    letter-spacing: 1.75px;
 }
 
 .cta-button {
@@ -81,51 +48,188 @@ p {
     text-decoration: none;
     border-radius: 8px;
     font-weight: bold;
+    letter-spacing: 5px;
 }
 
 .cta-button:hover {
     background: #ff934c;
 }
 
-.contents-description {
-    color: #141f35;
-    font-size: 1.0rem;
+/* Header section */
+header {
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/classroom.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #ffffff;
+}
+
+#header-h1, #header-h2, #header-p {
+    text-align: center;
+    color: #ffffff;
+    width: 75%;
     letter-spacing: 5px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+#header-h1 {
+    font-size: 3.0rem;
+}
+
+#header-h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+}
+
+#header-p {
+    font-size: 0.75rem;
+    letter-spacing: 1.75px;
+}
+
+/* Overview section */
+#overview {
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline1.jpg);
+    background-size: 50% 60%;
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#overview-h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+}
+
+#overview-p {
+    color: #141f35;
+    font-size: 1.25rem;
+    letter-spacing: 2.0px;
     text-align: justify;
     margin-top: 25px;
     margin-bottom: 25px;
     width: 75%;
 }
 
-.benefits, .contents, .details {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-}
-
-.contents {
+#contents {
     display: flex;
     flex-direction: column;
-    margin-top: 25px;
-    margin-bottom: 25px;
+    margin: 25px auto 25px 250px;
+    line-height: 40px;
+    width: 50%;
 }
 
 .content {
+    margin: 5px;
     color: #141f35;
+    font-size: 1.0rem;
+    letter-spacing: 2.0px;
+}
+
+/* Why-choose section */
+#why-choose {
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline2.jpg);
+    background-size: 50% 60%;
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#why-choose-h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+}
+
+#why-choose-p {
+    color: #141f35;
+    font-size: 1.25rem;
+    letter-spacing: 2.0px;
+    text-align: justify;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 75%;
+}
+
+#benefits {
+    display: flex;
+    flex-direction: column;
+    margin: 25px 150px 25px auto;
+    line-height: 40px;
+    width: 50%;
 }
 
 .benefit {
+    margin: 5px;
     color: #141f35;
+    font-size: 1.0rem;
+    letter-spacing: 2.0px;
 }
 
-.benefit, .detail-item {
-    max-width: 300px;
-    text-align: left;
+/* Who-for section */
+#who-for {
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline4.jpg);
+    background-size: 60% 90%;
+    background-position: center;
+    justify-content: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
 }
 
-#target-audience {
-    color: #000000;
+#who-for-h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+}
+
+.targets {
+    display: flex;
+    flex-direction: column;
+    margin: 25px 150px 25px auto;
+    line-height: 40px;
+    width: 50%;
+}
+
+.target {
+    margin: 50px 0px 50px 0px;
+    padding: 25px;
+    border-radius: 30px;
+    background-color: rgba(20, 31, 53, 0.75);
+    color: #FAF0E6;
+    font-size: 1.0rem;
+    letter-spacing: 2.0px;
+}
+
+/* Enroll section */
+#enroll {
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline4.jpg);
+    background-size: 60% 90%;
+    background-position: center;
+    justify-content: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+#enroll-h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+}
+
+#details {
+    display: flex;
+    flex-direction: column;
+    margin: 25px 150px 25px auto;
+    line-height: 40px;
+    width: 50%;
+}
+
+.detail {
+    margin: 5px 0px 5px 0px;
+    padding: 25px;
+    border-radius: 30px;
+    background-color: rgba(20, 31, 53, 0.75);
+    color: #FAF0E6;
+    font-size: 0.5rem;
+    letter-spacing: 1.0px;
 }
 
 footer {

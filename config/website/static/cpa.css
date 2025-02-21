@@ -104,27 +104,27 @@ header {
 
 #overview-p {
     color: #141f35;
-    font-size: 1.25rem;
-    letter-spacing: 2.0px;
+    font-size: 1.0rem;
+    letter-spacing: 1.5px;
     text-align: justify;
     margin-top: 25px;
     margin-bottom: 25px;
-    width: 75%;
+    width: 60%;
+    line-height: 40px;
 }
 
 #contents {
     display: flex;
     flex-direction: column;
-    margin: 25px auto 25px 250px;
-    line-height: 40px;
+    margin: 10px auto 10px 350px;
     width: 50%;
 }
 
 .content {
-    margin: 5px;
     color: #141f35;
     font-size: 1.0rem;
-    letter-spacing: 2.0px;
+    letter-spacing: 1.5px;
+    line-height: 40px;
 }
 
 /* Why-choose section */
@@ -143,34 +143,34 @@ header {
 
 #why-choose-p {
     color: #141f35;
-    font-size: 1.25rem;
-    letter-spacing: 2.0px;
+    font-size: 1.0rem;
+    letter-spacing: 1.5px;
     text-align: justify;
     margin-top: 25px;
     margin-bottom: 25px;
-    width: 75%;
+    width: 60%;
+    line-height: 40px;
 }
 
 #benefits {
     display: flex;
     flex-direction: column;
-    margin: 25px 150px 25px auto;
-    line-height: 40px;
+    margin: 10px 200px 10px auto;
     width: 50%;
 }
 
 .benefit {
-    margin: 5px;
     color: #141f35;
     font-size: 1.0rem;
-    letter-spacing: 2.0px;
+    letter-spacing: 1.5px;
+    line-height: 40px;
 }
 
 /* Who-for section */
 #who-for {
     background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline4.jpg);
     background-size: 60% 90%;
-    background-position: center;
+    background-position: top right;
     justify-content: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
@@ -184,7 +184,8 @@ header {
 .targets {
     display: flex;
     flex-direction: column;
-    margin: 25px 150px 25px auto;
+    justify-content: center;
+    align-items: center;
     line-height: 40px;
     width: 50%;
 }
@@ -194,14 +195,14 @@ header {
     padding: 25px;
     border-radius: 30px;
     background-color: rgba(20, 31, 53, 0.75);
-    color: #FAF0E6;
+    color: #ffffff;
     font-size: 1.0rem;
     letter-spacing: 2.0px;
 }
 
 /* Enroll section */
 #enroll {
-    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline4.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline6.jpg);
     background-size: 60% 90%;
     background-position: center;
     justify-content: center;
@@ -217,22 +218,35 @@ header {
 #details {
     display: flex;
     flex-direction: column;
-    margin: 25px 150px 25px auto;
-    line-height: 40px;
-    width: 50%;
+    justify-content: center;
+    align-items: center;
+    line-height: 30px;
+    margin-top: 30px;  
+    margin-bottom: 30px;
 }
 
 .detail {
-    margin: 5px 0px 5px 0px;
+    margin: 10px 0px 10px 0px;
     padding: 25px;
     border-radius: 30px;
     background-color: rgba(20, 31, 53, 0.75);
-    color: #FAF0E6;
-    font-size: 0.5rem;
-    letter-spacing: 1.0px;
+    color: #ffffff;
+    font-size: 1.0rem;
+    letter-spacing: 2.0px;
+    width: 100%;
 }
 
-footer {
-    background: #001f3f;
-    color: white;
+/* Final section */
+#final {
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/classroom.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #ffffff;
+}
+
+#final-h2 {
+    font-size: 1.5rem;
+    color: #dadada;
 }

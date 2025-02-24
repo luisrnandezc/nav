@@ -21,9 +21,9 @@ html, body {
     background-color:#ffffff;
 }
 
-/* main webpage content */
+/*#region Main page content */
 
-/* General styles */
+/*#region General styles */
 .slider-divisor {
     height: 1px;
     background-color: #e84728;
@@ -36,8 +36,43 @@ header, section {
     justify-content: center;
     align-items: center;
     background-color: #ffffff;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
 }
 
+.section-h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+    text-align: center;
+}
+
+.section-p {
+    color: #141f35;
+    font-size: 1.0rem;
+    letter-spacing: 1.5px;
+    text-align: justify;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 60%;
+    line-height: 40px;
+}
+
+.bullet-points-1 {
+    display: flex;
+    flex-direction: column;
+    margin: 10px auto 10px 350px;
+    width: 50%;
+}
+
+.bullet-point-1 {
+    color: #141f35;
+    font-size: 1.0rem;
+    letter-spacing: 1.5px;
+    line-height: 40px;
+}
+/*#endregion*/
+
+/*#region Buttons */
 .cta-button {
     display: inline-block;
     margin-top: 25px;
@@ -54,20 +89,16 @@ header, section {
 .cta-button:hover {
     background: #ff934c;
 }
+/*#endregion*/
 
-/* Header section */
+/* #region Header section */
 header {
     background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/classroom.jpg);
     background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-position: center;
-    color: #ffffff;
 }
 
-#header-h1, #header-h2, #header-p {
+#header-h1, #header-p {
     text-align: center;
-    color: #ffffff;
     width: 75%;
     letter-spacing: 5px;
     margin-top: 25px;
@@ -78,146 +109,77 @@ header {
     font-size: 3.0rem;
 }
 
-#header-h2 {
-    font-size: 1.5rem;
-    color: #e84728;
-    text-align: center;
-}
-
 #header-p {
     font-size: 0.75rem;
     letter-spacing: 1.75px;
 }
+/*#endregion*/
 
-/* Overview section */
+/*#region Main sections */
 #overview {
     background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline1.jpg);
     background-size: 50% 60%;
     background-position: bottom right;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
 }
-
-#overview-h2 {
-    font-size: 1.5rem;
-    color: #e84728;
-    text-align: center;
-}
-
-#overview-p {
-    color: #141f35;
-    font-size: 1.0rem;
-    letter-spacing: 1.5px;
-    text-align: justify;
-    margin-top: 25px;
-    margin-bottom: 25px;
-    width: 60%;
-    line-height: 40px;
-}
-
-#contents {
-    display: flex;
-    flex-direction: column;
-    margin: 10px auto 10px 350px;
-    width: 50%;
-}
-
-.content {
-    color: #141f35;
-    font-size: 1.0rem;
-    letter-spacing: 1.5px;
-    line-height: 40px;
-}
-
-/* Why-choose section */
 #why-choose {
     background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline2.jpg);
     background-size: 50% 60%;
     background-position: bottom left;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
 }
-
-#why-choose-h2 {
-    font-size: 1.5rem;
-    color: #e84728;
-    text-align: center;
-}
-
-#why-choose-p {
-    color: #141f35;
-    font-size: 1.0rem;
-    letter-spacing: 1.5px;
-    text-align: justify;
-    margin-top: 25px;
-    margin-bottom: 25px;
-    width: 60%;
-    line-height: 40px;
-}
-
-#benefits {
-    display: flex;
-    flex-direction: column;
-    margin: 10px 200px 10px auto;
-    width: 50%;
-}
-
-.benefit {
-    color: #141f35;
-    font-size: 1.0rem;
-    letter-spacing: 1.5px;
-    line-height: 40px;
-}
-
-/* Who-for section */
 #who-for {
     background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline4.jpg);
     background-size: 60% 90%;
     background-position: top right;
-    justify-content: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
 }
-
-#who-for-h2 {
-    font-size: 1.5rem;
-    color: #e84728;
-    text-align: center;
-}
-
-.targets {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    line-height: 40px;
-    width: 50%;
-}
-
-.target {
-    margin: 50px 0px 50px 0px;
-    padding: 25px;
-    border-radius: 30px;
-    background-color: rgba(20, 31, 53, 0.75);
-    color: #ffffff;
-    font-size: 1.0rem;
-    letter-spacing: 2.0px;
-}
-
-/* Enroll section */
 #enroll {
     background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline6.jpg);
     background-size: 60% 90%;
     background-position: center;
-    justify-content: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+}
+#final {
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/classroom.jpg);
+    background-size: cover;
+}
+/*#endregion*/
+
+/*#region Section headers */
+#who-for-h2 {
+    margin-bottom: 50px;
 }
 
-#enroll-h2 {
-    font-size: 1.5rem;
-    color: #e84728;
-    text-align: center;
+#final-h2 {
+    color: #dadada;
+}
+/*#endregion*/
+
+/*#region Specific styles */
+#contents {
+    margin: 10px auto 10px 350px;
+}
+
+#benefits {
+    margin: 10px 200px 10px auto;
+}
+
+#targets {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    line-height: 30px;
+    width: 60%;
+}
+
+.target {
+    color: #ffffff;
+    font-size: 0.85rem;
+    letter-spacing: 2.0px;
+    text-align: left;
+    margin: 30px 0px 30px 0px;
+    padding: 20px;
+    background-color: rgba(20, 31, 53, 0.75);
+    border-radius: 30px;
+    width: 100%;
 }
 
 #details {
@@ -228,264 +190,128 @@ header {
     line-height: 25px;
     margin-top: 30px;  
     margin-bottom: 30px;
+    width: 45%;
 }
 
 .detail {
-    margin: 10px 0px 10px 0px;
-    padding: 20px;
-    border-radius: 30px;
-    background-color: rgba(20, 31, 53, 0.75);
     color: #ffffff;
     font-size: 0.75rem;
     letter-spacing: 2.0px;
+    text-align: left;
+    margin: 15px 0px 15px 0px;
+    padding: 15px;
+    background-color: rgba(20, 31, 53, 0.75);
+    border-radius: 30px;
     width: 100%;
 }
+/*#endregion*/
 
-/* Final section */
-#final {
-    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/classroom.jpg);
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-position: center;
-    color: #ffffff;
-}
+/*#endregion*/
 
-#final-h2 {
-    font-size: 1.5rem;
-    color: #dadada;
-    text-align: center;
-}
-
-/* main webpage responsive design */
+/*#region Responsive design */
 @media screen and (max-width: 1200px) {
 
-    /* Header section */
+    section {
+        background-size: cover;
+        background-position: center;
+    }
+
     #header-p {
         font-size: 1.0rem;
         letter-spacing: 1.75px;
     }
 
-    /* Overview section */
-    #overview {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    #overview-h2 {
+    .section-h2 {
         letter-spacing: 5.0px;
     }
 
-    #overview-p {
+    .section-p {
         line-height: 30px;
     }
 
-    #contents {
-        display: flex;
-        flex-direction: column;
-        justify-content: left;
-        align-items: left;
+    .bullet-points-1 {
         margin: 10px 50px 10px 50px;
     }
 
-    .content {
+    .bullet-point-1 {
         line-height: 30px;
     }
 
-    /* Why-choose section */
-    #why-choose {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    #why-choose-h2 {
-        letter-spacing: 5.0px;
-    }
-
-    #why-choose-p {
-        line-height: 30px;
-    }
-
-    #benefits {
-        display: flex;
-        flex-direction: column;
-        justify-content: left;
-        align-items: left;
-        margin: 10px 50px 10px 50px;
-    }
-
-    .benefit {
-        line-height: 30px;
-    }
-
-    /* Who-for section */
-    #who-for {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    #who-for-h2 {
-        letter-spacing: 5.0px;
-    }
-
-    .target {
-        font-size: 1.25rem;
-    }
-
-    /* Enroll section */
-    #enroll {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    #enroll-h2 {
-        letter-spacing: 5.0px;
+    #targets {
+        width: 75%;
     }
 
     #details {
-        line-height: 10px;
+        width: 60%;
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
 
-    .detail {
+    .target, .detail {
         font-size: 1.0rem;
-    }
-
-    /* Final section */
-    #final-h2 {
-        letter-spacing: 5.0px;
     }
 }
 
 @media screen and (max-width: 850px) {
 
-    /* General section */
-    .cta-button {
-        font-size: 2.0rem;
-        line-height: 20px;
+    section {
+        background-size: 100% 80% !important;
+        background-position: center !important;
     }
 
-    /* Header section */
+    .cta-button {
+        font-size: 1.5rem;
+    }
+
     #header-h1 {
-        font-size: 7.5rem;
+        font-size: 5.0rem;
     }
 
     #header-h2 {
-        font-size: 5.0rem;
+        font-size: 3.0rem;
     }
 
     #header-p {
         font-size: 2.0rem;
-        letter-spacing: 1.75px;
     }
 
-    /* Overview section */
-    #overview {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+    .section-h2 {
+        font-size: 2.0rem;
     }
 
-    #overview-h2 {
-        letter-spacing: 5.0px;
-        font-size: 3.0rem;
-    }
-
-    #overview-p {
-        line-height: 30px;
+    .section-p {
         font-size: 1.5rem;
-        width: 100%;
-        padding-left: 25px !important;
-        padding-right: 25px !important;
+        width: 75%;
     }
 
-    #contents {
-        width: 100%;
-        margin-left: 150px;
+    #contents, #benefits {
+        margin: 0px;
+        justify-content: left;
+        align-items: left;
+        width: 75%;
     }
 
-    .content {
-        line-height: 30px;
+    .bullet-point-1 {
         font-size: 1.5rem;
     }
 
-    /* Why-choose section */
-    #why-choose {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    #why-choose-h2 {
-        letter-spacing: 5.0px;
-        font-size: 3.0rem;
-    }
-
-    #why-choose-p {
-        line-height: 30px;
-        font-size: 1.5rem;
-        width: 100%;
-        padding-left: 25px !important;
-        padding-right: 25px !important;
-    }
-
-    #benefits {
-        width: 100%;
-        margin-left: 150px;
-    }
-
-    .benefit {
-        line-height: 30px;
-        font-size: 1.5rem;
-    }
-
-    /* Who-for section */
-    #who-for {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    #who-for-h2 {
-        letter-spacing: 5.0px;
+    #targets, #details {
+        width: 75%;
+        line-height: 5px;
     }
 
     .target {
-        font-size: 1.25rem;
-    }
-
-    /* Enroll section */
-    #enroll {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    #enroll-h2 {
-        letter-spacing: 5.0px;
-    }
-
-    #details {
+        font-size: 1.5rem;
         line-height: 10px;
     }
 
     .detail {
-        font-size: 1.0rem;
+        font-size: 1.5rem;
+        line-height: 10px;
     }
 
-    /* Final section */
     #final-h2 {
-        letter-spacing: 5.0px;
+        font-size: 5.0rem;
     }
 }
+/*#endregion*/

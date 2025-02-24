@@ -162,7 +162,7 @@ html, body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/bw12.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/about1.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -174,7 +174,7 @@ html, body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/737sim/sim10bw.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/about3.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -186,7 +186,7 @@ html, body {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/lecture.png);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/about4.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;

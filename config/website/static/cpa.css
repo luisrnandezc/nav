@@ -47,7 +47,7 @@ header, section {
 }
 
 .section-p {
-    color: #141f35;
+    color: #dadada;
     font-size: 1.0rem;
     letter-spacing: 1.5px;
     text-align: justify;
@@ -65,7 +65,7 @@ header, section {
 }
 
 .bullet-point-1 {
-    color: #141f35;
+    color: #dadada;
     font-size: 1.0rem;
     letter-spacing: 1.5px;
     line-height: 40px;
@@ -117,27 +117,27 @@ header {
 
 /*#region Main sections */
 #overview {
-    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline1.jpg);
-    background-size: 50% 60%;
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa5.jpg);
+    background-size: cover;
     background-position: bottom right;
 }
 #why-choose {
-    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline2.jpg);
-    background-size: 50% 60%;
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa3.jpg);
+    background-size: cover;
     background-position: bottom left;
 }
 #who-for {
-    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline4.jpg);
-    background-size: 60% 90%;
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa4.jpg);
+    background-size: cover;
     background-position: top right;
 }
 #enroll {
-    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/oneline6.jpg);
-    background-size: 60% 90%;
+    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa2.jpg);
+    background-size: cover;
     background-position: center;
 }
 #final {
-    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa2.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/cpa6.jpg);
     background-size: cover;
 }
 /*#endregion*/

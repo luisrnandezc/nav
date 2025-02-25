@@ -26,19 +26,21 @@ html, body {
     background-color: #e84728;
 }
 
+header, .simulator {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
 header {
-    background: #333;
-    color: white;
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim1.jpg);
+    background-size: cover;
     padding: 20px;
 }
 
 .simulator {
-    background: white;
-    margin: 20px auto;
-    padding: 20px;
-    width: 80%;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .simulator img {
@@ -46,4 +48,8 @@ header {
     max-width: 600px;
     height: auto;
     border-radius: 5px;
+}
+
+p {
+    text-align: center;
 }

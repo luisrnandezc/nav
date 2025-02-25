@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>NAV | Simuladores</title>
+        <link href="{% static 'navbar.css' %}" rel="stylesheet"> 
+        <link href="{% static 'sims.css' %}" rel="stylesheet">
+        <link href="{% static 'footer.css' %}" rel="stylesheet"> 
+    </head>
+
+    <body>
+        <!--navbar-->
+        {% include 'website/navbar.html' %}
+        <!--main webpage content-->
+        <header>
+            <h1>Simuladores de vuelo</h1>
+            <p>Explore the state-of-the-art flight simulators used in our training program.</p>
+        </header>
+        <div class="slider-divisor"></div>
+        <section class="simulator" id="sim1">
+            <h2>FSTD Level III</h2>
+            <p>This simulator features three touchscreens for instruments and two seats for multicrew training. The touchscreens allow us to simulate different aircraft types by changing instrument panels.</p>
+            <img src="sim1.jpg" alt="FSTD Level III Simulator">
+        </section>
+        <div class="slider-divisor"></div>
+        <section class="simulator" id="sim2">
+            <h2>Boeing 737-800 Simulator</h2>
+            <p>A near-perfect replica of the Boeing 737-800, featuring fully functional instruments and a 120-degree visual field created by three video projectors. This simulator provides advanced training for professional crews.</p>
+            <img src="sim2.jpg" alt="Boeing 737-800 Simulator">
+        </section>
+        <div class="slider-divisor"></div>
+        <!--footer-->
+        {% include 'website/footer.html' %}
+        <!--Javascript-->
+        <script src="{% static 'js/navbar_dynamics.js' %}"></script>
+    </body>
+</html>

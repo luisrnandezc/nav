@@ -1,0 +1,49 @@
+@font-face {
+    font-family: "Renogare-Regular";
+    src: local("Renogare-Regular");
+    src: local("Renogare Regular");
+}
+
+* {
+    font-family: "Renogare-Regular", "Arial", sans-serif;
+    color: #dadada;
+    font-size: 1vw;
+    letter-spacing: 10px;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    text-transform: uppercase;
+    background-color:#ffffff;
+}
+
+.slider-divisor {
+    height: 1px;
+    background-color: #e84728;
+}
+
+header {
+    background: #333;
+    color: white;
+    padding: 20px;
+}
+
+.simulator {
+    background: white;
+    margin: 20px auto;
+    padding: 20px;
+    width: 80%;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.simulator img {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 5px;
+}

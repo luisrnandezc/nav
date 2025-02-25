@@ -153,12 +153,8 @@ header {
 /*#endregion*/
 
 /*#region Specific styles */
-#contents {
+#contents, #benefits {
     margin: 10px auto 10px 350px;
-}
-
-#benefits {
-    margin: 10px 200px 10px auto;
 }
 
 #targets {

@@ -32,23 +32,19 @@ header, .simulator {
     justify-content: center;
     align-items: center;
     height: 100vh;
-}
-
-header {
-    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim1.jpg);
-    background-size: cover;
     padding: 20px;
 }
 
-.simulator {
+header {
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/737sim/sim12.jpg);
+    background-size: cover;
 }
 
-.simulator img {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    border-radius: 5px;
+#header-h1 {
+    font-size: 3.0rem;
 }
+
+
 
 p {
     text-align: center;

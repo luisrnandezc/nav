@@ -17,5 +17,5 @@ def courses(request):
 def cpa(request):
     return render(request, "website/cpa.html")
 
-def sims(request):
-    return render(request, "website/sims.html")
+def sim(request):
+    return render(request, "website/sim.html")

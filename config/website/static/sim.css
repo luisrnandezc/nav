@@ -46,7 +46,7 @@ header, .simulator {
 }
 
 header {
-    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/sim/737/sim7.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/sim/sim7.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -59,7 +59,7 @@ header {
     padding: 0px;
 }
 
-#header-h1 {
+h1 {
     font-size: 3.0rem;
     margin-top: 25px;
     margin-bottom: 25px;
@@ -155,6 +155,13 @@ header {
     background-repeat: no-repeat;
 }
 
+#final {
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/sim/sim12.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
 .info-container {
     display: flex;
     flex-direction: column;
@@ -197,4 +204,31 @@ p {
 
 .cta-button:hover {
     background: #ff934c;
+}
+
+/* Responsive design */
+@media screen and (max-width: 850px) {
+
+    #header-p {
+        display: none;
+    }
+
+    .swiper-slide {
+        background-size: 30%;
+    }
+
+    .cta-button {
+        font-size: 3.0rem;
+    }
+
+    h2 {
+        font-size: 3.0rem;
+        text-align: center;
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+
+    p.sim-description {
+        display: none;
+    }
 }

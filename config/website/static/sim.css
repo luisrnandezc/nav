@@ -1,0 +1,90 @@
+@font-face {
+    font-family: "Renogare-Regular";
+    src: local("Renogare-Regular");
+    src: local("Renogare Regular");
+}
+
+* {
+    font-family: "Renogare-Regular", "Arial", sans-serif;
+    color: #dadada;
+    font-size: 1vw;
+    letter-spacing: 10px;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    text-transform: uppercase;
+    background-color:#000000;
+}
+
+.slider-divisor {
+    height: 1px;
+    background-color: #e84728;
+}
+
+header, .simulator {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    padding: 20px;
+}
+
+header {
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/sim/737/sim12.jpg);
+    background-size: cover;
+}
+
+#header-h1 {
+    font-size: 3.0rem;
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+  
+.swiper-slide {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center !important;
+    align-items: center !important;
+    object-fit: cover;
+    position: relative;
+}
+
+#img-fstd-1 {
+    width: 800px;
+    height: 500px;
+}
+
+#img-fstd-2 {
+    width: 800px;
+    height: 500px;
+}
+
+#img-fstd-3 {
+    width: 800px;
+    height: 500px;
+}
+
+#img-fstd-4 {
+    width: 800px;
+    height: 500px;
+}
+
+#img-fstd-5 {
+    width: 800px;
+    height: 500px;
+}
+
+p {
+    text-align: center;
+}

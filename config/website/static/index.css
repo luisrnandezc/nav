@@ -38,30 +38,30 @@ html, body {
 }
 
 #first {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(./img/airliner.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(./img/index/index1.jpg);
     background-size: cover;
 }
 
 #second {
-    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(./img/737sunset.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(./img/index/index2.jpg);
     background-size: cover;
     background-position: center;
 }
 
 #third {
-    background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)), url(./img/cockpit_view.jpeg);
+    background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)), url(./img/index/index3.jpg);
     background-size: cover;
     background-position: center;
 }
 
 #fourth {
-    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/cockpit_view2.jpeg);
+    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/index/index4.jpg);
     background-size: cover;
     background-position: center;
 }
 
 #fifth {
-    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/generic1.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/index/index5.jpg);
     background-size: cover;
     background-position: center;
 }

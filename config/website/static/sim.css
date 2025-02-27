@@ -49,6 +49,7 @@ header {
     background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/sim/sim7.jpg);
     background-size: cover;
     background-repeat: no-repeat;
+    background-position: center;
     background-attachment: fixed;
     opacity: 0;
     animation: fadeIn 1.0s ease-in forwards;

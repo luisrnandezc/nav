@@ -93,63 +93,63 @@ header {
 }
 
 #sim1-first-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.25), rgba(20, 31, 53, 0.25)), url(./img/sim/sim1.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim1.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #sim1-second-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.25), rgba(20, 31, 53, 0.25)), url(./img/sim/sim2.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim2.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #sim1-third-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.25), rgba(20, 31, 53, 0.25)), url(./img/sim/sim4.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim4.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #sim1-fourth-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.25), rgba(20, 31, 53, 0.25)), url(./img/sim/sim5.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim5.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #sim1-fifth-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim3.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim3.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #sim2-first-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim11.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim11.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #sim2-second-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim6.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim6.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #sim2-third-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim7.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim7.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #sim2-fourth-slide {
-    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim10.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0), rgba(20, 31, 53, 0)), url(./img/sim/sim10.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;

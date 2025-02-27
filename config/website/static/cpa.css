@@ -129,26 +129,32 @@ header {
 #overview {
     background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa/cpa2.jpg);
     background-size: cover;
-    background-position: bottom right;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 #why-choose {
     background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa/cpa3.jpg);
+    background-position: center;
     background-size: cover;
-    background-position: bottom left;
+    background-repeat: no-repeat;
 }
 #who-for {
     background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa/cpa4.jpg);
+    background-position: center;
     background-size: cover;
-    background-position: top right;
+    background-repeat: no-repeat;
 }
 #enroll {
     background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa/cpa5.jpg);
-    background-size: cover;
     background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 #final {
     background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/cpa/cpa6.jpg);
+    background-position: center;
     background-size: cover;
+    background-repeat: no-repeat;
 }
 /*#endregion*/
 
@@ -265,7 +271,7 @@ header {
 @media screen and (max-width: 850px) {
 
     section {
-        background-size: 100% 80% !important;
+        background-size: cover;
         background-position: center !important;
     }
 

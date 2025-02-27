@@ -21,6 +21,16 @@ html, body {
     background-color:#000000;
 }
 
+/* main webpage content */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .slider-divisor {
     height: 1px;
     background-color: #e84728;
@@ -33,16 +43,33 @@ header, .simulator {
     align-items: center;
     height: 100vh;
     width: 100%;
-    padding: 20px;
 }
 
 header {
-    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/sim/737/sim12.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/sim/737/sim7.jpg);
     background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0;
+    animation: fadeIn 1.0s ease-in forwards;
+}
+
+.simulator {
+    background-color: rgba(20, 31, 53);
+    padding: 0px;
 }
 
 #header-h1 {
     font-size: 3.0rem;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+#header-p {
+    color: #dadada;
+    font-size: 1.5rem;
+    margin: 75px 75px 75px 75px;
+    text-align: center;
 }
 
 .swiper {
@@ -60,31 +87,114 @@ header {
     position: relative;
 }
 
-#img-fstd-1 {
-    width: 800px;
-    height: 500px;
+.swiper-button-next,
+.swiper-button-prev {
+  color: #dadada !important;
 }
 
-#img-fstd-2 {
-    width: 800px;
-    height: 500px;
+#sim1-first-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.25), rgba(20, 31, 53, 0.25)), url(./img/sim/sim1.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
-#img-fstd-3 {
-    width: 800px;
-    height: 500px;
+#sim1-second-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.25), rgba(20, 31, 53, 0.25)), url(./img/sim/sim2.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
-#img-fstd-4 {
-    width: 800px;
-    height: 500px;
+#sim1-third-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.25), rgba(20, 31, 53, 0.25)), url(./img/sim/sim4.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
-#img-fstd-5 {
-    width: 800px;
-    height: 500px;
+#sim1-fourth-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.25), rgba(20, 31, 53, 0.25)), url(./img/sim/sim5.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#sim1-fifth-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim3.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#sim2-first-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim11.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#sim2-second-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim6.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#sim2-third-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim7.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#sim2-fourth-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/sim/sim10.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(20, 31, 53, 0.5);
+    backdrop-filter: blur(7.5px);
+    width: 100%;
+    margin-bottom: 0px;
+    margin-top: auto;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-top: 25px;
+    margin-bottom: 0px;
+    color: #e84728;
 }
 
 p {
-    text-align: center;
+    font-size: 1.0rem;
+    text-align: left;
+    margin: 25px 50px 50px 50px;
+    letter-spacing: 5px;
+}
+
+.cta-button {
+    display: inline-block;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    padding: 0.8rem 1.5rem;
+    background: #e84728;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.0rem;
+    letter-spacing: 5px;
+}
+
+.cta-button:hover {
+    background: #ff934c;
 }

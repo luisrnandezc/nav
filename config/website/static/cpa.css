@@ -18,10 +18,18 @@ html, body {
     margin: 0px;
     padding: 0px;
     text-transform: uppercase;
-    background-color:#ffffff;
+    background-color:#000000;
 }
 
 /*#region Main page content */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 
 /*#region General styles */
 .slider-divisor {
@@ -95,6 +103,8 @@ header, section {
 header {
     background: linear-gradient(rgba(20, 31, 53, 0.85), rgba(20, 31, 53, 0.85)), url(./img/cpa/cpa1.jpg);
     background-size: cover;
+    opacity: 0;
+    animation: fadeIn 1.0s ease-in forwards;
 }
 
 #header-h1, #header-p {

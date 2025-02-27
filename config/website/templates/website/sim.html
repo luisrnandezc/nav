@@ -17,10 +17,11 @@
         <!--main webpage content-->
         <header>
             <h1 id="header-h1">Simuladores de vuelo</h1>
-            <p>
+            <p id="header-p">
                 Nuestros simuladores avanzados te permitirán desarrollar 
                 habilidades de vuelo críticas en un entorno controlado.
             </p>
+            <a href="#final" class="cta-button">Agendar sesión</a>
         </header>
         <div class="slider-divisor"></div>
         <section class="simulator" id="sim1">
@@ -28,40 +29,47 @@
                 <!-- Additional required wrapper -->
                 <div class="swiper-wrapper">
                     <!-- Slides -->
-                    <div class="swiper-slide" id="first-slide">
-                        <h2>FSTD Level III 1</h2>
-                        <p>
-                            Descripción general del simulador.
-                        </p>
-                        <img class="slide-img" id="img-fstd-1" src="{% static 'img/sim/sim1.jpg' %}">
+                    <div class="swiper-slide" id="sim1-first-slide">
+                        <div class="info-container">
+                            <h2>FSTD Nivel III</h2>
+                            <p>
+                                En nuestro simulator táctil multipropósito podrás vivir una experiencia
+                                de simulación sin precedentes en el mercado venezolano.
+                            </p>
+                        </div>
                     </div>
-                    <div class="swiper-slide" id="second-slide">
-                        <h2>Aviónica garmin</h2>
-                        <p>
-                            Capacidad para entrenar con aviónica moderna.
-                        </p>
-                        <img class="slide-img" id="img-fstd-2" src="{% static 'img/sim/sim2.jpg' %}">
+                    <div class="swiper-slide" id="sim1-second-slide">
+                        <div class="info-container">
+                            <h2>Operación de múltiples equipos y sistemas</h2>
+                            <p>
+                                Entrena con diferentes aeronaves utilizando el sistema de aviónica de tu preferencia.
+                            </p>
+                        </div>
                     </div>
-                    <div class="swiper-slide" id="third-slide">
-                        <h2>Aviónica convencional</h2>
-                        <p>
-                            Capacidad para modelar múltiples equipos con aviónicas diferentes.
-                        </p>
-                        <img class="slide-img" id="img-fstd-3" src="{% static 'img/sim/sim3.jpg' %}">
+                    <div class="swiper-slide" id="sim1-third-slide">
+                        <div class="info-container">
+                            <h2>Modelo de vuelo realista</h2>
+                            <p>
+                                Vive una experiencia de simulación realista gracias a nuestro software de vuelo
+                                de última generación con "feedback force".
+                            </p>
+                        </div>
                     </div>
-                    <div class="swiper-slide" id="fourth-slide">
-                        <h2>Modelo de vuelo realista</h2>
-                        <p>
-                            Modelo de vuelo realista de última generación con "control feedback".
-                        </p>
-                        <img class="slide-img" id="img-fstd-4" src="{% static 'img/sim/sim4.jpg' %}">
+                    <div class="swiper-slide" id="sim1-fourth-slide">
+                        <div class="info-container">
+                            <h2>Entrenamiento simultáneo para dos pilotos</h2>
+                            <p>
+                                Entrena procedimientos en aeronaves de doble tripulación y obtén proeficiencia en CRM.
+                            </p>
+                        </div>
                     </div>
-                    <div class="swiper-slide" id="fifth-slide">
-                        <h2>Multicrew training</h2>
-                        <p>
-                            Capacidad para entrenar CRM.
-                        </p>
-                        <img class="slide-img" id="img-fstd-5" src="{% static 'img/sim/sim5.jpg' %}">
+                    <div class="swiper-slide" id="sim1-fifth-slide">
+                        <div class="info-container">
+                            <h2>Visual extraordinario</h2>
+                            <p>
+                                Practica operaciones visuales realistas gracias al modelo gráfico de alta fidelidad.
+                            </p>
+                        </div>
                     </div>
                 </div>
                 <!-- If we need pagination -->
@@ -72,6 +80,56 @@
             </div>
         </section>
         <div class="slider-divisor"></div>
+        <section class="simulator" id="sim2">
+            <div class="swiper">
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide" id="sim2-first-slide">
+                        <div class="info-container">
+                            <h2>Boeing 737-800</h2>
+                            <p>
+                                Contamos con el simulador de vuelo más avanzado de toda Venezuela.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="swiper-slide" id="sim2-second-slide">
+                        <div class="info-container">
+                            <h2>Réplica exacta de la cabina real</h2>
+                            <p>
+                                Familiarízate con el funcionamiento y operación de un jet comercial moderno.   
+                            </p>
+                        </div>
+                    </div>
+                    <div class="swiper-slide" id="sim2-third-slide">
+                        <div class="info-container">
+                            <h2>Entrenamiento CPT</h2>
+                            <p>
+                                Practica procedimientos de cabina en un entorno altamente realista.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="swiper-slide" id="sim2-fourth-slide">
+                        <div class="info-container">
+                            <h2>Sesiones para entusiastas</h2>
+                            <p>
+                                Lleva tu pasión por la aviación al siguiente nivel.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- If we need pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- If we need navigation buttons -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </section>
+        <div class="slider-divisor"></div>
+        <section class="simulator" id="final">
+            <h2 id="final-h2">Agenda tu sesión hoy</h2>
+            <a class="cta-button">Más información</a>
+        </section>
         <div class="slider-divisor"></div>
         <!--footer-->
         {% include 'website/footer.html' %}

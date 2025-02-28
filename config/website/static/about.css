@@ -48,6 +48,7 @@ html, body {
     background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/about/about1.jpg);
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
     justify-content: center;
     align-items: center;
     opacity: 0;
@@ -140,6 +141,7 @@ html, body {
     background-position: center;
     background-size: cover;
     background-repeat: repeat;
+    background-attachment: fixed;
     justify-content: center;
     align-items: center;
 }
@@ -166,6 +168,7 @@ html, body {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    background-attachment: fixed !important;
     justify-content: center;
     align-items: center;
 }
@@ -178,6 +181,7 @@ html, body {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    background-attachment: fixed !important;
     justify-content: center;
     align-items: center;
 }
@@ -190,6 +194,7 @@ html, body {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    background-attachment: fixed !important;
     justify-content: center;
     align-items: center;
 }
@@ -220,14 +225,11 @@ html, body {
     align-items: center;
     height: 8%;
     width: 35%;
-    /*background-color: rgba(20, 31, 53, 0.5);*/
     background-color: transparent;
     backdrop-filter: blur(7.5px);
-    margin-left: auto;
-    margin-right: 75px;
-    margin-bottom: 125px;
-    margin-top: auto;
     border: solid 0.75px #e84728;
+    margin-top: auto;
+    margin-bottom: 100px;
 }
 
 .blurry-header {
@@ -260,6 +262,7 @@ html, body {
     background-position: center;
     background-size: cover;
     background-repeat: repeat;
+    background-attachment: fixed;
 }
 
 #fleet-description {

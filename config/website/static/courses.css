@@ -53,48 +53,117 @@ html, body {
     }
 }
 
+/* #region General styles */
 .slider-divisor {
     height: 1px;
-    background-color: rgb(232, 71, 40);
+    background-color: #e84728;
+}
+
+.highlight {
+    color: #e84728;
+    line-height: inherit;
+    font-size: inherit;  
+    letter-spacing: inherit;
 }
 
 .content-section {
     display: flex;
     flex-direction: column;
     position: relative;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/courses/courses2.jpg);
-    background-size: cover;
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.content-section#section-1 {
+.header-h1 {
+    text-align: center;
+    width: 85%;
+    letter-spacing: 5px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    font-size: 3.0rem;
+}
+/*#endregion*/
+
+/*#region Buttons */
+.cta-button {
+    display: inline-block;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    padding: 0.8rem 1.5rem;
+    background: #e84728;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    letter-spacing: 5px;
+}
+
+.cta-button:hover {
+    background: #ff934c;
+    cursor: pointer;
+}
+
+.course-button {
+    font-size: 1.0rem;
+    margin: 0px;
+    padding: 10px;
+    border: 0px solid #ffffff;
+    background-color: rgba(0, 0, 0, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 3.0px;
+    transition: 0.3s;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 40%;
+    justify-content: center;
+    align-items: center;
+}
+
+.course-button:hover {
+    background-color: #e84728;
+    color: #ffffff;
+    border: 0px solid #ffffff;
+}
+/*#endregion*/
+
+/* #region Header section */
+header {
+    background: linear-gradient(rgba(20, 31, 53, 0.6), rgba(20, 31, 53, 0.6)), url(./img/courses/courses2.jpg);
+    background-size: cover;
+    opacity: 0;
+    animation: fadeIn 1.0s ease-in forwards;
+}
+
+#header-p {
+    text-align: center;
+    width: 85%;
+    letter-spacing: 5px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+#header-h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+    text-align: center;
+}
+
+#header-p {
+    font-size: 0.75rem;
+    letter-spacing: 1.75px;
+}
+/*#endregion*/
+
+/* #region Specific styles */
+#section-1 {
     justify-content: center;
     align-items: center;
     height: 100vh;
     animation: fadeIn 1.0s ease-in forwards;
-}
-
-.header-img {
-    width: auto;
-    height: 40vh;
-}
-
-#top-header {
-    font-size: 1.25rem;
-    margin: 50px;
-    text-align: center;
-    line-height: 100px;
-}
-
-.header-description {
-    font-size: 3.0rem;
-}
-
-.content-section#section-2 {
-    height: 100%;
 }
 
 .course-slide {
@@ -102,9 +171,48 @@ html, body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0);
     height: 100vh;
     opacity: 1;
+}
+
+#pp-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/courses/courses3.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#hvi-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/courses/courses4.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#pc-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/courses/courses5.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#tla-slide {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/courses/courses6.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#specials {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/courses/courses7.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .scrolled.slide-left {
@@ -124,6 +232,7 @@ html, body {
     transition: opacity 3.0s;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 25px;
+    backdrop-filter: blur(5px);
 }
 
 .course-box.scrolled {
@@ -138,7 +247,7 @@ html, body {
 }
 
 .course-title {
-    color: #247AFD;
+    color: #dadada;
     font-size: 2.0rem;
     letter-spacing: 3px;
     margin: 25px 0px 25px 0px;
@@ -162,38 +271,15 @@ ul.course-bullets, li.course-bullet {
     width: 100%;
 }
 
-.course-button {
-    font-size: 1.0rem;
-    margin: 0px;
-    padding: 10px;
-    border: 0px solid #ffffff;
-    background-color: rgba(0, 0, 0, 0.25);
-    text-transform: uppercase;
-    letter-spacing: 3.0px;
-    transition: 0.3s;
-    cursor: pointer;
-    border-radius: 5px;
-    width: 40%;
-    justify-content: center;
-    align-items: center;
-}
-
-.course-button:hover {
-    background-color: rgb(232, 71, 40);
-    color: #ffffff;
-    border: 0px solid #ffffff;
-}
-
 .scrolled.slide-right {
     animation: slide-in-right 1.0s ease-in-out both;
 }
 
-.highlight {
-    color: #247AFD;
-    line-height: inherit;
-    font-size: inherit;  
-    letter-spacing: inherit;
+#final {
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/courses/courses7.jpg);
+    background-size: cover;
 }
+/*#endregion*/
 
 /* main webpage responsive design */
 @media screen and (max-width: 1200px) {
@@ -218,9 +304,22 @@ ul.course-bullets, li.course-bullet {
 
 @media screen and (max-width: 850px) {
 
-    .header-img {
-        width: auto;
-        height: 25vh;
+    .header-h1 {
+        font-size: 5.0rem;
+    }
+
+    #header-h2 {
+        font-size: 3.0rem;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    #header-p {
+        font-size: 2.0rem;
+    }
+
+    .cta-button {
+        font-size: 3.0rem;
     }
 
     .course-box {
@@ -247,20 +346,7 @@ ul.course-bullets, li.course-bullet {
 
 @media screen and (max-width: 550px) {
 
-    .header-img {
-        width: auto;
-        height: 10vh;
-    }
-
-    #top-header {
-        font-size: 2.5rem;
-    }
-
     .course-title {
-        font-size: 2.5rem;
-    }
-
-    .header-description {
         font-size: 2.5rem;
     }
 

@@ -206,6 +206,7 @@ p {
 
 .cta-button:hover {
     background: #ff934c;
+    cursor: pointer;
 }
 
 /* Responsive design */

@@ -14,100 +14,105 @@
         <!--navbar-->
         {% include 'website/navbar.html' %}
         <!--main webpage content-->
-        <div class="main-container">
-            <div class="content-section" id="section-1">
-                <img class="header-img" src="{% static 'img/courses/courses1.png' %}">
-                <h3 id="top-header">Tu futuro en la aviación empieza <span class="header-description highlight">aquí</span></h3>
-            </div>
-            <div class="slider-divisor"></div>
-            <div class="content-section" id="section-2">
-                <div class="course-slide" id="pp-slide">
-                    <div class="course-box slide-right">
-                        <div class="info-container">
-                            <h1 class="course-title">Piloto privado (PP)</h1>
-                            <p class="course-description">
-                                Vuela por <span class="course-description highlight">placer</span> y 
-                                disfruta de la aviación <span class="course-description highlight">recreativa</span>.
-                                <ul class="course-bullets">
-                                    <li class="course-bullet">13 materias</li>
-                                    <li class="course-bullet">300 horas académicas</li>
-                                    <li class="course-bullet">4 horas de simulador</li>
-                                    <li class="course-bullet">40 horas de vuelo</li>
-                                </ul>
-                            </p>
-                            <button class="course-button">Más información</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="slider-divisor"></div>
-                <div class="course-slide" id="hvi-slide">
-                    <div class="course-box slide-right">
-                        <h1 class="course-title">Vuelo Instrumental (HVI)</h1>
-                        <p class="course-description">
-                            Desbloquea nuevos <span class="course-description highlight">horizontes</span> y 
-                            transforma tu <span class="course-description highlight">experiencia</span> de vuelo.
-                            <ul class="course-bullets">
-                                <li class="course-bullet">7 materias</li>
-                                <li class="course-bullet">70 horas académicas</li>
-                                <li class="course-bullet">20 horas de simulador</li>
-                                <li class="course-bullet">20 horas de vuelo</li>
-                            </ul>
-                        </p>
-                        <button class="course-button">Más información</button>
-                    </div>
-                </div>
-                <div class="slider-divisor"></div>
-                <div class="course-slide" id="pc-slide">
-                    <div class="course-box slide-right">
-                        <h1 class="course-title">Piloto comercial (PC)</h1>
-                        <p class="course-description">
-                            Transforma tu <span class="course-description highlight">pasión</span>
-                                por volar en una carrera <span class="course-description highlight">profesional</span>.
-                            <ul class="course-bullets">
-                                <li class="course-bullet">9 materias</li>
-                                <li class="course-bullet">170 horas académicas</li>
-                                <li class="course-bullet">X horas de simulador</li>
-                                <li class="course-bullet">X horas de vuelo</li>
-                            </ul>
-                        </p>
-                        <button class="course-button">Más información</button>
-                    </div>
-                </div>
-                <div class="slider-divisor"></div>
-                <div class="course-slide" id="tla-slide">
-                    <div class="course-box slide-right">
-                        <h1 class="course-title">Piloto de Línea Aérea (TLA)</h1>
-                        <p class="course-description">
-                            Inicia tu carrera <span class="course-description highlight">profesional</span> 
-                            como Piloto de <span class="course-description highlight">Línea Aérea</span>.
-                            <ul class="course-bullets">
-                                <li class="course-bullet">7 materias</li>
-                                <li class="course-bullet">100 horas académicas</li>
-                                <li class="course-bullet">X horas de simulador</li>
-                                <li class="course-bullet">X horas de vuelo</li>
-                            </ul>
-                        </p>
-                        <button class="course-button">Más información</button>
-                    </div>
-                </div>
-                <div class="slider-divisor"></div>
-                <div class="course-slide" id="tla-slide">
-                    <div class="course-box slide-right">
-                        <h1 class="course-title">Cursos especiales</h1>
-                        <p class="course-description">
-                            En NAV estamos capacitados para dictar cursos <span class="course-description highlight">especializados</span> 
-                            y adaptados a tus <span class="course-description highlight">necesidades</span>.
-                            <ul class="course-bullets">
-                                <li class="course-bullet">PBN</li>
-                                <li class="course-bullet">RVSM</li>
-                                <li class="course-bullet">UPRT</li>
-                                <li class="course-bullet">Habilitaciones en equipos</li>
-                            </ul>
-                        </p>
-                        <button class="course-button">Más información</button>
-                    </div>
+        <header class="content-section" id="header">
+            <h1 class="header-h1">Nuestros cursos</h1>
+            <h2 id="header-h2">Tu futuro en la aviación empieza aquí</h2>
+            <p id="header-p">
+                Nuestros programas de entrenamiento están cuidadosamente diseñados para brindarte
+                una formación integral y efectiva.
+            </p>
+            <a class="cta-button">Inscríbete</a>
+        </header>
+        <div class="slider-divisor"></div>
+        <div class="course-slide" id="pp-slide">
+            <div class="course-box slide-right">
+                <div class="info-container">
+                    <h1 class="course-title">Piloto privado (PP)</h1>
+                    <p class="course-description">
+                        Vuela por <span class="course-description highlight">placer</span> y 
+                        disfruta de la aviación <span class="course-description highlight">recreativa</span>.
+                        <ul class="course-bullets">
+                            <li class="course-bullet">13 materias</li>
+                            <li class="course-bullet">300 horas académicas</li>
+                            <li class="course-bullet">4 horas de simulador</li>
+                            <li class="course-bullet">40 horas de vuelo</li>
+                        </ul>
+                    </p>
+                    <button class="course-button">Más información</button>
                 </div>
             </div>
+        </div>
+        <div class="slider-divisor"></div>
+        <div class="course-slide" id="hvi-slide">
+            <div class="course-box slide-right">
+                <h1 class="course-title">Vuelo Instrumental (HVI)</h1>
+                <p class="course-description">
+                    Desbloquea nuevos <span class="course-description highlight">horizontes</span> y 
+                    transforma tu <span class="course-description highlight">experiencia</span> de vuelo.
+                    <ul class="course-bullets">
+                        <li class="course-bullet">7 materias</li>
+                        <li class="course-bullet">70 horas académicas</li>
+                        <li class="course-bullet">20 horas de simulador</li>
+                        <li class="course-bullet">20 horas de vuelo</li>
+                    </ul>
+                </p>
+                <button class="course-button">Más información</button>
+            </div>
+        </div>
+        <div class="slider-divisor"></div>
+        <div class="course-slide" id="pc-slide">
+            <div class="course-box slide-right">
+                <h1 class="course-title">Piloto comercial (PC)</h1>
+                <p class="course-description">
+                    Transforma tu <span class="course-description highlight">pasión</span>
+                        por volar en una carrera <span class="course-description highlight">profesional</span>.
+                    <ul class="course-bullets">
+                        <li class="course-bullet">9 materias</li>
+                        <li class="course-bullet">170 horas académicas</li>
+                        <li class="course-bullet">Simulador a convenir</li>
+                    </ul>
+                </p>
+                <button class="course-button">Más información</button>
+            </div>
+        </div>
+        <div class="slider-divisor"></div>
+        <div class="course-slide" id="tla-slide">
+            <div class="course-box slide-right">
+                <h1 class="course-title">Piloto de Línea Aérea (TLA)</h1>
+                <p class="course-description">
+                    Inicia tu carrera <span class="course-description highlight">profesional</span> 
+                    como Piloto de <span class="course-description highlight">Línea Aérea</span>.
+                    <ul class="course-bullets">
+                        <li class="course-bullet">7 materias</li>
+                        <li class="course-bullet">100 horas académicas</li>
+                    </ul>
+                </p>
+                <button class="course-button">Más información</button>
+            </div>
+        </div>
+         <div class="slider-divisor"></div>
+        <div class="course-slide" id="specials">
+            <div class="course-box slide-right">
+                <h1 class="course-title">Cursos especiales</h1>
+                <p class="course-description">
+                    En NAV estamos capacitados para dictar cursos <span class="course-description highlight">especializados</span> 
+                    y adaptados a tus <span class="course-description highlight">necesidades</span>.
+                    <ul class="course-bullets">
+                        <li class="course-bullet">PBN</li>
+                        <li class="course-bullet">RVSM</li>
+                        <li class="course-bullet">UPRT</li>
+                        <li class="course-bullet">Habilitaciones en equipos</li>
+                    </ul>
+                </p>
+                <button class="course-button">Más información</button>
+            </div>
+        </div>
+        </div>
+        <div class="slider-divisor"></div>
+        <div class="content-section" id="final">
+            <h1 class="header-h1" id="final-h2">Inicia hoy tu camino en la aviación</h1>
+            <a class="cta-button">Más información</a>
+        </div>
         <div class="slider-divisor"></div>
         <!--footer-->
         {% include 'website/footer.html' %}

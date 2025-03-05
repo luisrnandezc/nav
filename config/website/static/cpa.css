@@ -101,7 +101,7 @@ header, section {
 
 /* #region Header section */
 header {
-    background: linear-gradient(rgba(20, 31, 53, 0.85), rgba(20, 31, 53, 0.85)), url(./img/cpa/cpa1.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/cpa/cpa1.jpg);
     background-size: cover;
     opacity: 0;
     animation: fadeIn 1.0s ease-in forwards;
@@ -127,25 +127,25 @@ header {
 
 /*#region Main sections */
 #overview {
-    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa/cpa2.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.85), rgba(20, 31, 53, 0.85)), url(./img/cpa/cpa2.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
 #why-choose {
-    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa/cpa3.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.85), rgba(20, 31, 53, 0.85)), url(./img/cpa/cpa3.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 #who-for {
-    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa/cpa4.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.85), rgba(20, 31, 53, 0.85)), url(./img/cpa/cpa4.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
 }
 #enroll {
-    background: linear-gradient(rgba(20, 31, 53, 0.9), rgba(20, 31, 53, 0.9)), url(./img/cpa/cpa5.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.85), rgba(20, 31, 53, 0.85)), url(./img/cpa/cpa5.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -191,6 +191,7 @@ header {
     padding: 20px;
     background-color: rgba(20, 31, 53, 0.75);
     border-radius: 30px;
+    border: 1px solid #e84728;
     width: 100%;
 }
 
@@ -214,6 +215,7 @@ header {
     padding: 15px;
     background-color: rgba(20, 31, 53, 0.75);
     border-radius: 30px;
+    border: 1px solid #e84728;
     width: 100%;
 }
 /*#endregion*/
@@ -276,7 +278,7 @@ header {
     }
 
     .cta-button {
-        font-size: 1.5rem;
+        font-size: 3.0rem;
     }
 
     #header-h1 {

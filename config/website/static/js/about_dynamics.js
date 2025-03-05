@@ -16,7 +16,7 @@ function updateBackgrounds() {
         const direction = index % 2 === 0 ? 1 : -1;
 
         // additional offset for the first div (move it slightly to the left)
-        const extraOffset = index === 0 ? -75 : 0; // adjust the first background 50px to the left
+        const extraOffset = index === 0 ? -0 : 0; // adjust the first background 50px to the left
 
         // apply the momentum offset with direction and additional offset
         const horizontalMovement = (momentumOffset + (scrollPosition - lastScrollY) * 0.1 + extraOffset) * direction;
@@ -29,7 +29,7 @@ function updateBackgrounds() {
 function smoothScrollEffect() {
     if (isScrolling) {
         // calculate the velocity based on the scroll delta
-        velocity = (scrollPosition - lastScrollY) * 0.1;
+        velocity = (scrollPosition - lastScrollY) * 0.05;
         momentumOffset += velocity; // update momentum offset with current velocity
         lastScrollY = scrollPosition; // update last scroll position
         updateBackgrounds();

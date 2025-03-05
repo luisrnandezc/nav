@@ -136,7 +136,7 @@ html, body {
     background-repeat: repeat;
 }
 
-#section-3 {
+#section-2 {
     background: linear-gradient(to left, rgba(20, 31, 53) 30%, rgba(20, 31, 53, 0.75)), url(./img/about/about5.jpg);
     background-position: center;
     background-size: cover;

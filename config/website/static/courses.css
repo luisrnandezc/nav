@@ -21,7 +21,7 @@ html, body {
     background-color:#000000;
 }
 
-/* main webpage content */
+/*#region Main page content */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -53,7 +53,7 @@ html, body {
     }
 }
 
-/* #region General styles */
+/*#region General styles */
 .slider-divisor {
     height: 1px;
     background-color: #e84728;
@@ -130,7 +130,7 @@ html, body {
 }
 /*#endregion*/
 
-/* #region Header section */
+/*#region Header section */
 header {
     background: linear-gradient(rgba(20, 31, 53, 0.6), rgba(20, 31, 53, 0.6)), url(./img/courses/courses2.jpg);
     background-size: cover;
@@ -158,7 +158,7 @@ header {
 }
 /*#endregion*/
 
-/* #region Specific styles */
+/*#region Specific styles */
 #section-1 {
     justify-content: center;
     align-items: center;
@@ -281,7 +281,9 @@ ul.course-bullets, li.course-bullet {
 }
 /*#endregion*/
 
-/* main webpage responsive design */
+/*#endregion*/
+
+/* #region Responsive design */
 @media screen and (max-width: 1200px) {
 
     .course-title {
@@ -374,3 +376,4 @@ ul.course-bullets, li.course-bullet {
         width: 50%;
     }
 }
+/*#endregion*/

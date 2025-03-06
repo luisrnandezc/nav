@@ -142,7 +142,7 @@ class FlightLog(models.Model):
 
     session_number = models.CharField(
         max_length=3,
-        choices=generate_choices,
+        choices=generate_choices(),
         default='1',
     )
 
@@ -365,7 +365,7 @@ class FlightEvaluation(models.Model):
 
     session_number = models.CharField(
         max_length=3,
-        choices=generate_choices,
+        choices=generate_choices(),
         default='1',
     )
 

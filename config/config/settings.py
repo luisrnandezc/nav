@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -119,7 +120,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# Base directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Static files settings
+STATIC_URL = '/static/'
+
+# Directory where collectstatic will place all static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Directories where Django will look for static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'accounts', 'static'),
+    os.path.join(BASE_DIR, 'dashboard', 'static'),
+    os.path.join(BASE_DIR, 'fms', 'static'),
+    os.path.join(BASE_DIR, 'website', 'static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

@@ -170,12 +170,13 @@ button {
     }
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 980px) {
 
     #first {
         background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(./img/index/index6.jpg);
         background-size: cover;
         background-repeat: no-repeat;
+        background-position: center;
     }
 
     .main-header {

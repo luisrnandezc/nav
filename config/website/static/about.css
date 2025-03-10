@@ -44,7 +44,8 @@ span.dots {
     display: flex;
     flex-direction: column;
     position: relative;
-    height: 100%;
+    height: auto;
+    min-height: 100vh;
     background-color: #000000;
 }
 
@@ -78,8 +79,8 @@ span.dots {
 .about-content {
     display: flex;
     flex-direction: row;
+    height: 33.3vh !important;
     width: 100%;
-    height: 100vh;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -162,6 +163,10 @@ span.dots {
 
 #section-4 {
     z-index: 0;
+    background-position: center !important;
+    background-size: cover !important;
+    background-repeat: repeat !important;
+    background-attachment: fixed !important;
 }
 
 #first-slide {
@@ -205,7 +210,6 @@ span.dots {
 
 .swiper {
     width: 100%;
-    height: 100%; /* Adjust height as needed */
     margin: auto;
 }
   
@@ -215,6 +219,8 @@ span.dots {
     align-items: center !important;
     object-fit: cover;
     position: relative;
+    height: auto;
+    min-height: 100vh;
 }
 
 .swiper-button-next,
@@ -231,7 +237,8 @@ span.dots {
     width: 35%;
     background-color: transparent;
     backdrop-filter: blur(7.5px);
-    border: solid 0.75px #e84728;
+    border-top: solid 0.75px #e84728;
+    border-bottom: solid 0.75px #e84728;
     margin-top: auto;
     margin-bottom: 100px;
 }
@@ -338,8 +345,6 @@ ul li {
 
     .blurry-box {
         width: 40%;
-        margin-left: auto;
-        margin-right: 75px;
     }
 
     #viewer-container {
@@ -384,9 +389,7 @@ ul li {
     }
 
     .blurry-box {
-        width: 70%;
-        margin-left: auto;
-        margin-right: 75px;
+        width: 60%;
     }
 
     .blurry-header {

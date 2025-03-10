@@ -72,7 +72,8 @@ html, body {
     position: relative;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: auto;
+    min-height: 100vh;
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;

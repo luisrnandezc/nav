@@ -37,6 +37,10 @@ html, body {
     background-color: #e84728;
 }
 
+span.dots {
+    font-weight: bold;
+}
+
 header, section {
     height: 100vh;
     display: flex;

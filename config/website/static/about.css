@@ -36,6 +36,10 @@ html, body {
     background-color: #e84728;
 }
 
+span.dots {
+    font-weight: bold;
+}
+
 .content-section {
     display: flex;
     flex-direction: column;

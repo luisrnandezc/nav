@@ -18,7 +18,7 @@
             <div class="inner-bottom">
                 <h1 class="main-header"><span class="main-header" style="color: rgb(232, 71, 40);">NAV </span>Aviation Academy</h1>
                 <p class="header-description" id="first-description">Más alto, más lejos</p>
-                <button class="button">Conócenos</button>
+                <button class="button" onclick=window.location.href="{% url 'about' %}">Conócenos</button>
             </div>
         </div>
         <div class="slider-divisor"></div>
@@ -26,13 +26,13 @@
             <div class="inner-bottom">
                 <h1 class="main-header">Cursos</h1>
                 <div class="inline-buttons">
-                    <button class="inline-button" id="b1">PP</button>
+                    <button class="inline-button" id="b1" onclick=window.location.href="{% url 'courses' %}#pp-slide">PP</button>
                     <div class="inline-separator"></div>
-                    <button class="inline-button" id="b2">HVI</button>
+                    <button class="inline-button" id="b2" onclick=window.location.href="{% url 'courses' %}#hvi-slide">HVI</button>
                     <div class="inline-separator"></div>
-                    <button class="inline-button" id="b3">PC</button>
+                    <button class="inline-button" id="b3" onclick=window.location.href="{% url 'courses' %}#pc-slide">PC</button>
                     <div class="inline-separator"></div>
-                    <button class="inline-button" id="b4">TLA</button>
+                    <button class="inline-button" id="b4" onclick=window.location.href="{% url 'courses' %}#tla-slide">TLA</button>
                 </div>
                 <button class="button" onclick="window.open('https://wa.me/584242360119', '_blank')">Inscríbete</button>
             </div>
@@ -41,11 +41,11 @@
             <div class="inner-bottom">
                 <h1 class="main-header">Simuladores</h1>
                 <div class="inline-buttons">
-                    <button class="inline-button" id="b1">FSTD Nivel III</button>
+                    <button class="inline-button" id="b1" onclick=window.location.href="{% url 'sim' %}#sim1">FSTD Nivel III</button>
                     <div class="inline-separator"></div>
-                    <button class="inline-button" id="b2">737-800</button>
+                    <button class="inline-button" id="b2" onclick=window.location.href="{% url 'sim' %}#sim2">737-800</button>
                 </div>
-                <button class="button">Entrena</button>
+                <button class="button" onclick=window.location.href="{% url 'sim' %}">Entrena</button>
             </div>
         </div>
         <div class="slider-divisor"></div>
@@ -53,11 +53,11 @@
             <div class="inner-bottom">
                 <h1 class="main-header">Cursos especiales</h1>
                 <div class="inline-buttons">
-                    <button class="inline-button" id="b5">PBN</button>
+                    <button class="inline-button" id="b5" onclick=window.location.href="{% url 'courses' %}#specials">PBN</button>
                     <div class="inline-separator"></div>
-                    <button class="inline-button" id="b6">RVSM</button>
+                    <button class="inline-button" id="b6" onclick=window.location.href="{% url 'courses' %}#specials">RVSM</button>
                     <div class="inline-separator"></div>
-                    <button class="inline-button" id="b7">UPRT</button>
+                    <button class="inline-button" id="b7" onclick=window.location.href="{% url 'courses' %}#specials">UPRT</button>
                 </div>
                 <button class="button" onclick="window.open('https://wa.me/584242360119', '_blank')">Saber más</button>
             </div>
@@ -67,7 +67,7 @@
             <div class="inner-bottom">
                 <h1 class="main-header">CPA</h1>
                 <p class="header-description">Curso Propedéutico Aeronáutico</p>
-                <button class="button" onclick="window.open('https://wa.me/584242360119', '_blank')">Saber más</button>              
+                <button class="button" onclick=window.location.href="{% url 'cpa' %}">Saber más</button>              
             </div>
         </div>
         <div class="slider-divisor"></div>

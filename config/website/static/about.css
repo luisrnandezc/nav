@@ -209,16 +209,23 @@ span.dots {
 }
 
 .swiper {
+    display: flex;
+    align-items: center;
     width: 100%;
     margin: auto;
 }
 
+.swiper-wrapper {
+    display: flex;
+    align-items: center;
+}
+
 .swiper-slide {
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: row;
     justify-content: center !important;
     align-items: center !important;
-    position: relative;
+    position: relative !important;
     height: auto;
     min-height: 100vh;
 }
@@ -400,9 +407,8 @@ ul li {
     }
 
     .performance-box {
-        min-height: 80vh;
-        height: 80vh;
-        width: 75%;
+        justify-content: center !important;
+        width: 65%;
         margin: 25px;
     }
 

@@ -7,10 +7,12 @@ const light_1 = new THREE.AmbientLight(0xffffff, 5);
 const light_2 = new THREE.AmbientLight(0xffffff, 5);
 
 // Scene creation
-const container_1 = document.getElementById('viewer-container-1');
-const container_2 = document.getElementById('viewer-container-2');
-const canvas_1 = document.getElementById('3d-viewer-1');
-const canvas_2 = document.getElementById('3d-viewer-2');
+//const container_1 = document.getElementById('viewer-container-1');
+//const container_2 = document.getElementById('viewer-container-2');
+const container_1 = document.getElementById('model-viewer-1');
+const container_2 = document.getElementById('model-viewer-2');
+const canvas_1 = document.getElementById('model-viewer-1');
+const canvas_2 = document.getElementById('model-viewer-2');
 const renderer_1 = new THREE.WebGLRenderer({ canvas: canvas_1, alpha: true }); // alpha = true for transparent background.
 const renderer_2 = new THREE.WebGLRenderer({ canvas: canvas_2, alpha: true }); // alpha = true for transparent background.
 renderer_1.setClearColor(0x000000, 0);
@@ -48,6 +50,7 @@ const loader = new GLTFLoader();
 
 loader.load(modelPath, function ( gltf ) {
     model_1 = gltf.scene;
+    model_1.position.y += 1;
 	scene_1.add(model_1);
 }, undefined, function ( error ) {
 	console.error( error );
@@ -55,6 +58,7 @@ loader.load(modelPath, function ( gltf ) {
 
 loader.load(modelPath, function ( gltf ) {
     model_2 = gltf.scene;
+    model_2.position.y += 1;
 	scene_2.add(model_2);
 }, undefined, function ( error ) {
 	console.error( error );
@@ -69,7 +73,10 @@ renderer_2.setAnimationLoop( () => animate(model_2, renderer_2, scene_2, camera_
 function resizeRendererToContainer(container, renderer, camera) {
     const width = container.clientWidth;
     const height = container.clientHeight;
-    renderer.setSize(width, height); // Match canvas size to div
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio); 
+    renderer.domElement.style.width = "65%";
+    renderer.domElement.style.height = "90vh";
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 }

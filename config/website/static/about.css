@@ -332,8 +332,20 @@ canvas {
 }
 
 ul li {
-    font-size: 0.85rem;
-    letter-spacing: 3.0px;
+    display: flex;
+    flex-direction: row;
+    letter-spacing: 1.5px;
+
+}
+
+.performance-field, .performance-value {
+    font-size: 1.0rem;
+    letter-spacing: 1.0px;
+    margin: 0px;
+}
+
+.performance-field {
+    margin-right: 5px !important;
 }
 
 .highlight {
@@ -360,7 +372,7 @@ ul li {
     }
 
     .performance-box {
-        width: 35%;
+        width: 40%;
     }
 }
 
@@ -426,9 +438,12 @@ ul li {
     }
 
     ul li {
+        line-height: 50px;
+    }
+
+    .performance-field, .performance-value {
         font-size: 1.5rem;
-        letter-spacing: 3.0px;
-        line-height: 40px;
+        margin: 0px;
     }
 }
 
@@ -499,5 +514,27 @@ ul li {
         letter-spacing: 1.0px !important;
         width: 75vw !important;
         line-height: 5.0rem !important;
+    }
+
+    .performance-box {
+        min-height: 70vh;
+    }
+
+    ul li {
+        flex-direction: column;
+    }
+
+    .performance-field, .performance-value {
+        font-size: 3.0rem;
+        text-align: center;
+        line-height: 25px;
+    }
+
+    .performance-field {
+        margin-bottom: 5px !important;
+    }
+
+    .performance-value {
+        margin-bottom: 25px !important;
     }
 }

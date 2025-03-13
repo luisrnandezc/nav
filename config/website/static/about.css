@@ -521,6 +521,10 @@ ul li {
         min-height: 60vh;
     }
 
+    .performance-list {
+        padding: 0px;
+    }
+
     ul li {
         flex-direction: column;
     }

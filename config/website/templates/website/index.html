@@ -15,17 +15,17 @@
         {% include 'website/navbar.html' %}
         <!--main webpage content-->
         <div class="slides" id="first">
-            <div class="inner-bottom">
+            <div class="info-container">
                 <h1 class="main-header"><span class="main-header" style="color: rgb(232, 71, 40);">NAV </span>Aviation Academy</h1>
-                <p class="header-description" id="first-description">Más alto, más lejos</p>
+                <p class="sub-header">Más alto, más lejos</p>
                 <button class="button" onclick=window.location.href="{% url 'about' %}">Conócenos</button>
             </div>
         </div>
         <div class="slider-divisor"></div>
         <div class="slides" id="second">
-            <div class="inner-bottom">
+            <div class="info-container">
                 <h1 class="main-header">Cursos</h1>
-                <div class="inline-buttons">
+                <div class="sub-header">
                     <button class="inline-button" id="b1" onclick=window.location.href="{% url 'courses' %}#pp-slide">PP</button>
                     <div class="inline-separator"></div>
                     <button class="inline-button" id="b2" onclick=window.location.href="{% url 'courses' %}#hvi-slide">HVI</button>
@@ -39,9 +39,9 @@
         </div>
         <div class="slider-divisor" id="hidden-divisor"></div>
         <div class="slides" id="third">
-            <div class="inner-bottom">
+            <div class="info-container">
                 <h1 class="main-header">Simuladores</h1>
-                <div class="inline-buttons">
+                <div class="sub-header">
                     <button class="inline-button" id="b1" onclick=window.location.href="{% url 'sim' %}#sim1">FSTD Nivel III</button>
                     <div class="inline-separator"></div>
                     <button class="inline-button" id="b2" onclick=window.location.href="{% url 'sim' %}#sim2">737-800</button>
@@ -51,9 +51,9 @@
         </div>
         <div class="slider-divisor"></div>
         <div class="slides" id="fourth">
-            <div class="inner-bottom">
+            <div class="info-container">
                 <h1 class="main-header">Cursos especiales</h1>
-                <div class="inline-buttons">
+                <div class="sub-header">
                     <button class="inline-button" id="b5" onclick=window.location.href="{% url 'courses' %}#specials">PBN</button>
                     <div class="inline-separator"></div>
                     <button class="inline-button" id="b6" onclick=window.location.href="{% url 'courses' %}#specials">RVSM</button>
@@ -65,9 +65,9 @@
         </div>
         <div class="slider-divisor"></div>
         <div class="slides" id="fifth">
-            <div class="inner-bottom">
+            <div class="info-container">
                 <h1 class="main-header">CPA</h1>
-                <p class="header-description">Curso Propedéutico Aeronáutico</p>
+                <p class="sub-header" id="cpa-sub-header">Curso Propedéutico Aeronáutico</p>
                 <button class="button" onclick=window.location.href="{% url 'cpa' %}">Saber más</button>              
             </div>
         </div>

@@ -543,3 +543,101 @@ ul li {
         margin-bottom: 15px !important;
     }
 }
+
+@media screen and (orientation: landscape) {
+
+    html, body {
+        background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/mobile/mobile3.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    .content-section {
+        background: transparent !important;
+    }
+
+    .about-content {
+        background: transparent !important;
+    }
+
+    .header1 {
+        font-size: 5.0rem;
+    }
+
+    .sub-header {
+        font-size: 3.0rem;
+        margin: 10px 0px 10px 0px;
+    }
+
+    #section-2 {
+        display: none;
+    }
+
+    .about-title {
+        width: 100%;
+        margin: 0px;
+    }
+
+    .about-header {
+        font-size: 3.0rem;
+        text-align: center;
+        margin: 0px;
+    }
+
+    p {
+        font-size: 1.5rem;
+        margin: 0px;
+    }
+
+    .blurry-box {
+        width: 50%;
+    }
+
+    .blurry-header {
+        font-size: 2.0rem;
+    }
+
+    #fleet-title-h1 {
+        margin-bottom: 10px;
+    }
+
+    #fleet-title {
+        font-size: 3.0rem;
+    }
+
+    p.fadein-p {
+        font-size: 1.5rem !important;
+        letter-spacing: 1.0px !important;
+        width: 75vw !important;
+        line-height: 5.0rem !important;
+    }
+
+    .performance-box {
+        width: 75%;
+        min-height: 60vh;
+    }
+
+    .performance-list {
+        padding: 0px;
+    }
+
+    ul li {
+        flex-direction: column;
+    }
+
+    .performance-field, .performance-value {
+        font-size: 2.5rem;
+        text-align: center;
+        line-height: 20px;
+    }
+
+    .performance-field {
+        margin-bottom: 0px !important;
+    }
+
+    .performance-value {
+        margin-bottom: 15px !important;
+    }
+}

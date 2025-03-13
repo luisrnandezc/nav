@@ -346,6 +346,15 @@ ul li {
 /* main webage responsive design */
 @media screen and (max-width: 1200px) {
 
+    .about-title {
+        margin: 0px;
+    }
+
+    .about-header {
+        text-align: center;
+        margin: 0px;
+    }
+
     .blurry-box {
         width: 40%;
     }
@@ -396,10 +405,14 @@ ul li {
         flex-direction: row;
     }
 
-    #fleet-description * {
+    #fleet-title {
+        font-size: 3.0rem;
+    }
+
+    p.fadein-p {
         font-size: 1.25rem !important;
         width: 75vw !important;
-        line-height: 7.0rem !important;
+        line-height: 5.0rem !important;
     }
 
     canvas {
@@ -416,5 +429,75 @@ ul li {
         font-size: 1.5rem;
         letter-spacing: 3.0px;
         line-height: 40px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    html, body {
+        background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/mobile/mobile3.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    .content-section {
+        background: transparent !important;
+    }
+
+    .about-content {
+        background: transparent !important;
+    }
+
+    .header1 {
+        font-size: 10.0rem;
+    }
+
+    .sub-header {
+        font-size: 5.0rem;
+    }
+
+    #section-2 {
+        display: none;
+    }
+
+    .about-title {
+        width: 100%;
+        margin: 0px;
+    }
+
+    .about-header {
+        font-size: 6.0rem;
+        text-align: center;
+        margin: 0px;
+    }
+
+    p {
+        font-size: 3.0rem;
+        margin: 0px;
+    }
+
+    .blurry-box {
+        width: 85%;
+    }
+
+    .blurry-header {
+        font-size: 3.0rem;
+    }
+
+    #fleet-title-h1 {
+        margin-bottom: 25px;
+    }
+
+    #fleet-title {
+        font-size: 4.0rem;
+    }
+
+    p.fadein-p {
+        font-size: 3.0rem !important;
+        letter-spacing: 1.0px !important;
+        width: 75vw !important;
+        line-height: 5.0rem !important;
     }
 }

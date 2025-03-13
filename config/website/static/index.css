@@ -32,77 +32,77 @@ html, body {
 }
 
 .slides {
-    position: relative;
-    width: 100%;
-    height: auto;
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-size: cover;
-    background-position: center;
+    position: relative;
+    width: 100%;
 }
 
 #first {
     background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(./img/index/index1.jpg);
     background-size: cover;
+    background-position: center;
+    height: auto;
+    min-height: 100vh;
 }
 
 #second {
     background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(./img/index/index2.jpg);
     background-size: cover;
     background-position: center;
+    height: auto;
+    min-height: 100vh;
 }
 
 #third {
     background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)), url(./img/index/index3.jpg);
     background-size: cover;
     background-position: center;
+    height: auto;
+    min-height: 100vh;
 }
 
 #fourth {
     background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/index/index4.jpg);
     background-size: cover;
     background-position: center;
+    height: auto;
+    min-height: 100vh;
 }
 
 #fifth {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/index/index5.jpg);
     background-size: cover;
     background-position: center;
+    height: auto;
+    min-height: 100vh;
 }
 
-.inner-bottom {
-    position: absolute;
-    bottom: 125px;
-    left: 0px;
-    padding-left: 48px;
-    padding-right: 32px;
-    align-items: left;
+.info-container {
+    margin: auto auto 10vh 5vh;
 }
 
 .main-header {
     font-size: 3.0rem;
     letter-spacing: 5px;
     text-align: left;
-    line-height: 75px;
+    margin: 0px;
 }
 
-.header-description {
+.sub-header {
+    display: flex;
+    flex-direction: row;
     font-size: 2.0rem;
-    margin-top: 0px;
-    margin-bottom: 50px;
-    text-align: left;
-    letter-spacing: 5px;
+    margin: 40px 0px 40px 0px;
 }
 
 button {
-    font-size: 1.0rem;
+    font-size: 2.0rem;
     display: block;
-    margin: 0px;
     padding: 10px;
     border: 0px solid #ffffff;
-    background-color: #00000040;
+    background-color: rgba(0, 0, 0, 0.25);
     text-transform: uppercase;
     letter-spacing: 3px;
     transition: 0.3s;
@@ -114,11 +114,6 @@ button {
     background-color: #e84728;
     color: #ffffff;
     border: 0px solid #ffffff;
-}
-
-.inline-buttons {
-    display: flex;
-    margin-bottom: 50px;
 }
 
 .inline-button {
@@ -162,23 +157,15 @@ button {
         font-size: 3.0rem;
     }
 
-    .header-description {
-        font-size: 2.0rem;
-    }
-
     .button {
         font-size: 1.5rem;
     }
-
-    .flex-box {
-        width: 45%;
-    }
 }
 
-@media screen and (max-width: 980px) {
+@media screen and (max-width: 1100px) {
 
     #first {
-        background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(./img/index/index6.jpg);
+        background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/mobile/mobile1.jpg);
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
@@ -186,27 +173,6 @@ button {
 
     .main-header {
         font-size: 4.0rem;
-    }
-
-    .header-description {
-        font-size: 3.0rem;
-    }
-
-    .flex-box-container {
-        flex-direction: column;
-        align-content: center;
-    }
-
-    .flex-box {
-        width: 90%;
-    }
-
-    .box-title {
-        font-size: 2.0rem;
-    }
-
-    .box-text {
-        font-size: 1.5rem;
     }
 
     .inline-button {
@@ -241,7 +207,7 @@ button {
         letter-spacing: 1.0px;
     }
 
-    #first-description {
+    .sub-header {
         font-size: 4.0rem;
         letter-spacing: 1.0px;
     }
@@ -257,8 +223,7 @@ button {
         font-weight: bold;
     }
 
-    .header-description {
-        font-size: 4.0rem;
-        letter-spacing: 1.0px;
+    #cpa-sub-header {
+        font-size: 3.5rem;
     }
 }

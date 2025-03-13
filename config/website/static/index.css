@@ -212,3 +212,18 @@ button {
         font-size: 3.0rem;
     }
 }
+
+@media screen and (max-width: 768px) {
+
+    html, body {
+        background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url(./img/mobile/mobile1.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    .slides {
+        background: transparent !important;
+    }
+}

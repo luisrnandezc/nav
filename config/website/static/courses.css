@@ -42,17 +42,6 @@ html, body {
     }
 }
 
-@keyframes slide-in-right {
-    0% {
-      transform: translateX(100px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-}
-
 /*#region General styles */
 .slider-divisor {
     height: 1px;
@@ -217,10 +206,6 @@ header {
     background-position: center;
 }
 
-.scrolled.slide-left {
-    animation: slide-in-left 1.0s ease-in-out both;
-}
-
 .course-box {
     display: flex;
     flex-direction: column;
@@ -231,14 +216,16 @@ header {
     padding: 20px;
     margin: 20px;
     opacity: 0;
-    transition: opacity 3.0s;
+    transform: translateX(100px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 25px;
     backdrop-filter: blur(5px);
 }
 
-.course-box.scrolled {
+.course-box.visible {
     opacity: 1;
+    transform: translateX(0);
 }
 
 .info-container {
@@ -271,10 +258,6 @@ ul.course-bullets, li.course-bullet {
     line-height: 3.5rem;
     letter-spacing: 5.0px;
     width: 100%;
-}
-
-.scrolled.slide-right {
-    animation: slide-in-right 1.0s ease-in-out both;
 }
 
 #final {
@@ -345,6 +328,25 @@ ul.course-bullets, li.course-bullet {
     .course-button {
         font-size: 1.25rem;
         width: 50%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    html, body {
+        background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/mobile/mobile3.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    .content-section {
+        background: transparent !important;
+    }
+
+    .course-slide {
+        background: transparent !important;
     }
 }
 

@@ -19,6 +19,7 @@ html, body {
     padding: 0px;
     text-transform: uppercase;
     background-color:#000000;
+    overflow-y: scroll;
 }
 
 /*#region Main page content */
@@ -238,8 +239,9 @@ header {
 .course-title {
     color: #dadada;
     font-size: 2.0rem;
-    letter-spacing: 3px;
+    letter-spacing: 3.0px;
     margin: 25px 0px 25px 0px;
+    text-align: center;
 }
 
 .course-description {
@@ -256,7 +258,7 @@ ul.course-bullets, li.course-bullet {
     text-align: left;
     font-size: 1.0rem;
     line-height: 3.5rem;
-    letter-spacing: 5.0px;
+    letter-spacing: 3.0px;
     width: 100%;
 }
 
@@ -269,27 +271,7 @@ ul.course-bullets, li.course-bullet {
 /*#endregion*/
 
 /* #region Responsive design */
-@media screen and (max-width: 1200px) {
-
-    .course-title {
-        font-size: 1.5rem;
-    }
-
-    .course-description {
-        font-size: 0.75rem;
-    }
-
-    li.course-bullet {
-        font-size: 0.75rem;
-    }
-
-    .course-button {
-        font-size: 0.75rem;
-        width: 50%;
-    }
-}
-
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 970px) {
 
     .header-h1 {
         font-size: 5.0rem;
@@ -334,7 +316,7 @@ ul.course-bullets, li.course-bullet {
 @media screen and (max-width: 768px) {
 
     html, body {
-        background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/mobile/mobile3.jpg);
+        background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(./img/mobile/mobile6.jpg);
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
@@ -345,39 +327,54 @@ ul.course-bullets, li.course-bullet {
         background: transparent !important;
     }
 
+    .header-h1 {
+        font-size: 7.0rem;
+    }
+
+    #header-p {
+        display: none;
+    }
+
+    #header-h2 {
+        color: #dadada;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        font-size: 4.0rem;
+        letter-spacing: 5.0px;
+    }
+
     .course-slide {
         background: transparent !important;
     }
-}
-
-@media screen and (max-width: 550px) {
-
-    .course-title {
-        font-size: 2.5rem;
-    }
 
     .course-box {
-        width: 100%;
+        height: fit-content;
+        width: 90vw;
+    }
+
+    .course-title {
+        font-size: 3.0rem;
     }
 
     .course-description {
-        font-size: 2.0rem;
-        line-height: 5.0rem;
-    }
-
-    .course-bullets {
-        margin-top: 25px;
-        margin-bottom: 25px;
+        font-size: 3.0rem;
+        text-align: center;
+        line-height: 15px;
     }
 
     li.course-bullet {
-        font-size: 2.0rem;
-        line-height: 5.0rem;
+        font-size: 3.0rem;
+        line-height: 30px;
+    }
+
+    ul.course-bullets {
+        margin-top: 30px;
+        margin-bottom: 30px;
     }
 
     .course-button {
-        font-size: 2.0rem;
-        width: 50%;
+        font-size: 3.0rem;
+        width: 75%;
     }
 }
 /*#endregion*/

@@ -137,7 +137,7 @@ header {
     margin-bottom: 25px;
 }
 
-#header-h2 {
+.header-h2 {
     font-size: 1.5rem;
     color: #e84728;
     text-align: center;
@@ -277,7 +277,7 @@ ul.course-bullets, li.course-bullet {
         font-size: 5.0rem;
     }
 
-    #header-h2 {
+    .header-h2 {
         font-size: 3.0rem;
         margin-left: 10px;
         margin-right: 10px;
@@ -335,10 +335,10 @@ ul.course-bullets, li.course-bullet {
         display: none;
     }
 
-    #header-h2 {
+    .header-h2 {
         color: #dadada;
-        margin-top: 30px;
-        margin-bottom: 30px;
+        margin-top: 25px;
+        margin-bottom: 25px;
         font-size: 4.0rem;
         letter-spacing: 5.0px;
     }
@@ -375,6 +375,18 @@ ul.course-bullets, li.course-bullet {
     .course-button {
         font-size: 3.0rem;
         width: 75%;
+    }
+
+    #final-h2 {
+        font-size: 4.0rem;
+    }
+}
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .course-description {
+        font-size: 3.0rem;
+        text-align: center;
+        line-height: 30px;
     }
 }
 /*#endregion*/

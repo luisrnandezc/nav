@@ -30,8 +30,9 @@ footer * {
     text-transform: uppercase;
 }
 
-footer p {
+.footer-text {
     color: rgb(128, 128, 128);
+    text-align: center !important;
 }
 
 footer a {

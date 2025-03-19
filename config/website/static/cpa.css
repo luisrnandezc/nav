@@ -336,14 +336,11 @@ header {
         line-height: 5px;
     }
 
-    .target {
-        font-size: 1.5rem;
+    .target, .detail {
+        font-size: 3.0rem;
         line-height: 10px;
-    }
-
-    .detail {
-        font-size: 1.5rem;
-        line-height: 10px;
+        line-height: 20px;
+        text-align: center;
     }
 
     #final {

@@ -106,8 +106,9 @@ header, section {
 
 /* #region Header section */
 header {
-    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/cpa/cpa1.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/cpa/cpa1.jpg);
     background-size: cover;
+    background-position: center;
     opacity: 0;
     animation: fadeIn 1.0s ease-in forwards;
 }
@@ -156,7 +157,7 @@ header {
     background-repeat: no-repeat;
 }
 #final {
-    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/cpa/cpa6.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/cpa/cpa1.jpg);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -275,11 +276,22 @@ header {
     }
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 768px) {
 
-    section {
+    html, body {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/mobile/mobile10.jpg);
         background-size: cover;
-        background-position: center !important;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    header, section {
+        background: transparent !important;
+    }
+
+    #header-p {
+        display: none;
     }
 
     .cta-button {
@@ -292,6 +304,7 @@ header {
 
     #header-h2 {
         font-size: 3.0rem;
+        letter-spacing: 3.0px;
     }
 
     #header-p {
@@ -299,7 +312,7 @@ header {
     }
 
     .section-h2 {
-        font-size: 2.0rem;
+        font-size: 3.0rem;
     }
 
     .section-p {
@@ -339,6 +352,30 @@ header {
 
     #final-h2 {
         font-size: 5.0rem;
+    }
+}
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+
+    .bullet-points-1 {
+        margin: 10px auto 10px 200px !important;
+    }
+
+    #targets {
+        width: 75%;
+        line-height: 5px;
+    }
+
+    #details {
+        width: 70%;
+    }
+
+    .target {
+        margin: 20px 0px 20px 0px;
+    }
+
+    .detail {
+        margin: 5px 0px 5px 0px;
     }
 }
 /*#endregion*/

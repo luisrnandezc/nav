@@ -355,7 +355,7 @@ header {
 @media screen and (max-height: 500px) and (orientation: landscape) {
 
     .bullet-points-1 {
-        margin: 10px auto 10px 150px !important;
+        margin: 10px auto 10px 100px !important;
     }
 
     #targets {

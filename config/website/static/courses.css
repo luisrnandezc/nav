@@ -19,7 +19,6 @@ html, body {
     padding: 0px;
     text-transform: uppercase;
     background-color:#000000;
-    overflow-y: scroll;
 }
 
 /*#region Main page content */
@@ -249,13 +248,14 @@ header {
     width: 100%;
 }
 
-ul.course-bullets, li.course-bullet {
+.course-bullets, .course-bullet {
     font-family: "Renogare-Regular", "Arial", sans-serif;
     text-align: left;
     font-size: 1.0rem;
     line-height: 3.5rem;
     letter-spacing: 3.0px;
     width: 100%;
+    margin-left: 15px;
 }
 
 #final {
@@ -300,15 +300,15 @@ ul.course-bullets, li.course-bullet {
     }
 
     .course-description {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
     }
 
-    li.course-bullet {
-        font-size: 1.25rem;
+    .course-bullet {
+        font-size: 1.5rem;
     }
 
     .course-button {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         width: 50%;
     }
 }
@@ -362,14 +362,14 @@ ul.course-bullets, li.course-bullet {
         line-height: 15px;
     }
 
-    li.course-bullet {
-        font-size: 3.0rem;
-        line-height: 30px;
-    }
-
-    ul.course-bullets {
+    .course-bullets {
         margin-top: 30px;
         margin-bottom: 30px;
+    }
+
+    .course-bullet {
+        font-size: 3.0rem;
+        line-height: 30px;
     }
 
     .course-button {

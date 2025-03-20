@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     const boxes = document.querySelectorAll(".course-box");
 
     const box_observer = new IntersectionObserver(entries => {
@@ -8,6 +8,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }, { threshold: 0.2});
-
+    
     boxes.forEach(box => box_observer.observe(box));
 });

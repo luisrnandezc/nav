@@ -123,29 +123,25 @@ html, body {
 
 /*#region Header section */
 header {
-    background: linear-gradient(rgba(20, 31, 53, 0.6), rgba(20, 31, 53, 0.6)), url(./img/courses/courses11.jpg);
+    background: linear-gradient(rgba(20, 31, 53, 0.75), rgba(20, 31, 53, 0.75)), url(./img/courses/courses11.jpg);
     background-size: cover;
     opacity: 0;
     animation: fadeIn 1.0s ease-in forwards;
 }
 
+.header-h2 {
+    font-size: 1.5rem;
+    color: #e84728;
+    text-align: center;
+}
+
 #header-p {
     text-align: center;
     width: 85%;
-    letter-spacing: 5px;
+    font-size: 1.0rem;
+    letter-spacing: 2.0px;
     margin-top: 25px;
     margin-bottom: 25px;
-}
-
-.header-h2 {
-    font-size: 1.5rem;
-    color: #dadada;
-    text-align: center;
-}
-
-#header-p {
-    font-size: 0.75rem;
-    letter-spacing: 1.75px;
 }
 /*#endregion*/
 
@@ -265,6 +261,10 @@ ul.course-bullets, li.course-bullet {
 #final {
     background: linear-gradient(rgba(20, 31, 53, 0.5), rgba(20, 31, 53, 0.5)), url(./img/courses/courses12.jpg);
     background-size: cover;
+}
+
+#final-h2 {
+    color: #dadada;
 }
 /*#endregion*/
 

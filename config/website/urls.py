@@ -7,4 +7,5 @@ urlpatterns = [
     path("courses/", views.courses, name="courses"),
     path("cpa/", views.cpa, name="cpa"),
     path("sim/", views.sim, name="sim"),
+    path("privacy/", views.privacy, name="privacy"),
 ]

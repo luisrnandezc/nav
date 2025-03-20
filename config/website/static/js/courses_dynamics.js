@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     const boxes = document.querySelectorAll(".course-box");
 
-    const observer = new IntersectionObserver(entries => {
+    const box_observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add("visible");
@@ -9,5 +9,5 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }, { threshold: 0.2});
 
-    boxes.forEach(box => observer.observe(box));
+    boxes.forEach(box => box_observer.observe(box));
 });

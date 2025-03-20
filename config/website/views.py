@@ -19,3 +19,6 @@ def cpa(request):
 
 def sim(request):
     return render(request, "website/sim.html")
+
+def privacy(request):
+    return render(request, "website/privacy.html")

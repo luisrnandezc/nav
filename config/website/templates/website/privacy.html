@@ -1,54 +1,78 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidad</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>NAV | Política de Privacidad</title>
+        <link href="{% static 'privacy.css' %}" rel="stylesheet">
+        <link href="{% static 'footer.css' %}" rel="stylesheet">
+    </head>
 
-    <header>
-        <h1>Política de Privacidad</h1>
-    </header>
+    <body>
+        <!--main webpage content-->
+        <header id="privacy-header">
+            <h1 id="privacy-h1">Política de Privacidad</h1>
+            <h2 id="privacy-h2">Última actualización: 19 de Marzo de 2025</h2>
+        </header>
 
-    <main>
-        <section>
-            <h2>1. Introducción</h2>
-            <p>En [Nombre de la Empresa], valoramos y respetamos su privacidad. Esta política describe cómo recopilamos, usamos y protegemos su información.</p>
-        </section>
+        <main id="privacy-main">
+            <section class="privacy-section">
+                <h2 class="privacy-h2">Introducción</h2>
+                <p class="privacy-p">
+                    En NAV Aviation Academy nos comprometemos a proteger la privacidad de nuestros 
+                    usuarios. Esta política describe cómo manejamos la información en nuestro sitio web.
+                </p>
+            </section>
 
-        <section>
-            <h2>2. Información que Recopilamos</h2>
-            <p>Podemos recopilar información personal como nombre, correo electrónico, número de teléfono y datos de navegación cuando usa nuestro sitio web.</p>
-        </section>
+            <section class="privacy-section">
+                <h2 class="privacy-h2">No recolectamos información de visitantes</h2>
+                <p class="privacy-p">
+                    Los visitantes que navegan por nuestro sitio web no proporcionan ni comparten
+                    información personal con nosotros. No recopilamos datos de navegación, direcciones IP, 
+                    cookies ni ningún otro tipo de información identificativa.
+                </p>
+            </section>
 
-        <section>
-            <h2>3. Uso de la Información</h2>
-            <p>Usamos su información para mejorar nuestros servicios, responder a consultas y garantizar la seguridad de nuestra plataforma.</p>
-        </section>
+            <section class="privacy-section">
+                <h2 class="privacy-h2">Información recopilada de usuarios registrados</h2>
+                <p class="privacy-p">
+                    La única información que recolectamos es la suministrada por personas que 
+                    se registran como usuarios de nuestra plataforma, quienes siempre serán 
+                    estudiantes o personal de la escuela.
+                    </p>
+            </section>
 
-        <section>
-            <h2>4. Protección de Datos</h2>
-            <p>Implementamos medidas de seguridad para proteger su información contra accesos no autorizados.</p>
-        </section>
+            <section class="privacy-section">
+                <h2 class="privacy-h2">Registro de usuarios</h2>
+                <p class="privacy-p">
+                    Los visitantes del sitio no pueden registrarse por sí mismos. No existe un botón 
+                    ni una opción para el registro directo. El proceso de creación de cuentas es 
+                    realizado exclusivamente por el personal de la escuela a través de una plataforma interna.
+                </p>
+            </section>
 
-        <section>
-            <h2>5. Derechos del Usuario</h2>
-            <p>Usted tiene derecho a acceder, modificar o eliminar su información personal. Puede contactarnos en cualquier momento para ejercer estos derechos.</p>
-        </section>
+            <section class="privacy-section">
+                <h2 class="privacy-h2">Uso y protección de la información</h2>
+                <p class="privacy-p">
+                    Los datos proporcionados por los usuarios registrados serán utilizados únicamente 
+                    para fines académicos y administrativos dentro de la escuela. No compartimos, 
+                    vendemos ni cedemos esta información a terceros bajo ninguna circunstancia.
+                </p>
+            </section>
 
-        <section>
-            <h2>6. Contacto</h2>
-            <p>Si tiene preguntas sobre esta política, contáctenos en <a href="mailto:soporte@empresa.com">soporte@empresa.com</a>.</p>
-        </section>
+            <section class="privacy-section">
+                <h2 class="privacy-h2">Contacto</h2>
+                <p class="privacy-p">
+                    Si tienes alguna duda sobre nuestra política de privacidad, puedes comunicarte con nosotros a través de
+                    <a id="privacy-mail" href="mailto:navaviationacademy@gmail.com">navaviationacademy@gmail.com</a>.
+                </p>
+            </section>
 
-        <a href="index.html" class="btn">Volver al Inicio</a>
-    </main>
-
-    <footer>
-        <p>© 2025 [Nombre de la Empresa]. Todos los derechos reservados.</p>
-    </footer>
-
-</body>
+            <a id="privacy-button" href="{% url 'index' %}">Volver al Inicio</a>
+        </main>
+        <!--javascript-->
+        <script src="{% static 'js/navbar_dynamics.js' %}"></script>
+    </body>
 </html>

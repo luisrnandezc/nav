@@ -112,5 +112,10 @@ body {
     height: 30px;
   }
 
+  html,
+  body {
+    overflow-y: auto;
+  }
+
 }
 

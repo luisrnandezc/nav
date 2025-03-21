@@ -57,6 +57,8 @@ header, section {
     font-size: 1.5rem;
     color: #e84728;
     text-align: center;
+    margin-top: 50px;
+    margin-bottom: 25px;
 }
 
 .section-p {
@@ -64,24 +66,27 @@ header, section {
     font-size: 1.0rem;
     letter-spacing: 1.5px;
     text-align: justify;
+    width: 100%;
+    line-height: 50px;
+    padding: 0px 200px 0px 200px;
     margin-top: 25px;
     margin-bottom: 25px;
-    width: 60%;
-    line-height: 40px;
 }
 
 .bullet-points-1 {
     display: flex;
     flex-direction: column;
-    margin: 10px auto 10px 350px;
-    width: 50%;
+    padding: 0px 200px 0px 200px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 100%;
 }
 
 .bullet-point-1 {
     color: #dadada;
     font-size: 1.0rem;
     letter-spacing: 1.5px;
-    line-height: 40px;
+    line-height: 50px;
 }
 /*#endregion*/
 
@@ -101,6 +106,10 @@ header, section {
 
 .cta-button:hover {
     background: #ff934c;
+}
+
+#overview-button, #enroll-button {
+    margin-bottom: 50px;
 }
 /*#endregion*/
 
@@ -175,10 +184,6 @@ header {
 /*#endregion*/
 
 /*#region Specific styles */
-#contents, #benefits {
-    margin: 10px auto 10px 350px;
-}
-
 #targets {
     display: flex;
     flex-direction: column;
@@ -250,7 +255,7 @@ header {
     }
 
     .bullet-points-1 {
-        margin: 10px 50px 10px 50px;
+        margin: 12px 0px 50px 0px;
     }
 
     .bullet-point-1 {
@@ -299,12 +304,14 @@ header {
     }
 
     #header-h1 {
-        font-size: 5.0rem;
+        font-size: 4.0rem;
     }
 
     #header-h2 {
         font-size: 3.0rem;
         letter-spacing: 3.0px;
+        margin-top: 25px;
+        margin-bottom: 25px;
     }
 
     #header-p {
@@ -318,13 +325,14 @@ header {
     .section-p {
         font-size: 2.0rem;
         width: 75%;
+        padding: 0px;
     }
 
     #contents, #benefits {
-        margin: 0px;
         justify-content: left;
         align-items: left;
         width: 75%;
+        padding: 0px;
     }
 
     .bullet-point-1 {
@@ -347,19 +355,42 @@ header {
     }
 
     #final-h2 {
-        font-size: 5.0rem;
+        font-size: 4.0rem;
+        margin-top: 25px;
+        margin-bottom: 25px;
     }
 }
 
 @media screen and (max-height: 500px) and (orientation: landscape) {
 
+    #header-h1 {
+        font-size: 3.0rem;
+    }
+
+    #header-h2 {
+        font-size: 2.0rem;
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    .cta-button {
+        font-size: 2.0rem;
+    }
+
+    .section-h2, .section-p {
+        font-size: 2.0rem;
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
     .bullet-points-1 {
-        margin: 10px auto 10px 100px !important;
+        margin-bottom: 50px;
     }
 
     #targets {
         width: 75%;
         line-height: 5px;
+        margin-bottom: 50px;
     }
 
     #details {

@@ -4,3 +4,4 @@ venv/
 docs/
 media_kit/
 users/
+config/db.sqlite3

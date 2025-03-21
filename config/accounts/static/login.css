@@ -93,11 +93,23 @@ body {
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
-
   .logo-img {
     width: 50vw;
     height: auto;
     max-height: 40vh;
+  }
+}
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+
+  .logo-img {
+    width: 20vw;
+    height: auto;
+    max-height: 30vh;
+  }
+
+  .form-field {
+    height: 30px;
   }
 
 }

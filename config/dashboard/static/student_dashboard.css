@@ -14,7 +14,11 @@
     margin: 0px;
     padding: 0px;
     text-transform: uppercase;
-    background-color: #222222;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
   }
 
   .main-container {
@@ -30,12 +34,14 @@
     align-items: center;
     justify-content: center;
     padding: 25px 25px 25px 25px;
+    margin: 0px 0px 0px 30px;
     height: 100%;
     width: 50%;
   }
 
   .data-header > h1 {
     font-size: 3.0rem;
+    letter-spacing: 5px;
     text-align: center;
     margin: 0px;
   }
@@ -43,7 +49,7 @@
   .user-data {
     padding: 25px;
     margin: 50px 0px 50px 0px;
-    border: 3px solid #e84728;
+    border: 1px solid #e84728;
     border-radius: 25px;
     width: 75%;
   }
@@ -69,24 +75,20 @@
   
   .button {
     text-transform: uppercase;
-    font-size: 1.25rem;
+    font-size: 1.0rem;
     width: 200px;
     height: 50px;
     background-color: transparent;
-    border: 3px solid #ffffff;
+    border: 1px solid #ffffff;
     border-radius: 3px;
   }
   
   .button:hover {
-    background-color: rgb(232, 71, 40);
+    background-color: rgb(0, 0, 0, 0.25);
     color: #ffffff;
-    border: 3px solid #ffffff;
+    border: 1px solid #ffffff;
     border-radius: 3px;
     cursor: pointer;
-  }
-
-  #password-change {
-    font-size: 1.0rem;
   }
 
   .dashboard-container {
@@ -94,6 +96,7 @@
     align-items: center;
     justify-content: center;
     padding: 25px;
+    margin: 0px 30px 0px 0px;
     height: 100%;
     width: 50%;
   }
@@ -113,7 +116,7 @@
     padding: 10px;
     margin: 10px;
     color: #ffffff;
-    border: 3px solid #e84728;;
+    border: 1px solid #e84728;;
     border-radius: 25px;
   }
 

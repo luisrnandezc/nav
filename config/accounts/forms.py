@@ -3,8 +3,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Username'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-field', 'placeholder': 'Password'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Username'}), label=False)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-field', 'placeholder': 'Password'}), label=False)
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):

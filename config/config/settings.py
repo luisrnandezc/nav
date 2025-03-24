@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'www.navaviation.org']
 # Application definition
 
 INSTALLED_APPS = [
+    'academic',
     'accounts',
     'website',
     'dashboard',

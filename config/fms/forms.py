@@ -11,6 +11,7 @@ class FlightEvaluationForm(forms.ModelForm):
             'student_license_type', 'course_type',
             'flight_rules', 'solo_flight', 'session_number', 'session_letter',
             'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration', 'session_grade',
+            'pre_flight', 'checklist', 'coms', 'taxiing', 'op_safety',
         ]
 
         labels = {
@@ -32,6 +33,11 @@ class FlightEvaluationForm(forms.ModelForm):
             'session_flight_hours': 'Horas de vuelo de la sesión',
             'aircraft_registration': 'Registro de la aeronave',
             'session_grade': 'Calificación de la sesión',
+            'pre_flight': 'Inspección pre-vuelo',
+            'checklist': 'Uso de checklist',
+            'coms': 'Comunicaciones',
+            'taxiing': 'Técnica de rodaje',
+            'op_safety': 'Repaso de seguridad operacional',
         }
 
         widgets = {
@@ -53,6 +59,11 @@ class FlightEvaluationForm(forms.ModelForm):
             'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
             'aircraft_registration': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.Select(attrs={'class': 'form-field'}),
+            'pre_flight': forms.Select(attrs={'class': 'form-field'}),
+            'checklist': forms.Select(attrs={'class': 'form-field'}),
+            'coms': forms.Select(attrs={'class': 'form-field'}),
+            'taxiing': forms.Select(attrs={'class': 'form-field'}),
+            'op_safety': forms.Select(attrs={'class': 'form-field'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -401,6 +401,46 @@ class FlightEvaluation(models.Model):
         default=NOT_EVALUATED,
     )
 
+    #region PRE-FLIGHT
+    pre_flight = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
+
+    checklist = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
+
+    coms = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
+
+    taxiing = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
+
+    op_safety = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
+    #endregion
+
+    #region TAKEOFF
+    op_safety = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
+    #endregion
+
     notes = models.TextField(blank=False)
 
     def total_flight_hours(self):

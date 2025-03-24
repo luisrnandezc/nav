@@ -116,6 +116,36 @@
             </div>
           </div>
         </details>
+        <h1 class="subsection-header">Sección 4: PRE - ENCE - RODAJE</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.pre_flight.label_tag }}
+                {{ form.pre_flight }}
+              </div>
+              <div class="form-row">
+                {{ form.checklist.label_tag }}
+                {{ form.checklist }}
+              </div>
+              <div class="form-row">
+                {{ form.coms.label_tag }}
+                {{ form.coms }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.taxiing.label_tag }}
+                {{ form.taxiing }}
+              </div>
+              <div class="form-row">
+                {{ form.op_safety.label_tag }}
+                {{ form.op_safety }}
+              </div>
+            </div>
+          </div>
+        </details>
 
         {% if form.errors %}
           <ul>

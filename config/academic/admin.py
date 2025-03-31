@@ -15,6 +15,11 @@ class CourseEditionAdmin(admin.ModelAdmin):
     ordering = ('-start_date', 'course_type')
     filter_horizontal = ('students',)
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "course_type":
+            kwargs["initial"] = CourseType.objects.filter(code='PPA').first()
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     def get_students_count(self, obj):
         return obj.students.count()
     get_students_count.short_description = 'Estudiantes'

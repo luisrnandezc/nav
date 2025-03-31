@@ -10,24 +10,31 @@ class CourseType(models.Model):
     """Course model for all permanent courses (Private Pilot, Commercial Pilot, etc.)"""
 
     COURSE_CODES = (
-        ('ppa', 'PPA'),
-        ('hvi', 'HVI'),
-        ('pca', 'PCA'),
-        ('tla', 'TLA'),
+        ('PPA', 'PPA'),
+        ('HVI', 'HVI'),
+        ('PCA', 'PCA'),
+        ('TLA', 'TLA'),
+        ('IVA', 'IVA'),
+        ('IVS', 'IVS'),
+        ('DDV', 'DDV'),
     )
     COURSE_NAMES = (
-        ('private_pilot', 'Piloto Privado'),
-        ('instrument_rating', 'Vuelo Instrumental'),
-        ('commercial_pilot', 'Piloto Comercial'),
-        ('airline_transport_pilot', 'Línea Aérea'),
+        ('Piloto Privado Avión', 'Piloto Privado Avión'),
+        ('Habilitación Vuelo Instrumental Avión', 'Habilitación Vuelo Instrumental Avión'),
+        ('Piloto Comercial Avión', 'Piloto Comercial Avión'),
+        ('Transporte Línea Aérea Avión', 'Transporte Línea Aérea Avión'),
+        ('Instructor de Vuelo Avión', 'Instructor de Vuelo Avión'),
+        ('Instructor de Vuelo Simulado', 'Instructor de Vuelo Simulado'),
+        ('Despachador de Vuelo', 'Despachador de Vuelo'),
     )
 
-    code = models.CharField(max_length=10, unique=True, choices=COURSE_CODES, default='ppa')
-    name = models.CharField(max_length=100, unique=True, choices=COURSE_NAMES, default='private_pilot')
+    code = models.CharField(max_length=10, unique=True, choices=COURSE_CODES, default='PPA')
+    name = models.CharField(max_length=100, unique=True, choices=COURSE_NAMES, default='Piloto Privado')
+    credit_hours = models.PositiveIntegerField(default=0)
     
     class Meta:
-        verbose_name = 'Curso base'
-        verbose_name_plural = 'Cursos base'
+        verbose_name = 'Course Type'
+        verbose_name_plural = 'Course Types'
     
     def __str__(self):
         return self.name
@@ -36,19 +43,20 @@ class CourseType(models.Model):
 class CourseEdition(models.Model):
     """Course model for a specific course edition (Private Pilot 1, Commercial Pilot 5, etc.)"""
     course_type = models.ForeignKey(CourseType, on_delete=models.CASCADE, related_name='editions')
-    edition = models.IntegerField(validators=[MinValueValidator(1)])
-    start_date = models.DateField()
+    edition = models.IntegerField(validators=[MinValueValidator(1)], default=1)
+    start_date = models.DateField(default=datetime.date.today)
     students = models.ManyToManyField(Student, blank=True)
 
     TIME_SLOTS = (
-        ('matutino', 'Matutino'),
-        ('vespertino', 'Vespertino')
+        ('Mañana', 'Mañana'),
+        ('Tarde', 'Tarde')
     )
     time_slot = models.CharField(max_length=10, choices=TIME_SLOTS)
 
     class Meta:
-        verbose_name = 'Curso'
-        verbose_name_plural = 'Cursos'
+        verbose_name = 'Course Edition'
+        verbose_name_plural = 'Course Editions'
+        unique_together = ['course_type', 'edition']
     
     def __str__(self):
         return f"{self.course_type.name} - {self.edition}"
@@ -67,8 +75,8 @@ class SubjectType(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Materia base'
-        verbose_name_plural = 'Materias base'
+        verbose_name = 'Subject Type'
+        verbose_name_plural = 'Subject Types'
 
     def __str__(self):
         return f"{self.course_type.name} - {self.name}"
@@ -76,8 +84,6 @@ class SubjectType(models.Model):
 # Specific Subject Model (specific to a course)
 class SubjectEdition(models.Model):
     """Specific edition of a subject"""
-    # Temporarily keep both fields to handle the transition
-    base_subject = models.ForeignKey(SubjectType, on_delete=models.CASCADE, related_name='old_editions', null=True)
     subject_type = models.ForeignKey(SubjectType, on_delete=models.CASCADE, related_name='editions', null=True)
     
     instructor = models.ForeignKey(
@@ -91,8 +97,8 @@ class SubjectEdition(models.Model):
         limit_choices_to={'student_phase': 'TIERRA'})
 
     TIME_SLOTS = (
-        ('matutino', 'Matutino'),
-        ('vespertino', 'Vespertino')
+        ('Mañana', 'Mañana'),
+        ('Tarde', 'Tarde')
     )
     time_slot = models.CharField(max_length=10, choices=TIME_SLOTS)
     start_date = models.DateField()
@@ -101,8 +107,8 @@ class SubjectEdition(models.Model):
     end_time = models.TimeField(default=datetime.time(12, 30))
 
     class Meta:
-        verbose_name = 'Materia'
-        verbose_name_plural = 'Materias'
+        verbose_name = 'Subject Edition'
+        verbose_name_plural = 'Subject Editions'
 
     def clean(self):
         if self.end_date < self.start_date:

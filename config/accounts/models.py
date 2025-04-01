@@ -30,30 +30,34 @@ class Student(models.Model):
     ]
 
     # Course type
-    COURSE_PP = 'PP'
+    COURSE_PPA = 'PPA'
     COURSE_HVI = 'HVI'
-    COURSE_PC = 'PC'
-    COURSE_TLA = 'TLA'
+    COURSE_PCA = 'PCA'
+    COURSE_IVA = 'IVA'
+    COURSE_IVS = 'IVS'
+    COURSE_DDV = 'DDV'
 
     COURSE_TYPES = [
-        (COURSE_PP, 'PP'),
+        (COURSE_PPA, 'PPA'),
         (COURSE_HVI, 'HVI'),
-        (COURSE_PC, 'PC'),
-        (COURSE_TLA, 'TLA'),
+        (COURSE_PCA, 'PCA'),
+        (COURSE_IVA, 'IVA'),
+        (COURSE_IVS, 'IVS'),
+        (COURSE_DDV, 'DDV'),
     ]
 
     # Student license
     LICENSE_NA = 'NA'
     LICENSE_AP = 'AP'
-    LICENSE_PP = 'PP'
-    LICENSE_PC = 'PC'
+    LICENSE_PPA = 'PPA'
+    LICENSE_PCA = 'PCA'
     LICENSE_TLA = 'TLA'
 
     LICENSE_TYPES = [
         (LICENSE_NA, 'N/A'),
         (LICENSE_AP, 'AP'),
-        (LICENSE_PP, 'PP'),
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PPA, 'PPA'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
@@ -93,7 +97,7 @@ class Student(models.Model):
     student_course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPES, 
-        default=COURSE_PP, 
+        default=COURSE_PPA, 
         verbose_name='Curso',
     )
     
@@ -171,12 +175,12 @@ class Instructor(models.Model):
 
     # Instructor license
     LICENSE_NA = 'NA'
-    LICENSE_PC = 'PC'
+    LICENSE_PCA = 'PCA'
     LICENSE_TLA = 'TLA'
 
     LICENSE_TYPES = [
         (LICENSE_NA, 'N/A'),
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
@@ -204,7 +208,7 @@ class Instructor(models.Model):
     instructor_license_type = models.CharField(
         max_length=3,
         choices=LICENSE_TYPES,
-        default=LICENSE_PC,
+        default=LICENSE_PCA,
         verbose_name='Tipo de licencia',
     )
 

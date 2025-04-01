@@ -36,8 +36,10 @@ class Student(models.Model):
     COURSE_IVA = 'IVA'
     COURSE_IVS = 'IVS'
     COURSE_DDV = 'DDV'
+    COURSE_NA = 'N/A'
 
     COURSE_TYPES = [
+        (COURSE_NA, 'No inscrito'),
         (COURSE_PPA, 'PPA'),
         (COURSE_HVI, 'HVI'),
         (COURSE_PCA, 'PCA'),
@@ -148,13 +150,36 @@ class Student(models.Model):
                 'student_balance': 'Balance must be zero for ground students.'
             })
     
+    def get_current_course(self):
+        """
+        Get the student's current course edition.
+        Returns None if not enrolled in any course.
+        """
+        from academic.models import CourseEdition
+        return CourseEdition.objects.filter(students=self).first()
+
+    def update_course_info(self):
+        """
+        Update student_course_type and student_course_number based on current enrollment.
+        If not enrolled, sets course_type to "No inscrito" and course_number to 0.
+        """
+        current_course = self.get_current_course()
+        if current_course:
+            self.student_course_type = current_course.course_type.code
+            self.student_course_number = current_course.edition
+        else:
+            self.student_course_type = 'N/A'  # No inscrito
+            self.student_course_number = 0
+
     def save(self, *args, **kwargs):
         """
         Override the save method to ensure the balance is reset to 0
         when the student type is changed from 'flying' to 'ground'.
+        Also update course information based on current enrollment.
         """
         if self.student_phase == self.GROUND:
             self.student_balance = 0.00
+        self.update_course_info()
         super().save(*args, **kwargs)
         
 

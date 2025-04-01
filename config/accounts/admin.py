@@ -23,6 +23,7 @@ class StudentInline(admin.StackedInline):
             )
         })
     )
+    readonly_fields = ('student_course_type', 'student_course_number')
 
 # ------------------------------
 # Custom Inline for Instructor Data

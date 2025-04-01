@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import CourseType, CourseEdition, SubjectType, SubjectEdition
+from academic.models import CourseType, CourseEdition, SubjectType, SubjectEdition
+
 
 @admin.register(CourseType)
 class CourseTypeAdmin(admin.ModelAdmin):
@@ -26,7 +27,8 @@ class CourseEditionAdmin(admin.ModelAdmin):
 
 @admin.register(SubjectType)
 class SubjectTypeAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'course_type', 'credit_hours', 'passing_grade')
+    fields = ['course_type', 'code', 'name', 'credit_hours', 'passing_grade', 'recovery_passing_grade']
+    list_display = ('code', 'name', 'course_type', 'credit_hours', 'passing_grade', 'recovery_passing_grade')
     list_filter = ('course_type',)
     search_fields = ('code', 'name', 'course_type__name')
     ordering = ('course_type', 'code')

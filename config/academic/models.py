@@ -5,29 +5,131 @@ from django.db.models import Q
 from accounts.models import Instructor, Student
 import datetime
 
+#region Choices
+
+# Course Type Choices
+COURSE_CODES = (
+    ('PPA', 'PPA'),
+    ('HVI', 'HVI'),
+    ('PCA', 'PCA'),
+    ('IVA', 'IVA'),
+    ('IVS', 'IVS'),
+    ('DDV', 'DDV'),
+)
+COURSE_NAMES = (
+    ('Piloto Privado Avión', 'Piloto Privado Avión'),
+    ('Habilitación Vuelo Instrumental Avión', 'Habilitación Vuelo Instrumental Avión'),
+    ('Piloto Comercial Avión', 'Piloto Comercial Avión'),
+    ('Instructor de Vuelo Avión', 'Instructor de Vuelo Avión'),
+    ('Instructor de Vuelo Simulado', 'Instructor de Vuelo Simulado'),
+    ('Despachador de Vuelo', 'Despachador de Vuelo'),
+)
+
+# Subject Choices by Course Type
+SUBJECTS_CODES = (
+    ('PPA-AER-I', 'PPA-AER-I'),
+    ('PPA-SYE-I', 'PPA-SYE-I'),
+    ('PPA-MET-I', 'PPA-MET-I'),
+    ('PPA-DER-I', 'PPA-DER-I'),
+    ('PPA-NAV', 'PPA-NAV'),
+    ('PPA-UDM', 'PPA-UDM'),
+    ('PPA-MYC', 'PPA-MYC'),
+    ('PPA-PRF', 'PPA-PRF'),
+    ('PPA-RDC', 'PPA-RDC'),
+    ('PPA-FHH', 'PPA-FHH'),
+    ('PPA-SEG', 'PPA-SEG'),
+    ('PPA-SPV', 'PPA-SPV'),
+    ('PPA-PRO-I', 'PPA-PRO-I'),
+    ('HVI-DER', 'HVI-DER'),
+    ('HVI-SYE', 'HVI-SYE'),
+    ('HVI-PPV', 'HVI-PPV'),
+    ('HVI-MET', 'HVI-MET'),
+    ('HVI-RDN', 'HVI-RDN'),
+    ('HVI-PRO', 'HVI-PRO'),
+    ('HVI-CAR', 'HVI-CAR'),
+    ('PCA-AER-II', 'PCA-AER-II'),
+    ('PCA-SYE-II', 'PCA-SYE-II'),
+    ('PCA-MET-II', 'PCA-MET-II'),
+    ('PCA-DER-II', 'PCA-DER-II'),
+    ('PCA-FHH-II', 'PCA-FHH-II'),
+    ('PCA-INST-II', 'PCA-INST-II'),
+    ('PCA-RDN', 'PCA-RDN'),
+    ('PCA-PRO-II', 'PCA-PRO-II'),
+    ('PCA-SEG-II', 'PCA-SEG-II'),
+    ('IVA-PFD', 'IVA-PFD'),
+    ('IVA-ADE', 'IVA-ADE'),
+    ('IVS-PFD', 'IVS-PFD'),
+    ('IVS-ADE', 'IVS-ADE'),
+    ('DDV-DER', 'DDV-DER'),
+    ('DDV-ADA', 'DDV-ADA'),
+    ('DDV-MYP', 'DDV-MYP'),
+    ('DDV-NAV', 'DDV-NAV'),
+    ('DDV-CTA', 'DDV-CTA'),
+    ('DDV-MET', 'DDV-MET'),
+    ('DDV-CMC', 'DDV-CMC'),
+    ('DDV-TMP', 'DDV-TMP'),
+    ('DDV-PDV', 'DDV-PDV'),
+    ('DDV-MDV', 'DDV-MDV'),
+    ('DDV-RDC', 'DDV-RDC'),
+    ('DDV-FHH', 'DDV-FHH'),
+    ('DDV-SEG', 'DDV-SEG'),
+)
+
+SUBJECTS_NAMES = (
+    ('PPA-AER-I', 'PPA - Aeronáutica I'),
+    ('PPA-SYE-I', 'PPA - Sistemas y Equipos I'),
+    ('PPA-MET-I', 'PPA - Meteorología I'),
+    ('PPA-DER-I', 'PPA - Derecho Aeronáutico I'),
+    ('PPA-NAV', 'PPA - Navegación Visual'),
+    ('PPA-UDM', 'PPA - Unidades de Medida'),
+    ('PPA-MYC', 'PPA - Masa y Centrado'),
+    ('PPA-PRF', 'PPA - Performance'),
+    ('PPA-RDC', 'PPA - Radiocomunicaciones'),
+    ('PPA-FHH', 'PPA - Factores Humanos'),
+    ('PPA-SEG', 'PPA - Seguridad Aérea'),
+    ('PPA-SPV', 'PPA - Supervivencia'),
+    ('PPA-PRO-I', 'PPA - Procedimientos Operacionales I'),
+    ('HVI-DER', 'HVI - Derecho Aeronáutico'),
+    ('HVI-SYE', 'HVI - Sistemas y Equipos'),
+    ('HVI-PPV', 'HVI - Performance y Planificación de Vuelo'),
+    ('HVI-MET', 'HVI - Meteorología'),
+    ('HVI-RDN', 'HVI - Radionavegación'),
+    ('HVI-PRO', 'HVI - Procedimientos Operacionales'),
+    ('HVI-CAR', 'HVI - Comunicaciones Aeronáuticas'),
+    ('PCA-AER-II', 'PCA - Aerodinámica II'),
+    ('PCA-SYE-II', 'PCA - Sistemas y Equipos II'),
+    ('PCA-MET-II', 'PCA - Meteorología II'),
+    ('PCA-DER-II', 'PCA - Derecho Aeronáutico II'),
+    ('PCA-FHH-II', 'PCA - Factores Humanos II'),
+    ('PCA-INST-II', 'PCA - Instrumentos II'),
+    ('PCA-RDN', 'PCA - Radionavegación'),
+    ('PCA-PRO-II', 'PCA - Procedimientos Operacionales II'),
+    ('PCA-SEG-II', 'PCA - Seguridad Aérea II'),
+    ('IVA-PFD', 'IVA - Peligros Durante la Simulación de Fallas'),
+    ('IVA-ADE', 'IVA - Administración de la Enseñanza'),
+    ('IVS-PFD', 'IVS - Peligros Durante la Simulación de Fallas'),
+    ('IVS-ADE', 'IVS - Administración de la Enseñanza'),
+    ('DDV-DER', 'DDV - Derecho Aeronáutico'),
+    ('DDV-ADA', 'DDV - Adoctrinamiento en Aviación'),
+    ('DDV-MYP', 'DDV - Masa y Performance de la Aeronave'),
+    ('DDV-NAV', 'DDV - Navegación'),
+    ('DDV-CTA', 'DDV - Control de Tránsito Aéreo'),
+    ('DDV-MET', 'DDV - Meteorología'),
+    ('DDV-CMC', 'DDV - Control de Masa y Centrado'),
+    ('DDV-TMP', 'DDV - Transporte de Mercancías Peligrosas'),
+    ('DDV-PDV', 'DDV - Planificación de Vuelo'),
+    ('DDV-MDV', 'DDV - Monitoreo del Vuelo'),
+    ('DDV-RDC', 'DDV - Radiocomunicaciones'),
+    ('DDV-FHH', 'DDV - Factores Humanos'),
+    ('DDV-SEG', 'DDV - Seguridad'),
+)
+
+#endregion
+
+#region Models
 # General Course Type Model
 class CourseType(models.Model):
     """Course model for all permanent courses (Private Pilot, Commercial Pilot, etc.)"""
-
-    COURSE_CODES = (
-        ('PPA', 'PPA'),
-        ('HVI', 'HVI'),
-        ('PCA', 'PCA'),
-        ('TLA', 'TLA'),
-        ('IVA', 'IVA'),
-        ('IVS', 'IVS'),
-        ('DDV', 'DDV'),
-    )
-    COURSE_NAMES = (
-        ('Piloto Privado Avión', 'Piloto Privado Avión'),
-        ('Habilitación Vuelo Instrumental Avión', 'Habilitación Vuelo Instrumental Avión'),
-        ('Piloto Comercial Avión', 'Piloto Comercial Avión'),
-        ('Transporte Línea Aérea Avión', 'Transporte Línea Aérea Avión'),
-        ('Instructor de Vuelo Avión', 'Instructor de Vuelo Avión'),
-        ('Instructor de Vuelo Simulado', 'Instructor de Vuelo Simulado'),
-        ('Despachador de Vuelo', 'Despachador de Vuelo'),
-    )
-
     code = models.CharField(max_length=10, unique=True, choices=COURSE_CODES, default='PPA')
     name = models.CharField(max_length=100, unique=True, choices=COURSE_NAMES, default='Piloto Privado')
     credit_hours = models.PositiveIntegerField(default=0)
@@ -64,14 +166,21 @@ class CourseEdition(models.Model):
 # Subject Model (Belongs to a Course Type)
 class SubjectType(models.Model):
     """Subject type model for all permanent subjects (e.g., Aerodynamics I, Instruments II, etc.)"""
-    code = models.CharField(max_length=10, unique=True)
-    name = models.CharField(max_length=100, unique=True)
     course_type = models.ForeignKey(CourseType, on_delete=models.CASCADE, related_name='subjects')
-    credit_hours = models.PositiveIntegerField(default=0)
+    code = models.CharField(max_length=50, unique=True, choices=SUBJECTS_CODES)
+    name = models.CharField(max_length=100, unique=True, choices=SUBJECTS_NAMES)
+    credit_hours = models.PositiveIntegerField(
+        default=0,
+        help_text="Horas académicas de la materia")
     passing_grade = models.PositiveIntegerField(
         default=80,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         help_text="Nota mínima requerida para aprobar la materia"
+    )
+    recovery_passing_grade = models.PositiveIntegerField(
+        default=90,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        help_text="Nota mínima requerida para aprobar la materia en reparación"
     )
 
     class Meta:
@@ -117,5 +226,5 @@ class SubjectEdition(models.Model):
             raise ValidationError('El horario de finalización debe ser posterior al horario de inicio')
 
     def __str__(self):
-        subject = self.subject_type or self.base_subject
-        return f"{subject.code} ({self.time_slot})"
+        return f"{self.subject_type.code} ({self.time_slot})"
+#endregion

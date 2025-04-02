@@ -99,7 +99,7 @@ class Student(models.Model):
     student_course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPES, 
-        default=COURSE_PPA, 
+        default=COURSE_NA, 
         verbose_name='Curso',
     )
     

@@ -72,7 +72,7 @@ class Student(models.Model):
         verbose_name='Identificación',
         unique=True,
         primary_key=True,
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        validators=[MinValueValidator(1000000), MaxValueValidator(100000000)],
         help_text='Número de cédula o pasaporte sin puntos o guiones.',
     )
 
@@ -110,7 +110,7 @@ class Student(models.Model):
     student_license_type = models.CharField(
         max_length=3,
         choices=LICENSE_TYPES,
-        default=LICENSE_AP,
+        default=LICENSE_NA,
         verbose_name='Tipo de licencia',
     )
 

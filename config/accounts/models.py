@@ -218,7 +218,7 @@ class Instructor(models.Model):
         verbose_name='Identificación',
         unique=True,
         primary_key=True,
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        validators=[MinValueValidator(1000000), MaxValueValidator(100000000)],
         help_text='Número de cédula o pasaporte sin puntos o guiones.',
     )
 
@@ -257,7 +257,7 @@ class Staff(models.Model):
         verbose_name='Identificación',
         unique=True,
         primary_key=True,
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        validators=[MinValueValidator(1000000), MaxValueValidator(100000000)],
         help_text='Número de cédula o pasaporte sin puntos o guiones.',
     )
 

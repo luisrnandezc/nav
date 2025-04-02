@@ -4,8 +4,8 @@ from academic.models import CourseType, CourseEdition, SubjectType, SubjectEditi
 
 @admin.register(CourseType)
 class CourseTypeAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name')
-    search_fields = ('code', 'name')
+    list_display = ('code', 'name', 'credit_hours')
+    search_fields = ('code', 'name', 'credit_hours'	)
     ordering = ('code',)
 
 @admin.register(CourseEdition)

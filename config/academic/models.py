@@ -156,7 +156,6 @@ class CourseEdition(models.Model):
     course_type = models.ForeignKey(CourseType, on_delete=models.CASCADE, related_name='editions')
     edition = models.IntegerField(validators=[MinValueValidator(1)], default=1)
     start_date = models.DateField(default=timezone.now)
-    end_date = models.DateField(null=True, blank=True)
     students = models.ManyToManyField(
         User,
         limit_choices_to={'role': 'STUDENT'},

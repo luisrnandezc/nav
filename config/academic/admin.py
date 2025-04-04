@@ -22,7 +22,7 @@ class SubjectTypeAdmin(admin.ModelAdmin):
 
 @admin.register(SubjectEdition)
 class SubjectEditionAdmin(admin.ModelAdmin):
-    list_display = ('subject_type', 'course_edition', 'instructor', 'time_slot', 'start_date', 'end_date')
-    list_filter = ('course_edition__course_type', 'time_slot')
+    list_display = ('subject_type', 'instructor', 'time_slot', 'start_date', 'end_date')
+    list_filter = ('subject_type__course_type', 'time_slot')
     search_fields = ('subject_type__name', 'subject_type__code', 'instructor__username')
     filter_horizontal = ('students',)

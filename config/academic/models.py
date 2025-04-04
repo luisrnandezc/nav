@@ -211,7 +211,6 @@ class SubjectType(models.Model):
 class SubjectEdition(models.Model):
     """Specific edition of a subject"""
     subject_type = models.ForeignKey(SubjectType, on_delete=models.CASCADE, related_name='editions', null=True)
-    course_edition = models.ForeignKey(CourseEdition, on_delete=models.CASCADE, related_name='subjects')
     
     instructor = models.ForeignKey(
         User, 
@@ -237,7 +236,7 @@ class SubjectEdition(models.Model):
     class Meta:
         verbose_name = 'Subject Edition'
         verbose_name_plural = 'Subject Editions'
-        ordering = ['course_edition', 'subject_type']
+        ordering = ['subject_type']
 
     def clean(self):
         if self.end_date < self.start_date:

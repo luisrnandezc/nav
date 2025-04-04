@@ -143,8 +143,8 @@ class CourseType(models.Model):
     credit_hours = models.PositiveIntegerField(default=0)
     
     class Meta:
-        verbose_name = 'Course Type'
-        verbose_name_plural = 'Course Types'
+        verbose_name = 'Curso'
+        verbose_name_plural = 'Cursos'
         ordering = ['code']
     
     def __str__(self):
@@ -166,8 +166,8 @@ class CourseEdition(models.Model):
     time_slot = models.CharField(max_length=10, choices=TIME_SLOTS)
 
     class Meta:
-        verbose_name = 'Course Edition'
-        verbose_name_plural = 'Course Editions'
+        verbose_name = 'Edición de Curso'
+        verbose_name_plural = 'Ediciones de Cursos'
         unique_together = ['course_type', 'edition']
         ordering = ['course_type', 'edition']
     
@@ -200,8 +200,8 @@ class SubjectType(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Subject Type'
-        verbose_name_plural = 'Subject Types'
+        verbose_name = 'Materia'
+        verbose_name_plural = 'Materias'
         ordering = ['course_type', 'code']
 
     def __str__(self):
@@ -234,8 +234,8 @@ class SubjectEdition(models.Model):
     end_time = models.TimeField(default=datetime.time(12, 30))
 
     class Meta:
-        verbose_name = 'Subject Edition'
-        verbose_name_plural = 'Subject Editions'
+        verbose_name = 'Edición de Materia'
+        verbose_name_plural = 'Ediciones de Materias'
         ordering = ['subject_type']
 
     def clean(self):

@@ -153,8 +153,8 @@ class StudentProfile(models.Model):
     class Meta:
         db_table = 'students_db'
         ordering = ['user__national_id']
-        verbose_name = 'Student'
-        verbose_name_plural = 'Students'
+        verbose_name = 'Estudiante'
+        verbose_name_plural = 'Estudiantes'
 
     def __str__(self):
         return f'{self.user.username} [ID: {self.user.national_id}] ({self.student_phase} - {self.current_course_type})'
@@ -283,7 +283,7 @@ class InstructorProfile(models.Model):
         db_table = 'instructors_db'
         ordering = ['user__national_id']
         verbose_name = 'Instructor'
-        verbose_name_plural = 'Instructors'
+        verbose_name_plural = 'Instructores'
 
     
     def __str__(self):

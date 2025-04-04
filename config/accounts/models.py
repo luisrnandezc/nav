@@ -134,20 +134,6 @@ class StudentProfile(models.Model):
         verbose_name='Fase de entrenamiento',
     )
     
-    student_course_type = models.CharField(
-        max_length=3, 
-        choices=COURSE_TYPES, 
-        default=COURSE_NA, 
-        verbose_name='Curso',
-    )
-    
-    student_course_edition = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)], 
-        verbose_name='Edición de Curso',
-        null=True,
-        blank=True,
-    )
-
     student_license_type = models.CharField(
         max_length=3,
         choices=LICENSE_TYPES,
@@ -171,8 +157,22 @@ class StudentProfile(models.Model):
         verbose_name_plural = 'Students'
 
     def __str__(self):
-        return f'{self.user.username} [ID: {self.user.national_id}] ({self.student_phase} - {self.student_course_type})'
+        return f'{self.user.username} [ID: {self.user.national_id}] ({self.student_phase} - {self.current_course_type})'
     
+    @property
+    def current_course_type(self):
+        """Get the current course type code or 'N/A' if not enrolled."""
+        from academic.models import CourseEdition
+        current_course = CourseEdition.objects.filter(students=self.user).order_by('-start_date').first()
+        return current_course.course_type.code if current_course else self.COURSE_NA
+
+    @property
+    def current_course_edition(self):
+        """Get the current course edition number or None if not enrolled."""
+        from academic.models import CourseEdition
+        current_course = CourseEdition.objects.filter(students=self.user).order_by('-start_date').first()
+        return current_course.edition if current_course else None
+
     def get_total_flying_time(self):
         """
         Calculate total flight time from the FlightLog table.
@@ -196,19 +196,23 @@ class StudentProfile(models.Model):
         Returns None if not enrolled in any course.
         """
         from academic.models import CourseEdition
-        return CourseEdition.objects.filter(students=self).first()
+        return CourseEdition.objects.filter(students=self.user).first()
 
     def update_course_info(self):
         """
-        Update student_course_type and student_course_number based on current enrollment.
-        If not enrolled, sets course_type to "No inscrito" and course_number to 0.
+        Update student_course_type and student_course_edition based on current enrollment.
+        If not enrolled, sets course_type to "No inscrito" and course_edition to None.
         """
-        current_course = self.get_current_course()
+        from academic.models import CourseEdition
+        # Get the most recent course enrollment
+        current_course = CourseEdition.objects.filter(students=self.user).order_by('-start_date').first()
+        
         if current_course:
             self.student_course_type = current_course.course_type.code
             self.student_course_edition = current_course.edition
         else:
-            self.student_course_type = self.COURSE_NA  # No inscrito
+            # Student is not enrolled in any course
+            self.student_course_type = self.COURSE_NA
             self.student_course_edition = None
 
     def save(self, *args, **kwargs):

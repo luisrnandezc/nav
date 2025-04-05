@@ -179,16 +179,6 @@ class StudentProfile(models.Model):
         """
         total_time = self.flightlog_set.aggregate(models.Sum('flight_hours'))['flight_hours__sum'] or 0
         return total_time
-
-    def clean(self):
-        """
-        Custom validation for the 'balance' field.
-        If the student is not a 'flying' student, the balance must be zero.
-        """
-        if self.student_phase == self.GROUND and self.student_balance != 0:
-            raise ValidationError({
-                'student_balance': 'Balance must be zero for ground students.'
-            })
     
     def get_current_course(self):
         """
@@ -214,18 +204,6 @@ class StudentProfile(models.Model):
             # Student is not enrolled in any course
             self.student_course_type = self.COURSE_NA
             self.student_course_edition = None
-
-    def save(self, *args, **kwargs):
-        """
-        Override the save method to ensure the balance is reset to 0
-        when the student type is changed from 'flying' to 'ground'.
-        Also update course information based on current enrollment.
-        """
-        if self.student_phase == self.GROUND:
-            self.student_balance = 0.00
-        self.update_course_info()
-        super().save(*args, **kwargs)
-
 
 class InstructorProfile(models.Model):
 

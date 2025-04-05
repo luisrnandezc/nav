@@ -275,6 +275,8 @@ class StaffProfile(models.Model):
     """Model for storing staff member information and administrative roles."""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='staff_profile')
 
+    can_confirm_payments = models.BooleanField(default=False)
+
     class Meta:
         db_table = 'staff_db'
         ordering = ['user__national_id']
@@ -314,7 +316,8 @@ class StudentPayment(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='confirmed_student_payments'
+        related_name='confirmed_student_payments',
+        limit_choices_to={'staff_profile__can_confirm_payments': True}
     )
     confirmation_date = models.DateTimeField(null=True, blank=True)
 
@@ -336,10 +339,16 @@ class StudentPayment(models.Model):
         
         if self.confirmed and not self.confirmed_by:
             raise ValidationError('Un pago confirmado debe tener un usuario que lo confirme')
+        
+        if self.confirmed_by and (
+            not hasattr(self.confirmed_by, 'staff_profile') or 
+            not self.confirmed_by.staff_profile.can_confirm_payments
+        ):
+            raise ValidationError('Solo el personal autorizado puede confirmar pagos')
 
     def confirm(self, user):
-        """Call this method when the director confirms the payment"""
-        if not user.is_staff:
+        """Call this method when a director confirms the payment"""
+        if not hasattr(user, 'staff_profile') or not user.staff_profile.can_confirm_payments:
             raise ValidationError('Solo el personal autorizado puede confirmar pagos')
             
         self.confirmed = True

@@ -53,6 +53,7 @@ class User(AbstractUser):
     
 # Profile Models for Each Role
 class StudentProfile(models.Model):
+    """Model for managing student information, course enrollment, and flight training progress."""
 
     #region CHOICE DEFINITIONS
 
@@ -208,8 +209,9 @@ class StudentProfile(models.Model):
             self.student_course_edition = None
 
 class InstructorProfile(models.Model):
+    """Model for storing instructor-specific information and flight training credentials."""
 
-#region CHOICE DEFINITIONS
+    #region CHOICE DEFINITIONS
 
     # Instructor type
     GROUND = 'TIERRA'
@@ -265,12 +267,12 @@ class InstructorProfile(models.Model):
         verbose_name = 'Instructor'
         verbose_name_plural = 'Instructores'
 
-    
     def __str__(self):
         return f'{self.user.username} [ID: {self.user.national_id}] ({self.instructor_type})'
 
 
 class StaffProfile(models.Model):
+    """Model for storing staff member information and administrative roles."""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='staff_profile')
 
     class Meta:
@@ -282,8 +284,8 @@ class StaffProfile(models.Model):
     def __str__(self):
         return f'{self.user.username} [ID: {self.user.national_id}]'
 
-
 class StudentPayment(models.Model):
+    """Model for tracking student payments, balances, and payment confirmations."""
     student_profile = models.OneToOneField(
         'accounts.StudentProfile', 
         on_delete=models.CASCADE, 

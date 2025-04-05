@@ -1,7 +1,7 @@
 # Admin customization
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, StudentProfile, InstructorProfile, StaffProfile
+from .models import User, StudentProfile, InstructorProfile, StaffProfile, StudentPayment
 
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -51,6 +51,36 @@ class StudentProfileAdmin(admin.ModelAdmin):
     def get_course_edition(self, obj):
         return obj.current_course_edition
     get_course_edition.short_description = 'Edición de Curso'
+
+@admin.register(StudentPayment)
+class StudentPaymentAdmin(admin.ModelAdmin):
+    list_display = ('student_profile', 'amount', 'date_added', 'confirmed', 'confirmation_date')
+    list_filter = ('confirmed', 'date_added')
+    search_fields = (
+        'student_profile__user__username',
+        'student_profile__user__first_name',
+        'student_profile__user__last_name',
+        'student_profile__user__national_id'
+    )
+    readonly_fields = ('date_added', 'confirmation_date')
+    
+    fieldsets = (
+        ('Student Information', {
+            'fields': ('student_profile',)
+        }),
+        ('Payment Information', {
+            'fields': ('amount', 'date_added', 'notes')
+        }),
+        ('Confirmation Information', {
+            'fields': ('confirmed', 'confirmed_by', 'confirmation_date'),
+            'description': 'Solo el personal autorizado puede confirmar pagos.'
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        if not change:  # Only set added_by on creation
+            obj.added_by = request.user
+        super().save_model(request, obj, form, change)
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(InstructorProfile)

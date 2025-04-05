@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.conf import settings
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 # Custom User Manager
@@ -279,3 +281,71 @@ class StaffProfile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} [ID: {self.user.national_id}]'
+
+
+class StudentPayment(models.Model):
+    student_profile = models.OneToOneField(
+        'accounts.StudentProfile', 
+        on_delete=models.CASCADE, 
+        related_name='payment'
+    )
+    amount = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(0)]
+    )
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    # The user who adds the payment (accounting manager)
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True
+    )
+
+    confirmed = models.BooleanField(default=False)
+    
+    # Director who confirms the payment
+    confirmed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='confirmed_student_payments'
+    )
+    confirmation_date = models.DateTimeField(null=True, blank=True)
+
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        db_table = 'student_payments'
+        ordering = ['-date_added', 'student_profile__user__national_id']
+        verbose_name = 'Pago de Estudiante'
+        verbose_name_plural = 'Pagos de Estudiantes'
+
+    def __str__(self):
+        return f"{self.student_profile.user.first_name} {self.student_profile.user.last_name} - ${self.amount}"
+
+    def clean(self):
+        """Validate payment data"""
+        if self.amount <= 0:
+            raise ValidationError('El monto debe ser mayor a cero')
+        
+        if self.confirmed and not self.confirmed_by:
+            raise ValidationError('Un pago confirmado debe tener un usuario que lo confirme')
+
+    def confirm(self, user):
+        """Call this method when a director confirms the payment"""
+        if not user.is_staff:
+            raise ValidationError('Solo el personal autorizado puede confirmar pagos')
+            
+        self.confirmed = True
+        self.confirmed_by = user
+        self.confirmation_date = timezone.now()
+        self.save()
+        
+        # Update balance if your StudentProfile has one
+        if hasattr(self.student_profile, 'student_balance'):
+            self.student_profile.student_balance += self.amount
+            self.student_profile.save()

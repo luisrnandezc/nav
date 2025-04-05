@@ -336,7 +336,7 @@ class StudentPayment(models.Model):
             raise ValidationError('Un pago confirmado debe tener un usuario que lo confirme')
 
     def confirm(self, user):
-        """Call this method when a director confirms the payment"""
+        """Call this method when the director confirms the payment"""
         if not user.is_staff:
             raise ValidationError('Solo el personal autorizado puede confirmar pagos')
             

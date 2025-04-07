@@ -77,6 +77,12 @@ class StudentPaymentAdmin(admin.ModelAdmin):
         }),
     )
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = list(super().get_readonly_fields(request, obj))
+        if not hasattr(request.user, 'staff_profile') or not request.user.staff_profile.can_confirm_payments:
+            readonly_fields.extend(['confirmed', 'confirmed_by'])
+        return readonly_fields
+
     def save_model(self, request, obj, form, change):
         if not change:  # Only set added_by on creation
             obj.added_by = request.user

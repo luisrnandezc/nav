@@ -134,6 +134,10 @@ header {
     text-align: center;
 }
 
+#note {
+    color: red
+}
+
 #header-p {
     text-align: center;
     width: 85%;

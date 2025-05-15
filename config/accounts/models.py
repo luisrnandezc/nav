@@ -288,16 +288,19 @@ class StaffProfile(models.Model):
 
 class StudentPayment(models.Model):
     """Model for tracking student payments, balances, and payment confirmations."""
+
     student_profile = models.OneToOneField(
         'accounts.StudentProfile', 
         on_delete=models.CASCADE, 
         related_name='payment'
     )
+
     amount = models.DecimalField(
         max_digits=7,
         decimal_places=2,
         validators=[MinValueValidator(0)]
     )
+
     date_added = models.DateTimeField(auto_now_add=True)
 
     # The user who adds the payment (accounting manager)
@@ -308,9 +311,11 @@ class StudentPayment(models.Model):
         blank=True
     )
 
+    # Checks if the payment has been confirmed
+    # by the director or authorized staff
     confirmed = models.BooleanField(default=False)
     
-    # Director who confirms the payment
+    # Admin who confirms the payment
     confirmed_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -319,8 +324,12 @@ class StudentPayment(models.Model):
         related_name='confirmed_student_payments',
         limit_choices_to={'staff_profile__can_confirm_payments': True}
     )
+
+    # Date when the payment was confirmed
+    # by the director or authorized staff
     confirmation_date = models.DateTimeField(null=True, blank=True)
 
+    # Notes or comments about the payment
     notes = models.TextField(blank=True)
 
     class Meta:
@@ -360,3 +369,10 @@ class StudentPayment(models.Model):
         if hasattr(self.student_profile, 'student_balance'):
             self.student_profile.student_balance += self.amount
             self.student_profile.save()
+    
+    def save(self, *args, **kwargs):
+        """Override save method to validate data before saving"""
+        # Automatically update confirmation_date if confirmed is set to True
+        if self.confirmed and not self.confirmation_date:
+            self.confirmation_date = timezone.now()
+        super().save(*args, **kwargs)

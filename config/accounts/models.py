@@ -295,12 +295,14 @@ class StudentPayment(models.Model):
         related_name='payment'
     )
 
+    # Payment amount
     amount = models.DecimalField(
         max_digits=7,
         decimal_places=2,
         validators=[MinValueValidator(0)]
     )
 
+    # Date when the payment was made
     date_added = models.DateTimeField(auto_now_add=True)
 
     # The user who adds the payment (accounting manager)
@@ -326,7 +328,6 @@ class StudentPayment(models.Model):
     )
 
     # Date when the payment was confirmed
-    # by the director or authorized staff
     confirmation_date = models.DateTimeField(null=True, blank=True)
 
     # Notes or comments about the payment

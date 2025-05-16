@@ -291,30 +291,33 @@ class StudentPayment(models.Model):
     student_profile = models.ForeignKey(
         'accounts.StudentProfile', 
         on_delete=models.CASCADE, 
-        related_name='payments'
+        related_name='payments',
+        verbose_name='Estudiante',
     )
 
     # Payment amount
     amount = models.DecimalField(
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(0)]
+        validators=[MinValueValidator(0)],
+        verbose_name='Monto',
     )
 
     # Date when the payment was made
-    date_added = models.DateTimeField(auto_now_add=True)
+    date_added = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de pago')
 
     # The user who adds the payment (accounting manager)
     added_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.SET_NULL, 
         null=True, 
-        blank=True
+        blank=True,
+        verbose_name='Agregado por',
     )
 
     # Checks if the payment has been confirmed
     # by the director or authorized staff
-    confirmed = models.BooleanField(default=False)
+    confirmed = models.BooleanField(default=False, verbose_name='Confirmado')
     
     # Admin who confirms the payment
     confirmed_by = models.ForeignKey(
@@ -323,14 +326,19 @@ class StudentPayment(models.Model):
         null=True,
         blank=True,
         related_name='confirmed_student_payments',
-        limit_choices_to={'staff_profile__can_confirm_payments': True}
+        limit_choices_to={'staff_profile__can_confirm_payments': True},
+        verbose_name='Confirmado por',
     )
 
     # Date when the payment was confirmed
-    confirmation_date = models.DateTimeField(null=True, blank=True)
+    confirmation_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Fecha de confirmación',
+    )
 
     # Notes or comments about the payment
-    notes = models.TextField(blank=True)
+    notes = models.TextField(blank=True, verbose_name='Notas')
 
     class Meta:
         db_table = 'student_payments'

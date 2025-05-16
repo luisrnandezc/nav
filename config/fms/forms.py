@@ -22,6 +22,7 @@ class FlightEvaluationForm(forms.ModelForm):
             'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11', 'inst_12',
             'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7', 'land_8',
             'land_9', 'land_10', 'land_11', 'land_12', 'land_13', 'land_14', 'land_15',
+            'notes',
         ]
 
         labels = {
@@ -119,6 +120,7 @@ class FlightEvaluationForm(forms.ModelForm):
             'land_13': 'Dominio de instrumentos',
             'land_14': 'Procedimiento IAF - IF - FAF',
             'land_15': 'Patrón de espera',
+            'notes': 'Notas',
         }
 
         widgets = {
@@ -216,6 +218,7 @@ class FlightEvaluationForm(forms.ModelForm):
             'land_13': forms.Select(attrs={'class': 'form-field'}),
             'land_14': forms.Select(attrs={'class': 'form-field'}),
             'land_15': forms.Select(attrs={'class': 'form-field'}),
+            'notes': forms.Textarea(attrs={'class': 'form-field', 'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):

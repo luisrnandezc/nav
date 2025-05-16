@@ -83,69 +83,57 @@ class FlightLog(models.Model):
     #endregion
 
     #region STUDENT DATA
-
     student_id = models.PositiveIntegerField(
         validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
     )
-
     student_first_name = models.CharField(
         max_length=50,
         default='',
     )
-
     student_last_name = models.CharField(
         max_length=50,
         default='',
     )
-
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
         default=COURSE_PP,
     )
-
     #endregion
 
     #region INSTRUCTOR DATA
-
     instructor_id = models.PositiveIntegerField(
         validators=[MinValueValidator(1000000), MaxValueValidator(99999999)]
     )
-
     instructor_first_name = models.CharField(
         max_length=50,
         default='',
     )
-
     instructor_last_name = models.CharField(
         max_length=50,
         default='',
     )
-
     #endregion
 
     #region SESSION DATA
-
-    flight_date = models.DateTimeField(auto_now_add=True)
-
+    flight_date = models.DateTimeField(
+        auto_now_add=True
+    )
     flight_rules = models.CharField(
         max_length=4, 
         choices=FLIGHT_RULES_CHOICES,
         default=VFR,
     )
-
     solo_flight = models.CharField(
         max_length=3,
         choices=SOLO_FLIGHT_CHOICES,
         default=YES,
     )
-
     session_number = models.CharField(
         max_length=3,
         choices=generate_choices(),
         default='1',
     )
-
     session_letter = models.CharField(
         max_length=1,
         choices=SESSION_LETTER_CHOICES,
@@ -153,33 +141,29 @@ class FlightLog(models.Model):
         null=True,
         default='',
     )
-
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
         decimal_places=2,
         default=0.00,
     )
-
     session_flight_hours = models.DecimalField(
         max_digits=5, 
         decimal_places=2,
         default=0.00,
     )
-
     aircraft_registration = models.CharField(
         max_length=6,
         choices=AIRCRAFT_REG,
         default=YV1111,
     )
-
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
     )
-
-    notes = models.TextField(blank=False)
-
+    notes = models.TextField(
+        blank=False
+    )
     #endregion
 
     def __str__(self):

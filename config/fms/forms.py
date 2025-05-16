@@ -231,23 +231,32 @@ class FlightEvaluationForm(forms.ModelForm):
             self.fields['instructor_license_number'].initial = user.national_id
 
     def save(self, commit=True):
-        """Override the save method to copy user_id to user_license_number."""
+        """Override the save method to copy user_id to user_license_number and create FlightLog."""
         instance = super().save(commit=False)  # Don't save yet, so we can modify the instance
         instance.student_license_number = instance.student_id  # Copy value from user_id
-        
         
         # Create and save a FlightLog instance
         flightlog_instance = FlightLog(
             student_id=self.cleaned_data.get('student_id'),
             student_first_name=self.cleaned_data.get('student_first_name'),
             student_last_name=self.cleaned_data.get('student_last_name'),
-            student_course_type=self.cleaned_data.get('course_type'),
+            course_type=self.cleaned_data.get('course_type'),
             instructor_id=self.cleaned_data.get('instructor_id'),
             instructor_first_name=self.cleaned_data.get('instructor_first_name'),
             instructor_last_name=self.cleaned_data.get('instructor_last_name'),
+            flight_rules=self.cleaned_data.get('flight_rules'),
+            solo_flight=self.cleaned_data.get('solo_flight'),
+            session_number=self.cleaned_data.get('session_number'),
+            session_letter=self.cleaned_data.get('session_letter'),
+            accumulated_flight_hours=self.cleaned_data.get('accumulated_flight_hours'),
+            session_flight_hours=self.cleaned_data.get('session_flight_hours'),
+            aircraft_registration=self.cleaned_data.get('aircraft_registration'),
+            session_grade=self.cleaned_data.get('session_grade'),
+            notes=self.cleaned_data.get('notes', '')
         )
          
         if commit:
             instance.save()
+            flightlog_instance.save()
 
         return instance

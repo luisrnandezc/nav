@@ -23,10 +23,10 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'student_phase', 'get_course_type', 'get_course_edition')
+    list_display = ('user', 'student_phase', 'get_course_type', 'get_course_edition', 'get_student_balance')
     list_filter = ('student_phase',)
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
-    readonly_fields = ('get_course_type', 'get_course_edition')
+    readonly_fields = ('get_course_type', 'get_course_edition', 'get_student_balance')
     
     fieldsets = (
         ('User Information', {
@@ -40,7 +40,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
             'description': 'Esta información se actualiza automáticamente según la inscripción del estudiante en los cursos.'
         }),
         ('Balance Information', {
-            'fields': ('student_balance',)
+            'fields': ('get_student_balance',)
         }),
     )
 
@@ -51,6 +51,10 @@ class StudentProfileAdmin(admin.ModelAdmin):
     def get_course_edition(self, obj):
         return obj.current_course_edition
     get_course_edition.short_description = 'Edición de Curso'
+
+    def get_student_balance(self, obj):
+        return obj.student_balance
+    get_student_balance.short_description = 'Balance de vuelo'
 
 @admin.register(StudentPayment)
 class StudentPaymentAdmin(admin.ModelAdmin):

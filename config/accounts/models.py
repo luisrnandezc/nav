@@ -144,12 +144,11 @@ class StudentProfile(models.Model):
         verbose_name='Tipo de licencia',
     )
 
-    student_balance = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        default=0.00, 
-        verbose_name='Balance para Línea de Vuelo',
-    )
+    @property
+    def student_balance(self):
+        """Calculate the balance as the sum of all confirmed payments."""
+        confirmed_payments = self.payments.filter(confirmed=True).aggregate(models.Sum('amount'))
+        return confirmed_payments['amount__sum'] or 0.00
 
     #endregion
 
@@ -289,10 +288,10 @@ class StaffProfile(models.Model):
 class StudentPayment(models.Model):
     """Model for tracking student payments, balances, and payment confirmations."""
 
-    student_profile = models.OneToOneField(
+    student_profile = models.ForeignKey(
         'accounts.StudentProfile', 
         on_delete=models.CASCADE, 
-        related_name='payment'
+        related_name='payments'
     )
 
     # Payment amount

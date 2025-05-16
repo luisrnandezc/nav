@@ -71,12 +71,12 @@ class FlightEvaluationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         if user:
-            profile = user.instructor
-            self.fields['instructor_id'].initial = profile.instructor_id
+            profile = user.instructor_profile
+            self.fields['instructor_id'].initial = user.national_id
             self.fields['instructor_first_name'].initial = user.first_name
             self.fields['instructor_last_name'].initial = user.last_name
             self.fields['instructor_license_type'].initial = profile.instructor_license_type
-            self.fields['instructor_license_number'].initial = profile.instructor_id
+            self.fields['instructor_license_number'].initial = user.national_id
 
     def save(self, commit=True):
         """Override the save method to copy user_id to user_license_number."""

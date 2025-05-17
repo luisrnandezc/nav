@@ -11,11 +11,12 @@ def submit_flight_evaluation(request):
         if form.is_valid():
             try:
                 form.save()  # This will save both FlightEvaluation and FlightLog
-                messages.success(request, 'Evaluación de vuelo guardada exitosamente.')
                 return redirect('dashboard:dashboard')
             except Exception as e:
                 messages.error(request, f'Error al guardar la evaluación: {str(e)}')
+        else:
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
     else:  
         form = FlightEvaluationForm(user=request.user)
-    
+
     return render(request, 'fms/flight_evaluation.html', {'form': form})

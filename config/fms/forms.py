@@ -218,7 +218,7 @@ class FlightEvaluationForm(forms.ModelForm):
             'land_13': forms.Select(attrs={'class': 'form-field'}),
             'land_14': forms.Select(attrs={'class': 'form-field'}),
             'land_15': forms.Select(attrs={'class': 'form-field'}),
-            'notes': forms.Textarea(attrs={'class': 'form-field', 'rows': 4}),
+            'notes': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
         }
 
     def __init__(self, *args, **kwargs):

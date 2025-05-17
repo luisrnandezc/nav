@@ -19,9 +19,9 @@
           <p>Nombres: {{ user.first_name }}</p>
           <p>Apellidos: {{ user.last_name }}</p>
           <p>Usuario: {{ user.username }}</p>
-          <p>ID: {{ user_profile.instructor_id }}</p>
+          <p>ID: {{ user.national_id }}</p>
           <p>Email: {{ user.email }}</p>
-          <P>Función: {{ user_profile.instructor_type }}</P>
+          <p>Función: {{ user.instructor_profile.instructor_type }}</p>
         </div>
         <div class="buttons">
           <div class="button-container">
@@ -38,40 +38,77 @@
       </div>
       <div class="dashboard-container">
           <div class="left-column">
-
             <div class="dashboard-square">
               <h1 class="square-header">Cargar notas</h1>
-              <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                <img class="logo-img" src="{% static 'img/addGrade.png' %}" alt="Transcript">
-              </a>
+              {% if request.user.is_authenticated and request.user.instructor_profile.instructor_type in 'TIERRA,DUAL' %}
+                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                  <img class="logo-img" src="{% static 'img/addGrade.png' %}" alt="Cargar notas">
+                </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img 
+                  class="logo-img" 
+                  src="{% static 'img/addGrade.png' %}"
+                  alt="Cargar notas" 
+                  title="Solo disponible para instructores de tierra."
+                  >
+                </div>
+              {% endif %}
             </div>
-
             <div class="dashboard-square">
               <h1 class="square-header">Cargar vuelo</h1>
-              <a class="image-link" href="{% url 'fms:flight_evaluation' %}">
-                <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Transcript">
-              </a>
+              {% if request.user.is_authenticated and request.user.instructor_profile.instructor_type in 'VUELO,DUAL' %}
+                <a class="image-link" href="{% url 'fms:flight_evaluation' %}">
+                  <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Evaluación de vuelo">
+                </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img 
+                  class="logo-img" 
+                  src="{% static 'img/plane.png' %}" 
+                  alt="Evaluación de vuelo" 
+                  title="Solo disponible para instructores de vuelo."
+                  >
+                </div>
+              {% endif %}
             </div>
           </div>
-
           <div class="right-column">
-
             <div class="dashboard-square">
               <h1 class="square-header">Flight Log</h1>
-              <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                <img class="logo-img" src="{% static 'img/flightlog.png' %}" alt="Flight Log">
-              </a>
+              {% if request.user.is_authenticated and request.user.instructor_profile.instructor_type in 'VUELO,DUAL' %}
+                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                  <img class="logo-img" src="{% static 'img/flightlog.png' %}" alt="Bitácora">
+                </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img 
+                  class="logo-img" 
+                  src="{% static 'img/flightlog.png' %}" 
+                  alt="Bitácora" 
+                  title="Solo disponible para instructores de vuelo."
+                  >
+                </div>
+              {% endif %}
             </div>
-
             <div class="dashboard-square">
               <h1 class="square-header">Calendario de vuelos</h1>
-              <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                <img class="logo-img" src="{% static 'img/calendar.png' %}" alt="Airplane">
-              </a>
+              {% if request.user.is_authenticated and request.user.instructor_profile.instructor_type in 'VUELO,DUAL' %}
+                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
+                  <img class="logo-img" src="{% static 'img/calendar.png' %}" alt="Calendario">
+                </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img 
+                  class="logo-img" 
+                  src="{% static 'img/calendar.png' %}" 
+                  alt="Calenario" 
+                  title="Solo disponible para instructores de vuelo."
+                  >
+                </div>
+              {% endif %}
             </div>
-
           </div>
-
       </div>
     </div>
   </body>

@@ -1,0 +1,131 @@
+* {
+    font-family: 'Renogare-Regular', 'Arial', sans-serif;
+    color: #000000;
+    font-size: 16px;
+    letter-spacing: 0px;
+    box-sizing: border-box;
+  }
+  
+  html,
+  body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    text-transform: uppercase;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/login1.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 25px;
+  }
+
+  .main-header { 
+    color: rgb(232, 71, 40);
+    font-size: 2.0rem;
+    margin: 25px 0px 25px 0px;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 75%;
+    height: 100%;
+  }
+
+  .subsection-header {
+    color: #ffffff;
+    margin: 40px 0px 25px 0px;
+    text-decoration: underline solid 2px rgb(232, 71, 40);
+    text-underline-offset: 10px;
+    align-self: center;
+  }
+
+  details {
+    width: 100%;
+    background-color: transparent;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+
+  summary {
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .collapsible-section {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    margin-top: 25px;
+  }
+
+  .left-column,
+  .right-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 45%;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0px 10px 0px;
+  }
+
+  label {
+    width: 275px;
+    color: #ffffff;
+    text-align: right;
+    margin-right: 10px;
+  }
+
+  .form-field {
+    width: 150px;
+  }
+
+  #id_notes {
+    width: 500px;
+  }
+
+  .submit-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  
+  .submit-button {
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    width: 125px;
+    height: 40px;
+    border-radius: 3px;
+    color: #ffffff;
+    background-color: transparent;
+  }
+  
+  .submit-button:hover {
+    background-color: rgb(232, 71, 40);
+    color: #ffffff;
+    border: 0px solid #ffffff;
+    border-radius: 3px;
+    cursor: pointer;
+  }

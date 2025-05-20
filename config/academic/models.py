@@ -132,6 +132,12 @@ TIME_SLOTS = (
     ('N', 'Noche'),
 )
 
+# Test type choices
+TEST_TYPES = (
+    ('STANDARD', 'Examen estándar'),
+    ('RECOVERY', 'Examen de reparación'),
+)
+
 #endregion
 
 #region Models
@@ -149,6 +155,7 @@ class CourseType(models.Model):
     
     def __str__(self):
         return self.name
+    
 
 # Course Model (specific)
 class CourseEdition(models.Model):
@@ -173,6 +180,7 @@ class CourseEdition(models.Model):
     
     def __str__(self):
         return f"{self.course_type.name} - {self.edition}"
+    
     
 # Subject Model (Belongs to a Course Type)
 class SubjectType(models.Model):
@@ -206,6 +214,7 @@ class SubjectType(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.code})"
+    
 
 # Specific Subject Model (specific to a course)
 class SubjectEdition(models.Model):
@@ -247,4 +256,64 @@ class SubjectEdition(models.Model):
 
     def __str__(self):
         return f'{self.subject_type.code} {self.subject_type.name} ({self.time_slot})'
+    
+
+class StudentGrade(models.Model):
+    """Model for storing student grades in ground school subjects"""
+    subject_edition = models.ForeignKey(
+        SubjectEdition,
+        on_delete=models.CASCADE,
+        related_name='grades',
+        verbose_name='Edición de Materia'
+    )
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subject_grades',
+        verbose_name='Estudiante'
+    )
+    grade = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        verbose_name='Nota'
+    )
+    test_type = models.CharField(
+        max_length=10,
+        choices=TEST_TYPES,
+        default='STANDARD',
+        verbose_name='Tipo de Examen'
+    )
+    date = models.DateField(
+        auto_now_add=True,
+        verbose_name='Fecha'
+    )
+
+    class Meta:
+        verbose_name = 'Nota de Estudiante'
+        verbose_name_plural = 'Notas de Estudiantes'
+        unique_together = ['subject_edition', 'student', 'test_type']
+        ordering = ['-date']
+
+    def __str__(self):
+        return f'{self.student.username} - {self.subject_edition.subject_type.name} ({self.grade})'
+
+    def clean(self):
+        # Validate that the student is enrolled in the subject edition
+        if not self.subject_edition.students.filter(id=self.student.id).exists():
+            raise ValidationError('El estudiante no está inscrito en esta edición de materia')
+        
+        # Validate that the instructor is assigned to the subject edition
+        if not self.subject_edition.instructor:
+            raise ValidationError('No hay instructor asignado a esta edición de materia')
+
+    @property
+    def passed(self):
+        """Check if the student passed the exam based on test type and passing grade"""
+        passing_grade = (
+            self.subject_edition.subject_type.recovery_passing_grade
+            if self.test_type == 'RECOVERY'
+            else self.subject_edition.subject_type.passing_grade
+        )
+        return self.grade >= passing_grade
 #endregion

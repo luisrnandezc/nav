@@ -1,0 +1,52 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Carga de nota</title>
+    <link href="{% static 'student_grade.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="main-container">
+      <h1 class="main-header">Carga de notas</h1>
+      <form class="form-container" method="post"  action="{% url 'academic:student_grade' %}">
+        {% csrf_token %}
+        <div class="collapsible-section">
+          <div class="left-column">
+            <div class="form-row">
+              {{ form.subject_edition.label_tag }}
+              {{ form.subject_edition }}
+            </div>
+            <div class="form-row">
+              {{ form.student.label_tag }}
+              {{ form.student }}
+            </div>
+            <div class="form-row">
+              {{ form.grade.label_tag }}
+              {{ form.grade }}
+            </div>
+            <div class="form-row">
+              {{ form.test_type.label_tag }}
+              {{ form.test_type }}
+            </div>
+          </div>
+        </div>
+
+        {% if form.errors %}
+          <ul>
+            {% for field, errors in form.errors.items %}
+              <li>{{ field }}: {{ errors }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <div class="submit-button-container">
+        <button class="submit-button" type="submit">Cargar</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

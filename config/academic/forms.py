@@ -9,7 +9,7 @@ class StudentGradeForm(forms.ModelForm):
         fields = ['subject_edition', 'student', 'grade', 'test_type']
         widgets = {
             'grade': forms.NumberInput(attrs={'min': 0, 'max': 100, 'step': 0.1}),
-            'test_type': forms.RadioSelect(),
+            'test_type': forms.Select(attrs={'class': 'form-select'}),
         }
 
     def __init__(self, *args, **kwargs):

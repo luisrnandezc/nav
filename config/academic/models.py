@@ -231,7 +231,7 @@ class SubjectEdition(models.Model):
 
     students = models.ManyToManyField(
         User,
-        limit_choices_to={'student_profile__student_phase': 'TIERRA'},
+        limit_choices_to={'role': 'STUDENT'},
         related_name='enrolled_subjects',
         blank=True,
     )

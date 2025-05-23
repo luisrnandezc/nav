@@ -58,26 +58,22 @@ class StudentProfileAdmin(admin.ModelAdmin):
 
 @admin.register(StudentPayment)
 class StudentPaymentAdmin(admin.ModelAdmin):
-    list_display = ('student_profile', 'amount', 'date_added', 'added_by', 'confirmed', 'confirmation_date')
-    list_filter = ('confirmed', 'date_added')
-    search_fields = (
-        'student_profile__user__username',
-        'student_profile__user__first_name',
-        'student_profile__user__last_name',
-        'student_profile__user__national_id'
-    )
-    readonly_fields = ('date_added', 'confirmation_date', 'added_by')
-    
+    list_display = ('get_student_full_name', 'amount', 'date_added', 'added_by', 'confirmed', 'confirmed_by', 'confirmation_date')
+    list_filter = ('confirmed', 'date_added', 'confirmation_date')
+    search_fields = ('student_profile__user__first_name', 'student_profile__user__last_name', 'student_profile__user__national_id')
+    readonly_fields = ('date_added', 'confirmation_date')
     fieldsets = (
-        ('Student Information', {
+        ('Información del Estudiante', {
             'fields': ('student_profile',)
         }),
-        ('Payment Information', {
-            'fields': ('amount', 'date_added', 'notes', 'added_by')
+        ('Detalles del Pago', {
+            'fields': ('amount', 'date_added', 'added_by')
         }),
-        ('Confirmation Information', {
-            'fields': ('confirmed', 'confirmed_by', 'confirmation_date'),
-            'description': 'Solo el personal autorizado puede confirmar pagos.'
+        ('Confirmación', {
+            'fields': ('confirmed', 'confirmed_by', 'confirmation_date')
+        }),
+        ('Notas', {
+            'fields': ('notes',)
         }),
     )
 

@@ -350,6 +350,12 @@ class StudentPayment(models.Model):
     def __str__(self):
         return f"{self.student_profile.user.first_name} {self.student_profile.user.last_name} - ${self.amount}"
 
+    def get_student_full_name(self):
+        """Return the student's full name for admin display"""
+        return f"{self.student_profile.user.first_name} {self.student_profile.user.last_name}"
+    get_student_full_name.short_description = 'Estudiante'
+    get_student_full_name.admin_order_field = 'student_profile__user__last_name'
+
     def clean(self):
         """Validate payment data"""
         if self.amount <= 0:

@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,7 +11,7 @@
   <body>
     <div class="main-container">
       <h1 class="main-header">Carga de notas</h1>
-      <form class="form-container" method="post"  action="{% url 'academic:student_grade' %}">
+      <form class="form-container" method="post"  action="{% url 'academic:submit_grade' %}">
         {% csrf_token %}
         <div class="collapsible-section">
           <div class="left-column">
@@ -44,9 +43,11 @@
         {% endif %}
 
         <div class="submit-button-container">
-        <button class="submit-button" type="submit">Cargar</button>
+          <button class="submit-button" type="submit">Cargar</button>
         </div>
       </form>
     </div>
+
+    <script src="{% static 'academic/js/submit_grade.js' %}"></script>
   </body>
-</html>
+</html> 

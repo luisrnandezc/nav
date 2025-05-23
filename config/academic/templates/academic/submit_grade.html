@@ -13,25 +13,21 @@
       <h1 class="main-header">Carga de notas</h1>
       <form class="form-container" method="post"  action="{% url 'academic:submit_grade' %}">
         {% csrf_token %}
-        <div class="collapsible-section">
-          <div class="left-column">
-            <div class="form-row">
-              {{ form.subject_edition.label_tag }}
-              {{ form.subject_edition }}
-            </div>
-            <div class="form-row">
-              {{ form.student.label_tag }}
-              {{ form.student }}
-            </div>
-            <div class="form-row">
-              {{ form.grade.label_tag }}
-              {{ form.grade }}
-            </div>
-            <div class="form-row">
-              {{ form.test_type.label_tag }}
-              {{ form.test_type }}
-            </div>
-          </div>
+        <div class="form-row">
+          {{ form.subject_edition.label_tag }}
+          {{ form.subject_edition }}
+        </div>
+        <div class="form-row">
+          {{ form.student.label_tag }}
+          {{ form.student }}
+        </div>
+        <div class="form-row">
+          {{ form.grade.label_tag }}
+          {{ form.grade }}
+        </div>
+        <div class="form-row">
+          {{ form.test_type.label_tag }}
+          {{ form.test_type }}
         </div>
 
         {% if form.errors %}

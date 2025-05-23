@@ -6,6 +6,7 @@ from .forms import StudentGradeForm
 from .models import SubjectEdition
 from accounts.models import User
 
+
 @login_required
 def submit_student_grade(request):
     """Handle student grade form submission."""
@@ -37,7 +38,9 @@ def load_students(request):
         if subject_edition.instructor != request.user:
             return JsonResponse({'error': 'Instructor no autorizado'}, status=403)
         
+        # Get all students enrolled in this subject edition
         students = subject_edition.students.all().order_by('first_name', 'last_name')
+        
         student_list = [{'id': student.id, 'name': f"{student.first_name} {student.last_name}"} 
                        for student in students]
         return JsonResponse({'students': student_list})

@@ -58,7 +58,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
 
 @admin.register(StudentPayment)
 class StudentPaymentAdmin(admin.ModelAdmin):
-    list_display = ('student_profile', 'amount', 'date_added', 'confirmed', 'confirmation_date')
+    list_display = ('student_profile', 'amount', 'date_added', 'added_by', 'confirmed', 'confirmation_date')
     list_filter = ('confirmed', 'date_added')
     search_fields = (
         'student_profile__user__username',
@@ -66,14 +66,14 @@ class StudentPaymentAdmin(admin.ModelAdmin):
         'student_profile__user__last_name',
         'student_profile__user__national_id'
     )
-    readonly_fields = ('date_added', 'confirmation_date')
+    readonly_fields = ('date_added', 'confirmation_date', 'added_by')
     
     fieldsets = (
         ('Student Information', {
             'fields': ('student_profile',)
         }),
         ('Payment Information', {
-            'fields': ('amount', 'date_added', 'notes')
+            'fields': ('amount', 'date_added', 'notes', 'added_by')
         }),
         ('Confirmation Information', {
             'fields': ('confirmed', 'confirmed_by', 'confirmation_date'),

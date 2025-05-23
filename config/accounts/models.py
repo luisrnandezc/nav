@@ -312,6 +312,7 @@ class StudentPayment(models.Model):
         on_delete=models.SET_NULL, 
         null=True, 
         blank=True,
+        limit_choices_to={'role': 'STAFF'},
         verbose_name='Agregado por',
     )
 
@@ -353,6 +354,10 @@ class StudentPayment(models.Model):
         """Validate payment data"""
         if self.amount <= 0:
             raise ValidationError('El monto debe ser mayor a cero')
+        
+        # Validate that added_by is a staff member
+        if self.added_by and self.added_by.role != 'STAFF':
+            raise ValidationError('Solo el personal autorizado puede agregar pagos')
         
         if self.confirmed and not self.confirmed_by:
             raise ValidationError('Un pago confirmado debe tener un usuario que lo confirme')

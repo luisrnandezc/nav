@@ -36,4 +36,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 studentSelect.innerHTML = '<option value="">Error al cargar estudiantes</option>';
             });
     });
-}); 
+});

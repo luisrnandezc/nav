@@ -365,9 +365,6 @@ class StudentPayment(models.Model):
         if self.added_by and self.added_by.role != 'STAFF':
             raise ValidationError('Solo el personal autorizado puede agregar pagos')
         
-        if self.confirmed and not self.confirmed_by:
-            raise ValidationError('Un pago confirmado debe tener un usuario que lo confirme')
-        
         if self.confirmed_by and (
             not hasattr(self.confirmed_by, 'staff_profile') or 
             not self.confirmed_by.staff_profile.can_confirm_payments

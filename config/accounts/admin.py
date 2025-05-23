@@ -2,6 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User, StudentProfile, InstructorProfile, StaffProfile, StudentPayment
+from django.utils import timezone
 
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -61,16 +62,18 @@ class StudentPaymentAdmin(admin.ModelAdmin):
     list_display = ('get_student_full_name', 'amount', 'date_added', 'added_by', 'confirmed', 'confirmed_by', 'confirmation_date')
     list_filter = ('confirmed', 'date_added', 'confirmation_date')
     search_fields = ('student_profile__user__first_name', 'student_profile__user__last_name', 'student_profile__user__national_id')
-    readonly_fields = ('date_added', 'confirmation_date')
+    readonly_fields = ( 'date_added', 'added_by', 'confirmation_date', 'confirmed_by')
     fieldsets = (
         ('Información del Estudiante', {
             'fields': ('student_profile',)
         }),
         ('Detalles del Pago', {
-            'fields': ('amount', 'date_added', 'added_by')
+            'fields': ('amount', 'date_added'),
+            'description': 'El usuario que agrega el pago se registrará automáticamente.'
         }),
         ('Confirmación', {
-            'fields': ('confirmed', 'confirmed_by', 'confirmation_date')
+            'fields': ('confirmed', 'confirmation_date'),
+            'description': 'Al confirmar el pago, se registrará automáticamente su usuario como confirmador.'
         }),
         ('Notas', {
             'fields': ('notes',)
@@ -80,12 +83,18 @@ class StudentPaymentAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = list(super().get_readonly_fields(request, obj))
         if not hasattr(request.user, 'staff_profile') or not request.user.staff_profile.can_confirm_payments:
-            readonly_fields.extend(['confirmed', 'confirmed_by'])
+            readonly_fields.extend(['confirmed'])
         return readonly_fields
 
     def save_model(self, request, obj, form, change):
-        if not change:  # Only set added_by on creation
+        if not change:  # New payment
             obj.added_by = request.user
+            if obj.confirmed:  # If payment is confirmed on creation
+                obj.confirmed_by = request.user
+                obj.confirmation_date = timezone.now()
+        elif obj.confirmed and not obj.confirmed_by:  # Existing payment being confirmed
+            obj.confirmed_by = request.user
+            obj.confirmation_date = timezone.now()
         super().save_model(request, obj, form, change)
 
 admin.site.register(User, CustomUserAdmin)

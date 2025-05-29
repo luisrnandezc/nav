@@ -69,11 +69,11 @@ class StudentPaymentAdmin(admin.ModelAdmin):
         }),
         ('Detalles del Pago', {
             'fields': ('amount', 'added_by', 'date_added'),
-            'description': 'El usuario que agrega el pago se registrará automáticamente.'
+            'description': 'El usuario que agrega el pago se registra automáticamente.'
         }),
         ('Confirmación', {
             'fields': ('confirmed', 'confirmed_by', 'confirmation_date'),
-            'description': 'Al confirmar el pago, se registrará automáticamente su usuario como confirmador.'
+            'description': 'El usuario que confirma el pago se registra automáticamente.'
         }),
         ('Notas', {
             'fields': ('notes',)

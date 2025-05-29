@@ -233,6 +233,13 @@ header {
     border: 1px solid #e84728;
     width: 100%;
 }
+
+.detail span {
+    color: #ffffff;
+    font-size: 0.75rem;
+    letter-spacing: 2.0px;
+    text-align: left;
+}
 /*#endregion*/
 
 /*#endregion*/

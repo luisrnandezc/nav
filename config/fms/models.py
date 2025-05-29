@@ -61,13 +61,15 @@ class FlightLog(models.Model):
     ]
 
     # Flight session grades
-    STANDARD = 'S'
     NON_STANDARD = 'NS'
+    STANDARD = 'S'
+    SUPER_STANDARD = 'SS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
-        (STANDARD, 'S'),
         (NON_STANDARD, 'NS'),
+        (STANDARD, 'S'),
+        (SUPER_STANDARD, 'SS'),
         (NOT_EVALUATED, 'NE'),
     ]
 
@@ -233,13 +235,15 @@ class FlightEvaluation(models.Model):
     ]
 
     # Flight session grades
-    STANDARD = 'S'
     NON_STANDARD = 'NS'
+    STANDARD = 'S'
+    SUPER_STANDARD = 'SS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
-        (STANDARD, 'S'),
         (NON_STANDARD, 'NS'),
+        (STANDARD, 'S'),
+        (SUPER_STANDARD, 'SS'),
         (NOT_EVALUATED, 'NE'),
     ]
 

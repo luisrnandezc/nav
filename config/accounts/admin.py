@@ -62,17 +62,17 @@ class StudentPaymentAdmin(admin.ModelAdmin):
     list_display = ('get_student_full_name', 'amount', 'date_added', 'added_by', 'confirmed', 'confirmed_by', 'confirmation_date')
     list_filter = ('confirmed', 'date_added', 'confirmation_date')
     search_fields = ('student_profile__user__first_name', 'student_profile__user__last_name', 'student_profile__user__national_id')
-    readonly_fields = ( 'date_added', 'added_by', 'confirmation_date', 'confirmed_by')
+    readonly_fields = ('date_added', 'added_by', 'confirmation_date', 'confirmed_by')
     fieldsets = (
         ('Información del Estudiante', {
             'fields': ('student_profile',)
         }),
         ('Detalles del Pago', {
-            'fields': ('amount', 'date_added'),
+            'fields': ('amount', 'added_by', 'date_added'),
             'description': 'El usuario que agrega el pago se registrará automáticamente.'
         }),
         ('Confirmación', {
-            'fields': ('confirmed', 'confirmation_date'),
+            'fields': ('confirmed', 'confirmed_by', 'confirmation_date'),
             'description': 'Al confirmar el pago, se registrará automáticamente su usuario como confirmador.'
         }),
         ('Notas', {

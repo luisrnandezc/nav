@@ -32,7 +32,7 @@
   .main-header { 
     color: rgb(232, 71, 40);
     font-size: 2.0rem;
-    margin: 25px 0px 25px 0px;
+    margin: 50px 0px 25px 0px;
   }
 
   .form-container {
@@ -42,35 +42,33 @@
     justify-content: center;
     width: 75%;
     height: 100%;
-  }
-
-  .subsection-header {
-    color: #ffffff;
-    margin: 40px 0px 25px 0px;
-    text-decoration: underline solid 2px rgb(232, 71, 40);
-    text-underline-offset: 10px;
-    align-self: center;
+    margin-top: 25px;
   }
 
   .form-row {
     display: flex;
     flex-direction: row;
     margin: 10px 0px 10px 0px;
+    height: 40px;
+    align-items: center;
   }
 
   label {
-    width: 275px;
+    width: 200px;
     color: #ffffff;
     text-align: right;
     margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 
   .form-field {
-    width: 150px;
-  }
-
-  #id_notes {
-    width: 500px;
+    width: 250px;
+    height: 30px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
   }
 
   .submit-button-container {
@@ -97,4 +95,12 @@
     border: 0px solid #ffffff;
     border-radius: 3px;
     cursor: pointer;
+  }
+
+  .errorlist {
+    color: rgb(232, 71, 40);
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    font-size: 0.9rem;
   }

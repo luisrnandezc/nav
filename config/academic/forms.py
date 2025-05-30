@@ -7,10 +7,6 @@ class StudentGradeForm(forms.ModelForm):
     class Meta:
         model = StudentGrade
         fields = ['subject_edition', 'student', 'grade', 'test_type']
-        widgets = {
-            'grade': forms.NumberInput(attrs={'min': 0, 'max': 100, 'step': 0.1}),
-            'test_type': forms.Select(attrs={'class': 'form-select'}),
-        }
 
     def __init__(self, *args, **kwargs):
         self.instructor = kwargs.pop('instructor', None)
@@ -36,15 +32,25 @@ class StudentGradeForm(forms.ModelForm):
                 # Initially set student choices to empty
                 self.fields['student'].queryset = User.objects.none()
             
-            # Add a data attribute to store the URL for dynamic student loading
+            # Add classes and data attributes for all fields
             self.fields['subject_edition'].widget.attrs.update({
-                'class': 'subject-edition-select',
+                'class': 'form-field subject-edition-select',
                 'data-url': '/academic/ajax/load-students/'
             })
             
-            # Add class to student field for dynamic updates
             self.fields['student'].widget.attrs.update({
-                'class': 'student-select'
+                'class': 'form-field student-select'
+            })
+            
+            self.fields['grade'].widget.attrs.update({
+                'class': 'form-field',
+                'min': 0,
+                'max': 100,
+                'step': 0.1
+            })
+            
+            self.fields['test_type'].widget.attrs.update({
+                'class': 'form-field'
             })
 
     def clean(self):

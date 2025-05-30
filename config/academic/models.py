@@ -219,7 +219,12 @@ class SubjectType(models.Model):
 # Specific Subject Model (specific to a course)
 class SubjectEdition(models.Model):
     """Specific edition of a subject"""
-    subject_type = models.ForeignKey(SubjectType, on_delete=models.CASCADE, related_name='editions', null=True)
+    subject_type = models.ForeignKey(
+        SubjectType, 
+        on_delete=models.CASCADE, 
+        related_name='editions',
+        verbose_name='Tipo de Materia'
+    )
     
     instructor = models.ForeignKey(
         User, 
@@ -227,6 +232,7 @@ class SubjectEdition(models.Model):
         null=True,
         limit_choices_to=Q(instructor_profile__instructor_type='TIERRA') | Q(instructor_profile__instructor_type='DUAL'),
         related_name='teaching_subjects',
+        verbose_name='Instructor'
     )
 
     students = models.ManyToManyField(
@@ -234,13 +240,24 @@ class SubjectEdition(models.Model):
         limit_choices_to={'role': 'STUDENT'},
         related_name='enrolled_subjects',
         blank=True,
+        verbose_name='Estudiantes'
     )
 
-    time_slot = models.CharField(max_length=10, choices=TIME_SLOTS)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    start_time = models.TimeField(default=datetime.time(9, 0))
-    end_time = models.TimeField(default=datetime.time(12, 30))
+    time_slot = models.CharField(
+        max_length=10, 
+        choices=TIME_SLOTS,
+        verbose_name='Horario'
+    )
+    start_date = models.DateField(verbose_name='Fecha de inicio')
+    end_date = models.DateField(verbose_name='Fecha de finalización')
+    start_time = models.TimeField(
+        default=datetime.time(9, 0),
+        verbose_name='Hora de inicio'
+    )
+    end_time = models.TimeField(
+        default=datetime.time(12, 30),
+        verbose_name='Hora de finalización'
+    )
 
     class Meta:
         verbose_name = 'Edición de Materia'
@@ -253,10 +270,20 @@ class SubjectEdition(models.Model):
         
         if self.end_time <= self.start_time:
             raise ValidationError('La hora de finalización debe ser posterior a la hora de inicio')
+        
+        # Check if instructor is assigned
+        if not self.instructor:
+            raise ValidationError('Debe asignar un instructor a la materia')
+        
+        # Check if instructor is qualified for this subject type
+        if self.instructor and self.subject_type:
+            instructor_type = self.instructor.instructor_profile.instructor_type
+            if instructor_type not in ['TIERRA', 'DUAL']:
+                raise ValidationError('El instructor debe ser de tipo TIERRA o DUAL')
 
     def __str__(self):
         return f'{self.subject_type.code} {self.subject_type.name} ({self.time_slot})'
-    
+
 
 class StudentGrade(models.Model):
     """Model for storing student grades in ground school subjects"""
@@ -292,7 +319,6 @@ class StudentGrade(models.Model):
     class Meta:
         verbose_name = 'Nota de Estudiante'
         verbose_name_plural = 'Notas de Estudiantes'
-        unique_together = ['subject_edition', 'student', 'test_type']
         ordering = ['-date']
 
     def __str__(self):
@@ -306,6 +332,18 @@ class StudentGrade(models.Model):
         # Validate that the instructor is assigned to the subject edition
         if not self.subject_edition.instructor:
             raise ValidationError('No hay instructor asignado a esta edición de materia')
+        
+        # Validate that the grade is within the subject's passing grade range
+        if self.test_type == 'RECOVERY':
+            if self.grade < self.subject_edition.subject_type.recovery_passing_grade:
+                raise ValidationError(
+                    f'La nota debe ser mayor o igual a {self.subject_edition.subject_type.recovery_passing_grade} para un examen de reparación'
+                )
+        else:
+            if self.grade < self.subject_edition.subject_type.passing_grade:
+                raise ValidationError(
+                    f'La nota debe ser mayor o igual a {self.subject_edition.subject_type.passing_grade} para un examen estándar'
+                )
 
     @property
     def passed(self):

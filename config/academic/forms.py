@@ -51,8 +51,9 @@ class StudentGradeForm(forms.ModelForm):
         cleaned_data = super().clean()
         subject_edition = cleaned_data.get('subject_edition')
         student = cleaned_data.get('student')
+        test_type = cleaned_data.get('test_type')
         
-        if subject_edition and student:
+        if subject_edition and student and test_type:
             # Check if student is enrolled in the subject
             if not subject_edition.students.filter(id=student.id).exists():
                 raise forms.ValidationError(
@@ -63,6 +64,16 @@ class StudentGradeForm(forms.ModelForm):
             if subject_edition.instructor != self.instructor:
                 raise forms.ValidationError(
                     'No está autorizado para calificar esta materia'
+                )
+            
+            # Check for duplicate grade
+            if StudentGrade.objects.filter(
+                subject_edition=subject_edition,
+                student=student,
+                test_type=test_type
+            ).exists():
+                raise forms.ValidationError(
+                    'Ya existe una nota para este estudiante en esta materia con el mismo tipo de examen.'
                 )
         
         return cleaned_data

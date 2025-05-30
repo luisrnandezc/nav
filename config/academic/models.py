@@ -223,7 +223,8 @@ class SubjectEdition(models.Model):
         SubjectType, 
         on_delete=models.CASCADE, 
         related_name='editions',
-        verbose_name='Tipo de Materia'
+        verbose_name='Tipo de Materia',
+        null=True
     )
     
     instructor = models.ForeignKey(
@@ -265,6 +266,9 @@ class SubjectEdition(models.Model):
         ordering = ['subject_type']
 
     def clean(self):
+        if not self.subject_type:
+            raise ValidationError('Debe seleccionar un tipo de materia')
+            
         if self.end_date < self.start_date:
             raise ValidationError('La fecha de finalización debe ser posterior a la fecha de inicio')
         
@@ -332,18 +336,6 @@ class StudentGrade(models.Model):
         # Validate that the instructor is assigned to the subject edition
         if not self.subject_edition.instructor:
             raise ValidationError('No hay instructor asignado a esta edición de materia')
-        
-        # Validate that the grade is within the subject's passing grade range
-        if self.test_type == 'RECOVERY':
-            if self.grade < self.subject_edition.subject_type.recovery_passing_grade:
-                raise ValidationError(
-                    f'La nota debe ser mayor o igual a {self.subject_edition.subject_type.recovery_passing_grade} para un examen de reparación'
-                )
-        else:
-            if self.grade < self.subject_edition.subject_type.passing_grade:
-                raise ValidationError(
-                    f'La nota debe ser mayor o igual a {self.subject_edition.subject_type.passing_grade} para un examen estándar'
-                )
 
     @property
     def passed(self):

@@ -22,13 +22,24 @@ class StudentGradeForm(forms.ModelForm):
                 instructor=self.instructor
             ).order_by('subject_type__name')
             
-            # Initially set student choices to empty
-            self.fields['student'].queryset = User.objects.none()
+            # If we have POST data and a subject_edition, set the student queryset
+            if self.data.get('subject_edition'):
+                try:
+                    subject_edition = SubjectEdition.objects.get(
+                        id=self.data.get('subject_edition'),
+                        instructor=self.instructor
+                    )
+                    self.fields['student'].queryset = subject_edition.students.all().order_by('first_name', 'last_name')
+                except SubjectEdition.DoesNotExist:
+                    self.fields['student'].queryset = User.objects.none()
+            else:
+                # Initially set student choices to empty
+                self.fields['student'].queryset = User.objects.none()
             
             # Add a data attribute to store the URL for dynamic student loading
             self.fields['subject_edition'].widget.attrs.update({
                 'class': 'subject-edition-select',
-                'data-url': '/academic/ajax/load-students/'  # You'll need to create this URL
+                'data-url': '/academic/ajax/load-students/'
             })
             
             # Add class to student field for dynamic updates

@@ -134,8 +134,8 @@ TIME_SLOTS = (
 
 # Test type choices
 TEST_TYPES = (
-    ('STANDARD', 'Examen estándar'),
-    ('RECOVERY', 'Examen de reparación'),
+    ('STANDARD', 'Estándar'),
+    ('RECOVERY', 'Reparación'),
 )
 
 #endregion

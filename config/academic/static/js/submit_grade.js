@@ -37,3 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 });
+
+function confirmSubmit() {
+    return confirm('¿Está seguro que desea guardar las notas? Esta acción no se puede deshacer.');
+}

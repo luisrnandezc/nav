@@ -131,7 +131,7 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
+    margin-top: 15px;
     margin-bottom: 50px;
     width: 65%;
   }
@@ -165,4 +165,34 @@
 
   .temp-grades-table tr:hover {
     background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  @media screen and (max-width: 800px) {
+
+    .form-field {
+      width: 200px;
+    }
+
+    .temp-grades-container {
+      width: 95%;
+    }
+
+    .temp-grades-header {
+      font-size: 0.75rem;
+    }
+
+    .temp-grades-table th,
+    .temp-grades-table td {
+      font-size: 0.75rem;
+    }
+
+    #submit-all-button {
+      font-size: 0.75rem;
+      width: 150px;
+    }
+
+    #clear-temp-button {
+      font-size: 0.75rem;
+      width: 150px;
+    }
   }

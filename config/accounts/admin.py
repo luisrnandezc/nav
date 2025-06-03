@@ -24,11 +24,16 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'student_phase', 'get_course_type', 'get_course_edition', 'get_student_balance')
+    list_display = ('get_username', 'student_phase', 'get_course_type', 'get_course_edition', 'get_student_balance')
     list_filter = ('student_phase',)
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
     readonly_fields = ('get_course_type', 'get_course_edition', 'get_student_balance')
-    
+
+    def get_username(self, obj):
+        return obj.user.username if obj.user else '-'
+    get_username.short_description = 'Usuario'
+    get_username.admin_order_field = 'user__username'
+
     fieldsets = (
         ('User Information', {
             'fields': ('user',)
@@ -127,6 +132,44 @@ class StudentPaymentAdmin(admin.ModelAdmin):
             obj.confirmation_date = timezone.now()
         super().save_model(request, obj, form, change)
 
+@admin.register(InstructorProfile)
+class InstructorProfileAdmin(admin.ModelAdmin):
+    list_display = ('get_username', 'get_instructor_id', 'instructor_license_type', 'instructor_type')
+    search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
+
+    def get_username(self, obj):
+        return obj.user.username if obj.user else '-'
+    get_username.short_description = 'Usuario'
+    get_username.admin_order_field = 'user__username'
+
+    def get_instructor_id(self, obj):
+        return obj.user.national_id if obj.user else '-'
+    get_instructor_id.short_description = 'ID'
+    get_instructor_id.admin_order_field = 'user__national_id'
+
+@admin.register(StaffProfile)
+class StaffProfileAdmin(admin.ModelAdmin):
+    list_display = ('get_username', 'get_staff_id', 'get_first_name', 'get_last_name')
+    search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
+
+    def get_username(self, obj):
+        return obj.user.username if obj.user else '-'
+    get_username.short_description = 'Usuario'
+    get_username.admin_order_field = 'user__username'
+
+    def get_staff_id(self, obj):
+        return obj.user.national_id if obj.user else '-'
+    get_staff_id.short_description = 'ID'
+    get_staff_id.admin_order_field = 'user__national_id'
+
+    def get_first_name(self, obj):
+        return obj.user.first_name if obj.user else '-'
+    get_first_name.short_description = 'Nombre'
+    get_first_name.admin_order_field = 'user__first_name'
+
+    def get_last_name(self, obj):
+        return obj.user.last_name if obj.user else '-'
+    get_last_name.short_description = 'Apellido'
+    get_last_name.admin_order_field = 'user__last_name'
+
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(InstructorProfile)
-admin.site.register(StaffProfile)

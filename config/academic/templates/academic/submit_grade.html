@@ -80,16 +80,16 @@
         </table>
 
         <div class="submit-button-container">
-          <form method="post" action="{% url 'academic:submit_grade' %}" style="display: inline;">
+          <form method="post" action="{% url 'academic:submit_grade' %}" id="submit-all-form" style="display: inline;">
             {% csrf_token %}
             <input type="hidden" name="action" value="submit_all">
-            <button class="submit-button" id="submit-all-button" type="submit">Guardar Todas</button>
+            <button class="submit-button" type="submit" onclick="return confirmSubmit()">Guardar Todas</button>
           </form>
           
           <form method="post" action="{% url 'academic:submit_grade' %}" style="display: inline;">
             {% csrf_token %}
             <input type="hidden" name="action" value="clear_temp">
-            <button class="submit-button" id="clear-temp-button" type="submit">Limpiar</button>
+            <button class="submit-button" type="submit">Limpiar</button>
           </form>
         </div>
       </div>

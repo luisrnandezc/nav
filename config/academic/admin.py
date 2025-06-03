@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CourseType, CourseEdition, SubjectType, SubjectEdition
+from .models import CourseType, CourseEdition, SubjectType, SubjectEdition, StudentGrade
 
 @admin.register(CourseType)
 class CourseTypeAdmin(admin.ModelAdmin):
@@ -26,3 +26,9 @@ class SubjectEditionAdmin(admin.ModelAdmin):
     list_filter = ('subject_type__course_type', 'time_slot')
     search_fields = ('subject_type__name', 'subject_type__code', 'instructor__username')
     filter_horizontal = ('students',)
+
+@admin.register(StudentGrade)
+class StudentGradeAdmin(admin.ModelAdmin):
+    list_display = ('subject_edition', 'student', 'grade', 'test_type')
+    list_filter = ('subject_edition__subject_type__course_type', 'test_type')
+    search_fields = ('subject_edition__subject_type__name', 'subject_edition__subject_type__code', 'student__username')

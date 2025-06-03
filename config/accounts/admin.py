@@ -59,9 +59,9 @@ class StudentProfileAdmin(admin.ModelAdmin):
 
 @admin.register(StudentPayment)
 class StudentPaymentAdmin(admin.ModelAdmin):
-    list_display = ('get_student_full_name', 'amount', 'date_added', 'added_by', 'confirmed', 'confirmed_by', 'confirmation_date')
+    list_display = ('get_student_username', 'amount', 'get_date_added', 'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
     list_filter = ('confirmed', 'date_added', 'confirmation_date')
-    search_fields = ('student_profile__user__first_name', 'student_profile__user__last_name', 'student_profile__user__national_id')
+    search_fields = ('student_profile__user__username', 'student_profile__user__national_id')
     readonly_fields = ('date_added', 'added_by', 'confirmation_date', 'confirmed_by')
     fieldsets = (
         ('Información del Estudiante', {
@@ -79,6 +79,36 @@ class StudentPaymentAdmin(admin.ModelAdmin):
             'fields': ('notes',)
         }),
     )
+
+    def get_student_username(self, obj):
+        """Return the student's username for admin display"""
+        return obj.student_profile.user.username
+    get_student_username.short_description = 'Estudiante'
+    get_student_username.admin_order_field = 'student_profile__user__username'
+
+    def get_added_by_username(self, obj):
+        """Return the username of the user who added the payment"""
+        return obj.added_by.username if obj.added_by else '-'
+    get_added_by_username.short_description = 'Agregado por'
+    get_added_by_username.admin_order_field = 'added_by__username'
+
+    def get_confirmed_by_username(self, obj):
+        """Return the username of the user who confirmed the payment"""
+        return obj.confirmed_by.username if obj.confirmed_by else '-'
+    get_confirmed_by_username.short_description = 'Confirmado por'
+    get_confirmed_by_username.admin_order_field = 'confirmed_by__username'
+
+    def get_date_added(self, obj):
+        """Return only the date part of date_added"""
+        return obj.date_added.date()
+    get_date_added.short_description = 'Fecha de pago'
+    get_date_added.admin_order_field = 'date_added'
+
+    def get_confirmation_date(self, obj):
+        """Return only the date part of confirmation_date"""
+        return obj.confirmation_date.date() if obj.confirmation_date else '-'
+    get_confirmation_date.short_description = 'Fecha de confirmación'
+    get_confirmation_date.admin_order_field = 'confirmation_date'
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = list(super().get_readonly_fields(request, obj))

@@ -9,10 +9,15 @@ class CourseTypeAdmin(admin.ModelAdmin):
 
 @admin.register(CourseEdition)
 class CourseEditionAdmin(admin.ModelAdmin):
-    list_display = ('course_type', 'edition', 'start_date', 'time_slot')
+    list_display = ('get_course_code', 'course_type', 'edition', 'start_date', 'time_slot')
     list_filter = ('course_type', 'time_slot')
     search_fields = ('course_type__name', 'course_type__code')
     filter_horizontal = ('students',)
+
+    def get_course_code(self, obj):
+        return obj.course_type.code if obj.course_type else '-'
+    get_course_code.short_description = 'Código'
+    get_course_code.admin_order_field = 'course_type__code'
 
 @admin.register(SubjectType)
 class SubjectTypeAdmin(admin.ModelAdmin):

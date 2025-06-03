@@ -34,7 +34,7 @@ class SubjectEditionAdmin(admin.ModelAdmin):
 
 @admin.register(StudentGrade)
 class StudentGradeAdmin(admin.ModelAdmin):
-    list_display = ('get_subject_info', 'get_student_username', 'grade', 'test_type')
+    list_display = ('get_subject_info', 'get_student_username', 'get_student_id', 'grade', 'test_type')
     list_filter = ('subject_edition__subject_type__course_type', 'test_type')
     search_fields = ('subject_edition__subject_type__name', 'subject_edition__subject_type__code', 'student__username')
 
@@ -47,5 +47,10 @@ class StudentGradeAdmin(admin.ModelAdmin):
 
     def get_student_username(self, obj):
         return obj.student.username if obj.student else '-'
-    get_student_username.short_description = 'Estudiante'
+    get_student_username.short_description = 'Usuario'
     get_student_username.admin_order_field = 'student__username'
+
+    def get_student_id(self, obj):
+        return obj.student.national_id if obj.student else '-'
+    get_student_id.short_description = 'ID'
+    get_student_id.admin_order_field = 'student__national_id'

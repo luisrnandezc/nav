@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ('get_username', 'student_phase', 'get_course_type', 'get_course_edition', 'get_student_balance')
+    list_display = ('get_username', 'get_student_id', 'student_phase', 'get_course_type', 'get_course_edition', 'get_student_balance')
     list_filter = ('student_phase',)
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
     readonly_fields = ('get_course_type', 'get_course_edition', 'get_student_balance')
@@ -33,6 +33,11 @@ class StudentProfileAdmin(admin.ModelAdmin):
         return obj.user.username if obj.user else '-'
     get_username.short_description = 'Usuario'
     get_username.admin_order_field = 'user__username'
+
+    def get_student_id(self, obj):
+        return obj.user.national_id if obj.user else '-'
+    get_student_id.short_description = 'ID'
+    get_student_id.admin_order_field = 'user__national_id'
 
     fieldsets = (
         ('User Information', {
@@ -64,7 +69,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
 
 @admin.register(StudentPayment)
 class StudentPaymentAdmin(admin.ModelAdmin):
-    list_display = ('get_student_username', 'amount', 'get_date_added', 'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
+    list_display = ('get_student_username', 'get_student_id', 'amount', 'get_date_added', 'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
     list_filter = ('confirmed', 'date_added', 'confirmation_date')
     search_fields = ('student_profile__user__username', 'student_profile__user__national_id')
     readonly_fields = ('date_added', 'added_by', 'confirmation_date', 'confirmed_by')
@@ -88,8 +93,13 @@ class StudentPaymentAdmin(admin.ModelAdmin):
     def get_student_username(self, obj):
         """Return the student's username for admin display"""
         return obj.student_profile.user.username
-    get_student_username.short_description = 'Estudiante'
+    get_student_username.short_description = 'Usuario'
     get_student_username.admin_order_field = 'student_profile__user__username'
+
+    def get_student_id(self, obj):
+        return obj.student_profile.user.national_id if obj.student_profile else '-'
+    get_student_id.short_description = 'ID'
+    get_student_id.admin_order_field = 'student_profile__user__national_id'
 
     def get_added_by_username(self, obj):
         """Return the username of the user who added the payment"""
@@ -134,7 +144,7 @@ class StudentPaymentAdmin(admin.ModelAdmin):
 
 @admin.register(InstructorProfile)
 class InstructorProfileAdmin(admin.ModelAdmin):
-    list_display = ('get_username', 'get_instructor_id', 'instructor_license_type', 'instructor_type')
+    list_display = ('get_username', 'get_instructor_id', 'get_first_name', 'get_last_name', 'instructor_license_type', 'instructor_type')
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
 
     def get_username(self, obj):
@@ -146,6 +156,16 @@ class InstructorProfileAdmin(admin.ModelAdmin):
         return obj.user.national_id if obj.user else '-'
     get_instructor_id.short_description = 'ID'
     get_instructor_id.admin_order_field = 'user__national_id'
+
+    def get_first_name(self, obj):
+        return obj.user.first_name if obj.user else '-'
+    get_first_name.short_description = 'Nombre'
+    get_first_name.admin_order_field = 'user__first_name'
+
+    def get_last_name(self, obj):
+        return obj.user.last_name if obj.user else '-'
+    get_last_name.short_description = 'Apellido'
+    get_last_name.admin_order_field = 'user__last_name'
 
 @admin.register(StaffProfile)
 class StaffProfileAdmin(admin.ModelAdmin):

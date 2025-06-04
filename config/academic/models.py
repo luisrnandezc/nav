@@ -299,9 +299,10 @@ class StudentGrade(models.Model):
     )
     student = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='subject_grades',
-        verbose_name='Estudiante'
+        verbose_name='Estudiante',
+        null=True
     )
     grade = models.DecimalField(
         max_digits=4,
@@ -333,11 +334,12 @@ class StudentGrade(models.Model):
         unique_together = [('subject_edition', 'student', 'test_type')]
 
     def __str__(self):
-        return f'{self.student.username} - {self.subject_edition.subject_type.name} ({self.grade})'
+        student_name = self.student.username if self.student else 'Estudiante eliminado'
+        return f'{student_name} - {self.subject_edition.subject_type.name} ({self.grade})'
 
     def clean(self):
         # Validate that the student is enrolled in the subject edition
-        if not self.subject_edition.students.filter(id=self.student.id).exists():
+        if self.student and not self.subject_edition.students.filter(id=self.student.id).exists():
             raise ValidationError('El estudiante no está inscrito en esta edición de materia')
         
         # Validate that the instructor is assigned to the subject edition

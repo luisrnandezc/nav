@@ -304,6 +304,13 @@ class StudentGrade(models.Model):
         verbose_name='Estudiante',
         null=True
     )
+    student_username = models.CharField(
+        max_length=150,
+        verbose_name='Usuario',
+        editable=False,
+        null=False,
+        default='-'
+    )
     grade = models.DecimalField(
         max_digits=4,
         decimal_places=1,
@@ -334,12 +341,17 @@ class StudentGrade(models.Model):
         unique_together = [('subject_edition', 'student', 'test_type')]
 
     def __str__(self):
-        student_name = self.student.username if self.student else 'Estudiante eliminado'
-        return f'{student_name} - {self.subject_edition.subject_type.name} ({self.grade})'
+        return f'{self.student_username} - {self.subject_edition.subject_type.name} ({self.grade})'
+
+    def save(self, *args, **kwargs):
+        # Store the student's username before saving
+        if self.student:
+            self.student_username = self.student.username
+        super().save(*args, **kwargs)
 
     def clean(self):
         # Validate that the student is enrolled in the subject edition
-        if self.student and not self.subject_edition.students.filter(id=self.student.id).exists():
+        if not self.subject_edition.students.filter(id=self.student.id).exists():
             raise ValidationError('El estudiante no está inscrito en esta edición de materia')
         
         # Validate that the instructor is assigned to the subject edition

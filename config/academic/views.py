@@ -59,11 +59,13 @@ def submit_student_grade(request):
             success_count = 0
             for grade_data in temp_grades:
                 try:
+                    # Create the grade with the instructor's username
                     StudentGrade.objects.create(
                         subject_edition_id=grade_data['subject_edition'],
                         student_id=grade_data['student'],
                         grade=grade_data['grade'],
-                        test_type=grade_data['test_type']
+                        test_type=grade_data['test_type'],
+                        submitted_by_username=request.user.username
                     )
                     success_count += 1
                 except Exception as e:

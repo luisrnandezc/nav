@@ -7,6 +7,9 @@ class StudentGradeForm(forms.ModelForm):
     class Meta:
         model = StudentGrade
         fields = ['subject_edition', 'student', 'grade', 'test_type']
+        widgets = {
+            'grade': forms.NumberInput(attrs={'min': 0, 'max': 100, 'step': 0.1}),
+        }
 
     def __init__(self, *args, **kwargs):
         self.instructor = kwargs.pop('instructor', None)

@@ -44,7 +44,10 @@ def submit_student_grade(request):
                 
                 return redirect('academic:submit_grade')
             else:
-                messages.error(request, 'Por favor corrija los errores en el formulario.')
+                # Display form validation errors
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, error)
         
         elif action == 'submit_all':
             # Handle final submission of all temporary grades

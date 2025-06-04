@@ -39,9 +39,9 @@ class SubjectEditionAdmin(admin.ModelAdmin):
 
 @admin.register(StudentGrade)
 class StudentGradeAdmin(admin.ModelAdmin):
-    list_display = ('get_student_username', 'get_student_id', 'grade', 'test_type', 'get_subject_info')
+    list_display = ('get_student_username', 'get_student_id', 'grade', 'test_type', 'get_subject_info', 'submitted_by_username')
     list_filter = ('subject_edition__subject_type__course_type', 'test_type')
-    search_fields = ('subject_edition__subject_type__name', 'subject_edition__subject_type__code', 'student__username')
+    search_fields = ('subject_edition__subject_type__name', 'subject_edition__subject_type__code', 'student__username', 'submitted_by_username')
 
     def get_subject_info(self, obj):
         if obj.subject_edition and obj.subject_edition.subject_type:

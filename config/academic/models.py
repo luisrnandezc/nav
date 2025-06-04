@@ -319,11 +319,18 @@ class StudentGrade(models.Model):
         auto_now_add=True,
         verbose_name='Fecha'
     )
+    submitted_by_username = models.CharField(
+        max_length=150,
+        verbose_name='Instructor',
+        null=False,
+        default='-',
+    )
 
     class Meta:
         verbose_name = 'Nota de Estudiante'
         verbose_name_plural = 'Notas de Estudiantes'
         ordering = ['-date']
+        unique_together = [('subject_edition', 'student', 'test_type')]
 
     def __str__(self):
         return f'{self.student.username} - {self.subject_edition.subject_type.name} ({self.grade})'

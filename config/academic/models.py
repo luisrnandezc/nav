@@ -286,7 +286,7 @@ class SubjectEdition(models.Model):
                 raise ValidationError('El instructor debe ser de tipo TIERRA o DUAL')
 
     def __str__(self):
-        return f'{self.subject_type.code} {self.subject_type.name} ({self.time_slot})'
+        return f'{self.subject_type.code} ({self.time_slot})'
 
 
 class StudentGrade(models.Model):

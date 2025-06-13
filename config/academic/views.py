@@ -3,9 +3,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .forms import StudentGradeForm
-from .models import SubjectEdition, StudentGrade
+from .models import SubjectEdition, StudentGrade, TEST_TYPES
 from accounts.models import User
-import json
 
 
 @login_required
@@ -28,7 +27,7 @@ def submit_student_grade(request):
                     'student': form.cleaned_data['student'].id,
                     'student_name': f"{form.cleaned_data['student'].first_name} {form.cleaned_data['student'].last_name}",
                     'grade': float(form.cleaned_data['grade']),
-                    'test_type': form.cleaned_data['test_type']
+                    'test_type': dict(TEST_TYPES)[form.cleaned_data['test_type']]
                 }
                 
                 # Check for duplicates in temp storage

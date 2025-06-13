@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import CourseType, CourseEdition, SubjectType, SubjectEdition, StudentGrade
+from accounts.models import User
 
 @admin.register(CourseType)
 class CourseTypeAdmin(admin.ModelAdmin):
@@ -39,10 +40,18 @@ class SubjectEditionAdmin(admin.ModelAdmin):
 
 @admin.register(StudentGrade)
 class StudentGradeAdmin(admin.ModelAdmin):
-    list_display = ('student_username', 'get_student_id', 'grade', 'test_type', 'get_subject_info', 'submitted_by_username')
-    list_filter = ('subject_edition__subject_type__course_type', 'test_type')
-    search_fields = ('student_username', 'subject_edition__subject_type__name', 'subject_edition__subject_type__code', 'submitted_by_username')
-    readonly_fields = ('student_username',)
+    list_display = ('student_username', 'get_student_id', 'grade', 'test_type', 'get_subject_info', 'submitted_by_username', 'date')
+    list_filter = ('subject_edition__subject_type__course_type', 'subject_edition__time_slot', 'test_type', 'date')
+    search_fields = ('student_username', 'subject_edition__subject_type__name', 'subject_edition__subject_type__code', 'submitted_by_username', 'student__first_name', 'student__last_name')
+    readonly_fields = ('submitted_by_username', 'date')
+
+    def has_add_permission(self, request):
+        return False  # Disable adding new grades from admin
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "student":
+            kwargs["queryset"] = User.objects.filter(role='STUDENT').order_by('first_name', 'last_name')
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_subject_info(self, obj):
         if obj.subject_edition and obj.subject_edition.subject_type:

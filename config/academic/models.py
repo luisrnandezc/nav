@@ -338,7 +338,13 @@ class StudentGrade(models.Model):
         verbose_name = 'Nota de Estudiante'
         verbose_name_plural = 'Notas de Estudiantes'
         ordering = ['-date']
-        unique_together = [('subject_edition', 'student', 'test_type')]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["subject_edition", "student", "test_type"],
+                name="unique_student_grade",
+                violation_error_message="Ya existe una nota para este estudiante con el mismo tipo de examen"
+            ),
+        ]
 
     def __str__(self):
         return f'{self.student_username} - {self.subject_edition.subject_type.name} ({self.grade})'

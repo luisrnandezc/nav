@@ -1,5 +1,5 @@
 from django import forms
-from .models import FlightEvaluation0_100, FlightLog
+from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightLog
 
 class FlightEvaluation0_100Form(forms.ModelForm):
     class Meta:
@@ -92,7 +92,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_7': 'Juicio general',
             'land_1': 'Comunicación',
             'land_2': 'Procedimiento de circuito',
-            'land_3': 'Maniobra de derrape (demostración)',
+            'land_3': 'Maniobra de derrape (demo)',
             'land_4': 'Configuración de aterrizaje (limpio/full flaps)',
             'land_5': 'Aproximación estabilizada',
             'land_6': 'Aterrizaje normal',
@@ -226,3 +226,217 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             flightlog_instance.save()
 
         return instance
+    
+class FlightEvaluation100_120Form(forms.ModelForm):
+    class Meta:
+        model = FlightEvaluation100_120
+        fields = [
+            'instructor_id', 'instructor_first_name', 'instructor_last_name',
+            'instructor_license_type', 'instructor_license_number',
+            'student_id', 'student_first_name', 'student_last_name',
+            'student_license_type', 'course_type',
+            'flight_rules', 'solo_flight', 'session_number', 'session_letter',
+            'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration', 'session_grade',
+            'pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6',
+            'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6',
+            'b_ifr_1', 'b_ifr_2', 'b_ifr_3', 'b_ifr_4', 'b_ifr_5', 'b_ifr_6', 'b_ifr_7', 'b_ifr_8', 'b_ifr_9', 'b_ifr_10', 'b_ifr_11',
+            'a_ifr_1', 'a_ifr_2', 'a_ifr_3', 'a_ifr_4', 'a_ifr_5', 'a_ifr_6', 'a_ifr_7', 'a_ifr_8', 'a_ifr_9', 'a_ifr_10', 'a_ifr_11',
+            'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7',
+            'emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5',
+            'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7',
+            'notes',
+        ]
+
+        labels = {
+            'instructor_id': 'Número de cédula',
+            'instructor_first_name': 'Nombre',
+            'instructor_last_name': 'Apellido',
+            'instructor_license_type': 'Tipo de licencia',
+            'instructor_license_number': 'Número de licencia',
+            'student_id': 'Número de cédula',
+            'student_first_name': 'Nombre',
+            'student_last_name': 'Apellido',
+            'student_license_type': 'Tipo de licencia',
+            'course_type': 'Curso',
+            'flight_rules': 'Reglas de vuelo',
+            'solo_flight': 'Vuelo solo',
+            'session_number': 'Número de sesión',
+            'session_letter': 'Repetición de la sesión',
+            'accumulated_flight_hours': 'Horas de vuelo acumuladas',
+            'session_flight_hours': 'Horas de vuelo de la sesión',
+            'aircraft_registration': 'Registro de la aeronave',
+            'session_grade': 'Calificación de la sesión',
+            'pre_1': 'Plan de vuelo IFR',
+            'pre_2': 'Inspección pre-vuelo',
+            'pre_3': 'Uso correcto de checklist',
+            'pre_4': 'Comunicaciones aeronáuticas',
+            'pre_5': 'Técnica de rodaje',
+            'pre_6': 'Anormalidades en el encendido y taxeo',
+            'to_1': 'Normal',
+            'to_2': 'Viento cruzado',
+            'to_3': 'Pista corta',
+            'to_4': 'Ascenso (potencia/velocidad/rumbo)',
+            'to_5': 'Comunicaciones aeronáuticas IFR',
+            'to_6': 'Ejecución SID',
+            'b_ifr_1': 'Maniobra tipo S (SA, SB, SC, DC)',
+            'b_ifr_2': 'Virajes cronometrados (1 RST / 1/2 RST)',
+            'b_ifr_3': 'Reconocimiento de actitud inusual (UPSET)',
+            'b_ifr_4': 'Serie de virajes',
+            'b_ifr_5': 'Cambios de velocidad',
+            'b_ifr_6': 'Intercepción de radiales (IB/OB)',
+            'b_ifr_7': 'Interceptación de marcaciones',
+            'b_ifr_8': 'Uso de instrumentos de navegación (chequeos)',
+            'b_ifr_9': 'Chequeo cruzado',
+            'b_ifr_10': 'Virajes inversión curso (45x180) (80/260) (base)',
+            'b_ifr_11': 'Patrón de juego',
+            'a_ifr_1': 'Plan de vuelo/operacional (IFR)',
+            'a_ifr_2': 'Planificación IFR',
+            'a_ifr_3': 'Comunicaciones IFR (reportes)',
+            'a_ifr_4': 'Ejecución SID',
+            'a_ifr_5': 'Viraje de procedimiento (45x180) (base)',
+            'a_ifr_6': 'Arcos/DME',
+            'a_ifr_7': 'Procedimientos de no-precisión',
+            'a_ifr_8': 'Procedimientos APV (demo)',
+            'a_ifr_9': 'Procedimientos de precisión',
+            'a_ifr_10': 'Procedimiento de aprox. frustrada',
+            'a_ifr_11': 'Circuitos de espera',
+            'land_1': 'Aterrizaje normal',
+            'land_2': 'Aproximación estabilizada',
+            'land_3': 'Aproximación frustrada',
+            'land_4': 'Ejecución de procedimiento IFR',
+            'land_5': 'Transición IFR a referencias visuales',
+            'land_6': 'Disciplina de vuelo',
+            'land_7': 'Técnica de vuelo',
+            'emer_1': 'Actitud y juicio',
+            'emer_2': 'Identificación de la anormalidad',
+            'emer_3': 'Procedimientos memory-items y anormales',
+            'emer_4': 'Recuperación de pérdida por instrumentos',
+            'emer_5': 'Panel parcial',
+            'gen_1': 'Actitud y criterio',
+            'gen_2': 'Seguridad de vuelo',
+            'gen_3': 'Disciplina de vuelo',
+            'gen_4': 'Técnica de vuelo',
+            'gen_5': 'Conocimiento de la aeronave y limitaciones',
+            'gen_6': 'Conocimiento RAV',
+            'gen_7': 'Juicio general',
+            'notes': 'Notas',
+        }
+
+        widgets = {
+            'instructor_id': forms.NumberInput(attrs={'class': 'form-field'}),
+            'instructor_first_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'instructor_last_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'instructor_license_type': forms.Select(attrs={'class': 'form-field'}),
+            'instructor_license_number': forms.NumberInput(attrs={'class': 'form-field'}),
+            'student_id': forms.NumberInput(attrs={'class': 'form-field'}),
+            'student_first_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'student_last_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'student_license_type': forms.Select(attrs={'class': 'form-field'}),
+            'course_type': forms.Select(attrs={'class': 'form-field'}),
+            'flight_rules': forms.Select(attrs={'class': 'form-field'}),
+            'solo_flight': forms.Select(attrs={'class': 'form-field'}),
+            'session_number': forms.Select(attrs={'class': 'form-field'}),
+            'session_letter': forms.Select(attrs={'class': 'form-field'}),
+            'accumulated_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
+            'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
+            'aircraft_registration': forms.Select(attrs={'class': 'form-field'}),
+            'session_grade': forms.Select(attrs={'class': 'form-field'}),
+            'pre_1': forms.Select(attrs={'class': 'form-field'}),
+            'pre_2': forms.Select(attrs={'class': 'form-field'}),
+            'pre_3': forms.Select(attrs={'class': 'form-field'}),
+            'pre_4': forms.Select(attrs={'class': 'form-field'}),
+            'pre_5': forms.Select(attrs={'class': 'form-field'}),
+            'pre_6': forms.Select(attrs={'class': 'form-field'}),
+            'to_1': forms.Select(attrs={'class': 'form-field'}),
+            'to_2': forms.Select(attrs={'class': 'form-field'}),
+            'to_3': forms.Select(attrs={'class': 'form-field'}),
+            'to_4': forms.Select(attrs={'class': 'form-field'}),
+            'to_5': forms.Select(attrs={'class': 'form-field'}),
+            'to_6': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_1': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_2': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_3': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_4': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_5': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_6': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_7': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_8': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_9': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_10': forms.Select(attrs={'class': 'form-field'}),
+            'b_ifr_11': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_1': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_2': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_3': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_4': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_5': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_6': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_7': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_8': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_9': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_10': forms.Select(attrs={'class': 'form-field'}),
+            'a_ifr_11': forms.Select(attrs={'class': 'form-field'}),
+            'land_1': forms.Select(attrs={'class': 'form-field'}),
+            'land_2': forms.Select(attrs={'class': 'form-field'}),
+            'land_3': forms.Select(attrs={'class': 'form-field'}),
+            'land_4': forms.Select(attrs={'class': 'form-field'}),
+            'land_5': forms.Select(attrs={'class': 'form-field'}),
+            'land_6': forms.Select(attrs={'class': 'form-field'}),
+            'land_7': forms.Select(attrs={'class': 'form-field'}),
+            'emer_1': forms.Select(attrs={'class': 'form-field'}),
+            'emer_2': forms.Select(attrs={'class': 'form-field'}),
+            'emer_3': forms.Select(attrs={'class': 'form-field'}),
+            'emer_4': forms.Select(attrs={'class': 'form-field'}),
+            'emer_5': forms.Select(attrs={'class': 'form-field'}),
+            'gen_1': forms.Select(attrs={'class': 'form-field'}),
+            'gen_2': forms.Select(attrs={'class': 'form-field'}),
+            'gen_3': forms.Select(attrs={'class': 'form-field'}),
+            'gen_4': forms.Select(attrs={'class': 'form-field'}),
+            'gen_5': forms.Select(attrs={'class': 'form-field'}),
+            'gen_6': forms.Select(attrs={'class': 'form-field'}),
+            'gen_7': forms.Select(attrs={'class': 'form-field'}),
+            'notes': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Extract the 'user' argument from kwargs
+        super().__init__(*args, **kwargs)
+        
+        if user:
+            profile = user.instructor_profile
+            self.fields['instructor_id'].initial = user.national_id
+            self.fields['instructor_first_name'].initial = user.first_name
+            self.fields['instructor_last_name'].initial = user.last_name
+            self.fields['instructor_license_type'].initial = profile.instructor_license_type
+            self.fields['instructor_license_number'].initial = user.national_id
+
+    def save(self, commit=True):
+        """Override the save method to copy user_id to user_license_number and create FlightLog."""
+        instance = super().save(commit=False)  # Don't save yet, so we can modify the instance
+        instance.student_license_number = instance.student_id  # Copy value from user_id
+        
+        # Create and save a FlightLog instance
+        flightlog_instance = FlightLog(
+            student_id=self.cleaned_data.get('student_id'),
+            student_first_name=self.cleaned_data.get('student_first_name'),
+            student_last_name=self.cleaned_data.get('student_last_name'),
+            course_type=self.cleaned_data.get('course_type'),
+            instructor_id=self.cleaned_data.get('instructor_id'),
+            instructor_first_name=self.cleaned_data.get('instructor_first_name'),
+            instructor_last_name=self.cleaned_data.get('instructor_last_name'),
+            flight_rules=self.cleaned_data.get('flight_rules'),
+            solo_flight=self.cleaned_data.get('solo_flight'),
+            session_number=self.cleaned_data.get('session_number'),
+            session_letter=self.cleaned_data.get('session_letter'),
+            accumulated_flight_hours=self.cleaned_data.get('accumulated_flight_hours'),
+            session_flight_hours=self.cleaned_data.get('session_flight_hours'),
+            aircraft_registration=self.cleaned_data.get('aircraft_registration'),
+            session_grade=self.cleaned_data.get('session_grade'),
+            notes=self.cleaned_data.get('notes', '')
+        )
+         
+        if commit:
+            instance.save()
+            flightlog_instance.save()
+
+        return instance
+

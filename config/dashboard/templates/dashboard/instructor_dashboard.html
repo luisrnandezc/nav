@@ -58,7 +58,7 @@
             <div class="dashboard-square">
               <h1 class="square-header">Cargar vuelo</h1>
               {% if request.user.is_authenticated and request.user.instructor_profile.instructor_type in 'VUELO,DUAL' %}
-                <a class="image-link" href="{% url 'fms:flight_evaluation' %}">
+                <a class="image-link" href="{% url 'fms:form_selection' %}">
                   <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Evaluación de vuelo">
                 </a>
               {% else %}

@@ -3,6 +3,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import FlightEvaluationForm
 
+
+@login_required
+def form_selection(request):
+    """Handle form selection."""
+    return render(request, 'fms/form_selection.html')
+
 @login_required
 def submit_flight_evaluation(request):
     """Handle flight evaluation form submission."""

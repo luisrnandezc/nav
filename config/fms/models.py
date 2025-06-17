@@ -172,7 +172,7 @@ class FlightLog(models.Model):
         return f'Flight data: {self.flight_date} - {self.flight_hours} hrs'
     
 
-class FlightEvaluation(models.Model):
+class FlightEvaluation0_100(models.Model):
     """
     Flight Evaluation Model
 
@@ -270,7 +270,6 @@ class FlightEvaluation(models.Model):
         (YV1111, 'YV1111'),
         (YV2222, 'YV2222'),
     ]
-
     #endregion
 
     #region STUDENT DATA
@@ -368,6 +367,7 @@ class FlightEvaluation(models.Model):
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
     )
+    #endregion
 
     #region PRE-FLIGHT
     pre_1 = models.CharField(
@@ -391,6 +391,11 @@ class FlightEvaluation(models.Model):
         default=NOT_EVALUATED,
     )
     pre_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
+    pre_6 = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
@@ -516,6 +521,11 @@ class FlightEvaluation(models.Model):
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
     )
+    mvrs_18 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
     #endregion
 
     #region EMERGENCIES
@@ -544,9 +554,14 @@ class FlightEvaluation(models.Model):
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
     )
+    emer_6 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+    )
     #endregion
 
-    #region NAVIGATION VFR/IFR
+    #region NAVIGATION VFR
     nav_1 = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
@@ -573,21 +588,6 @@ class FlightEvaluation(models.Model):
         default=NOT_EVALUATED,
     )
     nav_6 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    nav_7 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    nav_8 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    nav_9 = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
@@ -632,70 +632,7 @@ class FlightEvaluation(models.Model):
     )
     #endregion
 
-    #region INSTRUMENT FLIGHT
-    inst_1 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_2 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_3 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_4 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_5 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_6 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_7 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_8 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_9 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_10 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_11 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    inst_12 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    #endregion
-
-    #region LANDING
+    #region CIRCUIT/PROCEDURE
     land_1 = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
@@ -742,31 +679,6 @@ class FlightEvaluation(models.Model):
         default=NOT_EVALUATED,
     )
     land_10 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    land_11 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    land_12 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    land_13 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    land_14 = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-    )
-    land_15 = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,

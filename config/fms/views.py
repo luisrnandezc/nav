@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import FlightEvaluationForm
+from .forms import FlightEvaluation0_100Form
 
 
 @login_required
@@ -13,7 +13,7 @@ def form_selection(request):
 def submit_flight_evaluation(request):
     """Handle flight evaluation form submission."""
     if request.method == 'POST':
-        form = FlightEvaluationForm(request.POST, user=request.user)
+        form = FlightEvaluation0_100Form(request.POST, user=request.user)
         if form.is_valid():
             try:
                 form.save()  # This will save both FlightEvaluation and FlightLog
@@ -23,6 +23,6 @@ def submit_flight_evaluation(request):
         else:
             messages.error(request, 'Por favor corrija los errores en el formulario.')
     else:  
-        form = FlightEvaluationForm(user=request.user)
+        form = FlightEvaluation0_100Form(user=request.user)
 
     return render(request, 'fms/flight_evaluation.html', {'form': form})

@@ -41,12 +41,18 @@ body {
 .submit-button {
     text-transform: uppercase;
     font-size: 1.25rem;
+    text-align: center;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 20%;
     height: 50px;
+    border: #dadada 3px solid;
     border-radius: 3px;
-    color: #ffffff;
     background-color: transparent;
     margin: 20px 0px 20px 0px;
+    text-decoration: none;
 }
   
 .submit-button:hover {

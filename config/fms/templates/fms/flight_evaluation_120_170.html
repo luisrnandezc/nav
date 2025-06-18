@@ -354,9 +354,15 @@
         {% endif %}
 
         <div class="submit-button-container">
-          <button class="submit-button" type="submit">Enviar</button>
+          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>
         </div>
       </form>
     </div>
+
+    <script>
+      function confirmSubmission() {
+        return confirm('¿Está seguro de que desea enviar esta evaluación de vuelo?\n\n⚠️ ADVERTENCIA: Esta acción no se puede deshacer.\n\nUna vez enviada, la evaluación quedará registrada permanentemente en el sistema.');
+      }
+    </script>
   </body>
 </html>

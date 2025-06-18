@@ -249,19 +249,19 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
             ),
             'classes': ('collapse',)
         }),
-        ('Sección 8: Aproximación final y aterrizaje', {
+        ('Sección 7: Aproximación final y aterrizaje', {
             'fields': ('land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7'),
             'classes': ('collapse',)
         }),
-        ('Sección 9: Emergencias situacionales', {
+        ('Sección 8: Emergencias situacionales', {
             'fields': ('emer_1', 'emer_2', 'emer_3', 'emer_4'),
             'classes': ('collapse',)
         }),
-        ('Sección 10: General', {
+        ('Sección 9: General', {
             'fields': ('gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'),
             'classes': ('collapse',)
         }),
-        ('Sección 11: Notas', {
+        ('Sección 10: Notas', {
             'fields': ('notes',)
         }),
     )

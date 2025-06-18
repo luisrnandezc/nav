@@ -7,4 +7,5 @@ urlpatterns = [
     path('fms/form_selection/', views.form_selection, name='form_selection'),
     path('fms/submit_flight_evaluation_0_100/', views.submit_flight_evaluation_0_100, name='flight_evaluation_0_100'),
     path('fms/submit_flight_evaluation_100_120/', views.submit_flight_evaluation_100_120, name='flight_evaluation_100_120'),
+    path('fms/submit_flight_evaluation_120_170/', views.submit_flight_evaluation_120_170, name='flight_evaluation_120_170'),
 ]

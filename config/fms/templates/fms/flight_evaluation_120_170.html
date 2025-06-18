@@ -11,8 +11,8 @@
 
   <body>
     <div class="main-container">
-      <h1 class="main-header">Evaluación de vuelo 0-100 horas</h1>
-      <form class="form-container" method="post"  action="{% url 'fms:flight_evaluation_0_100' %}">
+      <h1 class="main-header">Evaluación de vuelo 120-170 horas</h1>
+      <form class="form-container" method="post"  action="{% url 'fms:flight_evaluation_120_170' %}">
         {% csrf_token %}
         <h1 class="subsection-header">Sección 1: Datos del instructor</h1>
         <details>
@@ -150,7 +150,7 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 5: Despegue - Salida</h1>
+        <h1 class="subsection-header">Sección 5: Despegue - Salida VFR/IFR</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
@@ -184,123 +184,61 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 6: Maniobras</h1>
+        <h1 class="subsection-header">Sección 6: Procedimientos IFR avanzados</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
             <div class="left-column">
               <div class="form-row">
-                {{ form.mvrs_1.label_tag }}
-                {{ form.mvrs_1 }}
+                {{ form.inst_1.label_tag }}
+                {{ form.inst_1 }}
               </div>
               <div class="form-row">
-                {{ form.mvrs_2.label_tag }}
-                {{ form.mvrs_2 }}
+                {{ form.inst_2.label_tag }}
+                {{ form.inst_2 }}
               </div>
               <div class="form-row">
-                {{ form.mvrs_3.label_tag }}
-                {{ form.mvrs_3 }}
+                {{ form.inst_3.label_tag }}
+                {{ form.inst_3 }}
               </div>
               <div class="form-row">
-                {{ form.mvrs_4.label_tag }}
-                {{ form.mvrs_4 }}
+                {{ form.inst_4.label_tag }}
+                {{ form.inst_4 }}
               </div>
               <div class="form-row">
-                {{ form.mvrs_5.label_tag }}
-                {{ form.mvrs_5 }}
+                {{ form.inst_5.label_tag }}
+                {{ form.inst_5 }}
               </div>
               <div class="form-row">
-                {{ form.mvrs_6.label_tag }}
-                {{ form.mvrs_6 }}
-              </div>
-              <div class="form-row">
-                {{ form.mvrs_7.label_tag }}
-                {{ form.mvrs_7 }}
-              </div>
-              <div class="form-row">
-                {{ form.mvrs_8.label_tag }}
-                {{ form.mvrs_8 }}
-              </div>
-              <div class="form-row">
-                {{ form.mvrs_9.label_tag }}
-                {{ form.mvrs_9 }}
+                {{ form.inst_6.label_tag }}
+                {{ form.inst_6 }}
               </div>
             </div>
             <div class="right-column">
               <div class="form-row">
-                {{ form.mvrs_10.label_tag }}
-                {{ form.mvrs_10}}
+                {{ form.inst_7.label_tag }}
+                {{ form.inst_7}}
               </div>
               <div class="form-row">
-                {{ form.mvrs_11.label_tag }}
-                {{ form.mvrs_11 }}
+                {{ form.inst_8.label_tag }}
+                {{ form.inst_8 }}
               </div>
               <div class="form-row">
-                {{ form.mvrs_12.label_tag }}
-                {{ form.mvrs_12 }}
+                {{ form.inst_9.label_tag }}
+                {{ form.inst_9 }}
               </div>
               <div class="form-row">
-                {{ form.mvrs_13.label_tag }}
-                {{ form.mvrs_13 }}
+                {{ form.inst_10.label_tag }}
+                {{ form.inst_10 }}
               </div>
               <div class="form-row">
-                {{ form.mvrs_14.label_tag }}
-                {{ form.mvrs_14 }}
-              </div>
-              <div class="form-row">
-                {{ form.mvrs_15.label_tag }}
-                {{ form.mvrs_15 }}
-              </div>
-              <div class="form-row">
-                {{ form.mvrs_16.label_tag }}
-                {{ form.mvrs_16 }}
-              </div>
-              <div class="form-row">
-                {{ form.mvrs_17.label_tag }}
-                {{ form.mvrs_17 }}
-              </div>
-              <div class="form-row">
-                {{ form.mvrs_18.label_tag }}
-                {{ form.mvrs_18 }}
+                {{ form.inst_11.label_tag }}
+                {{ form.inst_11 }}
               </div>
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 7: Navegación VFR</h1>
-        <details>
-          <summary>Ver sección</summary>
-          <div class="collapsible-section">
-            <div class="left-column">
-              <div class="form-row">
-                {{ form.nav_1.label_tag }}
-                {{ form.nav_1 }}
-              </div>
-              <div class="form-row">
-                {{ form.nav_2.label_tag }}
-                {{ form.nav_2 }}
-              </div>
-              <div class="form-row">
-                {{ form.nav_3.label_tag }}
-                {{ form.nav_3 }}
-              </div>
-            </div>
-            <div class="right-column">
-              <div class="form-row">
-                {{ form.nav_4.label_tag }}
-                {{ form.nav_4 }}
-              </div>
-              <div class="form-row">
-                {{ form.nav_5.label_tag }}
-                {{ form.nav_5 }}
-              </div>
-              <div class="form-row">
-                {{ form.nav_6.label_tag }}
-                {{ form.nav_6 }}
-              </div>
-            </div>
-          </div>
-        </details>
-        <h1 class="subsection-header">Sección 8: Circuito / Procedimiento</h1>
+        <h1 class="subsection-header">Sección 7: Aproximación final y aterrizaje</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
@@ -321,12 +259,12 @@
                 {{ form.land_4.label_tag }}
                 {{ form.land_4 }}
               </div>
+            </div>
+            <div class="right-column">
               <div class="form-row">
                 {{ form.land_5.label_tag }}
                 {{ form.land_5 }}
               </div>
-            </div>
-            <div class="right-column">
               <div class="form-row">
                 {{ form.land_6.label_tag }}
                 {{ form.land_6 }}
@@ -335,22 +273,10 @@
                 {{ form.land_7.label_tag }}
                 {{ form.land_7 }}
               </div>
-              <div class="form-row">
-                {{ form.land_8.label_tag }}
-                {{ form.land_8 }}
-              </div>
-              <div class="form-row">
-                {{ form.land_9.label_tag }}
-                {{ form.land_9 }}
-              </div>
-              <div class="form-row">
-                {{ form.land_10.label_tag }}
-                {{ form.land_10}}
-              </div>
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 9: Emergencias</h1>
+        <h1 class="subsection-header">Sección 8: Emergencias situacionales</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
@@ -363,28 +289,20 @@
                 {{ form.emer_2.label_tag }}
                 {{ form.emer_2 }}
               </div>
+            </div>
+            <div class="right-column">
               <div class="form-row">
                 {{ form.emer_3.label_tag }}
                 {{ form.emer_3 }}
               </div>
-            </div>
-            <div class="right-column">
               <div class="form-row">
                 {{ form.emer_4.label_tag }}
                 {{ form.emer_4 }}
               </div>
-              <div class="form-row">
-                {{ form.emer_5.label_tag }}
-                {{ form.emer_5 }}
-              </div>
-              <div class="form-row">
-                {{ form.emer_6.label_tag }}
-                {{ form.emer_6 }}
-              </div>
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 10: General</h1>
+        <h1 class="subsection-header">Sección 9: General</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
@@ -422,7 +340,7 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 11: Notas</h1>
+        <h1 class="subsection-header">Sección 10: Notas</h1>
         <div class="form-row">
           {{ form.notes }}
         </div>

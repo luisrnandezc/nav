@@ -74,12 +74,12 @@ class FlightLog(models.Model):
     ]
 
     # Aircraft registration
-    YV1111 = 'YV1111'
-    YV2222 = 'YV2222'
+    YV204E = 'YV204E'           
+    YV206E = 'YV206E'
 
     AIRCRAFT_REG = [
-        (YV1111, 'YV1111'),
-        (YV2222, 'YV2222'),
+        (YV204E, 'YV204E'),
+        (YV206E, 'YV206E'),
     ]
 
     #endregion
@@ -156,7 +156,7 @@ class FlightLog(models.Model):
     aircraft_registration = models.CharField(
         max_length=6,
         choices=AIRCRAFT_REG,
-        default=YV1111,
+        default=YV204E,
     )
     session_grade = models.CharField(
         max_length=2,
@@ -169,8 +169,11 @@ class FlightLog(models.Model):
     #endregion
 
     def __str__(self):
-        return f'Flight data: {self.flight_date} - {self.flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date} - {self.session_flight_hours} hrs'
     
+    class Meta:
+        verbose_name = 'Flight Log'
+        verbose_name_plural = 'Flight Logs'
 
 class FlightEvaluation0_100(models.Model):
     """
@@ -263,12 +266,12 @@ class FlightEvaluation0_100(models.Model):
     ]
 
     # Aircraft registration
-    YV1111 = 'YV1111'
-    YV2222 = 'YV2222'
+    YV204E = 'YV204E'
+    YV206E = 'YV206E'
 
     AIRCRAFT_REG = [
-        (YV1111, 'YV1111'),
-        (YV2222, 'YV2222'),
+        (YV204E, 'YV204E'),
+        (YV206E, 'YV206E'),
     ]
     #endregion
 
@@ -360,7 +363,7 @@ class FlightEvaluation0_100(models.Model):
     aircraft_registration = models.CharField(
         max_length=6,
         choices=AIRCRAFT_REG,
-        default=YV1111,
+        default=YV204E,
     )
     session_grade = models.CharField(
         max_length=2,
@@ -692,8 +695,12 @@ class FlightEvaluation0_100(models.Model):
         return self.accumulated_flight_hours + self.session_flight_hours
 
     def __str__(self):
-        return f'Flight data: {self.flight_date} - {self.flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date} - {self.session_flight_hours} hrs'
     
+    class Meta:
+        verbose_name = 'Flight Evaluation 0-100'
+        verbose_name_plural = 'Flight Evaluations 0-100'
+
 class FlightEvaluation100_120(models.Model):
     """
     Flight Evaluation Model
@@ -785,12 +792,12 @@ class FlightEvaluation100_120(models.Model):
     ]
 
     # Aircraft registration
-    YV1111 = 'YV1111'
-    YV2222 = 'YV2222'
+    YV204E = 'YV204E'
+    YV206E = 'YV206E'
 
     AIRCRAFT_REG = [
-        (YV1111, 'YV1111'),
-        (YV2222, 'YV2222'),
+        (YV204E, 'YV204E'),
+        (YV206E, 'YV206E'),
     ]
     #endregion
 
@@ -882,7 +889,7 @@ class FlightEvaluation100_120(models.Model):
     aircraft_registration = models.CharField(
         max_length=6,
         choices=AIRCRAFT_REG,
-        default=YV1111,
+        default=YV204E,
     )
     session_grade = models.CharField(
         max_length=2,
@@ -1184,4 +1191,8 @@ class FlightEvaluation100_120(models.Model):
         return self.accumulated_flight_hours + self.session_flight_hours
 
     def __str__(self):
-        return f'Flight data: {self.flight_date} - {self.flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date} - {self.session_flight_hours} hrs'
+    
+    class Meta:
+        verbose_name = 'Flight Evaluation 100-120'
+        verbose_name_plural = 'Flight Evaluations 100-120'

@@ -73,7 +73,19 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         }),
     )
     
-    readonly_fields = ['flight_date']
+    readonly_fields = [
+        'flight_date', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
+        'instructor_license_type', 'instructor_license_number', 'student_id', 'student_first_name',
+        'student_last_name', 'student_license_type', 'student_license_number', 'course_type',
+        'flight_rules', 'solo_flight', 'session_number', 'session_letter', 'accumulated_flight_hours',
+        'session_flight_hours', 'aircraft_registration', 'session_grade', 'pre_1', 'pre_2', 'pre_3',
+        'pre_4', 'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'mvrs_1', 'mvrs_2',
+        'mvrs_3', 'mvrs_4', 'mvrs_5', 'mvrs_6', 'mvrs_7', 'mvrs_8', 'mvrs_9', 'mvrs_10', 'mvrs_11',
+        'mvrs_12', 'mvrs_13', 'mvrs_14', 'mvrs_15', 'mvrs_16', 'mvrs_17', 'mvrs_18', 'emer_1', 'emer_2',
+        'emer_3', 'emer_4', 'emer_5', 'emer_6', 'nav_1', 'nav_2', 'nav_3', 'nav_4', 'nav_5', 'nav_6',
+        'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7', 'land_1', 'land_2', 'land_3',
+        'land_4', 'land_5', 'land_6', 'land_7', 'land_8', 'land_9', 'land_10', 'notes'
+    ]
     
     def has_add_permission(self, request):
         return False
@@ -173,7 +185,21 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         }),
     )
     
-    readonly_fields = ['flight_date']
+    readonly_fields = [
+        'flight_date', 'student_id', 'student_first_name', 'student_last_name',
+        'student_license_type', 'student_license_number', 'course_type', 'instructor_id',
+        'instructor_first_name', 'instructor_last_name', 'instructor_license_type',
+        'instructor_license_number', 'flight_rules', 'solo_flight', 'session_number',
+        'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
+        'aircraft_registration', 'session_grade', 'pre_1', 'pre_2', 'pre_3', 'pre_4',
+        'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'b_ifr_1',
+        'b_ifr_2', 'b_ifr_3', 'b_ifr_4', 'b_ifr_5', 'b_ifr_6', 'b_ifr_7', 'b_ifr_8',
+        'b_ifr_9', 'b_ifr_10', 'b_ifr_11', 'a_ifr_1', 'a_ifr_2', 'a_ifr_3', 'a_ifr_4',
+        'a_ifr_5', 'a_ifr_6', 'a_ifr_7', 'a_ifr_8', 'a_ifr_9', 'a_ifr_10', 'a_ifr_11',
+        'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7', 'emer_1',
+        'emer_2', 'emer_3', 'emer_4', 'emer_5', 'gen_1', 'gen_2', 'gen_3', 'gen_4',
+        'gen_5', 'gen_6', 'gen_7', 'notes'
+    ]
     
     def has_add_permission(self, request):
         return False
@@ -266,7 +292,19 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         }),
     )
     
-    readonly_fields = ['flight_date']
+    readonly_fields = [
+        'flight_date', 'student_id', 'student_first_name', 'student_last_name',
+        'student_license_type', 'student_license_number', 'course_type', 'instructor_id',
+        'instructor_first_name', 'instructor_last_name', 'instructor_license_type',
+        'instructor_license_number', 'flight_rules', 'solo_flight', 'session_number',
+        'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
+        'aircraft_registration', 'session_grade', 'pre_1', 'pre_2', 'pre_3', 'pre_4',
+        'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'inst_1',
+        'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9',
+        'inst_10', 'inst_11', 'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6',
+        'land_7', 'emer_1', 'emer_2', 'emer_3', 'emer_4', 'gen_1', 'gen_2', 'gen_3',
+        'gen_4', 'gen_5', 'gen_6', 'gen_7', 'notes'
+    ]
     
     def has_add_permission(self, request):
         return False
@@ -323,7 +361,13 @@ class FlightLogAdmin(admin.ModelAdmin):
         }),
     )
     
-    readonly_fields = ['flight_date']
+    readonly_fields = [
+        'flight_date', 'student_id', 'student_first_name', 'student_last_name',
+        'course_type', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
+        'flight_rules', 'solo_flight', 'session_number', 'session_letter',
+        'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration',
+        'session_grade', 'notes'
+    ]
     
     def has_add_permission(self, request):
         return False

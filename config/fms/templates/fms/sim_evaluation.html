@@ -12,7 +12,7 @@
   <body>
     <div class="main-container">
       <h1 class="main-header">Evaluación de simulador</h1>
-      <form class="form-container" method="post"  action="{% url 'fms:flight_evaluation_0_100' %}">
+      <form class="form-container" method="post"  action="{% url 'fms:submit_sim_evaluation' %}">
         {% csrf_token %}
         <h1 class="subsection-header">Sección 1: Datos del instructor</h1>
         <details>

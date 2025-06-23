@@ -185,8 +185,8 @@ class SimulatorLog(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.session_date.date()} - {self.simulator} - {self.session_grade}'
     
     class Meta:
-        verbose_name = 'Simulator Log'
-        verbose_name_plural = 'Simulator Logs'
+        verbose_name = 'Bitácora de simulador'
+        verbose_name_plural = 'Bitácoras de simulador'
 
 class FlightLog(models.Model):
     """
@@ -382,8 +382,8 @@ class FlightLog(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     class Meta:
-        verbose_name = 'Flight Log'
-        verbose_name_plural = 'Flight Logs'
+        verbose_name = 'Bitácora de vuelo'
+        verbose_name_plural = 'Bitácoras de vuelo'
 
 class FlightEvaluation0_100(models.Model):
     """
@@ -987,8 +987,8 @@ class FlightEvaluation0_100(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     class Meta:
-        verbose_name = 'Flight Evaluation 0-100'
-        verbose_name_plural = 'Flight Evaluations 0-100'
+        verbose_name = 'Evaluación de vuelo 0-100'
+        verbose_name_plural = 'Evaluaciones de vuelo 0-100'
 
 class FlightEvaluation100_120(models.Model):
     """
@@ -1556,8 +1556,8 @@ class FlightEvaluation100_120(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     class Meta:
-        verbose_name = 'Flight Evaluation 100-120'
-        verbose_name_plural = 'Flight Evaluations 100-120'
+        verbose_name = 'Evaluación de vuelo 100-120'
+        verbose_name_plural = 'Evaluaciones de vuelo 100-120'
 
 class FlightEvaluation120_170(models.Model):
     """
@@ -2050,8 +2050,8 @@ class FlightEvaluation120_170(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     class Meta:
-        verbose_name = 'Flight Evaluation 120-170'
-        verbose_name_plural = 'Flight Evaluations 120-170'
+        verbose_name = 'Evaluación de vuelo 120-170'
+        verbose_name_plural = 'Evaluaciones de vuelo 120-170'
 
 class SimEvaluation(models.Model):
     """
@@ -2817,5 +2817,5 @@ class SimEvaluation(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     class Meta:
-        verbose_name = 'Flight Evaluation 120-170'
-        verbose_name_plural = 'Flight Evaluations 120-170'
+        verbose_name = 'Evaluación de simulador'
+        verbose_name_plural = 'Evaluaciones de simulador'

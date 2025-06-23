@@ -1,0 +1,600 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Evaluación de simulador</title>
+    <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="main-container">
+      <h1 class="main-header">Evaluación de simulador</h1>
+      <form class="form-container" method="post"  action="{% url 'fms:flight_evaluation_0_100' %}">
+        {% csrf_token %}
+        <h1 class="subsection-header">Sección 1: Datos del instructor</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.instructor_id.label_tag }}
+                {{ form.instructor_id }}
+              </div>
+              <div class="form-row">
+                {{ form.instructor_first_name.label_tag }}
+                {{ form.instructor_first_name }}
+              </div>
+              <div class="form-row">
+                {{ form.instructor_last_name.label_tag }}
+                {{ form.instructor_last_name }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.instructor_license_type.label_tag }}
+                {{ form.instructor_license_type }}
+              </div>
+              <div class="form-row">
+                {{ form.instructor_license_number.label_tag }}
+                {{ form.instructor_license_number }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 2: Datos del alumno</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.student_id.label_tag }}
+                {{ form.student_id }}
+              </div>
+              <div class="form-row">
+                {{ form.student_first_name.label_tag }}
+                {{ form.student_first_name }}
+              </div>
+              <div class="form-row">
+                {{ form.student_last_name.label_tag }}
+                {{ form.student_last_name }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.student_license_type.label_tag }}
+                {{ form.student_license_type }}
+              </div>
+              <div class="form-row">
+                {{ form.course_type.label_tag }}
+                {{ form.course_type }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 3: Datos de la sesión</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.flight_rules.label_tag }}
+                {{ form.flight_rules }}
+              </div>
+              <div class="form-row">
+                {{ form.pre_solo_flight.label_tag }}
+                {{ form.pre_solo_flight }}
+              </div>
+              <div class="form-row">
+                {{ form.session_number.label_tag }}
+                {{ form.session_number }}
+              </div>
+              <div class="form-row">
+                {{ form.session_letter.label_tag }}
+                {{ form.session_letter }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.accumulated_sim_hours.label_tag }}
+                {{ form.accumulated_sim_hours }}
+              </div>
+              <div class="form-row">
+                {{ form.session_sim_hours.label_tag }}
+                {{ form.session_sim_hours }}
+              </div>
+              <div class="form-row">
+                {{ form.simulator.label_tag }}
+                {{ form.simulator }}
+              </div>
+              <div class="form-row">
+                {{ form.session_grade.label_tag }}
+                {{ form.session_grade }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 4: Prevuelo</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.pre_1.label_tag }}
+                {{ form.pre_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.pre_2.label_tag }}
+                {{ form.pre_2 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.pre_3.label_tag }}
+                {{ form.pre_3 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 5: Despegue</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.to_1.label_tag }}
+                {{ form.to_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.to_2.label_tag }}
+                {{ form.to_2 }}
+              </div>
+              <div class="form-row">
+                {{ form.to_3.label_tag }}
+                {{ form.to_3 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.to_4.label_tag }}
+                {{ form.to_4 }}
+              </div>
+              <div class="form-row">
+                {{ form.to_5.label_tag }}
+                {{ form.to_5 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 6: Procedimiento de salida</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.dep_1.label_tag }}
+                {{ form.dep_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.dep_2.label_tag }}
+                {{ form.dep_2 }}
+              </div>
+              <div class="form-row">
+                {{ form.dep_3.label_tag }}
+                {{ form.dep_3 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.dep_4.label_tag }}
+                {{ form.dep_4 }}
+              </div>
+              <div class="form-row">
+                {{ form.dep_5.label_tag }}
+                {{ form.dep_5 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 7: Instrumentos básicos</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.inst_1.label_tag }}
+                {{ form.inst_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_2.label_tag }}
+                {{ form.inst_2 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_3.label_tag }}
+                {{ form.inst_3 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_4.label_tag }}
+                {{ form.inst_4 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_5.label_tag }}
+                {{ form.inst_5 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_6.label_tag }}
+                {{ form.inst_6 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_7.label_tag }}
+                {{ form.inst_7 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.inst_8.label_tag }}
+                {{ form.inst_8 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_9.label_tag }}
+                {{ form.inst_9 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_10.label_tag }}
+                {{ form.inst_10 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_11.label_tag }}
+                {{ form.inst_11 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_12.label_tag }}
+                {{ form.inst_12 }}
+              </div>
+              <div class="form-row">
+                {{ form.inst_13.label_tag }}
+                {{ form.inst_13 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 8: Actitudes anormales</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.upset_1.label_tag }}
+                {{ form.upset_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.upset_2.label_tag }}
+                {{ form.upset_2 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.upset_3.label_tag }}
+                {{ form.upset_3 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 9: Misceláneos</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.misc_1.label_tag }}
+                {{ form.misc_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.misc_2.label_tag }}
+                {{ form.misc_2 }}
+              </div>
+              <div class="form-row">
+                {{ form.misc_3.label_tag }}
+                {{ form.misc_3 }}
+              </div>
+              <div class="form-row">
+                {{ form.misc_4.label_tag }}
+                {{ form.misc_4 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.misc_5.label_tag }}
+                {{ form.misc_5 }}
+              </div>
+              <div class="form-row">
+                {{ form.misc_6.label_tag }}
+                {{ form.misc_6 }}
+              </div>
+              <div class="form-row">
+                {{ form.misc_7.label_tag }}
+                {{ form.misc_7 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 10: Uso de radioayudas (VOR)</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.radio_1.label_tag }}
+                {{ form.radio_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_2.label_tag }}
+                {{ form.radio_2 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_3.label_tag }}
+                {{ form.radio_3 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_4.label_tag }}
+                {{ form.radio_4 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_5.label_tag }}
+                {{ form.radio_5 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_6.label_tag }}
+                {{ form.radio_6 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.radio_7.label_tag }}
+                {{ form.radio_7 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_8.label_tag }}
+                {{ form.radio_8 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_9.label_tag }}
+                {{ form.radio_9 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_10.label_tag }}
+                {{ form.radio_10 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_11.label_tag }}
+                {{ form.radio_11 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 11: Uso de radioayudas (ADF)</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.radio_12.label_tag }}
+                {{ form.radio_12 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_13.label_tag }}
+                {{ form.radio_13 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_14.label_tag }}
+                {{ form.radio_14 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_15.label_tag }}
+                {{ form.radio_15 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_16.label_tag }}
+                {{ form.radio_16 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_17.label_tag }}
+                {{ form.radio_17 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.radio_18.label_tag }}
+                {{ form.radio_18 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_19.label_tag }}
+                {{ form.radio_19 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_20.label_tag }}
+                {{ form.radio_20 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_21.label_tag }}
+                {{ form.radio_21 }}
+              </div>
+              <div class="form-row">
+                {{ form.radio_22.label_tag }}
+                {{ form.radio_22 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 12: Aproximaciones (ILS)</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.app_1.label_tag }}
+                {{ form.app_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_2.label_tag }}
+                {{ form.app_2 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_3.label_tag }}
+                {{ form.app_3 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_4.label_tag }}
+                {{ form.app_4 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.app_5.label_tag }}
+                {{ form.app_5 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_6.label_tag }}
+                {{ form.app_6 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_7.label_tag }}
+                {{ form.app_7 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_8.label_tag }}
+                {{ form.app_8 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 13: Aproximaciones (VOR)</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.app_9.label_tag }}
+                {{ form.app_9 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_10.label_tag }}
+                {{ form.app_10 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_11.label_tag }}
+                {{ form.app_11 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_12.label_tag }}
+                {{ form.app_12 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.app_13.label_tag }}
+                {{ form.app_13 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_14.label_tag }}
+                {{ form.app_14 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_15.label_tag }}
+                {{ form.app_15 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_16.label_tag }}
+                {{ form.app_16 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 14: Aproximaciones (ADF)</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.app_17.label_tag }}
+                {{ form.app_17 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_18.label_tag }}
+                {{ form.app_18 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_19.label_tag }}
+                {{ form.app_19 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_20.label_tag }}
+                {{ form.app_20 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.app_21.label_tag }}
+                {{ form.app_21 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_22.label_tag }}
+                {{ form.app_22 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_23.label_tag }}
+                {{ form.app_23 }}
+              </div>
+              <div class="form-row">
+                {{ form.app_24.label_tag }}
+                {{ form.app_24 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 15: Go-Around</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.go_1.label_tag }}
+                {{ form.go_1 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.go_2.label_tag }}
+                {{ form.go_2 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 16: Notas</h1>
+        <div class="form-row">
+          {{ form.notes }}
+        </div>
+
+        {% if form.errors %}
+          <ul>
+            {% for field, errors in form.errors.items %}
+              <li>{{ field }}: {{ errors }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <div class="submit-button-container">
+          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      function confirmSubmission() {
+        return confirm('¿Está seguro de que desea enviar esta evaluación de simulador?\n\n⚠️ ADVERTENCIA: Esta acción no se puede deshacer.\n\nUna vez enviada, la evaluación quedará registrada permanentemente en el sistema.');
+      }
+    </script>
+  </body>
+</html>

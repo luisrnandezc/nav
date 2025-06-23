@@ -1,5 +1,131 @@
 from django.contrib import admin
-from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightLog
+from .models import FlightLog, SimulatorLog, SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
+
+@admin.register(SimulatorLog)
+class SimulatorLogAdmin(admin.ModelAdmin):
+    list_display = [
+        'student_full_name', 'student_id',
+        'instructor_full_name', 'instructor_id',
+        'session_date_only', 'simulator', 'session_number', 'session_sim_hours'
+    ]
+    list_filter = ['session_date', 'simulator', 'instructor_id', 'session_grade', 'course_type']
+    search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
+    date_hierarchy = 'session_date'
+    ordering = ['-session_date']
+    
+    fieldsets = (
+        ('Sección 1: Datos del alumno', {
+            'fields': ('student_id', 'student_first_name', 'student_last_name', 'course_type')
+        }),
+        ('Sección 2: Datos del instructor', {
+            'fields': ('instructor_id', 'instructor_first_name', 'instructor_last_name')
+        }),
+        ('Sección 3: Datos de la sesión', {
+            'fields': (
+                'flight_rules', 'pre_solo_flight', 'session_number', 
+                'session_letter', 'accumulated_sim_hours', 'session_sim_hours',
+                'simulator', 'session_grade', 'notes'
+            )
+        }),
+    )
+    
+    readonly_fields = [
+        'session_date', 'student_id', 'student_first_name', 'student_last_name', 'course_type',	
+        'instructor_id', 'instructor_first_name', 'instructor_last_name',
+        'flight_rules', 'pre_solo_flight', 'session_number', 'session_letter',
+        'accumulated_sim_hours', 'session_sim_hours', 'simulator',
+        'session_grade', 'notes'
+    ]
+    
+    def has_add_permission(self, request):
+        return False
+    
+    def student_full_name(self, obj):
+        return f"{obj.student_first_name} {obj.student_last_name}"
+    student_full_name.short_description = 'Alumno'
+    
+    def instructor_full_name(self, obj):
+        return f"{obj.instructor_first_name} {obj.instructor_last_name}"
+    instructor_full_name.short_description = 'Instructor'
+    
+    def student_id(self, obj):
+        return obj.student_id
+    student_id.short_description = 'ID del alumno'
+    
+    def instructor_id(self, obj):
+        return obj.instructor_id
+    instructor_id.short_description = 'ID del instructor'
+    
+    def session_date_only(self, obj):
+        return obj.session_date.date()
+    session_date_only.short_description = 'Fecha de sesión'
+
+    class Meta:
+        verbose_name = 'Bitácora de simulador'
+        verbose_name_plural = 'Bitácoras de simulador'
+
+@admin.register(FlightLog)
+class FlightLogAdmin(admin.ModelAdmin):
+    list_display = [
+        'student_full_name', 'student_id',
+        'instructor_full_name', 'instructor_id',
+        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
+    ]
+    list_filter = ['flight_date', 'aircraft_registration', 'instructor_id', 'session_grade', 'course_type']
+    search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
+    date_hierarchy = 'flight_date'
+    ordering = ['-flight_date']
+    
+    fieldsets = (
+        ('Sección 1: Datos del alumno', {
+            'fields': ('student_id', 'student_first_name', 'student_last_name', 'course_type')
+        }),
+        ('Sección 2: Datos del instructor', {
+            'fields': ('instructor_id', 'instructor_first_name', 'instructor_last_name')
+        }),
+        ('Sección 3: Datos de la sesión', {
+            'fields': (
+                'flight_rules', 'solo_flight', 'session_number', 
+                'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
+                'aircraft_registration', 'session_grade', 'notes'
+            )
+        }),
+    )
+    
+    readonly_fields = [
+        'flight_date', 'student_id', 'student_first_name', 'student_last_name',
+        'course_type', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
+        'flight_rules', 'solo_flight', 'session_number', 'session_letter',
+        'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration',
+        'session_grade', 'notes'
+    ]
+    
+    def has_add_permission(self, request):
+        return False
+    
+    def student_full_name(self, obj):
+        return f"{obj.student_first_name} {obj.student_last_name}"
+    student_full_name.short_description = 'Alumno'
+    
+    def instructor_full_name(self, obj):
+        return f"{obj.instructor_first_name} {obj.instructor_last_name}"
+    instructor_full_name.short_description = 'Instructor'
+    
+    def student_id(self, obj):
+        return obj.student_id
+    student_id.short_description = 'ID del alumno'
+    
+    def instructor_id(self, obj):
+        return obj.instructor_id
+    instructor_id.short_description = 'ID del instructor'
+    
+    def flight_date_only(self, obj):
+        return obj.flight_date.date()
+    flight_date_only.short_description = 'Fecha de vuelo'
+
+    class Meta:
+        verbose_name = 'Bitácora de vuelo'
+        verbose_name_plural = 'Bitácoras de vuelo'
 
 @admin.register(FlightEvaluation0_100)
 class FlightEvaluation0_100Admin(admin.ModelAdmin):
@@ -333,40 +459,122 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         verbose_name = 'Evaluación de vuelo 120-170'
         verbose_name_plural = 'Evaluaciones de vuelo 120-170'
 
-@admin.register(FlightLog)
-class FlightLogAdmin(admin.ModelAdmin):
+@admin.register(SimEvaluation)
+class SimEvaluationAdmin(admin.ModelAdmin):
     list_display = [
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
+        'session_date_only', 'simulator', 'session_number', 'session_grade'
     ]
-    list_filter = ['flight_date', 'aircraft_registration', 'instructor_id', 'session_grade', 'course_type']
+    list_filter = ['session_date', 'simulator', 'instructor_license_number', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
-    date_hierarchy = 'flight_date'
-    ordering = ['-flight_date']
+    date_hierarchy = 'session_date'
+    ordering = ['-session_date']
     
     fieldsets = (
         ('Sección 1: Datos del alumno', {
-            'fields': ('student_id', 'student_first_name', 'student_last_name', 'course_type')
+            'fields': (
+                'student_id', 'student_first_name', 'student_last_name', 
+                'student_license_type', 'student_license_number', 'course_type'
+            )
         }),
         ('Sección 2: Datos del instructor', {
-            'fields': ('instructor_id', 'instructor_first_name', 'instructor_last_name')
+            'fields': (
+                'instructor_id', 'instructor_first_name', 'instructor_last_name',
+                'instructor_license_type', 'instructor_license_number'
+            )
         }),
         ('Sección 3: Datos de la sesión', {
             'fields': (
-                'flight_rules', 'solo_flight', 'session_number', 
-                'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
-                'aircraft_registration', 'session_grade', 'notes'
+                'flight_rules', 'pre_solo_flight', 'session_number', 
+                'session_letter', 'accumulated_sim_hours', 'session_sim_hours',
+                'simulator', 'session_grade'
             )
+        }),
+        ('Sección 4: Prevuelo', {
+            'fields': ('pre_1', 'pre_2', 'pre_3'),
+            'classes': ('collapse',)
+        }),
+        ('Sección 5: Despegue', {
+            'fields': ('to_1', 'to_2', 'to_3', 'to_4', 'to_5'),
+            'classes': ('collapse',)
+        }),
+        ('Sección 6: Procedimiento de salida', {
+            'fields': ('dep_1', 'dep_2', 'dep_3', 'dep_4', 'dep_5'),
+            'classes': ('collapse',)
+        }),
+        ('Sección 7: Instrumentos básicos', {
+            'fields': ('inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6',
+                'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11', 'inst_12', 'inst_13'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Sección 9: Misceláneos', {
+            'fields': ('misc_1', 'misc_2', 'misc_3', 'misc_4', 'misc_5', 'misc_6', 'misc_7'),
+            'classes': ('collapse',)
+        }),
+        ('Sección 10: Uso de radioayudas (VOR)', {
+            'fields': ('radio_1', 'radio_2', 'radio_3', 'radio_4', 'radio_5', 'radio_6', 
+                       'radio_7', 'radio_8', 'radio_9', 'radio_10', 'radio_11'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Sección 11: Uso de radioayudas (ADF)', {
+            'fields': ('radio_12', 'radio_13', 'radio_14', 'radio_15', 'radio_16', 'radio_17', 
+                       'radio_18', 'radio_19', 'radio_20', 'radio_21', 'radio_22'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Sección 12: Aproximaciones (ILS)', {
+            'fields': ('app_1', 'app_2', 'app_3', 'app_4', 
+                       'app_5', 'app_6', 'app_7', 'app_8'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Sección 13: Aproximaciones (VOR)', {
+            'fields': ('app_9', 'app_10', 'app_11', 'app_12', 
+                       'app_13', 'app_14', 'app_15', 'app_16'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Sección 14: Aproximaciones (ADF)', {
+            'fields': ('app_17', 'app_18', 'app_19', 'app_20', 
+                       'app_21', 'app_22', 'app_23', 'app_24'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Sección 15: Go-Around', {
+            'fields': ('go_1', 'go_2'),
+            'classes': ('collapse',)
+        }),
+        ('Sección 16: Notas', {
+            'fields': ('notes',)
         }),
     )
     
     readonly_fields = [
-        'flight_date', 'student_id', 'student_first_name', 'student_last_name',
-        'course_type', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
-        'flight_rules', 'solo_flight', 'session_number', 'session_letter',
-        'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration',
-        'session_grade', 'notes'
+            'instructor_id', 'instructor_first_name', 'instructor_last_name',
+            'instructor_license_type', 'instructor_license_number',
+            'student_id', 'student_first_name', 'student_last_name',
+            'student_license_type', 'course_type',
+            'flight_rules', 'pre_solo_flight', 'session_number', 'session_letter',
+            'accumulated_sim_hours', 'session_sim_hours', 'simulator', 'session_grade',
+            'pre_1', 'pre_2', 'pre_3',
+            'to_1', 'to_2', 'to_3', 'to_4', 'to_5',
+            'dep_1', 'dep_2', 'dep_3', 'dep_4', 'dep_5',
+            'inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 
+            'inst_8', 'inst_9', 'inst_10', 'inst_11', 'inst_12', 'inst_13',
+            'upset_1', 'upset_2', 'upset_3',
+            'misc_1', 'misc_2', 'misc_3', 'misc_4', 'misc_5', 'misc_6', 'misc_7',
+            'radio_1', 'radio_2', 'radio_3', 'radio_4', 'radio_5', 'radio_6',
+            'radio_7', 'radio_8', 'radio_9', 'radio_10', 'radio_11', 'radio_12',
+            'radio_13', 'radio_14', 'radio_15', 'radio_16', 'radio_17', 'radio_18',
+            'radio_19', 'radio_20', 'radio_21', 'radio_22',
+            'app_1', 'app_2', 'app_3', 'app_4', 'app_5', 'app_6', 'app_7', 'app_8',
+            'app_9', 'app_10', 'app_11', 'app_12', 'app_13', 'app_14', 'app_15', 'app_16',
+            'app_17', 'app_18', 'app_19', 'app_20', 'app_21', 'app_22', 'app_23', 'app_24',
+            'go_1', 'go_2',
+            'notes',
     ]
     
     def has_add_permission(self, request):
@@ -381,17 +589,17 @@ class FlightLogAdmin(admin.ModelAdmin):
     instructor_full_name.short_description = 'Instructor'
     
     def student_id(self, obj):
-        return obj.student_id
+        return obj.student_license_number
     student_id.short_description = 'ID del alumno'
     
     def instructor_id(self, obj):
-        return obj.instructor_id
+        return obj.instructor_license_number
     instructor_id.short_description = 'ID del instructor'
     
-    def flight_date_only(self, obj):
-        return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha de vuelo'
+    def session_date_only(self, obj):
+        return obj.session_date.date()
+    session_date_only.short_description = 'Fecha de sesión'
 
     class Meta:
-        verbose_name = 'Bitácora de vuelo'
-        verbose_name_plural = 'Bitácoras de vuelo'
+        verbose_name = 'Evaluación de simulador'
+        verbose_name_plural = 'Evaluaciones de simulador'

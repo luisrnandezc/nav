@@ -8,4 +8,6 @@ urlpatterns = [
     path('fms/submit_flight_evaluation_0_100/', views.submit_flight_evaluation_0_100, name='flight_evaluation_0_100'),
     path('fms/submit_flight_evaluation_100_120/', views.submit_flight_evaluation_100_120, name='flight_evaluation_100_120'),
     path('fms/submit_flight_evaluation_120_170/', views.submit_flight_evaluation_120_170, name='flight_evaluation_120_170'),
+    path('fms/submit_sim_evaluation/', views.submit_sim_evaluation, name='sim_evaluation'),
+
 ]

@@ -1,6 +1,193 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+class SimulatorLog(models.Model):
+    """
+    Simulator Log Model
+
+    This model receives data directly from the FlightEvaluationSim form.
+    It generates records that allow students and authorized staff 
+    to track and monitor students' simulator training progress.
+    """
+
+    #region CHOICES DEFINITIONS
+
+    # Course types
+    COURSE_PP = 'PP'
+    COURSE_HVI = 'HVI'
+    COURSE_PC = 'PC'
+    COURSE_TLA = 'TLA'
+
+    COURSE_TYPE_CHOICES = [
+        (COURSE_PP, 'PP'),
+        (COURSE_HVI, 'HVI'),
+        (COURSE_PC, 'PC'),
+        (COURSE_TLA, 'TLA'),
+    ]
+
+    # Flight rules
+    VFR = 'VFR'
+    IFR = 'IFR'
+    DUAL = 'DUAL'
+
+    FLIGHT_RULES_CHOICES = [
+        (VFR, 'VFR'),
+        (IFR, 'IFR'),
+        (DUAL, 'Dual'),
+    ]
+
+    # Pre-solo flight
+    NO = 'N'
+    YES = 'Y'
+
+    PRE_SOLO_FLIGHT_CHOICES = [
+        (NO, 'N'),
+        (YES, 'Y'),
+    ]
+
+    # Session number
+    def generate_choices():
+        choices = []
+        for i in range(1, 11):
+            choices.append((str(i), str(i)))
+        return choices
+    
+    # Session letter
+    SESSION_LETTER_CHOICES = [
+        ('', ''),
+        ('A', 'A'),
+        ('B', 'B'),
+        ('E', 'E'),
+    ]
+
+    # Flight session grades
+    NON_STANDARD = 'NS'
+    STANDARD = 'S'
+    SUPER_STANDARD = 'SS'
+    NOT_EVALUATED = 'NE'
+
+    SESSION_GRADE_CHOICES = [
+        (NON_STANDARD, 'NS'),
+        (STANDARD, 'S'),
+        (SUPER_STANDARD, 'SS'),
+        (NOT_EVALUATED, 'NE'),
+    ]
+
+    # Simulator
+    FPT = 'FPT'
+    B737 = 'B737'
+
+    SIMULATOR_CHOICES = [
+        (FPT, 'FPT'),
+        (B737, 'B737'),
+    ]
+    #endregion
+
+    #region STUDENT DATA
+    student_id = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='ID alumno'
+    )
+    student_first_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Nombre'
+    )
+    student_last_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Apellido'
+    )
+    course_type = models.CharField(
+        max_length=3, 
+        choices=COURSE_TYPE_CHOICES,
+        default=COURSE_PP,
+        verbose_name='Tipo de curso'
+    )
+    #endregion
+
+    #region INSTRUCTOR DATA
+    instructor_id = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='ID instructor'
+    )
+    instructor_first_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Nombre'
+    )
+    instructor_last_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Apellido'
+    )
+    #endregion
+
+    #region SESSION DATA
+    session_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Fecha de sesión'
+    )
+    flight_rules = models.CharField(
+        max_length=4, 
+        choices=FLIGHT_RULES_CHOICES,
+        default=VFR,
+        verbose_name='Reglas de vuelo'
+    )
+    pre_solo_flight = models.CharField(
+        max_length=3,
+        choices=PRE_SOLO_FLIGHT_CHOICES,
+        default=NO,
+        verbose_name='Sesión pre-solo'
+    )
+    session_number = models.CharField(
+        max_length=3,
+        choices=generate_choices(),
+        default='1',
+        verbose_name='Sesión'
+    )
+    session_letter = models.CharField(
+        max_length=1,
+        choices=SESSION_LETTER_CHOICES,
+        blank=True,
+        null=True,
+        default='',
+        verbose_name='Repetición de sesión'
+    )
+    accumulated_sim_hours = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2,
+        default=0.00,
+        verbose_name='Horas de simulador acumuladas'
+    )
+    session_sim_hours = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2,
+        default=0.00,   
+        verbose_name='Horas de la sesión'
+    )
+    simulator = models.CharField(
+        max_length=6,
+        choices=SIMULATOR_CHOICES,
+        default=FPT,
+        verbose_name='Simulador'
+    )
+    session_grade = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Calificación de la sesión'
+    )
+    notes = models.TextField(blank=False, verbose_name='Notas')
+    #endregion
+
+    def __str__(self):
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date.date()} - {self.simulator} - {self.session_grade}'
+    
+    class Meta:
+        verbose_name = 'Simulator Log'
+        verbose_name_plural = 'Simulator Logs'
+
 class FlightLog(models.Model):
     """
     Flight Log Model
@@ -23,6 +210,15 @@ class FlightLog(models.Model):
         (COURSE_HVI, 'HVI'),
         (COURSE_PC, 'PC'),
         (COURSE_TLA, 'TLA'),
+    ]
+
+    # Session type
+    SIM = 'SIMULADOR'
+    FLIGHT = 'VUELO'
+
+    SESSION_TYPE_CHOICES = [
+        (SIM, 'SIMULADOR'),
+        (FLIGHT, 'VUELO'),
     ]
 
     # Flight rules
@@ -1849,6 +2045,773 @@ class FlightEvaluation120_170(models.Model):
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""
         return self.accumulated_flight_hours + self.session_flight_hours
+
+    def __str__(self):
+        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+    
+    class Meta:
+        verbose_name = 'Flight Evaluation 120-170'
+        verbose_name_plural = 'Flight Evaluations 120-170'
+
+class SimEvaluation(models.Model):
+    """
+    Simulator Evaluation Model
+
+    This model receives data directly from the SimEvaluation form.
+    It generates simulator session records that are used to generate pdf
+    files and serve as a digital backup of simulator training sessions.
+    """
+
+    #region CHOICES DEFINITIONS
+
+    # License types
+    LICENSE_AP = 'AP'
+    LICENSE_PP = 'PP'
+    LICENSE_PC = 'PC'
+    LICENSE_TLA = 'TLA'
+
+    INSTRUCTOR_LICENSE_CHOICES = [ 
+        (LICENSE_PC, 'PC'),
+        (LICENSE_TLA, 'TLA'),
+    ]
+
+    STUDENT_LICENSE_CHOICES = [
+        (LICENSE_AP, 'AP'),
+        (LICENSE_PP, 'PP'),
+        (LICENSE_PC, 'PC'),
+        (LICENSE_TLA, 'TLA'),
+    ]
+
+    # Course types
+    COURSE_PP = 'PP'
+    COURSE_HVI = 'HVI'
+    COURSE_PC = 'PC'
+    COURSE_TLA = 'TLA'
+
+    COURSE_TYPE_CHOICES = [
+        (COURSE_PP, 'PP'),
+        (COURSE_HVI, 'HVI'),
+        (COURSE_PC, 'PC'),
+        (COURSE_TLA, 'TLA'),
+    ]
+
+    # Flight rules
+    VFR = 'VFR'
+    IFR = 'IFR'
+    DUAL = 'DUAL'
+
+    FLIGHT_RULES_CHOICES = [
+        (VFR, 'VFR'),
+        (IFR, 'IFR'),
+        (DUAL, 'Dual'),
+    ]
+
+    # Pre-solo flight
+    NO = 'N'
+    YES = 'Y'
+ 
+    PRE_SOLO_FLIGHT_CHOICES = [
+        (NO, 'N'),
+        (YES, 'Y'),
+    ]
+
+    # Flight session grades
+    NON_STANDARD = 'NS'
+    STANDARD = 'S'
+    SUPER_STANDARD = 'SS'
+    NOT_EVALUATED = 'NE'
+
+    SESSION_GRADE_CHOICES = [
+        (NON_STANDARD, 'NS'),
+        (STANDARD, 'S'),
+        (SUPER_STANDARD, 'SS'),
+        (NOT_EVALUATED, 'NE'),
+    ]
+
+    # Session number
+    def generate_choices():
+        choices = []
+        for i in range(1, 11):
+            choices.append((str(i), str(i)))
+        return choices
+    
+    # Session letter
+    SESSION_LETTER_CHOICES = [
+        ('', ''),
+        ('A', 'A'),
+        ('B', 'B'),
+        ('E', 'E'),
+    ]
+
+    # Simulator
+    FPT = 'FPT'
+    B737 = 'B737'
+
+    SIMULATOR_CHOICES = [
+        (FPT, 'FPT'),
+        (B737, 'B737'),
+    ]
+    #endregion
+
+    #region STUDENT DATA
+    student_id = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='ID alumno'
+    )
+    student_first_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Nombre'
+    )
+    student_last_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Apellido'
+    )
+    student_license_type = models.CharField(
+        max_length=3,
+        choices=STUDENT_LICENSE_CHOICES,
+        default=LICENSE_AP,
+        verbose_name='Tipo de licencia'
+    )
+    student_license_number = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='Número de licencia'
+    )
+    course_type = models.CharField(
+        max_length=3, 
+        choices=COURSE_TYPE_CHOICES,
+        default=COURSE_PP,
+        verbose_name='Tipo de curso'
+    )
+    #endregion
+
+    #region INSTRUCTOR DATA
+    instructor_id = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='ID instructor'
+    )
+    instructor_first_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Nombre'
+    )
+    instructor_last_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Apellido'
+    )
+    instructor_license_type = models.CharField(
+        max_length=3,
+        choices=INSTRUCTOR_LICENSE_CHOICES,
+        default=LICENSE_PC,
+        verbose_name='Tipo de licencia'
+    )
+    instructor_license_number = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='Número de licencia'
+    )
+    #endregion
+
+    #region SESSION DATA
+    session_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Fecha de sesión'
+    )
+    flight_rules = models.CharField(
+        max_length=4, 
+        choices=FLIGHT_RULES_CHOICES,
+        default=VFR,
+        verbose_name='Reglas de vuelo'
+    )
+    pre_solo_flight = models.CharField(
+        max_length=3,
+        choices=PRE_SOLO_FLIGHT_CHOICES,
+        default=NO,
+        verbose_name='Sesión pre-solo'
+    )
+    session_number = models.CharField(
+        max_length=3,
+        choices=generate_choices(),
+        default='1',
+        verbose_name='Número'
+    )
+    session_letter = models.CharField(
+        max_length=1,
+        choices=SESSION_LETTER_CHOICES,
+        blank=True,
+        null=True,
+        default='',
+        verbose_name='Repetición de sesión'
+    )
+    accumulated_sim_hours = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2,
+        default=0.00,
+        verbose_name='Horas de simulador acumuladas'
+    )
+    session_sim_hours = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2,
+        default=0.00,
+        verbose_name='Horas de la sesión'
+    )
+    simulator = models.CharField(
+        max_length=6,
+        choices=SIMULATOR_CHOICES,
+        default=FPT,
+        verbose_name='Simulador'
+    )
+    session_grade = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Calificación de la sesión'
+    )
+    #endregion
+
+    #region PRE-FLIGHT
+    pre_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Preparación del vuelo'
+    )
+    pre_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Lista de chequeo'
+    )
+    pre_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Instrucciones del ATC'
+    )
+    #endregion
+
+    #region TAKEOFF
+    to_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso de potencia'
+    )
+    to_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Rumbo'
+    )
+    to_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Actitud'
+    )
+    to_4 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Velocidad'
+    )
+    to_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Proc. de despegue'
+    )
+    #endregion
+
+    #region DEPARTURE PROCEDURE
+    dep_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso de radioayudas'
+    )
+    dep_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Radiocomunicaciones'
+    )
+    dep_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Instrucciones del ATC'
+    )
+    dep_4 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Conocimiento del SID'
+    )
+    dep_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Ejecución del SID'
+    )
+    #endregion
+
+    #region BASIC INSTRUMENTS
+    inst_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Ascenso'
+    )
+    inst_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Técnica de nivelado'
+    )
+    inst_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Vuelo recto y nivelado'
+    )
+    inst_4 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Virajes estándar'
+    )
+    inst_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Virajes 30° de banqueo'
+    )
+    inst_6 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Virajes 45° de banqueo'
+    )
+    inst_7 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='S vertical'
+    )
+    inst_8 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Cambios de velocidad'
+    )
+    inst_9 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Cambios de configuración'
+    )
+    inst_10 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Panel parcial'
+    )
+    inst_11 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Pérdida (conf. limpia)'
+    )
+    inst_12 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Pérdida (conf. despegue)'
+    )
+    inst_13 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Pérdida (conf. aterrizaje)'
+    )
+    #endregion
+
+    #region UNUSUAL ACTITUDES
+    upset_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Reconocimiento de actitud inusual'
+    )
+    upset_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Procedimiento de recuperación'
+    )
+    upset_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso de instrumentos'
+    )
+    #endregion
+
+    #region MISCELLANEOUS
+    misc_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso del transponder'
+    )
+    misc_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Teoría de vuelo instrumental'
+    )
+    misc_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Lectura e interpretación de cartas'
+    )
+    misc_4 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso del computador'
+    )
+    misc_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Conocimiento RAV'
+    )
+    misc_6 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Conocimiento general'
+    )
+    misc_7 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso de los compensadores'
+    )
+    #endregion
+
+    #region RADIONAVIGATION AIDS (VOR)
+    radio_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Sintonía para la identificación'
+    )
+    radio_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Intercepción IB'
+    )
+    radio_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Intercepción OB'
+    )
+    radio_4 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Tracking'
+    )
+    radio_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Entrada correcta'
+    )
+    radio_6 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Patrón de espera'
+    )
+    radio_7 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Virajes de procedimiento'
+    )
+    radio_8 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Estimación y corrección de tiempo'
+    )
+    radio_9 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Radiocomunicaciones'
+    )
+    radio_10 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Arco DME'
+    )
+    radio_11 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Técnica general'
+    )
+    #endregion
+
+    #region RADIONAVIGATION AIDS (ADF)
+    radio_12 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Sintonía para la identificación'
+    )
+    radio_13 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Intercepción IB'
+    )
+    radio_14 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Intercepción OB'
+    )
+    radio_15 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Tracking'
+    )
+    radio_16 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Entrada correcta'
+    )
+    radio_17 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Patrón de espera'
+    )
+    radio_18 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Virajes de procedimiento'
+    )
+    radio_19 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Estimación y corrección de tiempo'
+    )
+    radio_20 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Radiocomunicaciones'
+    )
+    radio_21 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Arco DME'
+    )
+    radio_22 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Técnica general'
+    )
+    #endregion
+
+    #region APPROACH (ILS)
+    app_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Instrucciones del ATC'
+    )
+    app_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso de frecuencias apropiadas'
+    )
+    app_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Radiocomunicaciones'
+    )
+    app_4 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Interpretación de cartas'
+    )
+    app_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Ejecución del procedimiento'
+    )
+    app_6 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Configuración'
+    )
+    app_7 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Aproximación frustrada'
+    )
+    app_8 = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name='Tipo de aproximación'
+    )
+    #endregion
+
+    #region APPROACH (VOR)
+    app_9 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Instrucciones del ATC'
+    )
+    app_10 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso de frecuencias apropiadas'
+    )
+    app_11 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Radiocomunicaciones'
+    )
+    app_12 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Interpretación de cartas'
+    )
+    app_13 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Ejecución del procedimiento'
+    )
+    app_14 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Configuración'
+    )
+    app_15 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Aproximación frustrada'
+    )
+    app_16 = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name='Tipo de aproximación'
+    )
+    #endregion
+
+    #region APPROACH (ADF)
+    app_17 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Instrucciones del ATC'
+    )
+    app_18 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso de frecuencias apropiadas'
+    )
+    app_19 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Radiocomunicaciones'
+    )
+    app_20 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Interpretación de cartas'
+    )
+    app_21 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Ejecución del procedimiento'
+    )
+    app_22 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Configuración'
+    )
+    app_23 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Aproximación frustrada'
+    )
+    app_24 = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name='Tipo de aproximación'
+    )
+    #endregion
+
+    #region GO-AROUND
+    go_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Ejecución del procedimiento'
+    )
+    go_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Comunicación'
+    )
+    #endregion
+
+    notes = models.TextField(blank=False, verbose_name='Notas')
+
+    def total_sim_hours(self):
+        """Return the sum of accumulated and session hours."""
+        return self.accumulated_sim_hours + self.session_sim_hours
 
     def __str__(self):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'

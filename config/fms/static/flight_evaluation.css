@@ -101,6 +101,24 @@
 
   .form-field {
     width: 150px;
+    display: inline-block;
+  }
+
+  .radio-field {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: bottom;
+    width: 30px;
+  }
+
+  .radio-field div label {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 40px !important;
   }
 
   #id_notes {
@@ -131,4 +149,13 @@
     border: 0px solid #ffffff;
     border-radius: 3px;
     cursor: pointer;
+  }
+
+  @media (max-width: 1024px) {
+
+    .collapsible-section {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
   }

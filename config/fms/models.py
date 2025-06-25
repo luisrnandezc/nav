@@ -13,16 +13,14 @@ class SimulatorLog(models.Model):
     #region CHOICES DEFINITIONS
 
     # Course types
-    COURSE_PP = 'PP'
+    COURSE_PPA = 'PPA'
     COURSE_HVI = 'HVI'
-    COURSE_PC = 'PC'
-    COURSE_TLA = 'TLA'
+    COURSE_PCA = 'PCA'
 
     COURSE_TYPE_CHOICES = [
-        (COURSE_PP, 'PP'),
+        (COURSE_PPA, 'PPA'),
         (COURSE_HVI, 'HVI'),
-        (COURSE_PC, 'PC'),
-        (COURSE_TLA, 'TLA'),
+        (COURSE_PCA, 'PCA'),
     ]
 
     # Flight rules
@@ -57,19 +55,19 @@ class SimulatorLog(models.Model):
         ('', ''),
         ('A', 'A'),
         ('B', 'B'),
-        ('E', 'E'),
+        ('C', 'C'),
     ]
 
     # Flight session grades
+    SUPER_STANDARD = 'SS'
     STANDARD = 'S'
     NON_STANDARD = 'NS'
-    SUPER_STANDARD = 'SS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
+        (SUPER_STANDARD, 'SS'),
         (STANDARD, 'S'),
         (NON_STANDARD, 'NS'),
-        (SUPER_STANDARD, 'SS'),
         (NOT_EVALUATED, 'NE'),
     ]
 
@@ -101,7 +99,7 @@ class SimulatorLog(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PP,
+        default=COURSE_PPA,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -200,16 +198,14 @@ class FlightLog(models.Model):
     #region CHOICES DEFINITIONS
 
     # Course types
-    COURSE_PP = 'PP'
+    COURSE_PPA = 'PPA'
     COURSE_HVI = 'HVI'
-    COURSE_PC = 'PC'
-    COURSE_TLA = 'TLA'
+    COURSE_PCA = 'PCA'
 
     COURSE_TYPE_CHOICES = [
-        (COURSE_PP, 'PP'),
+        (COURSE_PPA, 'PPA'),
         (COURSE_HVI, 'HVI'),
-        (COURSE_PC, 'PC'),
-        (COURSE_TLA, 'TLA'),
+        (COURSE_PCA, 'PCA'),
     ]
 
     # Session type
@@ -253,19 +249,19 @@ class FlightLog(models.Model):
         ('', ''),
         ('A', 'A'),
         ('B', 'B'),
-        ('E', 'E'),
+        ('C', 'C'),
     ]
 
-    # Flight session grade
+    # Flight session grades
+    SUPER_STANDARD = 'SS'
     STANDARD = 'S'
     NON_STANDARD = 'NS'
-    SUPER_STANDARD = 'SS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
+        (SUPER_STANDARD, 'SS'),
         (STANDARD, 'S'),
         (NON_STANDARD, 'NS'),
-        (SUPER_STANDARD, 'SS'),
         (NOT_EVALUATED, 'NE'),
     ]
 
@@ -298,7 +294,7 @@ class FlightLog(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PP,
+        default=COURSE_PPA,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -398,33 +394,31 @@ class FlightEvaluation0_100(models.Model):
 
     # License types
     LICENSE_AP = 'AP'
-    LICENSE_PP = 'PP'
-    LICENSE_PC = 'PC'
+    LICENSE_PPA = 'PPA'
+    LICENSE_PCA = 'PCA'
     LICENSE_TLA = 'TLA'
 
     INSTRUCTOR_LICENSE_CHOICES = [ 
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
     STUDENT_LICENSE_CHOICES = [
         (LICENSE_AP, 'AP'),
-        (LICENSE_PP, 'PP'),
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PPA, 'PPA'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
     # Course types
-    COURSE_PP = 'PP'
+    COURSE_PPA = 'PPA'
     COURSE_HVI = 'HVI'
-    COURSE_PC = 'PC'
-    COURSE_TLA = 'TLA'
+    COURSE_PCA = 'PCA'
 
     COURSE_TYPE_CHOICES = [
-        (COURSE_PP, 'PP'),
+        (COURSE_PPA, 'PPA'),
         (COURSE_HVI, 'HVI'),
-        (COURSE_PC, 'PC'),
-        (COURSE_TLA, 'TLA'),
+        (COURSE_PCA, 'PCA'),
     ]
 
     # Flight rules
@@ -448,15 +442,15 @@ class FlightEvaluation0_100(models.Model):
     ]
 
     # Flight session grades
+    SUPER_STANDARD = 'SS'
     STANDARD = 'S'
     NON_STANDARD = 'NS'
-    SUPER_STANDARD = 'SS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
+        (SUPER_STANDARD, 'SS'),
         (STANDARD, 'S'),
         (NON_STANDARD, 'NS'),
-        (SUPER_STANDARD, 'SS'),
         (NOT_EVALUATED, 'NE'),
     ]
 
@@ -472,7 +466,7 @@ class FlightEvaluation0_100(models.Model):
         ('', ''),
         ('A', 'A'),
         ('B', 'B'),
-        ('E', 'E'),
+        ('C', 'C'),
     ]
 
     # Aircraft registration
@@ -513,7 +507,7 @@ class FlightEvaluation0_100(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PP,
+        default=COURSE_PPA,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -536,7 +530,7 @@ class FlightEvaluation0_100(models.Model):
     instructor_license_type = models.CharField(
         max_length=3,
         choices=INSTRUCTOR_LICENSE_CHOICES,
-        default=LICENSE_PC,
+        default=LICENSE_PCA,
         verbose_name='Tipo de licencia'
     )
     instructor_license_number = models.PositiveIntegerField(
@@ -1003,33 +997,31 @@ class FlightEvaluation100_120(models.Model):
 
     # License types
     LICENSE_AP = 'AP'
-    LICENSE_PP = 'PP'
-    LICENSE_PC = 'PC'
+    LICENSE_PPA = 'PPA'
+    LICENSE_PCA = 'PCA'
     LICENSE_TLA = 'TLA'
 
     INSTRUCTOR_LICENSE_CHOICES = [ 
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
     STUDENT_LICENSE_CHOICES = [
         (LICENSE_AP, 'AP'),
-        (LICENSE_PP, 'PP'),
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PPA, 'PPA'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
     # Course types
-    COURSE_PP = 'PP'
+    COURSE_PPA = 'PPA'
     COURSE_HVI = 'HVI'
-    COURSE_PC = 'PC'
-    COURSE_TLA = 'TLA'
+    COURSE_PCA = 'PCA'
 
     COURSE_TYPE_CHOICES = [
-        (COURSE_PP, 'PP'),
+        (COURSE_PPA, 'PPA'),
         (COURSE_HVI, 'HVI'),
-        (COURSE_PC, 'PC'),
-        (COURSE_TLA, 'TLA'),
+        (COURSE_PCA, 'PCA'),
     ]
 
     # Flight rules
@@ -1053,15 +1045,15 @@ class FlightEvaluation100_120(models.Model):
     ]
 
     # Flight session grades
+    SUPER_STANDARD = 'SS'
     STANDARD = 'S'
     NON_STANDARD = 'NS'
-    SUPER_STANDARD = 'SS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
+        (SUPER_STANDARD, 'SS'),
         (STANDARD, 'S'),
         (NON_STANDARD, 'NS'),
-        (SUPER_STANDARD, 'SS'),
         (NOT_EVALUATED, 'NE'),
     ]
 
@@ -1077,7 +1069,7 @@ class FlightEvaluation100_120(models.Model):
         ('', ''),
         ('A', 'A'),
         ('B', 'B'),
-        ('E', 'E'),
+        ('C', 'C'),
     ]
 
     # Aircraft registration
@@ -1118,7 +1110,7 @@ class FlightEvaluation100_120(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PP,
+        default=COURSE_PPA,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -1141,7 +1133,7 @@ class FlightEvaluation100_120(models.Model):
     instructor_license_type = models.CharField(
         max_length=3,
         choices=INSTRUCTOR_LICENSE_CHOICES,
-        default=LICENSE_PC,
+        default=LICENSE_PCA,
         verbose_name='Tipo de licencia'
     )
     instructor_license_number = models.PositiveIntegerField(
@@ -1572,33 +1564,31 @@ class FlightEvaluation120_170(models.Model):
 
     # License types
     LICENSE_AP = 'AP'
-    LICENSE_PP = 'PP'
-    LICENSE_PC = 'PC'
+    LICENSE_PPA = 'PPA'
+    LICENSE_PCA = 'PCA'
     LICENSE_TLA = 'TLA'
 
     INSTRUCTOR_LICENSE_CHOICES = [ 
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
     STUDENT_LICENSE_CHOICES = [
         (LICENSE_AP, 'AP'),
-        (LICENSE_PP, 'PP'),
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PPA, 'PPA'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
     # Course types
-    COURSE_PP = 'PP'
+    COURSE_PPA = 'PPA'
     COURSE_HVI = 'HVI'
-    COURSE_PC = 'PC'
-    COURSE_TLA = 'TLA'
+    COURSE_PCA = 'PCA'
 
     COURSE_TYPE_CHOICES = [
-        (COURSE_PP, 'PP'),
+        (COURSE_PPA, 'PPA'),
         (COURSE_HVI, 'HVI'),
-        (COURSE_PC, 'PC'),
-        (COURSE_TLA, 'TLA'),
+        (COURSE_PCA, 'PCA'),
     ]
 
     # Flight rules
@@ -1622,15 +1612,15 @@ class FlightEvaluation120_170(models.Model):
     ]
 
     # Flight session grades
+    SUPER_STANDARD = 'SS'
     STANDARD = 'S'
     NON_STANDARD = 'NS'
-    SUPER_STANDARD = 'SS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
+        (SUPER_STANDARD, 'SS'),
         (STANDARD, 'S'),
         (NON_STANDARD, 'NS'),
-        (SUPER_STANDARD, 'SS'),
         (NOT_EVALUATED, 'NE'),
     ]
 
@@ -1646,7 +1636,7 @@ class FlightEvaluation120_170(models.Model):
         ('', ''),
         ('A', 'A'),
         ('B', 'B'),
-        ('E', 'E'),
+        ('C', 'C'),
     ]
 
     # Aircraft registration
@@ -1687,7 +1677,7 @@ class FlightEvaluation120_170(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PP,
+        default=COURSE_PPA,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -1710,7 +1700,7 @@ class FlightEvaluation120_170(models.Model):
     instructor_license_type = models.CharField(
         max_length=3,
         choices=INSTRUCTOR_LICENSE_CHOICES,
-        default=LICENSE_PC,
+        default=LICENSE_PCA,
         verbose_name='Tipo de licencia'
     )
     instructor_license_number = models.PositiveIntegerField(
@@ -2066,33 +2056,31 @@ class SimEvaluation(models.Model):
 
     # License types
     LICENSE_AP = 'AP'
-    LICENSE_PP = 'PP'
-    LICENSE_PC = 'PC'
+    LICENSE_PPA = 'PPA'
+    LICENSE_PCA = 'PCA'
     LICENSE_TLA = 'TLA'
 
     INSTRUCTOR_LICENSE_CHOICES = [ 
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
     STUDENT_LICENSE_CHOICES = [
         (LICENSE_AP, 'AP'),
-        (LICENSE_PP, 'PP'),
-        (LICENSE_PC, 'PC'),
+        (LICENSE_PPA, 'PPA'),
+        (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
 
     # Course types
-    COURSE_PP = 'PP'
+    COURSE_PPA = 'PPA'
     COURSE_HVI = 'HVI'
-    COURSE_PC = 'PC'
-    COURSE_TLA = 'TLA'
+    COURSE_PCA = 'PCA'
 
     COURSE_TYPE_CHOICES = [
-        (COURSE_PP, 'PP'),
+        (COURSE_PPA, 'PPA'),
         (COURSE_HVI, 'HVI'),
-        (COURSE_PC, 'PC'),
-        (COURSE_TLA, 'TLA'),
+        (COURSE_PCA, 'PCA'),
     ]
 
     # Flight rules
@@ -2115,16 +2103,16 @@ class SimEvaluation(models.Model):
         (YES, 'Y'),
     ]
 
-    # Flight session grades
+    # Simulator session grades
+    SUPER_STANDARD = 'SS'
     STANDARD = 'S'
     NON_STANDARD = 'NS'
-    SUPER_STANDARD = 'SS'
     NOT_EVALUATED = 'NE'
 
     SESSION_GRADE_CHOICES = [
+        (SUPER_STANDARD, 'SS'),
         (STANDARD, 'S'),
         (NON_STANDARD, 'NS'),
-        (SUPER_STANDARD, 'SS'),
         (NOT_EVALUATED, 'NE'),
     ]
 
@@ -2140,7 +2128,7 @@ class SimEvaluation(models.Model):
         ('', ''),
         ('A', 'A'),
         ('B', 'B'),
-        ('E', 'E'),
+        ('C', 'C'),
     ]
 
     # Simulator
@@ -2181,7 +2169,7 @@ class SimEvaluation(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PP,
+        default=COURSE_PPA,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -2204,7 +2192,7 @@ class SimEvaluation(models.Model):
     instructor_license_type = models.CharField(
         max_length=3,
         choices=INSTRUCTOR_LICENSE_CHOICES,
-        default=LICENSE_PC,
+        default=LICENSE_PCA,
         verbose_name='Tipo de licencia'
     )
     instructor_license_number = models.PositiveIntegerField(

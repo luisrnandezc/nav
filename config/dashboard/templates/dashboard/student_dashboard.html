@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Dashboard</title>
-    <link href="{% static 'student_dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
   </head>
 
   <body>
@@ -19,7 +19,7 @@
           <p>Nombres: {{ user.first_name }}</p>
           <p>Apellidos: {{ user.last_name }}</p>
           <p>Usuario: {{ user.username }}</p>
-          <p>ID: {{ user_profile.student_id }}</p>
+          <p>ID: {{ user.national_id }}</p>
           <p>Email: {{ user.email }}</p>
           <p>Curso: {{ user_profile.current_course_type }}-{{ user_profile.current_course_edition }}</p>
           <p>Fase: {{ user_profile.student_phase }}</p>

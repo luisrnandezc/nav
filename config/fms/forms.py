@@ -188,6 +188,14 @@ class FlightEvaluation0_100Form(forms.ModelForm):
         user = kwargs.pop('user', None)  # Extract the 'user' argument from kwargs
         super().__init__(*args, **kwargs)
         
+        # Set student fields to empty to prevent preselection
+        self.fields['student_license_type'].initial = ''
+        self.fields['course_type'].initial = ''
+        
+        # Override the field choices to include empty option
+        self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
+        self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
+        
         if user:
             profile = user.instructor_profile
             self.fields['instructor_id'].initial = user.national_id
@@ -401,6 +409,14 @@ class FlightEvaluation100_120Form(forms.ModelForm):
         user = kwargs.pop('user', None)  # Extract the 'user' argument from kwargs
         super().__init__(*args, **kwargs)
         
+        # Set student fields to empty to prevent preselection
+        self.fields['student_license_type'].initial = ''
+        self.fields['course_type'].initial = ''
+        
+        # Override the field choices to include empty option
+        self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
+        self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
+        
         if user:
             profile = user.instructor_profile
             self.fields['instructor_id'].initial = user.national_id
@@ -588,6 +604,14 @@ class FlightEvaluation120_170Form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)  # Extract the 'user' argument from kwargs
         super().__init__(*args, **kwargs)
+        
+        # Set student fields to empty to prevent preselection
+        self.fields['student_license_type'].initial = ''
+        self.fields['course_type'].initial = ''
+        
+        # Override the field choices to include empty option
+        self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
+        self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
         
         if user:
             profile = user.instructor_profile
@@ -871,6 +895,14 @@ class SimEvaluationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)  # Extract the 'user' argument from kwargs
         super().__init__(*args, **kwargs)
+        
+        # Set student fields to empty to prevent preselection
+        self.fields['student_license_type'].initial = ''
+        self.fields['course_type'].initial = ''
+        
+        # Override the field choices to include empty option
+        self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
+        self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
         
         if user:
             profile = user.instructor_profile

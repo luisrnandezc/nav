@@ -497,7 +497,7 @@ class FlightEvaluation0_100(models.Model):
     student_license_type = models.CharField(
         max_length=3,
         choices=STUDENT_LICENSE_CHOICES,
-        default=LICENSE_AP,
+        default=None,
         verbose_name='Tipo de licencia'
     )
     student_license_number = models.PositiveIntegerField(
@@ -507,7 +507,7 @@ class FlightEvaluation0_100(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PPA,
+        default=None,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -1100,7 +1100,7 @@ class FlightEvaluation100_120(models.Model):
     student_license_type = models.CharField(
         max_length=3,
         choices=STUDENT_LICENSE_CHOICES,
-        default=LICENSE_AP,
+        default=None,
         verbose_name='Tipo de licencia'
     )
     student_license_number = models.PositiveIntegerField(
@@ -1110,7 +1110,7 @@ class FlightEvaluation100_120(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PPA,
+        default=None,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -1667,7 +1667,7 @@ class FlightEvaluation120_170(models.Model):
     student_license_type = models.CharField(
         max_length=3,
         choices=STUDENT_LICENSE_CHOICES,
-        default=LICENSE_AP,
+        default=None,
         verbose_name='Tipo de licencia'
     )
     student_license_number = models.PositiveIntegerField(
@@ -1677,7 +1677,7 @@ class FlightEvaluation120_170(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PPA,
+        default=None,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -2159,7 +2159,7 @@ class SimEvaluation(models.Model):
     student_license_type = models.CharField(
         max_length=3,
         choices=STUDENT_LICENSE_CHOICES,
-        default=LICENSE_AP,
+        default=None,
         verbose_name='Tipo de licencia'
     )
     student_license_number = models.PositiveIntegerField(
@@ -2169,7 +2169,7 @@ class SimEvaluation(models.Model):
     course_type = models.CharField(
         max_length=3, 
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PPA,
+        default=None,
         verbose_name='Tipo de curso'
     )
     #endregion

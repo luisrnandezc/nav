@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from accounts.models import User
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
-
 
 @login_required
 def form_selection(request):
@@ -80,3 +82,50 @@ def submit_sim_evaluation(request):
         form = SimEvaluationForm(user=request.user)
 
     return render(request, 'fms/sim_evaluation.html', {'form': form})
+
+@login_required
+@require_http_methods(["GET"])
+def get_student_data(request):
+    """API endpoint to fetch student data by national ID."""
+    student_id = request.GET.get('student_id')
+    
+    if not student_id:
+        return JsonResponse({
+            'success': False,
+            'error': 'Se requiere el ID del estudiante'
+        }, status=400)
+    
+    try:
+        # Try to find the student by national_id
+        student = User.objects.get(national_id=student_id, role='STUDENT')
+        
+        # Get current course type
+        current_course_type = student.student_profile.current_course_type
+        
+        # Check if student is enrolled in a course
+        if current_course_type == 'N/A':
+            return JsonResponse({
+                'success': False,
+                'error': 'El estudiante no está inscrito en ningún curso'
+            }, status=400)
+        
+        return JsonResponse({
+            'success': True,
+            'data': {
+                'student_first_name': student.first_name,
+                'student_last_name': student.last_name,
+                'student_license_type': student.student_profile.student_license_type,
+                'course_type': current_course_type,
+            }
+        })
+        
+    except User.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Estudiante no encontrado'
+        }, status=404)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': 'Ocurrió un error al obtener los datos del estudiante'
+        }, status=500)

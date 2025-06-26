@@ -2802,7 +2802,7 @@ class SimEvaluation(models.Model):
         return self.accumulated_sim_hours + self.session_sim_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date.date()} - {self.simulator} - {self.session_sim_hours} hrs'
     
     class Meta:
         verbose_name = 'Evaluación de simulador'

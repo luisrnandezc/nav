@@ -4,6 +4,7 @@ from .models import FlightLog, SimulatorLog, SimEvaluation, FlightEvaluation0_10
 @admin.register(SimulatorLog)
 class SimulatorLogAdmin(admin.ModelAdmin):
     list_display = [
+        'evaluation_id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
         'session_date_only', 'simulator', 'session_number', 'session_sim_hours'
@@ -40,6 +41,26 @@ class SimulatorLogAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
     
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        return False
+    
+    def get_actions(self, request):
+        # Remove bulk delete action
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+    
+    def changelist_view(self, request, extra_context=None):
+        # Add custom message explaining why deletion is disabled
+        extra_context = extra_context or {}
+        extra_context['title'] = 'Bitácoras de simulador (Solo lectura)'
+        extra_context['subtitle'] = 'Para eliminar una bitácora, elimine la evaluación correspondiente. Los registros son generados automáticamente.'
+        return super().changelist_view(request, extra_context)
+    
     def student_full_name(self, obj):
         return f"{obj.student_first_name} {obj.student_last_name}"
     student_full_name.short_description = 'Alumno'
@@ -67,6 +88,7 @@ class SimulatorLogAdmin(admin.ModelAdmin):
 @admin.register(FlightLog)
 class FlightLogAdmin(admin.ModelAdmin):
     list_display = [
+        'evaluation_id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
         'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
@@ -103,6 +125,26 @@ class FlightLogAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
     
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        return False
+    
+    def get_actions(self, request):
+        # Remove bulk delete action
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+    
+    def changelist_view(self, request, extra_context=None):
+        # Add custom message explaining why deletion is disabled
+        extra_context = extra_context or {}
+        extra_context['title'] = 'Bitácoras de vuelo (Solo lectura)'
+        extra_context['subtitle'] = 'Para eliminar una bitácora, elimine la evaluación correspondiente. Los registros son generados automáticamente.'
+        return super().changelist_view(request, extra_context)
+    
     def student_full_name(self, obj):
         return f"{obj.student_first_name} {obj.student_last_name}"
     student_full_name.short_description = 'Alumno'
@@ -130,6 +172,7 @@ class FlightLogAdmin(admin.ModelAdmin):
 @admin.register(FlightEvaluation0_100)
 class FlightEvaluation0_100Admin(admin.ModelAdmin):
     list_display = [
+        'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
         'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
@@ -138,6 +181,13 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'flight_date'
     ordering = ['-flight_date']
+    
+    def delete_model(self, request, obj):
+        obj.delete()
+    
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
     
     fieldsets = (
         ('Sección 1: Datos del instructor', {
@@ -243,6 +293,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
 @admin.register(FlightEvaluation100_120)
 class FlightEvaluation100_120Admin(admin.ModelAdmin):
     list_display = [
+        'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
         'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
@@ -251,6 +302,13 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'flight_date'
     ordering = ['-flight_date']
+    
+    def delete_model(self, request, obj):
+        obj.delete()
+    
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
     
     fieldsets = (
         ('Sección 1: Datos del alumno', {
@@ -357,6 +415,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
 @admin.register(FlightEvaluation120_170)
 class FlightEvaluation120_170Admin(admin.ModelAdmin):
     list_display = [
+        'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
         'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
@@ -365,6 +424,13 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'flight_date'
     ordering = ['-flight_date']
+    
+    def delete_model(self, request, obj):
+        obj.delete()
+    
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
     
     fieldsets = (
         ('Sección 1: Datos del alumno', {
@@ -462,6 +528,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
 @admin.register(SimEvaluation)
 class SimEvaluationAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
         'session_date_only', 'simulator', 'session_number', 'session_grade'
@@ -470,6 +537,13 @@ class SimEvaluationAdmin(admin.ModelAdmin):
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'session_date'
     ordering = ['-session_date']
+    
+    def delete_model(self, request, obj):
+        obj.delete()
+    
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
     
     fieldsets = (
         ('Sección 1: Datos del alumno', {

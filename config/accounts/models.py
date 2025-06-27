@@ -144,6 +144,22 @@ class StudentProfile(models.Model):
         verbose_name='Tipo de licencia',
     )
 
+    flight_hours = models.DecimalField(
+        max_digits=5,
+        decimal_places=1,
+        validators=[MinValueValidator(0)],
+        verbose_name='Horas de vuelo',
+        default=0,
+    )
+
+    sim_hours = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        validators=[MinValueValidator(0)],
+        verbose_name='Horas de simulador',
+        default=0,
+    )
+
     @property
     def student_balance(self):
         """Calculate the balance as the sum of all confirmed payments."""

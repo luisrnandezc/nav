@@ -1,5 +1,7 @@
 from django import forms
+from django.db import transaction
 from .models import SimulatorLog, FlightLog, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation
+from accounts.models import StudentProfile
 
 class SimEvaluationForm(forms.ModelForm):
     class Meta:
@@ -263,10 +265,17 @@ class SimEvaluationForm(forms.ModelForm):
 
     def save(self, commit=True):
         """Override the save method to copy user_id to user_license_number and create FlightLog."""
-        instance = super().save(commit=False)  # Don't save yet, so we can modify the instance
-        instance.student_license_number = instance.student_id  # Copy value from user_id
-         
-        if commit:
+        if not commit:
+            # If not committing, just return the instance without saving
+            instance = super().save(commit=False)
+            instance.student_license_number = instance.student_id
+            return instance
+        
+        # Use transaction to ensure atomicity
+        with transaction.atomic():
+            # First save the evaluation
+            instance = super().save(commit=False)
+            instance.student_license_number = instance.student_id
             instance.save()
 
             # Create and save a SimulatorLog instance with the evaluation_id
@@ -291,7 +300,38 @@ class SimEvaluationForm(forms.ModelForm):
             )
             simlog_instance.save()
 
+            # Update student's accumulated hours LAST (after everything else succeeds)
+            student_id = self.cleaned_data.get('student_id')
+            session_sim_hours = self.cleaned_data.get('session_sim_hours')
+            
+            if student_id and session_sim_hours:
+                student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                student_profile.sim_hours += session_sim_hours
+                student_profile.save()
+
         return instance
+
+    def clean(self):
+        cleaned_data = super().clean()
+        student_id = cleaned_data.get('student_id')
+        session_sim_hours = cleaned_data.get('session_sim_hours')
+        
+        if student_id and session_sim_hours:
+            try:
+                student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                new_total = student_profile.sim_hours + session_sim_hours
+                
+                if new_total < 0:
+                    raise forms.ValidationError(
+                        f"Las horas acumuladas no pueden ser negativas. "
+                        f"Horas actuales: {student_profile.sim_hours}, "
+                        f"Horas de sesión: {session_sim_hours}, "
+                        f"Total resultante: {new_total}"
+                    )
+            except StudentProfile.DoesNotExist:
+                raise forms.ValidationError(f"No se encontró un perfil de estudiante con ID: {student_id}")
+        
+        return cleaned_data
 
 class FlightEvaluation0_100Form(forms.ModelForm):
     class Meta:
@@ -498,10 +538,17 @@ class FlightEvaluation0_100Form(forms.ModelForm):
 
     def save(self, commit=True):
         """Override the save method to copy user_id to user_license_number and create FlightLog."""
-        instance = super().save(commit=False)  # Don't save yet, so we can modify the instance
-        instance.student_license_number = instance.student_id  # Copy value from user_id
-         
-        if commit:
+        if not commit:
+            # If not committing, just return the instance without saving
+            instance = super().save(commit=False)
+            instance.student_license_number = instance.student_id
+            return instance
+        
+        # Use transaction to ensure atomicity
+        with transaction.atomic():
+            # First save the evaluation
+            instance = super().save(commit=False)
+            instance.student_license_number = instance.student_id
             instance.save()
 
             # Create and save a FlightLog instance with the evaluation_id
@@ -527,8 +574,39 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             )
             flightlog_instance.save()
 
+            # Update student's accumulated hours LAST (after everything else succeeds)
+            student_id = self.cleaned_data.get('student_id')
+            session_flight_hours = self.cleaned_data.get('session_flight_hours')
+            
+            if student_id and session_flight_hours:
+                student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                student_profile.flight_hours += session_flight_hours
+                student_profile.save()
+
         return instance
     
+    def clean(self):
+        cleaned_data = super().clean()
+        student_id = cleaned_data.get('student_id')
+        session_flight_hours = cleaned_data.get('session_flight_hours')
+        
+        if student_id and session_flight_hours:
+            try:
+                student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                new_total = student_profile.flight_hours + session_flight_hours
+                
+                if new_total < 0:
+                    raise forms.ValidationError(
+                        f"Las horas acumuladas no pueden ser negativas. "
+                        f"Horas actuales: {student_profile.flight_hours}, "
+                        f"Horas de sesión: {session_flight_hours}, "
+                        f"Total resultante: {new_total}"
+                    )
+            except StudentProfile.DoesNotExist:
+                raise forms.ValidationError(f"No se encontró un perfil de estudiante con ID: {student_id}")
+        
+        return cleaned_data
+
 class FlightEvaluation100_120Form(forms.ModelForm):
     class Meta:
         model = FlightEvaluation100_120
@@ -721,10 +799,17 @@ class FlightEvaluation100_120Form(forms.ModelForm):
 
     def save(self, commit=True):
         """Override the save method to copy user_id to user_license_number and create FlightLog."""
-        instance = super().save(commit=False)  # Don't save yet, so we can modify the instance
-        instance.student_license_number = instance.student_id  # Copy value from user_id
+        if not commit:
+            # If not committing, just return the instance without saving
+            instance = super().save(commit=False)
+            instance.student_license_number = instance.student_id
+            return instance
         
-        if commit:
+        # Use transaction to ensure atomicity
+        with transaction.atomic():
+            # First save the evaluation
+            instance = super().save(commit=False)
+            instance.student_license_number = instance.student_id
             instance.save()
 
             # Create and save a FlightLog instance with the evaluation_id
@@ -750,8 +835,39 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             )
             flightlog_instance.save()
 
+            # Update student's accumulated hours LAST (after everything else succeeds)
+            student_id = self.cleaned_data.get('student_id')
+            session_flight_hours = self.cleaned_data.get('session_flight_hours')
+            
+            if student_id and session_flight_hours:
+                student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                student_profile.flight_hours += session_flight_hours
+                student_profile.save()
+
         return instance
-    
+
+    def clean(self):
+        cleaned_data = super().clean()
+        student_id = cleaned_data.get('student_id')
+        session_flight_hours = cleaned_data.get('session_flight_hours')
+        
+        if student_id and session_flight_hours:
+            try:
+                student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                new_total = student_profile.flight_hours + session_flight_hours
+                
+                if new_total < 0:
+                    raise forms.ValidationError(
+                        f"Las horas acumuladas no pueden ser negativas. "
+                        f"Horas actuales: {student_profile.flight_hours}, "
+                        f"Horas de sesión: {session_flight_hours}, "
+                        f"Total resultante: {new_total}"
+                    )
+            except StudentProfile.DoesNotExist:
+                raise forms.ValidationError(f"No se encontró un perfil de estudiante con ID: {student_id}")
+        
+        return cleaned_data
+
 class FlightEvaluation120_170Form(forms.ModelForm):
     class Meta:
         model = FlightEvaluation120_170
@@ -919,10 +1035,17 @@ class FlightEvaluation120_170Form(forms.ModelForm):
 
     def save(self, commit=True):
         """Override the save method to copy user_id to user_license_number and create FlightLog."""
-        instance = super().save(commit=False)  # Don't save yet, so we can modify the instance
-        instance.student_license_number = instance.student_id  # Copy value from user_id
-                 
-        if commit:
+        if not commit:
+            # If not committing, just return the instance without saving
+            instance = super().save(commit=False)
+            instance.student_license_number = instance.student_id
+            return instance
+        
+        # Use transaction to ensure atomicity
+        with transaction.atomic():
+            # First save the evaluation
+            instance = super().save(commit=False)
+            instance.student_license_number = instance.student_id
             instance.save()
 
             # Create and save a FlightLog instance with the evaluation_id
@@ -948,4 +1071,35 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             )
             flightlog_instance.save()
 
+            # Update student's accumulated hours LAST (after everything else succeeds)
+            student_id = self.cleaned_data.get('student_id')
+            session_flight_hours = self.cleaned_data.get('session_flight_hours')
+            
+            if student_id and session_flight_hours:
+                student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                student_profile.flight_hours += session_flight_hours
+                student_profile.save()
+
         return instance
+
+    def clean(self):
+        cleaned_data = super().clean()
+        student_id = cleaned_data.get('student_id')
+        session_flight_hours = cleaned_data.get('session_flight_hours')
+        
+        if student_id and session_flight_hours:
+            try:
+                student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                new_total = student_profile.flight_hours + session_flight_hours
+                
+                if new_total < 0:
+                    raise forms.ValidationError(
+                        f"Las horas acumuladas no pueden ser negativas. "
+                        f"Horas actuales: {student_profile.flight_hours}, "
+                        f"Horas de sesión: {session_flight_hours}, "
+                        f"Total resultante: {new_total}"
+                    )
+            except StudentProfile.DoesNotExist:
+                raise forms.ValidationError(f"No se encontró un perfil de estudiante con ID: {student_id}")
+        
+        return cleaned_data

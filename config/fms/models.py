@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from accounts.models import StudentProfile
 
 class SimulatorLog(models.Model):
     """
@@ -1159,6 +1160,18 @@ class SimEvaluation(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.session_date.date()} - {self.simulator} - {self.session_sim_hours} hrs'
     
     def delete(self, *args, **kwargs):
+        # Subtract session hours from student's accumulated hours
+        try:
+            student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
+            student_profile.sim_hours -= self.session_sim_hours
+            # Ensure hours don't go negative
+            if student_profile.sim_hours < 0:
+                student_profile.sim_hours = 0
+            student_profile.save()
+        except StudentProfile.DoesNotExist:
+            # If student profile doesn't exist, continue with deletion
+            pass
+        
         # Delete the associated SimulatorLog using the evaluation_id
         SimulatorLog.objects.filter(evaluation_id=self.id).delete()
     
@@ -1769,6 +1782,18 @@ class FlightEvaluation0_100(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     def delete(self, *args, **kwargs):
+        # Subtract session hours from student's accumulated hours
+        try:
+            student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
+            student_profile.flight_hours -= self.session_flight_hours
+            # Ensure hours don't go negative
+            if student_profile.flight_hours < 0:
+                student_profile.flight_hours = 0
+            student_profile.save()
+        except StudentProfile.DoesNotExist:
+            # If student profile doesn't exist, continue with deletion
+            pass
+        
         # Delete the associated FlightLog using the evaluation_id
         FlightLog.objects.filter(
             evaluation_id=self.id,
@@ -2346,6 +2371,18 @@ class FlightEvaluation100_120(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     def delete(self, *args, **kwargs):
+        # Subtract session hours from student's accumulated hours
+        try:
+            student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
+            student_profile.flight_hours -= self.session_flight_hours
+            # Ensure hours don't go negative
+            if student_profile.flight_hours < 0:
+                student_profile.flight_hours = 0
+            student_profile.save()
+        except StudentProfile.DoesNotExist:
+            # If student profile doesn't exist, continue with deletion
+            pass
+        
         # Delete the associated FlightLog using the evaluation_id
         FlightLog.objects.filter(
             evaluation_id=self.id,
@@ -2848,6 +2885,18 @@ class FlightEvaluation120_170(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
 
     def delete(self, *args, **kwargs):
+        # Subtract session hours from student's accumulated hours
+        try:
+            student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
+            student_profile.flight_hours -= self.session_flight_hours
+            # Ensure hours don't go negative
+            if student_profile.flight_hours < 0:
+                student_profile.flight_hours = 0
+            student_profile.save()
+        except StudentProfile.DoesNotExist:
+            # If student profile doesn't exist, continue with deletion
+            pass
+        
         # Delete the associated FlightLog using the evaluation_id
         FlightLog.objects.filter(
             evaluation_id=self.id,

@@ -27,7 +27,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'get_student_id', 'student_phase', 'get_course_type', 'get_course_edition', 'get_student_balance', 'flight_hours', 'sim_hours')
     list_filter = ('student_phase',)
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
-    readonly_fields = ('flight_hours', 'sim_hours', 'get_course_type', 'get_course_edition', 'get_student_balance')
+    readonly_fields = ('get_course_type', 'get_course_edition', 'get_student_balance')
 
     def get_username(self, obj):
         return obj.user.username if obj.user else '-'

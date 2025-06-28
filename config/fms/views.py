@@ -116,6 +116,8 @@ def get_student_data(request):
                 'student_last_name': student.last_name,
                 'student_license_type': student.student_profile.student_license_type,
                 'course_type': current_course_type,
+                'flight_hours': student.student_profile.flight_hours,
+                'sim_hours': student.student_profile.sim_hours,
             }
         })
         

@@ -24,10 +24,11 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ('get_username', 'get_student_id', 'student_phase', 'get_course_type', 'get_course_edition', 'get_student_balance', 'flight_hours', 'sim_hours')
+    list_display = ('get_username', 'get_student_id', 'student_phase', 'get_course_type',
+                    'get_course_edition', 'get_student_balance', 'flight_hours', 'sim_hours')
     list_filter = ('student_phase',)
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
-    readonly_fields = ('get_course_type', 'get_course_edition', 'get_student_balance')
+    readonly_fields = ('get_course_type', 'get_course_edition', 'get_student_balance', 'sim_hours')
 
     def get_username(self, obj):
         return obj.user.username if obj.user else '-'
@@ -44,7 +45,8 @@ class StudentProfileAdmin(admin.ModelAdmin):
             'fields': ('user',)
         }),
         ('Student Information', {
-            'fields': ('student_age', 'student_gender', 'student_phase', 'student_license_type', 'flight_hours', 'sim_hours')
+            'fields': ('student_age', 'student_gender', 'student_phase', 
+                       'student_license_type', 'flight_hours', 'sim_hours')
         }),
         ('Course Information', {
             'fields': ('get_course_type', 'get_course_edition'),
@@ -69,7 +71,8 @@ class StudentProfileAdmin(admin.ModelAdmin):
 
 @admin.register(StudentPayment)
 class StudentPaymentAdmin(admin.ModelAdmin):
-    list_display = ('get_student_username', 'get_student_id', 'amount', 'get_date_added', 'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
+    list_display = ('get_student_username', 'get_student_id', 'amount', 'get_date_added',
+                     'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
     list_filter = ('confirmed', 'date_added', 'confirmation_date')
     search_fields = ('student_profile__user__username', 'student_profile__user__national_id')
     readonly_fields = ('date_added', 'added_by', 'confirmation_date', 'confirmed_by')
@@ -144,7 +147,8 @@ class StudentPaymentAdmin(admin.ModelAdmin):
 
 @admin.register(InstructorProfile)
 class InstructorProfileAdmin(admin.ModelAdmin):
-    list_display = ('get_username', 'get_instructor_id', 'get_first_name', 'get_last_name', 'instructor_license_type', 'instructor_type')
+    list_display = ('get_username', 'get_instructor_id', 'get_first_name', 'get_last_name',
+                     'instructor_license_type', 'instructor_type')
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
 
     def get_username(self, obj):

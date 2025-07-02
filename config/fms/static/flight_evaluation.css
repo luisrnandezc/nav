@@ -105,6 +105,10 @@
     display: inline-block;
   }
 
+  .form-field.read-only {
+    background-color: #c4c4c4;
+  }
+
   .radio-field {
     display: flex;
     flex-direction: row;

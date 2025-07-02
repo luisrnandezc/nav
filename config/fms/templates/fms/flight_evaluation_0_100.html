@@ -16,107 +16,98 @@
       <form class="form-container" method="post"  action="{% url 'fms:flight_evaluation_0_100' %}">
         {% csrf_token %}
         <h1 class="subsection-header">Sección 1: Datos del instructor</h1>
-        <details>
-          <summary>Ver sección</summary>
-          <div class="collapsible-section">
-            <div class="left-column">
-              <div class="form-row">
-                {{ form.instructor_id.label_tag }}
-                {{ form.instructor_id }}
-              </div>
-              <div class="form-row">
-                {{ form.instructor_first_name.label_tag }}
-                {{ form.instructor_first_name }}
-              </div>
-              <div class="form-row">
-                {{ form.instructor_last_name.label_tag }}
-                {{ form.instructor_last_name }}
-              </div>
+        <div class="fixed-fields-container">
+          <div class="left-column">
+            <div class="form-row">
+              {{ form.instructor_id.label_tag }}
+              {{ form.instructor_id }}
             </div>
-            <div class="right-column">
-              <div class="form-row">
-                {{ form.instructor_license_type.label_tag }}
-                {{ form.instructor_license_type }}
-              </div>
-              <div class="form-row">
-                {{ form.instructor_license_number.label_tag }}
-                {{ form.instructor_license_number }}
-              </div>
+            <div class="form-row">
+              {{ form.instructor_first_name.label_tag }}
+              {{ form.instructor_first_name }}
+            </div>
+            <div class="form-row">
+              {{ form.instructor_last_name.label_tag }}
+              {{ form.instructor_last_name }}
             </div>
           </div>
-        </details>
+          <div class="right-column">
+            <div class="form-row">
+              {{ form.instructor_license_type.label_tag }}
+              {{ form.instructor_license_type }}
+            </div>
+            <div class="form-row">
+              {{ form.instructor_license_number.label_tag }}
+              {{ form.instructor_license_number }}
+            </div>
+          </div>
+        </div>
         <h1 class="subsection-header">Sección 2: Datos del alumno</h1>
-        <details>
-          <summary>Ver sección</summary>
-          <div class="collapsible-section">
-            <div class="left-column">
-              <div class="form-row">
-                {{ form.student_id.label_tag }}
-                {{ form.student_id }}
-              </div>
-              <div class="form-row">
-                {{ form.student_first_name.label_tag }}
-                {{ form.student_first_name }}
-              </div>
-              <div class="form-row">
-                {{ form.student_last_name.label_tag }}
-                {{ form.student_last_name }}
-              </div>
+        <div class="fixed-fields-container">
+          <div class="left-column">
+            <div class="form-row">
+              {{ form.student_id.label_tag }}
+              {{ form.student_id }}
             </div>
-            <div class="right-column">
-              <div class="form-row">
-                {{ form.student_license_type.label_tag }}
-                {{ form.student_license_type }}
-              </div>
-              <div class="form-row">
-                {{ form.course_type.label_tag }}
-                {{ form.course_type }}
-              </div>
+            <div class="form-row">
+              {{ form.student_first_name.label_tag }}
+              {{ form.student_first_name }}
+            </div>
+            <div class="form-row">
+              {{ form.student_last_name.label_tag }}
+              {{ form.student_last_name }}
             </div>
           </div>
-        </details>
+          <div class="right-column">
+            <div class="form-row">
+              {{ form.student_license_type.label_tag }}
+              {{ form.student_license_type }}
+            </div>
+            <div class="form-row">
+              {{ form.course_type.label_tag }}
+              {{ form.course_type }}
+            </div>
+          </div>
+        </div>
         <h1 class="subsection-header">Sección 3: Datos de la sesión</h1>
-        <details>
-          <summary>Ver sección</summary>
-          <div class="collapsible-section">
-            <div class="left-column">
-              <div class="form-row">
-                {{ form.flight_rules.label_tag }}
-                {{ form.flight_rules }}
-              </div>
-              <div class="form-row">
-                {{ form.solo_flight.label_tag }}
-                {{ form.solo_flight }}
-              </div>
-              <div class="form-row">
-                {{ form.session_number.label_tag }}
-                {{ form.session_number }}
-              </div>
-              <div class="form-row">
-                {{ form.session_letter.label_tag }}
-                {{ form.session_letter }}
-              </div>
+        <div class="fixed-fields-container">
+          <div class="left-column">
+            <div class="form-row">
+              {{ form.flight_rules.label_tag }}
+              {{ form.flight_rules }}
             </div>
-            <div class="right-column">
-              <div class="form-row">
-                {{ form.accumulated_flight_hours.label_tag }}
-                {{ form.accumulated_flight_hours }}
-              </div>
-              <div class="form-row">
-                {{ form.session_flight_hours.label_tag }}
-                {{ form.session_flight_hours }}
-              </div>
-              <div class="form-row">
-                {{ form.aircraft_registration.label_tag }}
-                {{ form.aircraft_registration }}
-              </div>
-              <div class="form-row">
-                {{ form.session_grade.label_tag }}
-                {{ form.session_grade }}
-              </div>
+            <div class="form-row">
+              {{ form.solo_flight.label_tag }}
+              {{ form.solo_flight }}
+            </div>
+            <div class="form-row">
+              {{ form.session_number.label_tag }}
+              {{ form.session_number }}
+            </div>
+            <div class="form-row">
+              {{ form.session_letter.label_tag }}
+              {{ form.session_letter }}
             </div>
           </div>
-        </details>
+          <div class="right-column">
+            <div class="form-row">
+              {{ form.accumulated_flight_hours.label_tag }}
+              {{ form.accumulated_flight_hours }}
+            </div>
+            <div class="form-row">
+              {{ form.session_flight_hours.label_tag }}
+              {{ form.session_flight_hours }}
+            </div>
+            <div class="form-row">
+              {{ form.aircraft_registration.label_tag }}
+              {{ form.aircraft_registration }}
+            </div>
+            <div class="form-row">
+              {{ form.session_grade.label_tag }}
+              {{ form.session_grade }}
+            </div>
+          </div>
+        </div>
         <h1 class="subsection-header">Sección 4: Prevuelo / Encendido / Taxeo</h1>
         <details>
           <summary>Ver sección</summary>

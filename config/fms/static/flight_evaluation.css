@@ -66,7 +66,7 @@
     text-align: center;
   }
 
-  div.collapsible-section {
+  .fixed-fields-container, div.collapsible-section {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -155,7 +155,7 @@
 
   @media (max-width: 1150px) {
 
-    div.collapsible-section {
+    .fixed-fields-container, div.collapsible-section {
       flex-direction: column;
       align-items: center;
       justify-content: center;

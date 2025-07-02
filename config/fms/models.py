@@ -130,7 +130,7 @@ class SimulatorLog(models.Model):
     #region SESSION DATA
     session_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Fecha de sesión'
+        verbose_name='Fecha'
     )
     flight_rules = models.CharField(
         max_length=4, 
@@ -160,15 +160,15 @@ class SimulatorLog(models.Model):
     )
     accumulated_sim_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
+        decimal_places=1,
+        default=0.0,
         verbose_name='Horas de simulador acumuladas'
     )
     session_sim_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,   
-        verbose_name='Horas de la sesión'
+        decimal_places=1,
+        default=0.0,   
+        verbose_name='Horas sesión'
     )
     simulator = models.CharField(
         max_length=6,
@@ -180,7 +180,7 @@ class SimulatorLog(models.Model):
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
-        verbose_name='Calificación de la sesión'
+        verbose_name='Nota'
     )
     notes = models.TextField(blank=False, verbose_name='Notas')
     #endregion
@@ -336,7 +336,7 @@ class FlightLog(models.Model):
     #region SESSION DATA
     flight_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Fecha de vuelo'
+        verbose_name='Fecha'
     )
     flight_rules = models.CharField(
         max_length=4, 
@@ -366,15 +366,15 @@ class FlightLog(models.Model):
     )
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
+        decimal_places=1,
+        default=0.0,
         verbose_name='Horas de vuelo acumuladas'
     )
     session_flight_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,   
-        verbose_name='Horas de vuelo'
+        decimal_places=1,
+        default=0.0,   
+        verbose_name='Horas sesión'
     )
     aircraft_registration = models.CharField(
         max_length=6,
@@ -386,7 +386,7 @@ class FlightLog(models.Model):
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
-        verbose_name='Calificación de la sesión'
+        verbose_name='Nota'
     )
     notes = models.TextField(blank=False, verbose_name='Notas')
     #endregion
@@ -559,7 +559,7 @@ class SimEvaluation(models.Model):
     #region SESSION DATA
     session_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Fecha de sesión'
+        verbose_name='Fecha'
     )
     flight_rules = models.CharField(
         max_length=4, 
@@ -589,15 +589,15 @@ class SimEvaluation(models.Model):
     )
     accumulated_sim_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
+        decimal_places=1,
+        default=0.0,
         verbose_name='Horas de simulador acumuladas'
     )
     session_sim_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
-        verbose_name='Horas de la sesión'
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horas sesión'
     )
     simulator = models.CharField(
         max_length=6,
@@ -609,7 +609,7 @@ class SimEvaluation(models.Model):
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
-        verbose_name='Calificación de la sesión'
+        verbose_name='Nota'
     )
     #endregion
 
@@ -1343,7 +1343,7 @@ class FlightEvaluation0_100(models.Model):
     #region SESSION DATA
     flight_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Fecha de vuelo'
+        verbose_name='Fecha'
     )
     flight_rules = models.CharField(
         max_length=4, 
@@ -1373,15 +1373,15 @@ class FlightEvaluation0_100(models.Model):
     )
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
+        decimal_places=1,
+        default=0.0,
         verbose_name='Horas de vuelo acumuladas'
     )
     session_flight_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
-        verbose_name='Horas de vuelo'
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horas sesión'
     )
     aircraft_registration = models.CharField(
         max_length=6,
@@ -1393,7 +1393,7 @@ class FlightEvaluation0_100(models.Model):
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
-        verbose_name='Calificación de la sesión'
+        verbose_name='Nota'
     )
     #endregion
 
@@ -1968,7 +1968,7 @@ class FlightEvaluation100_120(models.Model):
     #region SESSION DATA
     flight_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Fecha de vuelo'
+        verbose_name='Fecha'
     )
     flight_rules = models.CharField(
         max_length=4, 
@@ -1998,15 +1998,15 @@ class FlightEvaluation100_120(models.Model):
     )
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
+        decimal_places=1,
+        default=0.0,
         verbose_name='Horas de vuelo acumuladas'
     )
     session_flight_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
-        verbose_name='Horas de vuelo'
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horas sesión'
     )
     aircraft_registration = models.CharField(
         max_length=6,
@@ -2018,7 +2018,7 @@ class FlightEvaluation100_120(models.Model):
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
-        verbose_name='Calificación de la sesión'
+        verbose_name='Nota'
     )
     #endregion
 
@@ -2557,7 +2557,7 @@ class FlightEvaluation120_170(models.Model):
     #region SESSION DATA
     flight_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Fecha de vuelo'
+        verbose_name='Fecha'
     )
     flight_rules = models.CharField(
         max_length=4, 
@@ -2587,15 +2587,15 @@ class FlightEvaluation120_170(models.Model):
     )
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
+        decimal_places=1,
+        default=0.0,
         verbose_name='Horas de vuelo acumuladas'
     )
     session_flight_hours = models.DecimalField(
         max_digits=5, 
-        decimal_places=2,
-        default=0.00,
-        verbose_name='Horas de vuelo'
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horas sesión'
     )
     aircraft_registration = models.CharField(
         max_length=6,
@@ -2607,7 +2607,7 @@ class FlightEvaluation120_170(models.Model):
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
-        verbose_name='Calificación de la sesión'
+        verbose_name='Nota'
     )
     #endregion
 

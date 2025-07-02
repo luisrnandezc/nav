@@ -79,7 +79,7 @@ class SimulatorLogAdmin(admin.ModelAdmin):
     
     def session_date_only(self, obj):
         return obj.session_date.date()
-    session_date_only.short_description = 'Fecha de sesión'
+    session_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Bitácora de simulador'
@@ -163,7 +163,7 @@ class FlightLogAdmin(admin.ModelAdmin):
     
     def flight_date_only(self, obj):
         return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha de vuelo'
+    flight_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Bitácora de vuelo'
@@ -175,7 +175,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date_only', 'simulator', 'session_number', 'session_grade'
+        'session_date_only', 'simulator', 'session_number', 'session_sim_hours', 'session_grade'
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'simulator', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -316,7 +316,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
     
     def session_date_only(self, obj):
         return obj.session_date.date()
-    session_date_only.short_description = 'Fecha de sesión'
+    session_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Evaluación de simulador'
@@ -328,7 +328,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
+        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
     ]
     list_filter = ['flight_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -437,7 +437,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
     
     def flight_date_only(self, obj):
         return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha de vuelo'
+    flight_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Evaluación de vuelo 0-100'
@@ -449,7 +449,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
+        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
     ]
     list_filter = ['flight_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -559,7 +559,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
     
     def flight_date_only(self, obj):
         return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha de vuelo'
+    flight_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Evaluación de vuelo 100-120'
@@ -571,7 +571,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
+        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
     ]
     list_filter = ['flight_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -672,7 +672,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
     
     def flight_date_only(self, obj):
         return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha de vuelo'
+    flight_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Evaluación de vuelo 120-170'

@@ -7,7 +7,7 @@
 }
 
 @page {
-    size: A4;
+    size: letter;
     margin: 1cm;
 }
   
@@ -101,15 +101,16 @@ body {
     font-weight: bold;
     border: 1px solid #000000;
     padding: 5px;
-    width: 15%;
+    width: 17%;
     text-align: center;
+    text-transform: uppercase;
 }
 
 /* Grades table */
 .grades-table-container {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
     gap: 10px;
     margin: 5px 0px;
     padding: 5px 0px;
@@ -124,12 +125,29 @@ body {
     border-collapse: collapse;
 }
 
+.grades-table-cell.table-section {
+    font-weight: bold;
+    background-color: #d7d7d7;
+}
+
 .grades-table-cell, .grade {
-    font-size: 0.75rem;
+    font-size: 0.6rem;
+    line-height: 1rem;
 }
 
 .grade {
     text-align: center;
+}
+
+.notes-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.notes-text {
+    font-size: 0.6rem;
+    line-height: 1rem;
 }
 
 /* Footer */
@@ -139,4 +157,8 @@ body {
     justify-content: space-between;
     margin: 5px 0px;
     padding: 5px 0px;
+}
+
+.signature {
+    font-size: 0.75rem;
 }

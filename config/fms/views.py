@@ -131,3 +131,8 @@ def get_student_data(request):
             'success': False,
             'error': 'Ocurrió un error al obtener los datos del estudiante'
         }, status=500)
+    
+@login_required
+def pdf_0_100(request):
+    """Handle evaluation form PDF."""
+    return render(request, 'fms/pdf_0_100.html')

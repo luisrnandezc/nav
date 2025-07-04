@@ -1,0 +1,122 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>NAV | Planilla de evaluación</title>
+        <link href="{% static 'pdf.css' %}" rel="stylesheet"> 
+    </head>
+
+    <body>
+        <section class="main-container">
+
+            <!-- Logo and form title -->
+            <section class="header-container">
+                <img class="logo" src="{% static 'img/evaluation_logo.png' %}" alt="NAV Logo">
+                <h1 class="title">Planilla de evaluación</h1>
+                <h1 class="title">0-100 horas</h1>
+            </section>
+
+            <!-- Data table -->
+            <section class="data-container">
+                <div class="row" id="row-1">
+                    <div class="data-cell" id="data-cell-1">Nombre y Apellido AP/Piloto:</div>
+                    <div class="data-cell" id="data-cell-2">Cédula:</div>
+                    <div class="data-cell" id="data-cell-3">Tipo y N° de licencia:</div>
+                </div>
+                <div class="row" id="row-2">
+                    <div class="data-cell" id="data-cell-4">Nombre y Apellido Instructor:</div>
+                    <div class="data-cell" id="data-cell-5">Cédula:</div>
+                    <div class="data-cell" id="data-cell-6">Tipo y N° de licencia:</div>
+                </div>
+                <div class="row" id="row-3">
+                    <div class="data-cell" id="data-cell-7">Curso:</div>
+                    <div class="data-cell" id="data-cell-8">Reglas de vuelo:</div>
+                    <div class="data-cell" id="data-cell-9">Horas acumuladas:</div>
+                </div>
+                <div class="row" id="row-4">
+                    <div class="data-cell" id="data-cell-10">Matrícula de aeronave:</div>
+                    <div class="data-cell" id="data-cell-11">Sesión:</div>
+                    <div class="data-cell" id="data-cell-12">Horas sesión:</div>
+                </div>
+                <div class="row" id="row-4">
+                    <div class="data-cell" id="data-cell-13"></div>
+                    <div class="data-cell" id="data-cell-14">Horas totales:</div>
+                </div>
+            </section>
+
+            <!-- Grades legend -->
+            <section class="grade-container">
+                <p id="grade-legend">SS: Sobre el Estándar | S: Estándar | NS: No Estándar | NE: No Evaluado</p>
+                <p class="data-box">Vuelo solo: N</p>
+                <p class="data-box">Calificación: S</p>
+            </section>
+
+            <!-- Grades table -->
+            <section class="grades-table-container">
+                <div class="grades-table-column">
+                    <table border="1" class="grades-table">
+                        <tbody>
+                            <tr>
+                                <td class="grades-table-cell">Prevuelo/encendido/taxeo</td>
+                                <td class="grades-table-cell grade">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Plan de vuelo VFR</td>
+                                <td class="grades-table-cell grade"></td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Inspección prevuelo (lista de chequeo)</td>
+                                <td class="grades-table-cell grade"></td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Uso correcto lista de verificación</td>
+                                <td class="grades-table-cell grade"></td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Comunicaciones aeronáuticas</td>
+                                <td class="grades-table-cell grade"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="grades-table-column">
+                    <table border="1" class="grades-table">
+                        <tbody>
+                            <tr>
+                                <td class="grades-table-cell">Emergencias</td>
+                                <td class="grades-table-cell grade">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Procedimientos memory-items y anormales</td>
+                                <td class="grades-table-cell grade"></td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Control de la aeronave</td>
+                                <td class="grades-table-cell grade"></td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Navegación (plan alterno en ruta)</td>
+                                <td class="grades-table-cell grade"></td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Comunicaciones</td>
+                                <td class="grades-table-cell grade"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <section class="footer-container">
+                <p>Firma Piloto/AP: ____________________</p>
+                <p>Firma Instructor: ____________________</p>
+            </section>
+
+        </section>
+
+    </body>
+</html>

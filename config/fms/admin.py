@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.urls import reverse
 from .models import FlightLog, SimulatorLog, SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
 
 @admin.register(SimulatorLog)
@@ -334,6 +337,20 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'flight_date'
     ordering = ['-flight_date']
+    
+    actions = ['generate_pdf']
+    
+    def generate_pdf(self, request, queryset):
+        """Generate PDF for selected evaluations."""
+        if len(queryset) == 1:
+            # Single evaluation - redirect to PDF download
+            evaluation = queryset.first()
+            return redirect('fms:download_pdf', form_type='0_100', evaluation_id=evaluation.id)
+        else:
+            # Multiple evaluations - show message
+            self.message_user(request, f'Seleccione solo una evaluación para generar el PDF.')
+            return
+    generate_pdf.short_description = "Generar PDF de la evaluación seleccionada"
     
     def delete_model(self, request, obj):
         obj.delete()

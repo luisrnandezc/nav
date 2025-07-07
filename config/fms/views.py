@@ -23,7 +23,7 @@ def submit_flight_evaluation_0_100(request):
             try:
                 evaluation = form.save()  # Save and get the saved instance
                 # Redirect to intermediate download page
-                return redirect('fms:pdf_download', evaluation_id=evaluation.id)
+                return redirect('fms:pdf_download_waiting_page', form_type='0_100', evaluation_id=evaluation.id)
             except Exception as e:
                 messages.error(request, f'Error al guardar la evaluación: {str(e)}')
         else:
@@ -136,37 +136,55 @@ def get_student_data(request):
             'error': 'Ocurrió un error al obtener los datos del estudiante'
         }, status=500)
 
-@login_required
-def pdf_download(request, evaluation_id):
-    """Show intermediate page for PDF download."""
-    try:
+def get_evaluation_and_template(form_type, evaluation_id):
+    """Helper function to get evaluation and template based on form_type."""
+    if form_type == '0_100':
         from .models import FlightEvaluation0_100
         evaluation = FlightEvaluation0_100.objects.get(id=evaluation_id)
+        template_name = 'fms/pdf_0_100.html'
+    elif form_type == '100_120':
+        from .models import FlightEvaluation100_120
+        evaluation = FlightEvaluation100_120.objects.get(id=evaluation_id)
+        template_name = 'fms/pdf_100_120.html'  # You'll need to create this
+    elif form_type == '120_170':
+        from .models import FlightEvaluation120_170
+        evaluation = FlightEvaluation120_170.objects.get(id=evaluation_id)
+        template_name = 'fms/pdf_120_170.html'  # You'll need to create this
+    elif form_type == 'sim':
+        from .models import SimEvaluation
+        evaluation = SimEvaluation.objects.get(id=evaluation_id)
+        template_name = 'fms/pdf_sim.html'  # You'll need to create this
+    else:
+        raise ValueError(f'Invalid form_type: {form_type}')
+    
+    return evaluation, template_name
+
+@login_required
+def pdf_download_waiting_page(request, form_type, evaluation_id):
+    """Show intermediate page for PDF download."""
+    try:
+        evaluation, _ = get_evaluation_and_template(form_type, evaluation_id)
         
         context = {
-            'pdf_url': f'/fms/download_pdf/{evaluation_id}/',
-            'filename': f'flight_evaluation_0_100_{evaluation.student_id}_{evaluation.session_number}.pdf',
+            'pdf_url': f'/fms/download_pdf/{form_type}/{evaluation_id}/',
+            'filename': f'flight_evaluation_{form_type}_{evaluation.student_id}_{evaluation.session_number}.pdf',
             'dashboard_url': '/dashboard/'
         }
         
         return render(request, 'fms/pdf_download.html', context)
         
-    except FlightEvaluation0_100.DoesNotExist:
-        messages.error(request, 'Evaluación no encontrada.')
-        return redirect('dashboard:dashboard')
     except Exception as e:
         messages.error(request, f'Error: {str(e)}')
         return redirect('dashboard:dashboard')
 
 @login_required
-def download_pdf(request, evaluation_id):
+def download_pdf(request, form_type, evaluation_id):
     """Download PDF for a specific evaluation."""
     try:
-        from .models import FlightEvaluation0_100
-        evaluation = FlightEvaluation0_100.objects.get(id=evaluation_id)
+        evaluation, template_name = get_evaluation_and_template(form_type, evaluation_id)
         
         # Render the PDF template with evaluation data
-        html_string = render_to_string('fms/pdf_0_100.html', {
+        html_string = render_to_string(template_name, {
             'evaluation': evaluation
         })
         
@@ -175,11 +193,6 @@ def download_pdf(request, evaluation_id):
         
         # Find the CSS file path
         css_path = find('pdf.css')
-        if css_path:
-            css_url = f'file://{css_path}'
-        else:
-            # Fallback to relative path if static file not found
-            css_url = f'{base_url}static/pdf.css'
         
         # Generate PDF using WeasyPrint with CSS
         html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
@@ -187,13 +200,10 @@ def download_pdf(request, evaluation_id):
         
         # Create HTTP response with PDF content
         response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="flight_evaluation_0_100_{evaluation.student_id}_{evaluation.session_number}.pdf"'
+        response['Content-Disposition'] = f'attachment; filename="flight_evaluation_{form_type}_{evaluation.student_id}_{evaluation.session_number}.pdf"'
         
         return response
         
-    except FlightEvaluation0_100.DoesNotExist:
-        messages.error(request, 'Evaluación no encontrada.')
-        return redirect('dashboard:dashboard')
     except Exception as e:
         messages.error(request, f'Error al generar el PDF: {str(e)}')
         return redirect('dashboard:dashboard')

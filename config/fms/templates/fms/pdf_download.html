@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargando PDF - NAV</title>
+    <link rel="stylesheet" href="{% static 'pdf_download.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Descargando evaluación de vuelo...</h2>
+        <div class="spinner"></div>
+        <div class="loading">
+            <p>El PDF se descargará automáticamente.</p>
+            <p>Serás redirigido al dashboard en <span id="countdown">3</span> segundos.</p>
+        </div>
+    </div>
+
+    <!-- Pass Django variables to JavaScript -->
+    <div id="pdf-data" 
+         data-pdf-url="{{ pdf_url }}" 
+         data-filename="{{ filename }}" 
+         data-dashboard-url="{{ dashboard_url }}" 
+         style="display: none;">
+    </div>
+
+    <script src="{% static 'js/pdf_download_dynamics.js' %}"></script>
+</body>
+</html> 

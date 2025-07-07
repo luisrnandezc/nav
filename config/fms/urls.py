@@ -10,6 +10,6 @@ urlpatterns = [
     path('submit_flight_evaluation_120_170/', views.submit_flight_evaluation_120_170, name='flight_evaluation_120_170'),
     path('submit_sim_evaluation/', views.submit_sim_evaluation, name='sim_evaluation'),
     path('api/get_student_data/', views.get_student_data, name='get_student_data'),
-    path('pdf_download/<int:evaluation_id>/', views.pdf_download, name='pdf_download'),
-    path('download_pdf/<int:evaluation_id>/', views.download_pdf, name='download_pdf'),
+    path('pdf_download_waiting_page/<str:form_type>/<int:evaluation_id>/', views.pdf_download_waiting_page, name='pdf_download_waiting_page'),
+    path('download_pdf/<str:form_type>/<int:evaluation_id>/', views.download_pdf, name='download_pdf'),
 ]

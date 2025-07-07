@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
-from django.db import transaction
+from django.template.loader import render_to_string
+from django.contrib.staticfiles.finders import find
 from accounts.models import User
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
+import weasyprint
 
 @login_required
 def form_selection(request):
@@ -19,8 +21,9 @@ def submit_flight_evaluation_0_100(request):
         form = FlightEvaluation0_100Form(request.POST, user=request.user)
         if form.is_valid():
             try:
-                form.save() # This will save both FlightEvaluation and FlightLog
-                return redirect('dashboard:dashboard')
+                evaluation = form.save()  # Save and get the saved instance
+                # Generate PDF immediately and return as download
+                return generate_pdf_response(evaluation, request)
             except Exception as e:
                 messages.error(request, f'Error al guardar la evaluación: {str(e)}')
         else:
@@ -132,3 +135,37 @@ def get_student_data(request):
             'success': False,
             'error': 'Ocurrió un error al obtener los datos del estudiante'
         }, status=500)
+
+def generate_pdf_response(evaluation, request):
+    """Generate PDF from evaluation data and return as HttpResponse."""
+    try:
+        # Render the PDF template with evaluation data
+        html_string = render_to_string('fms/pdf_0_100.html', {
+            'evaluation': evaluation
+        })
+        
+        # Get the base URL for static files
+        base_url = request.build_absolute_uri('/')
+        
+        # Find the CSS file path
+        css_path = find('pdf.css')
+        if css_path:
+            css_url = f'file://{css_path}'
+        else:
+            # Fallback to relative path if static file not found
+            css_url = f'{base_url}static/pdf.css'
+        
+        # Generate PDF using WeasyPrint with CSS
+        html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
+        pdf = html_doc.write_pdf(stylesheets=[weasyprint.CSS(filename=css_path)] if css_path else None)
+        
+        # Create HTTP response with PDF content
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="flight_evaluation_0_100_{evaluation.student_id}_{evaluation.session_number}.pdf"'
+        
+        return response
+        
+    except Exception as e:
+        # Fallback to dashboard redirect if PDF generation fails
+        messages.error(request, f'Error al generar el PDF: {str(e)}')
+        return redirect('dashboard:dashboard')

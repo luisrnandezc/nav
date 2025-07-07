@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.db import transaction
 from accounts.models import User
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
 
@@ -18,7 +19,7 @@ def submit_flight_evaluation_0_100(request):
         form = FlightEvaluation0_100Form(request.POST, user=request.user)
         if form.is_valid():
             try:
-                form.save()  # This will save both FlightEvaluation and FlightLog
+                form.save() # This will save both FlightEvaluation and FlightLog
                 return redirect('dashboard:dashboard')
             except Exception as e:
                 messages.error(request, f'Error al guardar la evaluación: {str(e)}')
@@ -131,8 +132,3 @@ def get_student_data(request):
             'success': False,
             'error': 'Ocurrió un error al obtener los datos del estudiante'
         }, status=500)
-    
-@login_required
-def pdf_0_100(request):
-    """Handle evaluation form PDF."""
-    return render(request, 'fms/pdf_0_100.html')

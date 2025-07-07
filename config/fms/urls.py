@@ -10,5 +10,4 @@ urlpatterns = [
     path('submit_flight_evaluation_120_170/', views.submit_flight_evaluation_120_170, name='flight_evaluation_120_170'),
     path('submit_sim_evaluation/', views.submit_sim_evaluation, name='sim_evaluation'),
     path('api/get_student_data/', views.get_student_data, name='get_student_data'),
-    path('pdf_0_100/', views.pdf_0_100, name='pdf_0_100'),
 ]

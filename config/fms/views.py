@@ -22,8 +22,8 @@ def submit_flight_evaluation_0_100(request):
         if form.is_valid():
             try:
                 evaluation = form.save()  # Save and get the saved instance
-                # Generate PDF immediately and return as download
-                return generate_pdf_response(evaluation, request)
+                # Redirect to intermediate download page
+                return redirect('fms:pdf_download', evaluation_id=evaluation.id)
             except Exception as e:
                 messages.error(request, f'Error al guardar la evaluación: {str(e)}')
         else:
@@ -136,9 +136,35 @@ def get_student_data(request):
             'error': 'Ocurrió un error al obtener los datos del estudiante'
         }, status=500)
 
-def generate_pdf_response(evaluation, request):
-    """Generate PDF from evaluation data and return as HttpResponse."""
+@login_required
+def pdf_download(request, evaluation_id):
+    """Show intermediate page for PDF download."""
     try:
+        from .models import FlightEvaluation0_100
+        evaluation = FlightEvaluation0_100.objects.get(id=evaluation_id)
+        
+        context = {
+            'pdf_url': f'/fms/download_pdf/{evaluation_id}/',
+            'filename': f'flight_evaluation_0_100_{evaluation.student_id}_{evaluation.session_number}.pdf',
+            'dashboard_url': '/dashboard/'
+        }
+        
+        return render(request, 'fms/pdf_download.html', context)
+        
+    except FlightEvaluation0_100.DoesNotExist:
+        messages.error(request, 'Evaluación no encontrada.')
+        return redirect('dashboard:dashboard')
+    except Exception as e:
+        messages.error(request, f'Error: {str(e)}')
+        return redirect('dashboard:dashboard')
+
+@login_required
+def download_pdf(request, evaluation_id):
+    """Download PDF for a specific evaluation."""
+    try:
+        from .models import FlightEvaluation0_100
+        evaluation = FlightEvaluation0_100.objects.get(id=evaluation_id)
+        
         # Render the PDF template with evaluation data
         html_string = render_to_string('fms/pdf_0_100.html', {
             'evaluation': evaluation
@@ -165,7 +191,9 @@ def generate_pdf_response(evaluation, request):
         
         return response
         
+    except FlightEvaluation0_100.DoesNotExist:
+        messages.error(request, 'Evaluación no encontrada.')
+        return redirect('dashboard:dashboard')
     except Exception as e:
-        # Fallback to dashboard redirect if PDF generation fails
         messages.error(request, f'Error al generar el PDF: {str(e)}')
         return redirect('dashboard:dashboard')

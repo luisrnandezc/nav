@@ -139,6 +139,10 @@ body {
     text-align: center;
 }
 
+.long-cell {
+    text-align: center;
+}
+
 .notes-title {
     font-size: 0.75rem;
     font-weight: bold;

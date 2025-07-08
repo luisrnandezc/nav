@@ -40,8 +40,9 @@ def submit_flight_evaluation_100_120(request):
         form = FlightEvaluation100_120Form(request.POST, user=request.user)
         if form.is_valid():
             try:
-                form.save()  # This will save both FlightEvaluation and FlightLog
-                return redirect('dashboard:dashboard')
+                evaluation = form.save()  # Save and get the saved instance
+                # Redirect to intermediate download page
+                return redirect('fms:pdf_download_waiting_page', form_type='100_120', evaluation_id=evaluation.id)
             except Exception as e:
                 messages.error(request, f'Error al guardar la evaluación: {str(e)}')
         else:
@@ -58,8 +59,9 @@ def submit_flight_evaluation_120_170(request):
         form = FlightEvaluation120_170Form(request.POST, user=request.user)
         if form.is_valid():
             try:
-                form.save()  # This will save both FlightEvaluation and FlightLog
-                return redirect('dashboard:dashboard')
+                evaluation = form.save()  # Save and get the saved instance
+                # Redirect to intermediate download page
+                return redirect('fms:pdf_download_waiting_page', form_type='120_170', evaluation_id=evaluation.id)
             except Exception as e:
                 messages.error(request, f'Error al guardar la evaluación: {str(e)}')
         else:
@@ -76,8 +78,9 @@ def submit_sim_evaluation(request):
         form = SimEvaluationForm(request.POST, user=request.user)
         if form.is_valid():
             try:
-                form.save()  # This will save both FlightEvaluation and FlightLog
-                return redirect('dashboard:dashboard')
+                evaluation = form.save()  # Save and get the saved instance
+                # Redirect to intermediate download page
+                return redirect('fms:pdf_download_waiting_page', form_type='sim', evaluation_id=evaluation.id)
             except Exception as e:
                 messages.error(request, f'Error al guardar la evaluación: {str(e)}')
         else:
@@ -145,15 +148,15 @@ def get_evaluation_and_template(form_type, evaluation_id):
     elif form_type == '100_120':
         from .models import FlightEvaluation100_120
         evaluation = FlightEvaluation100_120.objects.get(id=evaluation_id)
-        template_name = 'fms/pdf_100_120.html'  # You'll need to create this
+        template_name = 'fms/pdf_100_120.html'
     elif form_type == '120_170':
         from .models import FlightEvaluation120_170
         evaluation = FlightEvaluation120_170.objects.get(id=evaluation_id)
-        template_name = 'fms/pdf_120_170.html'  # You'll need to create this
+        template_name = 'fms/pdf_120_170.html'
     elif form_type == 'sim':
         from .models import SimEvaluation
         evaluation = SimEvaluation.objects.get(id=evaluation_id)
-        template_name = 'fms/pdf_sim.html'  # You'll need to create this
+        template_name = 'fms/pdf_sim.html'
     else:
         raise ValueError(f'Invalid form_type: {form_type}')
     

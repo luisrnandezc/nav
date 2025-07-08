@@ -184,6 +184,20 @@ class SimEvaluationAdmin(admin.ModelAdmin):
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'session_date'
     ordering = ['-session_date']
+
+    actions = ['generate_pdf']
+    
+    def generate_pdf(self, request, queryset):
+        """Generate PDF for selected evaluations."""
+        if len(queryset) == 1:
+            # Single evaluation - redirect to PDF download
+            evaluation = queryset.first()
+            return redirect('fms:download_pdf', form_type='100_120', evaluation_id=evaluation.id)
+        else:
+            # Multiple evaluations - show message
+            self.message_user(request, f'Seleccione solo una evaluación para generar el PDF.')
+            return
+    generate_pdf.short_description = "Generar PDF de la evaluación seleccionada"
     
     def delete_model(self, request, obj):
         obj.delete()
@@ -472,6 +486,20 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'flight_date'
     ordering = ['-flight_date']
+
+    actions = ['generate_pdf']
+    
+    def generate_pdf(self, request, queryset):
+        """Generate PDF for selected evaluations."""
+        if len(queryset) == 1:
+            # Single evaluation - redirect to PDF download
+            evaluation = queryset.first()
+            return redirect('fms:download_pdf', form_type='100_120', evaluation_id=evaluation.id)
+        else:
+            # Multiple evaluations - show message
+            self.message_user(request, f'Seleccione solo una evaluación para generar el PDF.')
+            return
+    generate_pdf.short_description = "Generar PDF de la evaluación seleccionada"
     
     def delete_model(self, request, obj):
         obj.delete()
@@ -594,6 +622,20 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'flight_date'
     ordering = ['-flight_date']
+
+    actions = ['generate_pdf']
+    
+    def generate_pdf(self, request, queryset):
+        """Generate PDF for selected evaluations."""
+        if len(queryset) == 1:
+            # Single evaluation - redirect to PDF download
+            evaluation = queryset.first()
+            return redirect('fms:download_pdf', form_type='100_120', evaluation_id=evaluation.id)
+        else:
+            # Multiple evaluations - show message
+            self.message_user(request, f'Seleccione solo una evaluación para generar el PDF.')
+            return
+    generate_pdf.short_description = "Generar PDF de la evaluación seleccionada"
     
     def delete_model(self, request, obj):
         obj.delete()

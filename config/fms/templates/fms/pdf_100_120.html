@@ -1,0 +1,335 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>NAV | Planilla de evaluación</title>
+        <link href="{% static 'pdf.css' %}" rel="stylesheet"> 
+    </head>
+
+    <body>
+        <section class="main-container">
+            <!-- Logo and form title -->
+            <section class="header-container">
+                <img class="logo" src="{% static 'img/evaluation_logo.png' %}" alt="NAV Logo">
+                <h1 class="title">Formulario de pruebas de pericia 2</h1>
+                <h1 class="title">100-120 horas</h1>
+            </section>
+
+            <!-- Data table -->
+            <section class="data-container">
+                <div class="row" id="row-1">
+                    <div class="data-cell" id="data-cell-1">Nombre y Apellido AP/Piloto: {{ evaluation.student_first_name }} {{ evaluation.student_last_name }}</div>
+                    <div class="data-cell" id="data-cell-2">Cédula: {{ evaluation.student_id }}</div>
+                    <div class="data-cell" id="data-cell-3">Tipo y N° de licencia: {{ evaluation.student_license_type }}{{ evaluation.student_license_number }}</div>
+                </div>
+                <div class="row" id="row-2">
+                    <div class="data-cell" id="data-cell-4">Nombre y Apellido Instructor: {{ evaluation.instructor_first_name }} {{ evaluation.instructor_last_name }}</div>
+                    <div class="data-cell" id="data-cell-5">Cédula: {{ evaluation.instructor_id }}</div>
+                    <div class="data-cell" id="data-cell-6">Tipo y N° de licencia: {{ evaluation.instructor_license_type }}{{ evaluation.instructor_license_number }}</div>
+                </div>
+                <div class="row" id="row-3">
+                    <div class="data-cell" id="data-cell-7">Reglas de vuelo: {{ evaluation.flight_rules }}</div>
+                    <div class="data-cell" id="data-cell-8">Curso: {{ evaluation.course_type }}</div>
+                    <div class="data-cell" id="data-cell-9">Horas acumuladas: {{ evaluation.accumulated_flight_hours }}</div>
+                </div>
+                <div class="row" id="row-4">
+                    <div class="data-cell" id="data-cell-10">Matrícula de aeronave: {{ evaluation.aircraft_registration }}</div>
+                    <div class="data-cell" id="data-cell-11">Sesión: {{ evaluation.session_number }}{{ evaluation.session_letter }}</div>
+                    <div class="data-cell" id="data-cell-12">Horas sesión: {{ evaluation.session_flight_hours }}</div>
+                </div>
+                <div class="row" id="row-5">
+                    <div class="data-cell" id="data-cell-13"></div>
+                    <div class="data-cell" id="data-cell-14">Horas totales: {{ evaluation.accumulated_flight_hours|add:evaluation.session_flight_hours }}</div>
+                </div>
+            </section>
+
+            <!-- Grades legend -->
+            <section class="grade-container">
+                <p id="grade-legend">SS: Sobre el Estándar | S: Estándar | NS: No Estándar | NE: No Evaluado</p>
+                <p class="data-box">Vuelo solo: {{ evaluation.solo_flight }}</p>
+                <p class="data-box">Calificación: {{ evaluation.session_grade }}</p>
+            </section>
+
+            <!-- Grades table -->
+            <section class="grades-table-container">
+                <div class="grades-table-column">
+                    <table border="1" class="grades-table">
+                        <tbody>
+                            <!-- Prevuelo/encendido/taxeo -->
+                            <tr>
+                                <td class="grades-table-cell table-section">Prevuelo/encendido/taxeo</td>
+                                <td class="grades-table-cell grade table-section">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Plan de vuelo VFR</td>
+                                <td class="grades-table-cell grade">{{ evaluation.pre_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Inspección prevuelo (lista de chequeo)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.pre_2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Uso correcto lista de verificación</td>
+                                <td class="grades-table-cell grade">{{ evaluation.pre_3 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Comunicaciones aeronáuticas</td>
+                                <td class="grades-table-cell grade">{{ evaluation.pre_4 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Técnica de rodaje</td>
+                                <td class="grades-table-cell grade">{{ evaluation.pre_5 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Anormalidades en el encendido y taxeo</td>
+                                <td class="grades-table-cell grade">{{ evaluation.pre_6 }}</td>
+                            </tr>
+                            <!-- Despegue / Salida instrumental -->
+                            <tr>
+                                <td class="grades-table-cell table-section">Despegue / Salida instrumental</td>
+                                <td class="grades-table-cell grade table-section">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Normal</td>
+                                <td class="grades-table-cell grade">{{ evaluation.to_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Viento cruzado</td>
+                                <td class="grades-table-cell grade">{{ evaluation.to_2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Pista corta</td>
+                                <td class="grades-table-cell grade">{{ evaluation.to_3 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Ascenso (potencia/velocidad/rumbo)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.to_4 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Comunicaciones aeronáuticas IFR</td>
+                                <td class="grades-table-cell grade">{{ evaluation.to_5 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Ejecución de SID</td>
+                                <td class="grades-table-cell grade">{{ evaluation.to_6 }}</td>
+                            </tr>
+                            <!-- Procedimientos IFR básicos -->
+                            <tr>
+                                <td class="grades-table-cell table-section">Maniobras IFR básicas</td>
+                                <td class="grades-table-cell grade table-section">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Maniobra tipo S (SA, SB, SC, SD)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Virajes cronometrados (1 RST / 1/2 RST)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Reconocimiento de actitud inusual (UPSET)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_3 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Serie de virajes</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_4 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Cambios de velocidad</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_5 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Intercepción de radiales (IB/OB)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_6 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Interceptación de marcaciones</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_7 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Uso de instrumentos de navegación (chequeos)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_8 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Chequeo cruzado</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_9 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Virajes inversión curso (45x180) (80x260) (base)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_10 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Patrón de juego</td>
+                                <td class="grades-table-cell grade">{{ evaluation.b_ifr_11 }}</td>
+                            </tr>
+                            <!-- Procedimientos IFR avanzados -->
+                            <tr>
+                                <td class="grades-table-cell table-section">Procedimientos IFR avanzados</td>
+                                <td class="grades-table-cell grade table-section">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Plan de vuelo/operacional (IFR)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Planificación IFR</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Comunicaciones IFR (reportes)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_3 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Ejecución SID</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_4 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="grades-table-column">
+                    <table border="1" class="grades-table">
+                        <tbody>
+                            <!-- Procedimientos IFR avanzados (cont.) -->
+                            <tr>
+                                <td class="grades-table-cell table-section">Procedimientos IFR avanzados (cont.)</td>
+                                <td class="grades-table-cell grade table-section">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Viraje de procedimiento (45x180) (base)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_5 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Arcos/DME</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_6 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Procedimientos de no-precisión</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_7 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Procedimientos APV (demostración)</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_8 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Procedimientos de precisión</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_9 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Procedimiento de aproximación frustrada</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_10 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Circuitos de espera</td>
+                                <td class="grades-table-cell grade">{{ evaluation.a_ifr_11 }}</td>
+                            </tr>
+                            <!-- Aproximación final y aterrizaje-->
+                            <tr>
+                                <td class="grades-table-cell table-section">Aproximación final y aterrizaje</td>
+                                <td class="grades-table-cell grade table-section">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Aterrizaje normal</td>
+                                <td class="grades-table-cell grade">{{ evaluation.land_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Aproximación estabilizada</td>
+                                <td class="grades-table-cell grade">{{ evaluation.land_2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Aproximación frustrada</td>
+                                <td class="grades-table-cell grade">{{ evaluation.land_3 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Ejecución procedimiento IFR</td>
+                                <td class="grades-table-cell grade">{{ evaluation.land_4 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Transición IFR a referencias visuales</td>
+                                <td class="grades-table-cell grade">{{ evaluation.land_5 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Disciplina de vuelo</td>
+                                <td class="grades-table-cell grade">{{ evaluation.land_6 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Técnica de vuelo</td>
+                                <td class="grades-table-cell grade">{{ evaluation.land_7 }}</td>
+                            </tr>
+                            <!-- Emergencias -->
+                            <tr>
+                                <td class="grades-table-cell table-section">Emergencias</td>
+                                <td class="grades-table-cell grade table-section">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Actitud y juicio</td>
+                                <td class="grades-table-cell grade">{{ evaluation.emer_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Identificación de la anormalidad</td>
+                                <td class="grades-table-cell grade">{{ evaluation.emer_2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Procedimientos memory-items y anormales</td>
+                                <td class="grades-table-cell grade">{{ evaluation.emer_3 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Recuperación de pérdida por instrumentos</td>
+                                <td class="grades-table-cell grade">{{ evaluation.emer_4 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Panel parcial</td>
+                                <td class="grades-table-cell grade">{{ evaluation.emer_5 }}</td>
+                            </tr>
+                            <!-- Evaluación general -->
+                            <tr>
+                                <td class="grades-table-cell table-section">Evaluación general</td>
+                                <td class="grades-table-cell grade table-section">Nota</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Actitud y criterio</td>
+                                <td class="grades-table-cell grade">{{ evaluation.gen_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Seguridad de vuelo</td>
+                                <td class="grades-table-cell grade">{{ evaluation.gen_2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Disciplina de vuelo</td>
+                                <td class="grades-table-cell grade">{{ evaluation.gen_3 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Técnica de vuelo</td>
+                                <td class="grades-table-cell grade">{{ evaluation.gen_4 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Conocimiento de la aeronave y limitaciones</td>
+                                <td class="grades-table-cell grade">{{ evaluation.gen_5 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Conocimiento RAV</td>
+                                <td class="grades-table-cell grade">{{ evaluation.gen_6 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="grades-table-cell">Juicio general</td>
+                                <td class="grades-table-cell grade">{{ evaluation.gen_7 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="notes-container">
+                        <p class="notes-title">Notas del instructor</p>
+                        <p class="notes-text">{{ evaluation.notes }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <section class="footer-container">
+                <p class="signature">Firma Piloto/AP: ____________________</p>
+                <p class="signature">Firma Instructor: ____________________</p>
+            </section>
+        </section>
+    </body>
+</html>

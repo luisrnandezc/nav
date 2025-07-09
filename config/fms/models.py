@@ -36,12 +36,12 @@ class SimulatorLog(models.Model):
     ]
 
     # Pre-solo flight
-    NO = 'N'
-    YES = 'Y'
+    NO = 'NO'
+    YES = 'SI'
 
     PRE_SOLO_FLIGHT_CHOICES = [
-        (NO, 'N'),
-        (YES, 'Y'),
+        (NO, 'NO'),
+        (YES, 'SI'),
     ]
 
     # Session number
@@ -235,12 +235,12 @@ class FlightLog(models.Model):
     ]
 
     # Solo flight
-    NO = 'N'
-    YES = 'Y'
+    NO = 'NO'
+    YES = 'SI'
 
     SOLO_FLIGHT_CHOICES = [
-        (NO, 'N'),
-        (YES, 'Y'),
+        (NO, 'NO'),
+        (YES, 'SI'),
     ]
 
     # Session number
@@ -450,12 +450,12 @@ class SimEvaluation(models.Model):
     ]
 
     # Pre-solo flight
-    NO = 'N'
-    YES = 'Y'
+    NO = 'NO'
+    YES = 'SI'
  
     PRE_SOLO_FLIGHT_CHOICES = [
-        (NO, 'N'),
-        (YES, 'Y'),
+        (NO, 'NO'),
+        (YES, 'SI'),
     ]
 
     # Simulator session grades
@@ -1234,12 +1234,12 @@ class FlightEvaluation0_100(models.Model):
     ]
 
     # Solo flight
-    NO = 'N'
-    YES = 'Y'
+    NO = 'NO'
+    YES = 'SI'
  
     SOLO_FLIGHT_CHOICES = [
-        (NO, 'N'),
-        (YES, 'Y'),
+        (NO, 'NO'),
+        (YES, 'SI'),
     ]
 
     # Flight session grades
@@ -1859,12 +1859,12 @@ class FlightEvaluation100_120(models.Model):
     ]
 
     # Solo flight
-    NO = 'N'
-    YES = 'Y'
+    NO = 'NO'
+    YES = 'SI'
  
     SOLO_FLIGHT_CHOICES = [
-        (NO, 'N'),
-        (YES, 'Y'),
+        (NO, 'NO'),
+        (YES, 'SI'),
     ]
 
     # Flight session grades
@@ -2448,12 +2448,12 @@ class FlightEvaluation120_170(models.Model):
     ]
 
     # Solo flight
-    NO = 'N'
-    YES = 'Y'
+    NO = 'NO'
+    YES = 'SI'
  
     SOLO_FLIGHT_CHOICES = [
-        (NO, 'N'),
-        (YES, 'Y'),
+        (NO, 'NO'),
+        (YES, 'SI'),
     ]
 
     # Flight session grades

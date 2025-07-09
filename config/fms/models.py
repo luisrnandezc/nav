@@ -154,9 +154,8 @@ class SimulatorLog(models.Model):
         max_length=1,
         choices=SESSION_LETTER_CHOICES,
         blank=True,
-        null=True,
         default='',
-        verbose_name='Repetición de sesión'
+        verbose_name='Repetición de la sesión'
     )
     accumulated_sim_hours = models.DecimalField(
         max_digits=5, 
@@ -360,9 +359,8 @@ class FlightLog(models.Model):
         max_length=1,
         choices=SESSION_LETTER_CHOICES,
         blank=True,
-        null=True,
         default='',
-        verbose_name='Repetición de sesión'
+        verbose_name='Repetición de la sesión'
     )
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
@@ -583,9 +581,8 @@ class SimEvaluation(models.Model):
         max_length=1,
         choices=SESSION_LETTER_CHOICES,
         blank=True,
-        null=True,
         default='',
-        verbose_name='Repetición de sesión'
+        verbose_name='Repetición de la sesión'
     )
     accumulated_sim_hours = models.DecimalField(
         max_digits=5, 
@@ -1367,7 +1364,6 @@ class FlightEvaluation0_100(models.Model):
         max_length=1,
         choices=SESSION_LETTER_CHOICES,
         blank=True,
-        null=True,
         default='',
         verbose_name='Repetición de la sesión'
     )
@@ -1992,9 +1988,8 @@ class FlightEvaluation100_120(models.Model):
         max_length=1,
         choices=SESSION_LETTER_CHOICES,
         blank=True,
-        null=True,
         default='',
-        verbose_name='Repetición de sesión'
+        verbose_name='Repetición de la sesión'
     )
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 
@@ -2581,9 +2576,8 @@ class FlightEvaluation120_170(models.Model):
         max_length=1,
         choices=SESSION_LETTER_CHOICES,
         blank=True,
-        null=True,
         default='',
-        verbose_name='Repetición de sesión'
+        verbose_name='Repetición de la sesión'
     )
     accumulated_flight_hours = models.DecimalField(
         max_digits=5, 

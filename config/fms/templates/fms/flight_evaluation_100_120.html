@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Evaluación de vuelo</title>
     <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
-    <script src="{% static 'js/student_auto_fill.js' %}"></script>
+    <script src="{% static 'js/flight_evaluation.js' %}"></script>
   </head>
 
   <body>
@@ -405,11 +405,5 @@
         </div>
       </form>
     </div>
-
-    <script>
-      function confirmSubmission() {
-        return confirm('¿Está seguro de que desea enviar esta evaluación de vuelo?\n\n⚠️ ADVERTENCIA: Esta acción no se puede deshacer.\n\nUna vez enviada, la evaluación quedará registrada permanentemente en el sistema.');
-      }
-    </script>
   </body>
 </html>

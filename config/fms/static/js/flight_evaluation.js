@@ -60,3 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 }); 
+
+// Confirmation function for form submission
+function confirmSubmission() {
+    return confirm('¿Está seguro de que desea enviar esta evaluación de vuelo?\n\n⚠️ ADVERTENCIA: Esta acción no se puede deshacer.\n\nUna vez enviada, la evaluación quedará registrada permanentemente en el sistema.');
+}

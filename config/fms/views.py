@@ -8,6 +8,7 @@ from django.contrib.staticfiles.finders import find
 from accounts.models import User
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
 import weasyprint
+from django.contrib.staticfiles.finders import find
 
 @login_required
 def form_selection(request):
@@ -192,7 +193,7 @@ def download_pdf(request, form_type, evaluation_id):
         })
         
         # Get the base URL for static files
-        base_url = request.build_absolute_uri('/')
+        base_url = request.build_absolute_uri('.')
         
         # Find the CSS file path
         css_path = find('pdf.css')

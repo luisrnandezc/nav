@@ -193,7 +193,7 @@ def download_pdf(request, form_type, evaluation_id):
         })
         
         # Get the base URL for static files
-        base_url = request.build_absolute_uri('.')
+        base_url = request.build_absolute_uri()
         
         # Find the CSS file path
         css_path = find('pdf.css')

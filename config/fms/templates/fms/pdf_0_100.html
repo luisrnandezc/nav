@@ -355,5 +355,60 @@
                 <p class="signature">Firma Instructor: ____________________</p>
             </section>
         </section>
+
+        {% if evaluation.comments %}
+            <!-- Page break for comments -->
+            <div class="page-break"></div>
+
+            <!-- Logo and form title -->
+            <section class="header-container">
+                <img class="logo" src="{% static 'img/evaluation_logo.png' %}" alt="NAV Logo">
+                <h1 class="title">Formulario de pruebas de pericia 1</h1>
+                <h1 class="title">0-100 horas</h1>
+            </section>
+
+            <!-- Data table -->
+            <section class="data-container">
+                <div class="row" id="row-1">
+                    <div class="data-cell" id="data-cell-1">Nombre y Apellido AP/Piloto: {{ evaluation.student_first_name }} {{ evaluation.student_last_name }}</div>
+                    <div class="data-cell" id="data-cell-2">Cédula: {{ evaluation.student_id }}</div>
+                    <div class="data-cell" id="data-cell-3">Tipo y N° de licencia: {{ evaluation.student_license_type }}{{ evaluation.student_license_number }}</div>
+                </div>
+                <div class="row" id="row-2">
+                    <div class="data-cell" id="data-cell-4">Nombre y Apellido Instructor: {{ evaluation.instructor_first_name }} {{ evaluation.instructor_last_name }}</div>
+                    <div class="data-cell" id="data-cell-5">Cédula: {{ evaluation.instructor_id }}</div>
+                    <div class="data-cell" id="data-cell-6">Tipo y N° de licencia: {{ evaluation.instructor_license_type }}{{ evaluation.instructor_license_number }}</div>
+                </div>
+                <div class="row" id="row-3">
+                    <div class="data-cell" id="data-cell-7">Reglas de vuelo: {{ evaluation.flight_rules }}</div>
+                    <div class="data-cell" id="data-cell-8">Curso: {{ evaluation.course_type }}</div>
+                    <div class="data-cell" id="data-cell-9">Horas acumuladas: {{ evaluation.accumulated_flight_hours }}</div>
+                </div>
+                <div class="row" id="row-4">
+                    <div class="data-cell" id="data-cell-10">Matrícula de aeronave: {{ evaluation.aircraft_registration }}</div>
+                    <div class="data-cell" id="data-cell-11">Sesión: {{ evaluation.session_number }}{{ evaluation.session_letter }}</div>
+                    <div class="data-cell" id="data-cell-12">Horas sesión: {{ evaluation.session_flight_hours }}</div>
+                </div>
+                <div class="row" id="row-5">
+                    <div class="data-cell" id="data-cell-13">Fecha: {{ evaluation.flight_date|date:'d/m/Y' }}</div>
+                    <div class="data-cell" id="data-cell-14">Horas totales: {{ evaluation.total_flight_hours }}</div>
+                </div>
+            </section>
+
+            <!-- Grades legend -->
+            <section class="grade-container">
+                <p id="grade-legend">SS: Sobre el Estándar | S: Estándar | NS: No Estándar | NE: No Evaluado</p>
+                <p class="data-box">Vuelo solo: {{ evaluation.solo_flight }}</p>
+                <p class="data-box">Calificación: {{ evaluation.session_grade }}</p>
+            </section>
+
+            <!-- Comments section -->
+            <section class="comments-container">
+                <h2 class="comments-title">Comentarios del instructor</h2>
+                <div class="comments-text">
+                    {{ evaluation.comments|linebreaks }}
+                </div>
+            </section>
+        {% endif %}
     </body>
 </html>

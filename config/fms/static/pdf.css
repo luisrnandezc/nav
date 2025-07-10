@@ -167,3 +167,18 @@ body {
 .signature {
     font-size: 0.75rem;
 }
+
+/* Comments */
+.page-break {
+    page-break-before: always;
+}
+
+.comments-title {
+    text-decoration: underline;
+}
+
+.comments-text {
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+    text-align: justify;
+}

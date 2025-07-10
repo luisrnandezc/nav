@@ -28,7 +28,7 @@ class SimulatorLogAdmin(admin.ModelAdmin):
             'fields': (
                 'flight_rules', 'pre_solo_flight', 'session_number', 
                 'session_letter', 'accumulated_sim_hours', 'session_sim_hours',
-                'simulator', 'session_grade', 'notes'
+                'simulator', 'session_grade', 'notes', 'comments'
             )
         }),
     )
@@ -112,7 +112,7 @@ class FlightLogAdmin(admin.ModelAdmin):
             'fields': (
                 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
-                'aircraft_registration', 'session_grade', 'notes'
+                'aircraft_registration', 'session_grade', 'notes', 'comments'
             )
         }),
     )

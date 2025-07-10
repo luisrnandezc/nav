@@ -182,6 +182,7 @@ class SimulatorLog(models.Model):
         verbose_name='Nota'
     )
     notes = models.TextField(blank=False, verbose_name='Notas')
+    comments = models.TextField(blank=True, verbose_name='Comentarios')
     #endregion
 
     def __str__(self):
@@ -387,6 +388,7 @@ class FlightLog(models.Model):
         verbose_name='Nota'
     )
     notes = models.TextField(blank=False, verbose_name='Notas')
+    comments = models.TextField(blank=True, verbose_name='Comentarios')
     #endregion
 
     def __str__(self):
@@ -1148,6 +1150,7 @@ class SimEvaluation(models.Model):
     #endregion
 
     notes = models.TextField(blank=False, verbose_name='Notas')
+    comments = models.TextField(blank=True, verbose_name='Comentarios')
 
     def total_sim_hours(self):
         """Return the sum of accumulated and session hours."""
@@ -1769,6 +1772,7 @@ class FlightEvaluation0_100(models.Model):
     #endregion
 
     notes = models.TextField(blank=False, verbose_name='Notas')
+    comments = models.TextField(blank=True, verbose_name='Comentarios')
 
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""
@@ -2357,6 +2361,7 @@ class FlightEvaluation100_120(models.Model):
     #endregion
 
     notes = models.TextField(blank=False, verbose_name='Notas')
+    comments = models.TextField(blank=True, verbose_name='Comentarios')
 
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""
@@ -2870,6 +2875,7 @@ class FlightEvaluation120_170(models.Model):
     #endregion
 
     notes = models.TextField(blank=False, verbose_name='Notas')
+    comments = models.TextField(blank=True, verbose_name='Comentarios')
 
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""

@@ -181,7 +181,7 @@ class SimulatorLog(models.Model):
         default=NOT_EVALUATED,
         verbose_name='Nota'
     )
-    notes = models.TextField(blank=False, verbose_name='Notas')
+    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
     comments = models.TextField(blank=True, verbose_name='Comentarios')
     #endregion
 
@@ -387,7 +387,7 @@ class FlightLog(models.Model):
         default=NOT_EVALUATED,
         verbose_name='Nota'
     )
-    notes = models.TextField(blank=False, verbose_name='Notas')
+    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
     comments = models.TextField(blank=True, verbose_name='Comentarios')
     #endregion
 
@@ -1149,7 +1149,7 @@ class SimEvaluation(models.Model):
     )
     #endregion
 
-    notes = models.TextField(blank=False, verbose_name='Notas')
+    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
     comments = models.TextField(blank=True, verbose_name='Comentarios')
 
     def total_sim_hours(self):
@@ -1771,7 +1771,7 @@ class FlightEvaluation0_100(models.Model):
     )
     #endregion
 
-    notes = models.TextField(blank=False, verbose_name='Notas')
+    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
     comments = models.TextField(blank=True, verbose_name='Comentarios')
 
     def total_flight_hours(self):
@@ -2360,7 +2360,7 @@ class FlightEvaluation100_120(models.Model):
     )
     #endregion
 
-    notes = models.TextField(blank=False, verbose_name='Notas')
+    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
     comments = models.TextField(blank=True, verbose_name='Comentarios')
 
     def total_flight_hours(self):
@@ -2874,7 +2874,7 @@ class FlightEvaluation120_170(models.Model):
     )
     #endregion
 
-    notes = models.TextField(blank=False, verbose_name='Notas')
+    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
     comments = models.TextField(blank=True, verbose_name='Comentarios')
 
     def total_flight_hours(self):

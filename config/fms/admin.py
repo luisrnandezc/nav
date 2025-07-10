@@ -38,7 +38,7 @@ class SimulatorLogAdmin(admin.ModelAdmin):
         'instructor_id', 'instructor_first_name', 'instructor_last_name',
         'flight_rules', 'pre_solo_flight', 'session_number', 'session_letter',
         'accumulated_sim_hours', 'session_sim_hours', 'simulator',
-        'session_grade', 'notes'
+        'session_grade', 'notes', 'comments'
     ]
     
     def has_add_permission(self, request):
@@ -122,7 +122,7 @@ class FlightLogAdmin(admin.ModelAdmin):
         'course_type', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
         'flight_rules', 'solo_flight', 'session_number', 'session_letter',
         'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration',
-        'session_grade', 'notes'
+        'session_grade', 'notes', 'comments'
     ]
     
     def has_add_permission(self, request):
@@ -282,8 +282,8 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             'fields': ('go_1', 'go_2'),
             'classes': ('collapse',)
         }),
-        ('Sección 16: Notas', {
-            'fields': ('notes',)
+        ('Sección 16: Notas y comentarios', {
+            'fields': ('notes', 'comments')
         }),
     )
     
@@ -309,7 +309,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             'app_9', 'app_10', 'app_11', 'app_12', 'app_13', 'app_14', 'app_15', 'app_16',
             'app_17', 'app_18', 'app_19', 'app_20', 'app_21', 'app_22', 'app_23', 'app_24',
             'go_1', 'go_2',
-            'notes',
+            'notes', 'comments'
     ]
     
     def has_add_permission(self, request):
@@ -428,8 +428,8 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             ),
             'classes': ('collapse',)
         }),
-        ('Sección 11: Notas', {
-            'fields': ('notes',)
+        ('Sección 11: Notas y comentarios', {
+            'fields': ('notes', 'comments')
         }),
     )
     
@@ -444,7 +444,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'mvrs_12', 'mvrs_13', 'mvrs_14', 'mvrs_15', 'mvrs_16', 'mvrs_17', 'mvrs_18', 'emer_1', 'emer_2',
         'emer_3', 'emer_4', 'emer_5', 'emer_6', 'nav_1', 'nav_2', 'nav_3', 'nav_4', 'nav_5', 'nav_6',
         'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7', 'land_1', 'land_2', 'land_3',
-        'land_4', 'land_5', 'land_6', 'land_7', 'land_8', 'land_9', 'land_10', 'notes'
+        'land_4', 'land_5', 'land_6', 'land_7', 'land_8', 'land_9', 'land_10', 'notes', 'comments'
     ]
     
     def has_add_permission(self, request):
@@ -562,8 +562,8 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
             'fields': ('gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'),
             'classes': ('collapse',)
         }),
-        ('Sección 11: Notas', {
-            'fields': ('notes',)
+        ('Sección 11: Notas y comentarios', {
+            'fields': ('notes', 'comments')
         }),
     )
     
@@ -580,7 +580,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'a_ifr_5', 'a_ifr_6', 'a_ifr_7', 'a_ifr_8', 'a_ifr_9', 'a_ifr_10', 'a_ifr_11',
         'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7', 'emer_1',
         'emer_2', 'emer_3', 'emer_4', 'emer_5', 'gen_1', 'gen_2', 'gen_3', 'gen_4',
-        'gen_5', 'gen_6', 'gen_7', 'notes'
+        'gen_5', 'gen_6', 'gen_7', 'notes', 'comments'
     ]
     
     def has_add_permission(self, request):
@@ -691,8 +691,8 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
             'fields': ('gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'),
             'classes': ('collapse',)
         }),
-        ('Sección 10: Notas', {
-            'fields': ('notes',)
+        ('Sección 10: Notas y comentarios', {
+            'fields': ('notes', 'comments')
         }),
     )
     
@@ -707,7 +707,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9',
         'inst_10', 'inst_11', 'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6',
         'land_7', 'emer_1', 'emer_2', 'emer_3', 'emer_4', 'gen_1', 'gen_2', 'gen_3',
-        'gen_4', 'gen_5', 'gen_6', 'gen_7', 'notes'
+        'gen_4', 'gen_5', 'gen_6', 'gen_7', 'notes', 'comments'
     ]
     
     def has_add_permission(self, request):

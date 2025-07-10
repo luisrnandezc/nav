@@ -387,9 +387,14 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 11: Notas</h1>
-        <div class="form-row">
+        <h1 class="subsection-header">Sección 11: Notas y comentarios</h1>
+        <div class="form-row notes-row">
+          {{ form.notes.label_tag }}
           {{ form.notes }}
+        </div>
+        <div class="form-row comments-row">
+          {{ form.comments.label_tag }}
+          {{ form.comments }}
         </div>
 
         {% if form.errors %}

@@ -127,7 +127,7 @@
     width: 40px !important;
   }
 
-  #id_notes {
+  #id_notes, #id_comments {
     width: 500px;
   }
 

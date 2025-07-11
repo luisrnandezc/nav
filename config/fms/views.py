@@ -187,10 +187,23 @@ def download_pdf(request, form_type, evaluation_id):
     try:
         evaluation, template_name = get_evaluation_and_template(form_type, evaluation_id)
         
+        # Find logo path and create absolute URL
+        logo_path = find("img/evaluation_logo.png")
+        if logo_path:
+            # Use absolute URL instead of file:// URI for better compatibility
+            logo_url = request.build_absolute_uri('/static/img/evaluation_logo.png')
+        else:
+            logo_url = None
+        
         # Render the PDF template with evaluation data
         html_string = render_to_string(template_name, {
-            'evaluation': evaluation
+            'evaluation': evaluation,
+            'logo_url': logo_url
         })
+        
+        # Replace static logo URL with absolute URL
+        if logo_url:
+            html_string = html_string.replace('{% static \'img/evaluation_logo.png\' %}', logo_url)
         
         # Get the base URL for static files
         base_url = request.build_absolute_uri()

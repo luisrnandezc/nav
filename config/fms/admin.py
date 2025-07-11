@@ -283,7 +283,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Sección 16: Comentarios', {
-            'fields': ('comments')
+            'fields': ('comments',)
         }),
     )
     

@@ -8,7 +8,6 @@ from django.contrib.staticfiles.finders import find
 from accounts.models import User
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
 import weasyprint
-from django.contrib.staticfiles.finders import find
 
 @login_required
 def form_selection(request):
@@ -187,27 +186,19 @@ def download_pdf(request, form_type, evaluation_id):
     try:
         evaluation, template_name = get_evaluation_and_template(form_type, evaluation_id)
         
-        # Find logo path and create absolute URL
-        logo_path = find("img/evaluation_logo.png")
-        if logo_path:
-            # Use absolute URL instead of file:// URI for better compatibility
-            logo_url = request.build_absolute_uri('/static/img/evaluation_logo.png')
-        else:
-            logo_url = None
-        
-        # Render the PDF template with evaluation data
+        # Find the static image path (logo)
+        logo_path = find('img/evaluation_logo.png')
+        logo_uri = f'file://{logo_path}' if logo_path else ''
+
+        # Render the PDF template with evaluation data and logo path
         html_string = render_to_string(template_name, {
             'evaluation': evaluation,
-            'logo_url': logo_url
+            'logo_path': logo_uri
         })
-        
-        # Replace static logo URL with absolute URL
-        if logo_url:
-            html_string = html_string.replace('{% static \'img/evaluation_logo.png\' %}', logo_url)
         
         # Get the base URL for static files
         base_url = request.build_absolute_uri()
-        
+
         # Find the CSS file path
         css_path = find('pdf.css')
         

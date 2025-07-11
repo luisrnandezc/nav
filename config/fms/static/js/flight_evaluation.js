@@ -65,3 +65,18 @@ document.addEventListener('DOMContentLoaded', function() {
 function confirmSubmission() {
     return confirm('¿Está seguro de que desea enviar esta evaluación de vuelo?\n\n⚠️ ADVERTENCIA: Esta acción no se puede deshacer.\n\nUna vez enviada, la evaluación quedará registrada permanentemente en el sistema.');
 }
+
+// Prevent Enter key from creating new lines in comments textarea
+document.addEventListener('DOMContentLoaded', function() {
+    const commentsTextarea = document.getElementById('id_comments');
+    
+    if (commentsTextarea) {
+        commentsTextarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                // Optionally, you can replace Enter with a space
+                // this.value += ' ';
+            }
+        });
+    }
+});

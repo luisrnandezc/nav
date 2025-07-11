@@ -386,8 +386,14 @@
 
             <!-- Footer -->
             <section class="footer-container">
-                <p class="signature">Firma Piloto/AP: ____________________</p>
-                <p class="signature">Firma Instructor: ____________________</p>
+                <div class="signature-container">
+                    <p class="signature">{{evaluation.student_first_name}} {{evaluation.student_last_name}}</p>
+                    <p class="signature">Firma Piloto/AP: ____________________</p>
+                </div>
+                <div class="signature-container">
+                    <p class="signature">{{evaluation.instructor_first_name}} {{evaluation.instructor_last_name}}</p>
+                    <p class="signature">Firma Instructor: ____________________</p>
+                </div>
             </section>
         </section>
 
@@ -441,7 +447,19 @@
             <section class="comments-container">
                 <h2 class="comments-title">Comentarios del instructor</h2>
                 <div class="comments-text">
-                    {{ evaluation.comments|linebreaks }}
+                    {{ evaluation.comments|striptags }}
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <section class="footer-container">
+                <div class="signature-container">
+                    <p class="signature">{{evaluation.student_first_name}} {{evaluation.student_last_name}}</p>
+                    <p class="signature">Firma Piloto/AP: ____________________</p>
+                </div>
+                <div class="signature-container">
+                    <p class="signature">{{evaluation.instructor_first_name}} {{evaluation.instructor_last_name}}</p>
+                    <p class="signature">Firma Instructor: ____________________</p>
                 </div>
             </section>
         {% endif %}

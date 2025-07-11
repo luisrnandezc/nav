@@ -403,7 +403,7 @@
             <section class="comments-container">
                 <h2 class="comments-title">Comentarios del instructor</h2>
                 <div class="comments-text">
-                    {{ evaluation.comments|linebreaks }}
+                    {{ evaluation.comments|striptags }}
                 </div>
             </section>
 

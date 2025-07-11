@@ -134,7 +134,7 @@ class SimEvaluationForm(forms.ModelForm):
             'app_24': 'Tipo de aproximación',
             'go_1': 'Ejecución del procedimiento',
             'go_2': 'Comunicación',
-            'comments': 'Comentarios',
+            'comments': '',
         }
 
         widgets = {
@@ -240,7 +240,7 @@ class SimEvaluationForm(forms.ModelForm):
             'app_24': forms.TextInput(attrs={'class': 'form-field'}),
             'go_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'go_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -432,7 +432,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_5': 'Conocimiento de la aeronave y limitaciones',
             'gen_6': 'Conocimiento RAV',
             'gen_7': 'Juicio general',
-            'comments': 'Comentarios (opcional)',
+            'comments': '',
         }
 
         widgets = {
@@ -513,7 +513,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -699,7 +699,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'gen_5': 'Conocimiento de la aeronave y limitaciones',
             'gen_6': 'Conocimiento RAV',
             'gen_7': 'Juicio general',
-            'comments': 'Comentarios',
+            'comments': '',
         }
 
         widgets = {
@@ -774,7 +774,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -947,7 +947,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'gen_5': 'Conocimiento de la aeronave y limitaciones',
             'gen_6': 'Conocimiento RAV',
             'gen_7': 'Juicio general',
-            'comments': 'Comentarios',
+            'comments': '',
         }
 
         widgets = {
@@ -1010,7 +1010,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -240,7 +240,7 @@ class SimEvaluationForm(forms.ModelForm):
             'app_24': forms.TextInput(attrs={'class': 'form-field'}),
             'go_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'go_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -513,7 +513,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -774,7 +774,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -1010,7 +1010,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):

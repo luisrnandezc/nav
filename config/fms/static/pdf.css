@@ -162,26 +162,36 @@ body {
 }
 
 /* Comments */
-.comments-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 5px 0px;
-    padding: 5px 0px;
-    border: 1px solid #000000;
-}
-
 .page-break {
     page-break-before: always;
 }
 
+.comments-container {
+    margin: 10px 0;
+    padding: 10px;
+}
+
 .comments-title {
     text-decoration: underline;
+    margin-bottom: 5px;
 }
 
 .comments-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+}
+
+.comments-text p {
     font-size: 0.75rem;
     line-height: 1.25rem;
+    margin: 0 0 10px 0;
     text-align: justify;
+}
+
+.comments-text br {
+    display: block;
+    content: "";
+    margin-top: 5px;
 }

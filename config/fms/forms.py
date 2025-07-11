@@ -28,7 +28,6 @@ class SimEvaluationForm(forms.ModelForm):
             'app_9', 'app_10', 'app_11', 'app_12', 'app_13', 'app_14', 'app_15', 'app_16',
             'app_17', 'app_18', 'app_19', 'app_20', 'app_21', 'app_22', 'app_23', 'app_24',
             'go_1', 'go_2',
-            'notes',
             'comments',
         ]
 
@@ -135,7 +134,6 @@ class SimEvaluationForm(forms.ModelForm):
             'app_24': 'Tipo de aproximación',
             'go_1': 'Ejecución del procedimiento',
             'go_2': 'Comunicación',
-            'notes': 'Notas',
             'comments': 'Comentarios',
         }
 
@@ -242,7 +240,6 @@ class SimEvaluationForm(forms.ModelForm):
             'app_24': forms.TextInput(attrs={'class': 'form-field'}),
             'go_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'go_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'notes': forms.TextInput(attrs={'class': 'form-field'}),
             'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
         }
 
@@ -299,7 +296,6 @@ class SimEvaluationForm(forms.ModelForm):
                 session_sim_hours=self.cleaned_data.get('session_sim_hours'),
                 simulator=self.cleaned_data.get('simulator'),
                 session_grade=self.cleaned_data.get('session_grade'),
-                notes=self.cleaned_data.get('notes', ''),
                 comments=self.cleaned_data.get('comments', '')
             )
             simlog_instance.save()
@@ -355,7 +351,6 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7', 'land_8', 'land_9', 'land_10',
             'emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5',
             'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7',
-            'notes',
             'comments',
         ]
 
@@ -437,7 +432,6 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_5': 'Conocimiento de la aeronave y limitaciones',
             'gen_6': 'Conocimiento RAV',
             'gen_7': 'Juicio general',
-            'notes': 'Notas',
             'comments': 'Comentarios (opcional)',
         }
 
@@ -519,7 +513,6 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'notes': forms.TextInput(attrs={'class': 'form-field'}),
             'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
         }
 
@@ -577,7 +570,6 @@ class FlightEvaluation0_100Form(forms.ModelForm):
                 session_flight_hours=self.cleaned_data.get('session_flight_hours'),
                 aircraft_registration=self.cleaned_data.get('aircraft_registration'),
                 session_grade=self.cleaned_data.get('session_grade'),
-                notes=self.cleaned_data.get('notes', ''),
                 comments=self.cleaned_data.get('comments', '')
             )
             flightlog_instance.save()
@@ -632,7 +624,6 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7',
             'emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5',
             'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7',
-            'notes',
             'comments',
         ]
 
@@ -708,7 +699,6 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'gen_5': 'Conocimiento de la aeronave y limitaciones',
             'gen_6': 'Conocimiento RAV',
             'gen_7': 'Juicio general',
-            'notes': 'Notas',
             'comments': 'Comentarios',
         }
 
@@ -784,7 +774,6 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'notes': forms.TextInput(attrs={'class': 'form-field'}),
             'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
         }
 
@@ -842,7 +831,6 @@ class FlightEvaluation100_120Form(forms.ModelForm):
                 session_flight_hours=self.cleaned_data.get('session_flight_hours'),
                 aircraft_registration=self.cleaned_data.get('aircraft_registration'),
                 session_grade=self.cleaned_data.get('session_grade'),
-                notes=self.cleaned_data.get('notes', ''),
                 comments=self.cleaned_data.get('comments', '')
             )
             flightlog_instance.save()
@@ -896,7 +884,6 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7',
             'emer_1', 'emer_2', 'emer_3', 'emer_4',
             'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7',
-            'notes',
             'comments',
         ]
 
@@ -960,7 +947,6 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'gen_5': 'Conocimiento de la aeronave y limitaciones',
             'gen_6': 'Conocimiento RAV',
             'gen_7': 'Juicio general',
-            'notes': 'Notas',
             'comments': 'Comentarios',
         }
 
@@ -1024,7 +1010,6 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'notes': forms.TextInput(attrs={'class': 'form-field'}),
             'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10}),
         }
 
@@ -1082,7 +1067,6 @@ class FlightEvaluation120_170Form(forms.ModelForm):
                 session_flight_hours=self.cleaned_data.get('session_flight_hours'),
                 aircraft_registration=self.cleaned_data.get('aircraft_registration'),
                 session_grade=self.cleaned_data.get('session_grade'),
-                notes=self.cleaned_data.get('notes', ''),
                 comments=self.cleaned_data.get('comments', '')
             )
             flightlog_instance.save()

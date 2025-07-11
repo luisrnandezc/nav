@@ -144,17 +144,6 @@ body {
     text-align: center;
 }
 
-.notes-title {
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-decoration: underline;
-}
-
-.notes-text {
-    font-size: 0.6rem;
-    line-height: 1rem;
-}
-
 /* Footer */
 .footer-container {
     display: flex;

@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
 from accounts.models import StudentProfile
 
 class SimulatorLog(models.Model):
@@ -181,8 +181,7 @@ class SimulatorLog(models.Model):
         default=NOT_EVALUATED,
         verbose_name='Nota'
     )
-    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
-    comments = models.TextField(blank=True, verbose_name='Comentarios')
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75)])
     #endregion
 
     def __str__(self):
@@ -387,8 +386,7 @@ class FlightLog(models.Model):
         default=NOT_EVALUATED,
         verbose_name='Nota'
     )
-    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
-    comments = models.TextField(blank=True, verbose_name='Comentarios')
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75)])
     #endregion
 
     def __str__(self):
@@ -1149,8 +1147,7 @@ class SimEvaluation(models.Model):
     )
     #endregion
 
-    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
-    comments = models.TextField(blank=True, verbose_name='Comentarios')
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75)])
 
     def total_sim_hours(self):
         """Return the sum of accumulated and session hours."""
@@ -1771,8 +1768,7 @@ class FlightEvaluation0_100(models.Model):
     )
     #endregion
 
-    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
-    comments = models.TextField(blank=True, verbose_name='Comentarios')
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75)])
 
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""
@@ -2360,8 +2356,7 @@ class FlightEvaluation100_120(models.Model):
     )
     #endregion
 
-    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
-    comments = models.TextField(blank=True, verbose_name='Comentarios')
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75)])
 
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""
@@ -2874,8 +2869,7 @@ class FlightEvaluation120_170(models.Model):
     )
     #endregion
 
-    notes = models.CharField(blank=False, max_length=250, verbose_name='Notas')
-    comments = models.TextField(blank=True, verbose_name='Comentarios')
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75)])
 
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""

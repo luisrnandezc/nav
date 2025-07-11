@@ -429,7 +429,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Sección 11: Comentarios', {
-            'fields': ('comments')
+            'fields': ('comments',)
         }),
     )
     
@@ -563,7 +563,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Sección 11: Comentarios', {
-            'fields': ('comments')
+            'fields': ('comments',)
         }),
     )
     
@@ -692,7 +692,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Sección 10: Comentarios', {
-            'fields': ('comments')
+            'fields': ('comments',)
         }),
     )
     

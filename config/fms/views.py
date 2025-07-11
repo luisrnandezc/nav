@@ -8,6 +8,7 @@ from django.contrib.staticfiles.finders import find
 from accounts.models import User
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
 import weasyprint
+from pathlib import Path
 
 @login_required
 def form_selection(request):
@@ -187,8 +188,12 @@ def download_pdf(request, form_type, evaluation_id):
         evaluation, template_name = get_evaluation_and_template(form_type, evaluation_id)
         
         # Find the static image path (logo)
-        logo_path = find('img/evaluation_logo.png')
-        logo_uri = f'file://{logo_path}' if logo_path else ''
+        raw_logo_path = find('img/evaluation_logo.png')
+        if raw_logo_path:
+            logo_path = Path(raw_logo_path).as_posix()
+            logo_uri = f'file:///{logo_path}'
+        else:
+            logo_uri = ''
 
         # Render the PDF template with evaluation data and logo path
         html_string = render_to_string(template_name, {

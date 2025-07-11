@@ -177,21 +177,12 @@ body {
 }
 
 .comments-text {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: pre-wrap;
-    max-width: 100%;
-}
-
-.comments-text p {
     font-size: 0.75rem;
     line-height: 1.25rem;
-    margin: 0 0 10px 0;
     text-align: justify;
-}
-
-.comments-text br {
-    display: block;
-    content: "";
-    margin-top: 5px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    width: 100%;
+    max-width: 100%;
 }

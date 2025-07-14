@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from accounts.models import StudentProfile, InstructorProfile
+from fms.models import FlightLog, SimulatorLog
 from django.contrib import messages
 
 @login_required
@@ -27,3 +28,31 @@ def dashboard(request):
     except (StudentProfile.DoesNotExist, InstructorProfile.DoesNotExist):
         messages.error(request, 'No se encontró el perfil de usuario.')
         return redirect('accounts:login')
+
+@login_required
+def student_logs(request):
+    """
+    Display the logs page with flight and simulator logs for the current student.
+    """
+    user = request.user
+    
+    # Get student's national ID
+    student_id = user.national_id
+    
+    # Fetch flight logs for the student (last 10)
+    flight_logs = FlightLog.objects.filter(
+        student_id=student_id
+    ).order_by('-flight_date')[:10]
+    
+    # Fetch simulator logs for the student (last 10)
+    simulator_logs = SimulatorLog.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')[:10]
+    
+    context = {
+        'flight_logs': flight_logs,
+        'simulator_logs': simulator_logs,
+        'user': user,
+    }
+    
+    return render(request, 'dashboard/student_log.html', context)

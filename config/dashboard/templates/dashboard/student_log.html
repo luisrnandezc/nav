@@ -1,0 +1,87 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Bitácora</title>
+        <link href="{% static 'logs.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="main-container">
+            <div class="logs-container">
+                <h1>Registro de vuelo</h1>
+                <div class="logs-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Instructor</th>
+                                <th>Aeronave</th>
+                                <th>RV</th>
+                                <th>Sesión</th>
+                                <th>Horas sesión</th>
+                                <th>Nota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for log in flight_logs %}
+                             <tr>
+                                <td>{{ log.flight_date|date:"d/m/Y" }}</td>
+                                <td>{{ log.instructor_first_name }} {{ log.instructor_last_name }}</td>
+                                <td>{{ log.aircraft_registration }}</td>
+                                <td>{{ log.flight_rules }}</td>
+                                <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
+                                <td>{{ log.session_flight_hours }} hrs</td>
+                                <td>{{ log.session_grade }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="8" style="text-align: center;">No hay registros de vuelo disponibles</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="logs-container">
+                <h1>Registro de simulador</h1>
+                <div class="logs-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Instructor</th>
+                                <th>Simulador</th>
+                                <th>RV</th>
+                                <th>Sesión</th>
+                                <th>Horas sesión</th>
+                                <th>Nota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in simulator_logs %}
+                                <tr>
+                                    <td>{{ log.session_date|date:"d/m/Y" }}</td>
+                                    <td>{{ log.instructor_first_name }} {{ log.instructor_last_name }}</td>
+                                    <td>{{ log.simulator }}</td>
+                                    <td>{{ log.flight_rules }}</td>
+                                    <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
+                                    <td>{{ log.session_sim_hours }} hrs</td>
+                                    <td>{{ log.session_grade }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="8" style="text-align: center;">No hay registros de simulador disponibles</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

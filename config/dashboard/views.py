@@ -56,3 +56,31 @@ def student_logs(request):
     }
     
     return render(request, 'dashboard/student_log.html', context)
+
+@login_required
+def instructor_logs(request):
+    """
+    Display the logs page with flight and simulator logs for the current instructor.
+    """
+    user = request.user
+    
+    # Get instructor's national ID
+    instructor_id = user.national_id
+    
+    # Fetch flight logs for the instructor (last 10)
+    flight_logs = FlightLog.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-flight_date')[:10]
+    
+    # Fetch simulator logs for the instructor (last 10)
+    simulator_logs = SimulatorLog.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')[:10]
+    
+    context = {
+        'flight_logs': flight_logs,
+        'simulator_logs': simulator_logs,
+        'user': user,
+    }
+    
+    return render(request, 'dashboard/instructor_log.html', context)

@@ -70,16 +70,83 @@ h1 {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Comment tooltip styles */
+.comment-cell {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+    cursor: help;
+}
+
+.comment-tooltip {
+    visibility: hidden;
+    position: absolute;
+    z-index: 1000;
+    background-color: #333;
+    color: white;
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    max-width: 300px;
+    word-wrap: break-word;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.comment-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.comment-cell:hover .comment-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
 @media screen and (max-width: 800px) {
     .logs-table th,
-    .logs-table td {
+    .logs-table td,
+    .comment-text {
         font-size: 0.75rem;
+    }
+    
+    .comment-cell {
+        max-width: 100px;
+    }
+    
+    .comment-tooltip {
+        max-width: 250px;
+        font-size: 12px;
     }
 }
 
 @media screen and (max-width: 500px) {
     .logs-table th,
-    .logs-table td {
+    .logs-table td,
+    .comment-text {
         font-size: 0.5rem;
+    }
+    
+    .comment-cell {
+        max-width: 80px;
+    }
+    
+    .comment-tooltip {
+        max-width: 200px;
+        font-size: 11px;
     }
 }

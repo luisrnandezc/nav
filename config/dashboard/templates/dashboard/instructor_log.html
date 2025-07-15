@@ -24,6 +24,7 @@
                                 <th>Sesión</th>
                                 <th>Horas sesión</th>
                                 <th>Nota</th>
+                                <th>Comentarios</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -36,6 +37,14 @@
                                 <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
                                 <td>{{ log.session_flight_hours }} hrs</td>
                                 <td>{{ log.session_grade }}</td>
+                                <td class="comment-cell" {% if log.comments %}title="{{ log.comments }}"{% endif %}>
+                                    {% if log.comments %}
+                                        <span class="comment-text">{{ log.comments|truncatechars:30 }}</span>
+                                        <span class="comment-tooltip">{{ log.comments }}</span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% empty %}
                             <tr>
@@ -60,6 +69,7 @@
                                 <th>Sesión</th>
                                 <th>Horas sesión</th>
                                 <th>Nota</th>
+                                <th>Comentarios</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -72,6 +82,14 @@
                                     <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
                                     <td>{{ log.session_sim_hours }} hrs</td>
                                     <td>{{ log.session_grade }}</td>
+                                    <td class="comment-cell" {% if log.comments %}title="{{ log.comments }}"{% endif %}>
+                                        {% if log.comments %}
+                                            <span class="comment-text">{{ log.comments|truncatechars:30 }}</span>
+                                            <span class="comment-tooltip">{{ log.comments }}</span>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% empty %}
                                 <tr>

@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Calificaciones</title>
+        <link href="{% static 'logs.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="main-container">
+            <div class="logs-container">
+                <h1>Registro de calificaciones</h1>
+                <div class="logs-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Instructor</th>
+                                <th>Materia</th>
+                                <th>Tipo de examen</th>
+                                <th>Nota</th>
+                                <th>Estatus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for log in grade_logs %}
+                             <tr>
+                                <td>{{ log.date|date:"d/m/Y" }}</td>
+                                <td>{{ log.submitted_by_username }}</td>
+                                <td>{{ log.subject_edition.subject_type.name }}</td>
+                                <td>{{ log.get_test_type_display }}</td>
+                                <td>{{ log.grade }}</td>
+                                <td>{{ log.passed|yesno:"Aprobado,Reprobado" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" style="text-align: center;">No hay registros de calificaciones disponibles</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

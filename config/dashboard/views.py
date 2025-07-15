@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from accounts.models import StudentProfile, InstructorProfile
 from fms.models import FlightLog, SimulatorLog
 from django.contrib import messages
+from academic.models import StudentGrade
 
 @login_required
 def dashboard(request):
@@ -84,3 +85,22 @@ def instructor_logs(request):
     }
     
     return render(request, 'dashboard/instructor_log.html', context)
+
+@login_required
+def grade_logs(request):
+    """
+    Display the grade logs page for the current student.
+    """
+    user = request.user
+    
+    # Fetch grade logs for the student (last 10)
+    grade_logs = StudentGrade.objects.filter(
+        student=user
+    ).order_by('-date')[:10]
+    
+    context = {
+        'grade_logs': grade_logs,
+        'user': user,
+    }
+    
+    return render(request, 'dashboard/grade_log.html', context)

@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .forms import StudentGradeForm
-from .models import SubjectEdition, StudentGrade, TEST_TYPES
+from .models import SubjectEdition, StudentGrade
 from accounts.models import User
 
 
@@ -16,6 +16,7 @@ def submit_student_grade(request):
         if action == 'add_temp':
             # Handle adding to temporary storage
             form = StudentGradeForm(request.POST, instructor=request.user)
+            
             if form.is_valid():
                 # Get the temporary grades from session or initialize empty list
                 temp_grades = request.session.get('temp_grades', [])
@@ -24,22 +25,26 @@ def submit_student_grade(request):
                 grade_data = {
                     'subject_edition': form.cleaned_data['subject_edition'].id,
                     'subject_name': form.cleaned_data['subject_edition'].subject_type.name,
-                    'student': form.cleaned_data['student'].id,
-                    'student_name': f"{form.cleaned_data['student'].first_name} {form.cleaned_data['student'].last_name}",
+                    'student_id': form.cleaned_data['student'].id,
+                    'student_first_name': form.cleaned_data['student'].first_name,
+                    'student_last_name': form.cleaned_data['student'].last_name,
+                    'instructor_id': request.user.id,
+                    'instructor_first_name': request.user.first_name,
+                    'instructor_last_name': request.user.last_name,
                     'grade': float(form.cleaned_data['grade']),
-                    'test_type': dict(TEST_TYPES)[form.cleaned_data['test_type']]
+                    'test_type': form.cleaned_data['test_type']
                 }
                 
                 # Check for duplicates in temp storage
                 if not any(g['subject_edition'] == grade_data['subject_edition'] and 
-                          g['student'] == grade_data['student'] and 
+                          g['student_id'] == grade_data['student_id'] and 
                           g['test_type'] == grade_data['test_type'] 
                           for g in temp_grades):
                     temp_grades.append(grade_data)
                     request.session['temp_grades'] = temp_grades
-                    messages.success(request, 'Nota agregada temporalmente')
+                    messages.success(request, 'Calificación agregada temporalmente')
                 else:
-                    messages.error(request, 'Ya existe una nota temporal para este estudiante con el mismo tipo de examen')
+                    messages.error(request, 'Ya existe una calificación temporal para este estudiante con el mismo tipo de examen')
                 
                 return redirect('academic:submit_grade')
             else:
@@ -52,26 +57,26 @@ def submit_student_grade(request):
             # Handle final submission of all temporary grades
             temp_grades = request.session.get('temp_grades', [])
             if not temp_grades:
-                messages.error(request, 'No hay notas para guardar')
+                messages.error(request, 'No hay calificaciones para guardar')
                 return redirect('academic:submit_grade')
             
             success_count = 0
             for grade_data in temp_grades:
                 try:
-                    # Create the grade with the instructor's username
+                    # Create the grade with all required fields
                     StudentGrade.objects.create(
                         subject_edition_id=grade_data['subject_edition'],
-                        student_id=grade_data['student'],
+                        student_id=grade_data['student_id'],
+                        instructor_id=grade_data['instructor_id'],
                         grade=grade_data['grade'],
-                        test_type=grade_data['test_type'],
-                        submitted_by_username=request.user.username
+                        test_type=grade_data['test_type']
                     )
                     success_count += 1
                 except Exception as e:
-                    messages.error(request, f'Error al guardar la nota: {str(e)}')
+                    messages.error(request, f'Error al guardar la calificación: {str(e)}')
             
             if success_count > 0:
-                messages.success(request, f'Se guardaron {success_count} notas exitosamente')
+                messages.success(request, f'Se guardaron {success_count} calificaciones exitosamente')
                 # Clear temporary storage
                 request.session.pop('temp_grades', None)
                 return redirect('dashboard:dashboard')
@@ -79,7 +84,7 @@ def submit_student_grade(request):
         elif action == 'clear_temp':
             # Clear temporary storage
             request.session.pop('temp_grades', None)
-            messages.success(request, 'Notas temporales eliminadas')
+            messages.success(request, 'Calificaciones temporales eliminadas')
             return redirect('academic:submit_grade')
     
     # GET request - display form and temporary grades
@@ -90,16 +95,16 @@ def submit_student_grade(request):
     for grade in temp_grades:
         try:
             subject = SubjectEdition.objects.get(id=grade['subject_edition'])
-            student = User.objects.get(id=grade['student'])
             grade['subject_name'] = subject.subject_type.name
-            grade['student_name'] = f"{student.first_name} {student.last_name}"
-        except (SubjectEdition.DoesNotExist, User.DoesNotExist):
+            grade['student_name'] = f"{grade['student_first_name']} {grade['student_last_name']}"
+        except SubjectEdition.DoesNotExist:
             continue
 
     return render(request, 'academic/submit_grade.html', {
         'form': form,
         'temp_grades': temp_grades
     })
+
 
 @login_required
 def load_students(request):

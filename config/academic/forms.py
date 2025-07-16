@@ -21,21 +21,7 @@ class StudentGradeForm(forms.ModelForm):
                 instructor=self.instructor
             ).order_by('subject_type__name')
             
-            # If we have POST data and a subject_edition, set the student queryset
-            if self.data.get('subject_edition'):
-                try:
-                    subject_edition = SubjectEdition.objects.get(
-                        id=self.data.get('subject_edition'),
-                        instructor=self.instructor
-                    )
-                    self.fields['student'].queryset = subject_edition.students.all().order_by('first_name', 'last_name')
-                except SubjectEdition.DoesNotExist:
-                    self.fields['student'].queryset = User.objects.none()
-            else:
-                # Initially set student choices to empty
-                self.fields['student'].queryset = User.objects.none()
-            
-            # Add classes and data attributes for all fields
+            # Add classes for JavaScript
             self.fields['subject_edition'].widget.attrs.update({
                 'class': 'form-field subject-edition-select',
                 'data-url': '/academic/ajax/load-students/'
@@ -60,9 +46,8 @@ class StudentGradeForm(forms.ModelForm):
         cleaned_data = super().clean()
         subject_edition = cleaned_data.get('subject_edition')
         student = cleaned_data.get('student')
-        test_type = cleaned_data.get('test_type')
         
-        if subject_edition and student and test_type:
+        if subject_edition and student:
             # Check if student is enrolled in the subject
             if not subject_edition.students.filter(id=student.id).exists():
                 raise forms.ValidationError(
@@ -76,3 +61,10 @@ class StudentGradeForm(forms.ModelForm):
                 )
         
         return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.instructor = self.instructor
+        if commit:
+            instance.save()
+        return instance

@@ -12,43 +12,34 @@
     <div class="main-container">
       <h1 class="main-header">Carga de notas</h1>
       
-      {% if messages %}
       <div class="messages">
         {% for message in messages %}
-        <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+        <div class="message {{ message.tags }}">
           {{ message }}
         </div>
         {% endfor %}
       </div>
-      {% endif %}
 
       <form class="form-container" method="post" action="{% url 'academic:submit_grade' %}">
         {% csrf_token %}
         <input type="hidden" name="action" value="add_temp">
+        
+        {% for field in form %}
         <div class="form-row">
-          {{ form.subject_edition.label_tag }}
-          {{ form.subject_edition }}
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}
+            <div class="field-error">
+              {% for error in field.errors %}
+                <span class="error-message">{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if field.help_text %}
+            <div class="help-text">{{ field.help_text }}</div>
+          {% endif %}
         </div>
-        <div class="form-row">
-          {{ form.student.label_tag }}
-          {{ form.student }}
-        </div>
-        <div class="form-row">
-          {{ form.grade.label_tag }}
-          {{ form.grade }}
-        </div>
-        <div class="form-row">
-          {{ form.test_type.label_tag }}
-          {{ form.test_type }}
-        </div>
-
-        {% if form.errors %}
-          <ul class="errorlist">
-            {% for field, errors in form.errors.items %}
-              <li>{{ field }}: {{ errors }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+        {% endfor %}
 
         <div class="submit-button-container">
           <button class="submit-button" type="submit">Agregar Nota</button>
@@ -57,7 +48,7 @@
 
       {% if temp_grades %}
       <div class="temp-grades-container">
-        <h2 class="temp-grades-header">Notas Pendientes</h2>
+        <h2 class="temp-grades-header">Notas Pendientes ({{ temp_grades|length }} nota{{ temp_grades|length|pluralize }})</h2>
         <table class="temp-grades-table">
           <thead>
             <tr>
@@ -75,18 +66,22 @@
               <td>{{ grade.grade }}</td>
               <td>{{ grade.test_type }}</td>
             </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="no-grades">No hay notas pendientes</td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>
 
         <div class="submit-button-container">
-          <form method="post" action="{% url 'academic:submit_grade' %}" id="submit-all-form" style="display: inline;">
+          <form method="post" action="{% url 'academic:submit_grade' %}" id="submit-all-form" class="inline-form">
             {% csrf_token %}
             <input type="hidden" name="action" value="submit_all">
             <button class="submit-button" type="submit" onclick="return confirmSubmit()">Guardar Todas</button>
           </form>
           
-          <form method="post" action="{% url 'academic:submit_grade' %}" style="display: inline;">
+          <form method="post" action="{% url 'academic:submit_grade' %}" class="inline-form">
             {% csrf_token %}
             <input type="hidden" name="action" value="clear_temp">
             <button class="submit-button" type="submit">Limpiar</button>

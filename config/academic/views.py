@@ -91,11 +91,8 @@ def submit_student_grade(request):
         try:
             subject = SubjectEdition.objects.select_related('subject_type').get(id=grade['subject_edition_id'])
             student = User.objects.get(id=grade['student_id'])
-            instructor = User.objects.get(id=grade['instructor_id'])
-            
             grade['subject_name'] = subject.subject_type.name
             grade['student_name'] = f"{student.first_name} {student.last_name}"
-            grade['instructor_name'] = f"{instructor.first_name} {instructor.last_name}"
         except (SubjectEdition.DoesNotExist, User.DoesNotExist):
             # Remove invalid grades from session
             temp_grades.remove(grade)

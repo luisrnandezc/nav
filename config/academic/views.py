@@ -79,7 +79,7 @@ def submit_student_grade(request):
                 messages.success(request, f'Se guardaron {success_count} calificaciones exitosamente')
                 # Clear temporary storage
                 request.session.pop('temp_grades', None)
-                return redirect('dashboard:dashboard')
+                return redirect('academic:submit_grade')
             
         elif action == 'clear_temp':
             # Clear temporary storage

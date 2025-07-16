@@ -21,6 +21,9 @@ class StudentGradeForm(forms.ModelForm):
                 instructor=self.instructor
             ).order_by('subject_type__name')
             
+            # Set student queryset to all students initially (JavaScript will handle filtering)
+            self.fields['student'].queryset = User.objects.filter(role='STUDENT').order_by('first_name', 'last_name')
+            
             # Add classes for JavaScript
             self.fields['subject_edition'].widget.attrs.update({
                 'class': 'form-field subject-edition-select',
@@ -47,24 +50,12 @@ class StudentGradeForm(forms.ModelForm):
         subject_edition = cleaned_data.get('subject_edition')
         student = cleaned_data.get('student')
         
+        # Only validate if both fields are provided
         if subject_edition and student:
-            # Check if student is enrolled in the subject
+            # Check if student is enrolled in the subject (business rule)
             if not subject_edition.students.filter(id=student.id).exists():
                 raise forms.ValidationError(
                     'El estudiante seleccionado no está inscrito en esta materia'
                 )
-            
-            # Check if instructor is assigned to the subject
-            if subject_edition.instructor != self.instructor:
-                raise forms.ValidationError(
-                    'No está autorizado para calificar esta materia'
-                )
         
         return cleaned_data
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        instance.instructor = self.instructor
-        if commit:
-            instance.save()
-        return instance

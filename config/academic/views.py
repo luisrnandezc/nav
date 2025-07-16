@@ -115,7 +115,7 @@ def load_students(request):
         return JsonResponse({'error': 'No se proporcionó una edición de materia'}, status=400)
     
     try:
-        subject_edition = SubjectEdition.objects.get(id=subject_edition_id)
+        subject_edition = SubjectEdition.objects.select_related('instructor').get(id=subject_edition_id)
         # Verify the instructor has access to this subject edition
         if subject_edition.instructor != request.user:
             return JsonResponse({'error': 'Instructor no autorizado'}, status=403)

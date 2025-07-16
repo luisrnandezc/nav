@@ -21,22 +21,17 @@ def submit_student_grade(request):
                 # Get the temporary grades from session or initialize empty list
                 temp_grades = request.session.get('temp_grades', [])
                 
-                # Add new grade to temporary storage
+                # Add new grade to temporary storage (store only essential data)
                 grade_data = {
-                    'subject_edition': form.cleaned_data['subject_edition'].id,
-                    'subject_name': form.cleaned_data['subject_edition'].subject_type.name,
+                    'subject_edition_id': form.cleaned_data['subject_edition'].id,
                     'student_id': form.cleaned_data['student'].id,
-                    'student_first_name': form.cleaned_data['student'].first_name,
-                    'student_last_name': form.cleaned_data['student'].last_name,
                     'instructor_id': request.user.id,
-                    'instructor_first_name': request.user.first_name,
-                    'instructor_last_name': request.user.last_name,
                     'grade': float(form.cleaned_data['grade']),
                     'test_type': form.cleaned_data['test_type']
                 }
                 
                 # Check for duplicates in temp storage
-                if not any(g['subject_edition'] == grade_data['subject_edition'] and 
+                if not any(g['subject_edition_id'] == grade_data['subject_edition_id'] and 
                           g['student_id'] == grade_data['student_id'] and 
                           g['test_type'] == grade_data['test_type'] 
                           for g in temp_grades):
@@ -65,7 +60,7 @@ def submit_student_grade(request):
                 try:
                     # Create the grade with all required fields
                     StudentGrade.objects.create(
-                        subject_edition_id=grade_data['subject_edition'],
+                        subject_edition_id=grade_data['subject_edition_id'],
                         student_id=grade_data['student_id'],
                         instructor_id=grade_data['instructor_id'],
                         grade=grade_data['grade'],
@@ -91,13 +86,19 @@ def submit_student_grade(request):
     form = StudentGradeForm(instructor=request.user)
     temp_grades = request.session.get('temp_grades', [])
     
-    # Get full objects for display
+    # Fetch display data for temporary grades
     for grade in temp_grades:
         try:
-            subject = SubjectEdition.objects.get(id=grade['subject_edition'])
+            subject = SubjectEdition.objects.select_related('subject_type').get(id=grade['subject_edition_id'])
+            student = User.objects.get(id=grade['student_id'])
+            instructor = User.objects.get(id=grade['instructor_id'])
+            
             grade['subject_name'] = subject.subject_type.name
-            grade['student_name'] = f"{grade['student_first_name']} {grade['student_last_name']}"
-        except SubjectEdition.DoesNotExist:
+            grade['student_name'] = f"{student.first_name} {student.last_name}"
+            grade['instructor_name'] = f"{instructor.first_name} {instructor.last_name}"
+        except (SubjectEdition.DoesNotExist, User.DoesNotExist):
+            # Remove invalid grades from session
+            temp_grades.remove(grade)
             continue
 
     return render(request, 'academic/submit_grade.html', {

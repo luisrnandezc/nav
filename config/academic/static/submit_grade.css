@@ -69,6 +69,25 @@
     border: 1px solid #ccc;
   }
 
+  .field-error {
+    margin-left: 210px;
+    margin-top: 5px;
+  }
+
+  .error-message {
+    color: rgb(232, 71, 40);
+    font-size: 0.9rem;
+    display: block;
+  }
+
+  .help-text {
+    color: #dadada;
+    font-size: 0.8rem;
+    margin-left: 210px;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
   .submit-button-container {
     display: flex;
     align-items: center;
@@ -76,6 +95,10 @@
     margin-top: 50px;
     margin-bottom: 50px;
     gap: 20px;
+  }
+
+  .inline-form {
+    display: inline;
   }
 
   .submit-button {
@@ -106,6 +129,7 @@
 
   .messages {
     margin-bottom: 20px;
+    min-height: 50px;
   }
 
   .message {
@@ -116,14 +140,27 @@
 
   .message.success {
     background-color: rgba(40, 167, 69, 0.2);
-    color: #dadada;
+    color: #ffffff;
     border: 1px solid rgba(40, 167, 69, 0.3);
+    font-weight: bold;
   }
 
   .message.error {
     background-color: rgba(220, 53, 69, 0.2);
     color: #dadada;
     border: 1px solid rgba(220, 53, 69, 0.3);
+  }
+
+  .message.info {
+    background-color: rgba(23, 162, 184, 0.2);
+    color: #dadada;
+    border: 1px solid rgba(23, 162, 184, 0.3);
+  }
+
+  .message.warning {
+    background-color: rgba(255, 193, 7, 0.2);
+    color: #dadada;
+    border: 1px solid rgba(255, 193, 7, 0.3);
   }
 
   .temp-grades-container {
@@ -167,10 +204,21 @@
     background-color: rgba(255, 255, 255, 0.05);
   }
 
+  .no-grades {
+    text-align: center;
+    font-style: italic;
+    color: #999;
+  }
+
   @media screen and (max-width: 800px) {
 
     .form-field {
       width: 200px;
+    }
+
+    .field-error,
+    .help-text {
+      margin-left: 160px;
     }
 
     .temp-grades-container {

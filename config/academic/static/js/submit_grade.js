@@ -2,6 +2,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectSelect = document.querySelector('.subject-edition-select');
     const studentSelect = document.querySelector('.student-select');
     
+    // Auto-hide success messages after 5 seconds
+    const successMessages = document.querySelectorAll('.message.success');
+    successMessages.forEach(message => {
+        setTimeout(() => {
+            message.style.transition = 'opacity 0.5s ease-out';
+            message.style.opacity = '0';
+            // After fade out, collapse the height
+            setTimeout(() => {
+                message.style.transition = 'height 0.3s ease-out, margin 0.3s ease-out';
+                message.style.height = '0';
+                message.style.margin = '0';
+                message.style.overflow = 'hidden';
+            }, 500);
+        }, 5000);
+    });
+    
     subjectSelect.addEventListener('change', function() {
         const subjectId = this.value;
         if (!subjectId) {

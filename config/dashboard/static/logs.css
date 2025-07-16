@@ -117,10 +117,30 @@ h1 {
     opacity: 1;
 }
 
+/* Status indicators */
+.status-passed {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.status-failed {
+    color: #f44336;
+    font-weight: bold;
+}
+
+.status-passed::before {
+    content: "✓ ";
+    color: #4CAF50;
+}
+
+.status-failed::before {
+    content: "✗ ";
+    color: #f44336;
+}
+
 @media screen and (max-width: 800px) {
     .logs-table th,
-    .logs-table td,
-    .comment-text {
+    .logs-table td {
         font-size: 0.75rem;
     }
     
@@ -136,8 +156,7 @@ h1 {
 
 @media screen and (max-width: 500px) {
     .logs-table th,
-    .logs-table td,
-    .comment-text {
+    .logs-table td {
         font-size: 0.5rem;
     }
     

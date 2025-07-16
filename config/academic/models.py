@@ -291,26 +291,35 @@ class SubjectEdition(models.Model):
 
 class StudentGrade(models.Model):
     """Model for storing student grades in ground school subjects"""
+
+    #region RELATIONSHIPS
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        limit_choices_to={'role': 'STUDENT'},
+        related_name='grades',
+        verbose_name='Estudiante',
+        null=False,
+        blank=False,
+    )
+    instructor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        limit_choices_to=Q(instructor_profile__instructor_type='TIERRA') | Q(instructor_profile__instructor_type='DUAL'),
+        related_name='submitted_grades',
+        verbose_name='Instructor',
+        null=False,
+        blank=False,
+    )
     subject_edition = models.ForeignKey(
         SubjectEdition,
         on_delete=models.CASCADE,
         related_name='grades',
         verbose_name='Edición de Materia'
     )
-    student = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        related_name='subject_grades',
-        verbose_name='Estudiante',
-        null=True
-    )
-    student_username = models.CharField(
-        max_length=150,
-        verbose_name='Usuario',
-        editable=False,
-        null=False,
-        default='-'
-    )
+    #endregion
+
+    #region GRADE DATA
     grade = models.DecimalField(
         max_digits=4,
         decimal_places=1,
@@ -327,12 +336,7 @@ class StudentGrade(models.Model):
         auto_now_add=True,
         verbose_name='Fecha'
     )
-    submitted_by_username = models.CharField(
-        max_length=150,
-        verbose_name='Instructor',
-        null=False,
-        default='-',
-    )
+    #endregion
 
     class Meta:
         verbose_name = 'Nota de Estudiante'
@@ -347,22 +351,7 @@ class StudentGrade(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.student_username} - {self.subject_edition.subject_type.name} ({self.grade})'
-
-    def save(self, *args, **kwargs):
-        # Store the student's username before saving
-        if self.student:
-            self.student_username = self.student.username
-        super().save(*args, **kwargs)
-
-    def clean(self):
-        # Validate that the student is enrolled in the subject edition
-        if not self.subject_edition.students.filter(id=self.student.id).exists():
-            raise ValidationError('El estudiante no está inscrito en esta edición de materia')
-        
-        # Validate that the instructor is assigned to the subject edition
-        if not self.subject_edition.instructor:
-            raise ValidationError('No hay instructor asignado a esta edición de materia')
+        return f'{self.student.first_name} {self.student.last_name} - {self.subject_edition.subject_type.name} ({self.grade})'
 
     @property
     def passed(self):

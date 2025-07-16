@@ -95,7 +95,7 @@ def grade_logs(request):
     
     # Fetch grade logs for the student (last 10)
     grade_logs = StudentGrade.objects.filter(
-        student=user
+        student_id=user.national_id
     ).order_by('-date')[:10]
     
     context = {

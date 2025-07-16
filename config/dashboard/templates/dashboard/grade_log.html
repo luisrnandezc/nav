@@ -29,11 +29,13 @@
                         {% for log in grade_logs %}
                              <tr>
                                 <td>{{ log.date|date:"d/m/Y" }}</td>
-                                <td>{{ log.submitted_by_username }}</td>
+                                <td>{{ log.instructor_first_name }} {{ log.instructor_last_name }}</td>
                                 <td>{{ log.subject_edition.subject_type.name }}</td>
                                 <td>{{ log.get_test_type_display }}</td>
                                 <td>{{ log.grade }}</td>
-                                <td>{{ log.passed|yesno:"Aprobado,Reprobado" }}</td>
+                                <td class="{% if log.passed %}status-passed{% else %}status-failed{% endif %}">
+                                    {% if log.passed %}Aprobado{% else %}Reprobado{% endif %}
+                                </td>
                             </tr>
                         {% empty %}
                             <tr>

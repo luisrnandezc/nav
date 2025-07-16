@@ -29,7 +29,7 @@
                         {% for log in grade_logs %}
                              <tr>
                                 <td>{{ log.date|date:"d/m/Y" }}</td>
-                                <td>{{ log.instructor_first_name }} {{ log.instructor_last_name }}</td>
+                                <td>{{ log.instructor.first_name }} {{ log.instructor.last_name }}</td>
                                 <td>{{ log.subject_edition.subject_type.name }}</td>
                                 <td>{{ log.get_test_type_display }}</td>
                                 <td>{{ log.grade }}</td>

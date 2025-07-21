@@ -129,8 +129,8 @@ TEST_TYPES = (
 class CourseType(models.Model):
     """Course model for all permanent courses (Private Pilot, Commercial Pilot, etc.)"""
     code = models.CharField(
-        max_length=10, unique=True, 
-        choices=COURSE_CODES, 
+        max_length=10, unique=True,
+        choices=COURSE_CODES,
         default='PPA-T',
         verbose_name='Código'
     )

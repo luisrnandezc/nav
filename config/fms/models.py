@@ -14,15 +14,7 @@ class SimulatorLog(models.Model):
     #region CHOICES DEFINITIONS
 
     # Course types
-    COURSE_PPA = 'PPA'
-    COURSE_HVI = 'HVI'
-    COURSE_PCA = 'PCA'
-
-    COURSE_TYPE_CHOICES = [
-        (COURSE_PPA, 'PPA'),
-        (COURSE_HVI, 'HVI'),
-        (COURSE_PCA, 'PCA'),
-    ]
+    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -103,9 +95,9 @@ class SimulatorLog(models.Model):
         verbose_name='Apellido'
     )
     course_type = models.CharField(
-        max_length=3, 
+        max_length=10,
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PPA,
+        default=StudentProfile.COURSE_PPA_P,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -203,15 +195,7 @@ class FlightLog(models.Model):
     #region CHOICES DEFINITIONS
 
     # Course types
-    COURSE_PPA = 'PPA'
-    COURSE_HVI = 'HVI'
-    COURSE_PCA = 'PCA'
-
-    COURSE_TYPE_CHOICES = [
-        (COURSE_PPA, 'PPA'),
-        (COURSE_HVI, 'HVI'),
-        (COURSE_PCA, 'PCA'),
-    ]
+    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Session type
     SIM = 'SIMULADOR'
@@ -308,9 +292,9 @@ class FlightLog(models.Model):
         verbose_name='Apellido'
     )
     course_type = models.CharField(
-        max_length=3, 
+        max_length=10,
         choices=COURSE_TYPE_CHOICES,
-        default=COURSE_PPA,
+        default=StudentProfile.COURSE_PPA_P,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -426,15 +410,7 @@ class SimEvaluation(models.Model):
     ]
 
     # Course types
-    COURSE_PPA = 'PPA'
-    COURSE_HVI = 'HVI'
-    COURSE_PCA = 'PCA'
-
-    COURSE_TYPE_CHOICES = [
-        (COURSE_PPA, 'PPA'),
-        (COURSE_HVI, 'HVI'),
-        (COURSE_PCA, 'PCA'),
-    ]
+    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -520,9 +496,9 @@ class SimEvaluation(models.Model):
         verbose_name='Número de licencia'
     )
     course_type = models.CharField(
-        max_length=3, 
-        choices=COURSE_TYPE_CHOICES,
-        default=None,
+        max_length=10,
+        choices=StudentProfile.COURSE_TYPES,
+        default=StudentProfile.COURSE_PPA_P,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -1209,15 +1185,7 @@ class FlightEvaluation0_100(models.Model):
     ]
 
     # Course types
-    COURSE_PPA = 'PPA'
-    COURSE_HVI = 'HVI'
-    COURSE_PCA = 'PCA'
-
-    COURSE_TYPE_CHOICES = [
-        (COURSE_PPA, 'PPA'),
-        (COURSE_HVI, 'HVI'),
-        (COURSE_PCA, 'PCA'),
-    ]
+    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -1303,9 +1271,9 @@ class FlightEvaluation0_100(models.Model):
         verbose_name='Número de licencia'
     )
     course_type = models.CharField(
-        max_length=3, 
-        choices=COURSE_TYPE_CHOICES,
-        default=None,
+        max_length=10,
+        choices=StudentProfile.COURSE_TYPES,
+        default=StudentProfile.COURSE_PPA_P,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -1833,15 +1801,7 @@ class FlightEvaluation100_120(models.Model):
     ]
 
     # Course types
-    COURSE_PPA = 'PPA'
-    COURSE_HVI = 'HVI'
-    COURSE_PCA = 'PCA'
-
-    COURSE_TYPE_CHOICES = [
-        (COURSE_PPA, 'PPA'),
-        (COURSE_HVI, 'HVI'),
-        (COURSE_PCA, 'PCA'),
-    ]
+    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -1927,9 +1887,9 @@ class FlightEvaluation100_120(models.Model):
         verbose_name='Número de licencia'
     )
     course_type = models.CharField(
-        max_length=3, 
-        choices=COURSE_TYPE_CHOICES,
-        default=None,
+        max_length=10,
+        choices=StudentProfile.COURSE_TYPES,
+        default=StudentProfile.COURSE_HVI_P,
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -2421,15 +2381,7 @@ class FlightEvaluation120_170(models.Model):
     ]
 
     # Course types
-    COURSE_PPA = 'PPA'
-    COURSE_HVI = 'HVI'
-    COURSE_PCA = 'PCA'
-
-    COURSE_TYPE_CHOICES = [
-        (COURSE_PPA, 'PPA'),
-        (COURSE_HVI, 'HVI'),
-        (COURSE_PCA, 'PCA'),
-    ]
+    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -2515,9 +2467,9 @@ class FlightEvaluation120_170(models.Model):
         verbose_name='Número de licencia'
     )
     course_type = models.CharField(
-        max_length=3, 
-        choices=COURSE_TYPE_CHOICES,
-        default=None,
+        max_length=10,
+        choices=StudentProfile.COURSE_TYPES,
+        default=StudentProfile.COURSE_PCA_P,
         verbose_name='Tipo de curso'
     )
     #endregion

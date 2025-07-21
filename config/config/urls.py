@@ -25,4 +25,5 @@ urlpatterns = [
     path('fms/', include("fms.urls", "fms")),
     path('academic/', include("academic.urls", "academic")),
     path('scheduler/', include("scheduler.urls", "scheduler")),
+    path('fleet/', include("fleet.urls", "fleet")),
 ]

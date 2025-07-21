@@ -4,15 +4,36 @@ from django.conf import settings
 class Aircraft(models.Model):
 
     # Basic Information
-    manufacturer = models.CharField(max_length=255)
-    model = models.CharField(max_length=255)
-    registration = models.CharField(max_length=255, unique=True)
-    serial_number = models.CharField(max_length=255, unique=True)
-    year_manufactured = models.IntegerField()
+    manufacturer = models.CharField(
+        max_length=255,
+        verbose_name="Fabricante"
+    )
+    model = models.CharField(
+        max_length=255,
+        verbose_name="Modelo"
+    )
+    registration = models.CharField(
+        max_length=255,
+        unique=True,
+        verbose_name="Matrícula"
+    )
+    serial_number = models.CharField(
+        max_length=255,
+        unique=True,
+        verbose_name="Número de serial")
+    year_manufactured = models.IntegerField(
+        verbose_name="Año de fabricación"
+    )
 
     # Operational status
-    is_active = models.BooleanField(default=True)
-    is_available = models.BooleanField(default=True)
+    is_active = models.BooleanField(
+        default=True, 
+        verbose_name="Activo"
+    )
+    is_available = models.BooleanField(
+        default=True, 
+        verbose_name="Disponible"
+    )
     maintenance_status = models.CharField(
         max_length=50,
         choices=[
@@ -21,18 +42,42 @@ class Aircraft(models.Model):
             ("OUT_OF_SERVICE", "Fuera de servicio"),
         ],
         default="OPERATIONAL",
+        verbose_name="Estatus de mantenimiento"
     )
-    total_hours = models.IntegerField(default=0)
-    total_cycles = models.IntegerField(default=0)
+    total_hours = models.IntegerField(
+        default=0, 
+        verbose_name="Horas totales"
+    )
+    total_cycles = models.IntegerField(
+        default=0, 
+        verbose_name="Ciclos totales"
+    )
 
     # Scheduling configuration
-    max_daily_slots = models.IntegerField(default=3)
-    hourly_rate = models.DecimalField(max_digits=4, decimal_places=1, default=120.0)
+    max_daily_slots = models.IntegerField(
+        default=3, 
+        verbose_name="Slots máximos por día"
+    )
+    hourly_rate = models.DecimalField(
+        max_digits=4, 
+        decimal_places=1, 
+        default=130.0,
+        verbose_name="Tasa horaria"
+    )
 
     # Additional info
-    notes = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    notes = models.TextField(
+        blank=True, 
+        verbose_name="Notas"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, 
+        verbose_name="Fecha de creación"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True, 
+        verbose_name="Fecha de actualización"
+    )
 
     class Meta:
         ordering = ['registration']
@@ -50,11 +95,25 @@ class Aircraft(models.Model):
                 self.maintenance_status == "OPERATIONAL")
 
 class AircraftAvailability(models.Model):
-    aircraft = models.ForeignKey(Aircraft, on_delete=models.CASCADE)
-    date = models.DateField()
-    is_available = models.BooleanField(default=True)
-    reason = models.CharField(max_length=200, blank=True) # "Mantenimiento", "WX", "Reservado"
-    notes = models.TextField(blank=True)
+    aircraft = models.ForeignKey(
+        Aircraft, 
+        on_delete=models.CASCADE, 
+        verbose_name="Aeronave"
+    )
+    date = models.DateField(verbose_name="Fecha")
+    is_available = models.BooleanField(
+        default=True, 
+        verbose_name="Disponible"
+    )
+    reason = models.CharField(
+        max_length=200, 
+        blank=True, 
+        verbose_name="Motivo" # "Mantenimiento", "WX", "Reservado"
+    )
+    notes = models.TextField(
+        blank=True, 
+        verbose_name="Notas"
+    )
 
     class Meta:
         unique_together = ['aircraft', 'date']
@@ -67,13 +126,41 @@ class AircraftAvailability(models.Model):
         return f"{self.aircraft.registration} - {self.date}: {status}"
     
 class AircraftHours(models.Model):
-    aircraft = models.ForeignKey(Aircraft, on_delete=models.PROTECT)
-    date = models.DateField()
-    hours_flown = models.DecimalField(max_digits=3, decimal_places=1, default=0.0)
-    total_hours = models.DecimalField(max_digits=6, decimal_places=1, default=0.0)
-    recorded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
-    notes = models.TextField(blank=True)
+    aircraft = models.ForeignKey(
+        Aircraft, 
+        on_delete=models.PROTECT, 
+        verbose_name="Aeronave"
+    )
+    date = models.DateField(
+        verbose_name="Fecha"
+    )
+    hours_flown = models.DecimalField(
+        max_digits=3, 
+        decimal_places=1, 
+        default=0.0, 
+        verbose_name="Horas voladas"
+    )
+    total_hours = models.DecimalField(
+        max_digits=6, 
+        decimal_places=1, 
+        default=0.0, 
+        verbose_name="Horas totales"
+    )
+    recorded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.PROTECT, 
+        verbose_name="Registrado por"
+    )
+    notes = models.TextField(
+        blank=True, 
+        verbose_name="Notas"
+    )
 
     class Meta:
         unique_together = ['aircraft', 'date']
         ordering = ['-date']
+        verbose_name = "Horas de Aeronave"
+        verbose_name_plural = "Horas de Aeronaves"
+
+    def __str__(self):
+        return f"{self.aircraft.registration} - {self.date}: {self.total_hours} horas"

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class Aircraft(models.Model):
 
@@ -71,7 +71,7 @@ class AircraftHours(models.Model):
     date = models.DateField()
     hours_flown = models.DecimalField(max_digits=3, decimal_places=1, default=0.0)
     total_hours = models.DecimalField(max_digits=6, decimal_places=1, default=0.0)
-    recorded_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    recorded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     notes = models.TextField(blank=True)
 
     class Meta:

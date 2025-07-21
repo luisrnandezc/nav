@@ -165,7 +165,7 @@ class CourseEdition(models.Model):
         verbose_name='Tipo de Curso'
     )
     edition = models.IntegerField(
-        validators=[MinValueValidator(1)], 
+        validators=[MinValueValidator(0)], 
         default=0,
         verbose_name='Edición',
         blank=True,
@@ -184,7 +184,9 @@ class CourseEdition(models.Model):
     time_slot = models.CharField(
         max_length=10, 
         choices=TIME_SLOTS,
-        verbose_name='Horario'
+        verbose_name='Horario',
+        blank=True,
+        null=True,
     )
 
     class Meta:

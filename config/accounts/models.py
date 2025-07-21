@@ -32,16 +32,33 @@ class User(AbstractUser):
         INSTRUCTOR = 'INSTRUCTOR', 'Instructor'
         STAFF = 'STAFF', 'Staff'
     
-    username = models.CharField(max_length=150, unique=True, verbose_name='usuario')
-    email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=150, verbose_name='Nombre')    
-    last_name = models.CharField(max_length=150, verbose_name='Apellido')
+    username = models.CharField(
+        max_length=150, 
+        unique=True, 
+        verbose_name='Usuario'
+    )
+    email = models.EmailField(
+        unique=True,
+        verbose_name='Email',
+    )
+    first_name = models.CharField(
+        max_length=150, 
+        verbose_name='Nombre'
+    )    
+    last_name = models.CharField(
+        max_length=150, 
+        verbose_name='Apellido'
+    )
     national_id = models.IntegerField(
         validators=[MinValueValidator(999999), MaxValueValidator(100000000)],
         unique=True, 
         verbose_name='Cédula',
     )
-    role = models.CharField(max_length=10, choices=Role.choices, verbose_name='Rol')
+    role = models.CharField(
+        max_length=10, 
+        choices=Role.choices, 
+        verbose_name='Rol'
+    )
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'national_id', 'role', 'first_name', 'last_name']
@@ -79,21 +96,31 @@ class StudentProfile(models.Model):
 
     # Course type
     COURSE_NA = 'N/A'
-    COURSE_PPA = 'PPA'
-    COURSE_HVI = 'HVI'
-    COURSE_PCA = 'PCA'
-    COURSE_IVA = 'IVA'
-    COURSE_IVS = 'IVS'
-    COURSE_DDV = 'DDV'
+    COURSE_PPA_T = 'PPA-T'
+    COURSE_PPA_P = 'PPA-P'
+    COURSE_HVI_T = 'HVI-T'
+    COURSE_HVI_P = 'HVI-P'
+    COURSE_PCA_T = 'PCA-T'
+    COURSE_PCA_P = 'PCA-P'
+    COURSE_IVA_T = 'IVA-T'
+    COURSE_IVA_P = 'IVA-P'
+    COURSE_IVS_T = 'IVS-T'
+    COURSE_IVS_P = 'IVS-P'
+    COURSE_RCL = 'RCL'
 
     COURSE_TYPES = [
         (COURSE_NA, 'No inscrito'),
-        (COURSE_PPA, 'PPA'),
-        (COURSE_HVI, 'HVI'),
-        (COURSE_PCA, 'PCA'),
-        (COURSE_IVA, 'IVA'),
-        (COURSE_IVS, 'IVS'),
-        (COURSE_DDV, 'DDV'),
+        (COURSE_PPA_T, 'PPA-T'),
+        (COURSE_PPA_P, 'PPA-P'),
+        (COURSE_HVI_T, 'HVI-T'),
+        (COURSE_HVI_P, 'HVI-P'),
+        (COURSE_PCA_T, 'PCA-T'),
+        (COURSE_PCA_P, 'PCA-P'),
+        (COURSE_IVA_T, 'IVA-T'),
+        (COURSE_IVA_P, 'IVA-P'),
+        (COURSE_IVS_T, 'IVS-T'),
+        (COURSE_IVS_P, 'IVS-P'),
+        (COURSE_RCL, 'RCL'),
     ]
 
     # Student license
@@ -115,35 +142,34 @@ class StudentProfile(models.Model):
 
     #region MODEL FIELDS
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile')
-
+    user = models.OneToOneField(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='student_profile'
+    )
     student_age = models.PositiveIntegerField(
         validators=[MinValueValidator(16), MaxValueValidator(100)],
         verbose_name='Edad',
         default=None,
     )
-
     student_gender = models.CharField(
         max_length=1,
         choices=STUDENT_GENDER, 
         default=MALE,
         verbose_name='Género',
     )
-
     student_phase = models.CharField(
         max_length=20, 
         choices=STUDENT_PHASE, 
         default=GROUND,
         verbose_name='Fase de entrenamiento',
     )
-    
     student_license_type = models.CharField(
         max_length=3,
         choices=LICENSE_TYPES,
         default=LICENSE_NA,
         verbose_name='Tipo de licencia',
     )
-
     flight_hours = models.DecimalField(
         max_digits=5,
         decimal_places=1,
@@ -151,7 +177,6 @@ class StudentProfile(models.Model):
         verbose_name='Horas de vuelo',
         default=0,
     )
-
     sim_hours = models.DecimalField(
         max_digits=4,
         decimal_places=1,
@@ -258,15 +283,17 @@ class InstructorProfile(models.Model):
 
     #region MODEL FIELDS
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='instructor_profile')
-
+    user = models.OneToOneField(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='instructor_profile'
+    )
     instructor_type = models.CharField(
         max_length=20, 
         choices=INSTRUCTOR_TYPES, 
         default=GROUND, 
         verbose_name='Tipo de Instructor',
     )
-
     instructor_license_type = models.CharField(
         max_length=10,
         choices=LICENSE_TYPES,
@@ -288,9 +315,16 @@ class InstructorProfile(models.Model):
 
 class StaffProfile(models.Model):
     """Model for storing staff member information and administrative roles."""
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='staff_profile')
 
-    can_confirm_payments = models.BooleanField(default=False)
+    user = models.OneToOneField(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='staff_profile'
+    )
+    can_confirm_payments = models.BooleanField(
+        default=False,
+        verbose_name='Puede confirmar pagos'
+    )
 
     class Meta:
         db_table = 'staff_db'
@@ -310,19 +344,16 @@ class StudentPayment(models.Model):
         related_name='payments',
         verbose_name='Estudiante',
     )
-
-    # Payment amount
     amount = models.DecimalField(
         max_digits=7,
         decimal_places=2,
         validators=[MinValueValidator(0)],
         verbose_name='Monto',
     )
-
-    # Date when the payment was made
-    date_added = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de pago')
-
-    # The user who adds the payment (accounting manager)
+    date_added = models.DateTimeField(
+        auto_now_add=True, 
+        verbose_name='Fecha de pago'
+    )
     added_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.SET_NULL, 
@@ -331,12 +362,10 @@ class StudentPayment(models.Model):
         limit_choices_to={'role': 'STAFF'},
         verbose_name='Agregado por',
     )
-
-    # Checks if the payment has been confirmed
-    # by the director or authorized staff
-    confirmed = models.BooleanField(default=False, verbose_name='Confirmado')
-    
-    # Admin who confirms the payment
+    confirmed = models.BooleanField(
+        default=False, 
+        verbose_name='Confirmado'
+    )
     confirmed_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -346,16 +375,15 @@ class StudentPayment(models.Model):
         limit_choices_to={'staff_profile__can_confirm_payments': True},
         verbose_name='Confirmado por',
     )
-
-    # Date when the payment was confirmed
     confirmation_date = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name='Fecha de confirmación',
     )
-
-    # Notes or comments about the payment
-    notes = models.TextField(blank=True, verbose_name='Notas')
+    notes = models.TextField(
+        blank=True, 
+        verbose_name='Notas'
+    )
 
     class Meta:
         db_table = 'student_payments'

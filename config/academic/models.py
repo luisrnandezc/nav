@@ -128,9 +128,23 @@ TEST_TYPES = (
 # General Course Type Model
 class CourseType(models.Model):
     """Course model for all permanent courses (Private Pilot, Commercial Pilot, etc.)"""
-    code = models.CharField(max_length=10, unique=True, choices=COURSE_CODES, default='PPA')
-    name = models.CharField(max_length=100, unique=True, choices=COURSE_NAMES, default='Piloto Privado')
-    credit_hours = models.PositiveIntegerField(default=0)
+    code = models.CharField(
+        max_length=10, unique=True, 
+        choices=COURSE_CODES, 
+        default='PPA-T',
+        verbose_name='Código'
+    )
+    name = models.CharField(
+        max_length=100, 
+        unique=True, 
+        choices=COURSE_NAMES, 
+        default='Piloto Privado Avión Teórico',
+        verbose_name='Nombre'
+    )
+    credit_hours = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Horas académicas'
+    )
     
     class Meta:
         verbose_name = 'Curso'
@@ -144,17 +158,34 @@ class CourseType(models.Model):
 # Course Model (specific)
 class CourseEdition(models.Model):
     """Course model for a specific course edition (Private Pilot 1, Commercial Pilot 5, etc.)"""
-    course_type = models.ForeignKey(CourseType, on_delete=models.CASCADE, related_name='editions')
-    edition = models.IntegerField(validators=[MinValueValidator(1)], default=1)
-    start_date = models.DateField(default=timezone.now)
+    course_type = models.ForeignKey(
+        CourseType, 
+        on_delete=models.CASCADE, 
+        related_name='editions',
+        verbose_name='Tipo de Curso'
+    )
+    edition = models.IntegerField(
+        validators=[MinValueValidator(1)], 
+        default=0,
+        verbose_name='Edición',
+        blank=True,
+        null=True,
+    )
     students = models.ManyToManyField(
         User,
         limit_choices_to={'role': 'STUDENT'},
         related_name='enrolled_courses',
         blank=True
     )
-
-    time_slot = models.CharField(max_length=10, choices=TIME_SLOTS)
+    start_date = models.DateField(
+        default=timezone.now,
+        verbose_name='Fecha de inicio'
+    )
+    time_slot = models.CharField(
+        max_length=10, 
+        choices=TIME_SLOTS,
+        verbose_name='Horario'
+    )
 
     class Meta:
         verbose_name = 'Edición de Curso'
@@ -175,20 +206,31 @@ class SubjectType(models.Model):
         related_name='subjects',
         verbose_name='Tipo de Curso'
     )
-    code = models.CharField(max_length=50, unique=True, choices=SUBJECTS_CODES)
-    name = models.CharField(max_length=100, unique=True, choices=SUBJECTS_NAMES)
+    code = models.CharField(
+        max_length=50, 
+        unique=True, 
+        choices=SUBJECTS_CODES,
+        verbose_name='Código'
+    )
+    name = models.CharField(
+        max_length=100, 
+        unique=True, 
+        choices=SUBJECTS_NAMES,
+        verbose_name='Nombre'
+    )
     credit_hours = models.PositiveIntegerField(
         default=0,
-        help_text="Horas académicas de la materia")
+        verbose_name='Horas académicas'
+    )
     passing_grade = models.PositiveIntegerField(
         default=80,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
-        help_text="Nota mínima requerida para aprobar la materia"
+        verbose_name='Nota mínima requerida para aprobar'
     )
     recovery_passing_grade = models.PositiveIntegerField(
         default=90,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
-        help_text="Nota mínima requerida para aprobar la materia en reparación"
+        verbose_name='Nota mínima requerida para aprobar la reparación'
     )
 
     class Meta:
@@ -210,7 +252,6 @@ class SubjectEdition(models.Model):
         verbose_name='Tipo de Materia',
         null=True
     )
-    
     instructor = models.ForeignKey(
         User, 
         on_delete=models.SET_NULL,
@@ -219,7 +260,6 @@ class SubjectEdition(models.Model):
         related_name='teaching_subjects',
         verbose_name='Instructor'
     )
-
     students = models.ManyToManyField(
         User,
         limit_choices_to={'role': 'STUDENT'},
@@ -227,14 +267,19 @@ class SubjectEdition(models.Model):
         blank=True,
         verbose_name='Estudiantes'
     )
-
     time_slot = models.CharField(
         max_length=10, 
         choices=TIME_SLOTS,
         verbose_name='Horario'
     )
-    start_date = models.DateField(verbose_name='Fecha de inicio')
-    end_date = models.DateField(verbose_name='Fecha de finalización')
+    start_date = models.DateField(
+        default=timezone.now,
+        verbose_name='Fecha de inicio'
+    )
+    end_date = models.DateField(
+        default=timezone.now,
+        verbose_name='Fecha de finalización'
+    )
     start_time = models.TimeField(
         default=datetime.time(9, 0),
         verbose_name='Hora de inicio'

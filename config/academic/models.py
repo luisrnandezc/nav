@@ -10,20 +10,30 @@ from accounts.models import User
 
 # Course Type Choices
 COURSE_CODES = (
-    ('PPA', 'PPA'),
-    ('HVI', 'HVI'),
-    ('PCA', 'PCA'),
-    ('IVA', 'IVA'),
-    ('IVS', 'IVS'),
-    ('DDV', 'DDV'),
+    ('PPA-T', 'PPA-T'),
+    ('PPA-P', 'PPA-P'),
+    ('HVI-T', 'HVI-T'),
+    ('HVI-P', 'HVI-P'),
+    ('PCA-T', 'PCA-T'),
+    ('PCA-P', 'PCA-P'),
+    ('IVA-T', 'IVA-T'),
+    ('IVA-P', 'IVA-P'),
+    ('IVS-T', 'IVS-T'),
+    ('IVS-P', 'IVS-P'),
+    ('RCL', 'RCL'),
 )
 COURSE_NAMES = (
-    ('Piloto Privado Avión', 'Piloto Privado Avión'),
-    ('Habilitación Vuelo Instrumental Avión', 'Habilitación Vuelo Instrumental Avión'),
-    ('Piloto Comercial Avión', 'Piloto Comercial Avión'),
-    ('Instructor de Vuelo Avión', 'Instructor de Vuelo Avión'),
-    ('Instructor de Vuelo Simulado', 'Instructor de Vuelo Simulado'),
-    ('Despachador de Vuelo', 'Despachador de Vuelo'),
+    ('Piloto Privado Avión Teórico', 'Piloto Privado Avión Teórico'),
+    ('Piloto Privado Avión Práctico', 'Piloto Privado Avión Práctico'),
+    ('Habilitación Vuelo Instrumental Avión Teórico', 'Habilitación Vuelo Instrumental Avión Teórico'),
+    ('Habilitación Vuelo Instrumental Avión Práctico', 'Habilitación Vuelo Instrumental Avión Práctico'),
+    ('Piloto Comercial Avión Teórico', 'Piloto Comercial Avión Teórico'),
+    ('Piloto Comercial Avión Práctico', 'Piloto Comercial Avión Práctico'),
+    ('Instructor de Vuelo Avión Teórico', 'Instructor de Vuelo Avión Teórico'),
+    ('Instructor de Vuelo Avión Práctico', 'Instructor de Vuelo Avión Práctico'),
+    ('Instructor de Vuelo Simulado Teórico', 'Instructor de Vuelo Simulado Teórico'),
+    ('Instructor de Vuelo Simulado Práctico', 'Instructor de Vuelo Simulado Práctico'),
+    ('Recalificación', 'Recalificación'),
 )
 
 # Subject Choices by Course Type
@@ -61,19 +71,6 @@ SUBJECTS_CODES = (
     ('IVA-ADE', 'IVA-ADE'),
     ('IVS-PFD', 'IVS-PFD'),
     ('IVS-ADE', 'IVS-ADE'),
-    ('DDV-DER', 'DDV-DER'),
-    ('DDV-ADA', 'DDV-ADA'),
-    ('DDV-MYP', 'DDV-MYP'),
-    ('DDV-NAV', 'DDV-NAV'),
-    ('DDV-CTA', 'DDV-CTA'),
-    ('DDV-MET', 'DDV-MET'),
-    ('DDV-CMC', 'DDV-CMC'),
-    ('DDV-TMP', 'DDV-TMP'),
-    ('DDV-PDV', 'DDV-PDV'),
-    ('DDV-MDV', 'DDV-MDV'),
-    ('DDV-RDC', 'DDV-RDC'),
-    ('DDV-FHH', 'DDV-FHH'),
-    ('DDV-SEG', 'DDV-SEG'),
 )
 
 SUBJECTS_NAMES = (
@@ -110,19 +107,6 @@ SUBJECTS_NAMES = (
     ('IVA-ADE', 'IVA - Administración de la Enseñanza'),
     ('IVS-PFD', 'IVS - Peligros Durante la Simulación de Fallas'),
     ('IVS-ADE', 'IVS - Administración de la Enseñanza'),
-    ('DDV-DER', 'DDV - Derecho Aeronáutico'),
-    ('DDV-ADA', 'DDV - Adoctrinamiento en Aviación'),
-    ('DDV-MYP', 'DDV - Masa y Performance de la Aeronave'),
-    ('DDV-NAV', 'DDV - Navegación'),
-    ('DDV-CTA', 'DDV - Control de Tránsito Aéreo'),
-    ('DDV-MET', 'DDV - Meteorología'),
-    ('DDV-CMC', 'DDV - Control de Masa y Centrado'),
-    ('DDV-TMP', 'DDV - Transporte de Mercancías Peligrosas'),
-    ('DDV-PDV', 'DDV - Planificación de Vuelo'),
-    ('DDV-MDV', 'DDV - Monitoreo del Vuelo'),
-    ('DDV-RDC', 'DDV - Radiocomunicaciones'),
-    ('DDV-FHH', 'DDV - Factores Humanos'),
-    ('DDV-SEG', 'DDV - Seguridad'),
 )
 
 # Time Slots

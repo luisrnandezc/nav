@@ -10,7 +10,7 @@ class SimulatorLogAdmin(admin.ModelAdmin):
         'evaluation_id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date_only', 'simulator', 'session_number', 'session_sim_hours'
+        'session_date', 'simulator', 'session_number', 'session_sim_hours'
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'simulator', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -79,10 +79,6 @@ class SimulatorLogAdmin(admin.ModelAdmin):
     def instructor_id(self, obj):
         return obj.instructor_id
     instructor_id.short_description = 'ID del instructor'
-    
-    def session_date_only(self, obj):
-        return obj.session_date.date()
-    session_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Bitácora de simulador'
@@ -174,7 +170,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date_only', 'simulator', 'session_number', 'session_sim_hours', 'session_grade'
+        'session_date', 'simulator', 'session_number', 'session_sim_hours', 'session_grade'
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'simulator', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -326,10 +322,6 @@ class SimEvaluationAdmin(admin.ModelAdmin):
     def instructor_id(self, obj):
         return obj.instructor_license_number
     instructor_id.short_description = 'ID del instructor'
-    
-    def session_date_only(self, obj):
-        return obj.session_date.date()
-    session_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Evaluación de simulador'

@@ -30,7 +30,7 @@
                         <tbody>
                         {% for log in flight_logs %}
                              <tr>
-                                <td>{{ log.flight_date|date:"d/m/Y" }}</td>
+                                <td>{{ log.session_date|date:"d/m/Y" }}</td>
                                 <td>{{ log.student_first_name }} {{ log.student_last_name }}</td>
                                 <td>{{ log.aircraft_registration }}</td>
                                 <td>{{ log.flight_rules }}</td>

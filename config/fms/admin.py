@@ -94,12 +94,12 @@ class FlightLogAdmin(admin.ModelAdmin):
         'evaluation_id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours'
+        'session_date', 'aircraft_registration', 'session_number', 'session_flight_hours'
     ]
-    list_filter = ['flight_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
+    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
-    date_hierarchy = 'flight_date'
-    ordering = ['-flight_date']
+    date_hierarchy = 'session_date'
+    ordering = ['-session_date']
     
     fieldsets = (
         ('Sección 1: Datos del alumno', {
@@ -118,7 +118,7 @@ class FlightLogAdmin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'flight_date', 'student_id', 'student_first_name', 'student_last_name',
+        'session_date', 'student_id', 'student_first_name', 'student_last_name',
         'course_type', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
         'flight_rules', 'solo_flight', 'session_number', 'session_letter',
         'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration',
@@ -163,10 +163,6 @@ class FlightLogAdmin(admin.ModelAdmin):
     def instructor_id(self, obj):
         return obj.instructor_id
     instructor_id.short_description = 'ID del instructor'
-    
-    def flight_date_only(self, obj):
-        return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha'
 
     class Meta:
         verbose_name = 'Bitácora de vuelo'
@@ -345,12 +341,12 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
     ]
-    list_filter = ['flight_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
+    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
-    date_hierarchy = 'flight_date'
-    ordering = ['-flight_date']
+    date_hierarchy = 'session_date'
+    ordering = ['-session_date']
     
     actions = ['generate_pdf']
     
@@ -434,7 +430,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'flight_date', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
+        'session_date', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
         'instructor_license_type', 'instructor_license_number', 'student_id', 'student_first_name',
         'student_last_name', 'student_license_type', 'student_license_number', 'course_type',
         'flight_rules', 'solo_flight', 'session_number', 'session_letter', 'accumulated_flight_hours',
@@ -466,10 +462,6 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         return obj.instructor_license_number
     instructor_id.short_description = 'ID del instructor'
     
-    def flight_date_only(self, obj):
-        return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha'
-
     class Meta:
         verbose_name = 'Evaluación de vuelo 0-100'
         verbose_name_plural = 'Evaluaciones de vuelo 0-100'
@@ -480,12 +472,12 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
     ]
-    list_filter = ['flight_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
+    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
-    date_hierarchy = 'flight_date'
-    ordering = ['-flight_date']
+    date_hierarchy = 'session_date'
+    ordering = ['-session_date']
 
     actions = ['generate_pdf']
     
@@ -568,7 +560,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'flight_date', 'student_id', 'student_first_name', 'student_last_name',
+        'session_date', 'student_id', 'student_first_name', 'student_last_name',
         'student_license_type', 'student_license_number', 'course_type', 'instructor_id',
         'instructor_first_name', 'instructor_last_name', 'instructor_license_type',
         'instructor_license_number', 'flight_rules', 'solo_flight', 'session_number',
@@ -602,10 +594,6 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         return obj.instructor_license_number
     instructor_id.short_description = 'ID del instructor'
     
-    def flight_date_only(self, obj):
-        return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha'
-
     class Meta:
         verbose_name = 'Evaluación de vuelo 100-120'
         verbose_name_plural = 'Evaluaciones de vuelo 100-120'
@@ -616,12 +604,12 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'flight_date_only', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
     ]
-    list_filter = ['flight_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
+    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
-    date_hierarchy = 'flight_date'
-    ordering = ['-flight_date']
+    date_hierarchy = 'session_date'
+    ordering = ['-session_date']
 
     actions = ['generate_pdf']
     
@@ -697,7 +685,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'flight_date', 'student_id', 'student_first_name', 'student_last_name',
+        'session_date', 'student_id', 'student_first_name', 'student_last_name',
         'student_license_type', 'student_license_number', 'course_type', 'instructor_id',
         'instructor_first_name', 'instructor_last_name', 'instructor_license_type',
         'instructor_license_number', 'flight_rules', 'solo_flight', 'session_number',
@@ -729,10 +717,6 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         return obj.instructor_license_number
     instructor_id.short_description = 'ID del instructor'
     
-    def flight_date_only(self, obj):
-        return obj.flight_date.date()
-    flight_date_only.short_description = 'Fecha'
-
     class Meta:
         verbose_name = 'Evaluación de vuelo 120-170'
         verbose_name_plural = 'Evaluaciones de vuelo 120-170'

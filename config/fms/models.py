@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
 from accounts.models import StudentProfile
+from django.utils import timezone
 
 class SimulatorLog(models.Model):
     """
@@ -120,8 +121,8 @@ class SimulatorLog(models.Model):
     #endregion
 
     #region SESSION DATA
-    session_date = models.DateTimeField(
-        auto_now_add=True,
+    session_date = models.DateField(
+        default=timezone.now,
         verbose_name='Fecha'
     )
     flight_rules = models.CharField(
@@ -177,7 +178,7 @@ class SimulatorLog(models.Model):
     #endregion
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date.date()} - {self.simulator} - {self.session_grade}'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.simulator} - {self.session_grade}'
     
     class Meta:
         verbose_name = 'Bitácora de simulador'
@@ -317,8 +318,8 @@ class FlightLog(models.Model):
     #endregion
 
     #region SESSION DATA
-    flight_date = models.DateTimeField(
-        auto_now_add=True,
+    session_date = models.DateField(
+        default=timezone.now,
         verbose_name='Fecha'
     )
     flight_rules = models.CharField(
@@ -374,7 +375,7 @@ class FlightLog(models.Model):
     #endregion
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     class Meta:
         verbose_name = 'Bitácora de vuelo'
@@ -531,8 +532,8 @@ class SimEvaluation(models.Model):
     #endregion
 
     #region SESSION DATA
-    session_date = models.DateTimeField(
-        auto_now_add=True,
+    session_date = models.DateField(
+        default=timezone.now,
         verbose_name='Fecha'
     )
     flight_rules = models.CharField(
@@ -1130,7 +1131,7 @@ class SimEvaluation(models.Model):
         return self.accumulated_sim_hours + self.session_sim_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date.date()} - {self.simulator} - {self.session_sim_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.simulator} - {self.session_sim_hours} hrs'
     
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours
@@ -1306,8 +1307,8 @@ class FlightEvaluation0_100(models.Model):
     #endregion
 
     #region SESSION DATA
-    flight_date = models.DateTimeField(
-        auto_now_add=True,
+    session_date = models.DateField(
+        default=timezone.now,
         verbose_name='Fecha'
     )
     flight_rules = models.CharField(
@@ -1743,7 +1744,7 @@ class FlightEvaluation0_100(models.Model):
         return self.accumulated_flight_hours + self.session_flight_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours
@@ -1922,8 +1923,8 @@ class FlightEvaluation100_120(models.Model):
     #endregion
 
     #region SESSION DATA
-    flight_date = models.DateTimeField(
-        auto_now_add=True,
+    session_date = models.DateField(
+        default=timezone.now,
         verbose_name='Fecha'
     )
     flight_rules = models.CharField(
@@ -2323,7 +2324,7 @@ class FlightEvaluation100_120(models.Model):
         return self.accumulated_flight_hours + self.session_flight_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
     
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours
@@ -2502,8 +2503,8 @@ class FlightEvaluation120_170(models.Model):
     #endregion
 
     #region SESSION DATA
-    flight_date = models.DateTimeField(
-        auto_now_add=True,
+    session_date = models.DateField(
+        default=timezone.now,
         verbose_name='Fecha'
     )
     flight_rules = models.CharField(
@@ -2828,7 +2829,7 @@ class FlightEvaluation120_170(models.Model):
         return self.accumulated_flight_hours + self.session_flight_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.flight_date.date()} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
 
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours

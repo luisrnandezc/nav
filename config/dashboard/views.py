@@ -43,7 +43,7 @@ def student_logs(request):
     # Fetch flight logs for the student (last 10)
     flight_logs = FlightLog.objects.filter(
         student_id=student_id
-    ).order_by('-flight_date')[:10]
+    ).order_by('-session_date')[:10]
     
     # Fetch simulator logs for the student (last 10)
     simulator_logs = SimulatorLog.objects.filter(
@@ -71,7 +71,7 @@ def instructor_logs(request):
     # Fetch flight logs for the instructor (last 10)
     flight_logs = FlightLog.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-flight_date')[:10]
+    ).order_by('-session_date')[:10]
     
     # Fetch simulator logs for the instructor (last 10)
     simulator_logs = SimulatorLog.objects.filter(

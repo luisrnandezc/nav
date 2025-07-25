@@ -106,7 +106,7 @@ class FlightLogAdmin(admin.ModelAdmin):
         }),
         ('Sección 3: Datos de la sesión', {
             'fields': (
-                'flight_rules', 'solo_flight', 'session_number', 
+                'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
                 'aircraft_registration', 'session_grade', 'comments'
             )
@@ -213,7 +213,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
         }),
         ('Sección 3: Datos de la sesión', {
             'fields': (
-                'flight_rules', 'pre_solo_flight', 'session_number', 
+                'session_date', 'flight_rules', 'pre_solo_flight', 'session_number', 
                 'session_letter', 'accumulated_sim_hours', 'session_sim_hours',
                 'simulator', 'session_grade'
             )
@@ -376,7 +376,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         }),
         ('Sección 3: Datos de la sesión', {
             'fields': (
-                'flight_rules', 'solo_flight', 'session_number', 
+                'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
                 'aircraft_registration', 'session_grade'
             )
@@ -507,7 +507,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         }),
         ('Sección 3: Datos de la sesión', {
             'fields': (
-                'flight_rules', 'solo_flight', 'session_number', 
+                'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
                 'aircraft_registration', 'session_grade'
             )
@@ -639,7 +639,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         }),
         ('Sección 3: Datos de la sesión', {
             'fields': (
-                'flight_rules', 'solo_flight', 'session_number', 
+                'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
                 'aircraft_registration', 'session_grade'
             )

@@ -24,9 +24,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&^7+-ow54x%!aopkqw@lfd59h=b+b&%9mz=s1df1@n6^1y=jht'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Check if we're on PythonAnywhere (production)
+ON_PYTHONANYWHERE = 'PYTHONANYWHERE_SITE' in os.environ
 
-ALLOWED_HOSTS = ['127.0.0.1', 'www.navaviation.org']
+DEBUG = not ON_PYTHONANYWHERE  # False on PythonAnywhere, True locally
+
+# ALLOWED_HOSTS configuration
+if ON_PYTHONANYWHERE:
+    ALLOWED_HOSTS = ['www.navaviation.org', 'navaviation.org', 'yourusername.pythonanywhere.com']
+    CSRF_TRUSTED_ORIGINS = [
+        'https://www.navaviation.org',
+        'https://navaviation.org',
+        'https://yourusername.pythonanywhere.com'
+    ]
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -148,3 +160,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
+
+# Additional CSRF settings for production
+if ON_PYTHONANYWHERE:
+    # Ensure CSRF cookies are secure in production
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    
+    # Session settings for production
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'

@@ -100,7 +100,9 @@ class AircraftAvailability(models.Model):
         on_delete=models.CASCADE, 
         verbose_name="Aeronave"
     )
-    date = models.DateField(verbose_name="Fecha")
+    date = models.DateField(
+        verbose_name="Fecha"
+    )
     is_available = models.BooleanField(
         default=True, 
         verbose_name="Disponible"

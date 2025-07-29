@@ -976,7 +976,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'session_number': forms.Select(attrs={'class': 'form-field'}),
             'session_letter': forms.Select(attrs={'class': 'form-field'}),
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
-            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field read-only', 'readonly': True}),
+            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field'}),
             'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
             'aircraft_registration': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),

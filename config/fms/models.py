@@ -1840,7 +1840,7 @@ class FlightEvaluation100_120(models.Model):
     # Session number
     def generate_choices():
         choices = []
-        for i in range(1, 21):
+        for i in range(1, 11):
             choices.append((str(i), str(i)))
         return choices
     

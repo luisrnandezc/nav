@@ -43,9 +43,6 @@ class SimulatorLogAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
     
-    def has_change_permission(self, request, obj=None):
-        return False
-    
     def get_actions(self, request):
         # Remove bulk delete action
         actions = super().get_actions(request)
@@ -119,9 +116,6 @@ class FlightLogAdmin(admin.ModelAdmin):
         return False
     
     def has_delete_permission(self, request, obj=None):
-        return False
-    
-    def has_change_permission(self, request, obj=None):
         return False
     
     def get_actions(self, request):

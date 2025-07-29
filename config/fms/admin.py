@@ -172,7 +172,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
         if len(queryset) == 1:
             # Single evaluation - redirect to PDF download
             evaluation = queryset.first()
-            return redirect('fms:download_pdf', form_type='100_120', evaluation_id=evaluation.id)
+            return redirect('fms:download_pdf', form_type='sim', evaluation_id=evaluation.id)
         else:
             # Multiple evaluations - show message
             self.message_user(request, f'Seleccione solo una evaluación para generar el PDF.')
@@ -593,7 +593,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         if len(queryset) == 1:
             # Single evaluation - redirect to PDF download
             evaluation = queryset.first()
-            return redirect('fms:download_pdf', form_type='100_120', evaluation_id=evaluation.id)
+            return redirect('fms:download_pdf', form_type='120_170', evaluation_id=evaluation.id)
         else:
             # Multiple evaluations - show message
             self.message_user(request, f'Seleccione solo una evaluación para generar el PDF.')

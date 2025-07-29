@@ -32,10 +32,8 @@ class SimulatorLogAdmin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'session_date', 'student_id', 'student_first_name', 'student_last_name', 'course_type',	
+        'student_id', 'student_first_name', 'student_last_name', 'course_type',	
         'instructor_id', 'instructor_first_name', 'instructor_last_name',
-        'flight_rules', 'pre_solo_flight', 'session_number', 'session_letter',
-        'accumulated_sim_hours', 'session_sim_hours', 'simulator',
         'session_grade', 'comments'
     ]
     
@@ -112,10 +110,8 @@ class FlightLogAdmin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'session_date', 'student_id', 'student_first_name', 'student_last_name',
+        'student_id', 'student_first_name', 'student_last_name',
         'course_type', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
-        'flight_rules', 'solo_flight', 'session_number', 'session_letter',
-        'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration',
         'session_grade', 'comments'
     ]
     

@@ -2,8 +2,17 @@ from django import forms
 from django.db import transaction
 from .models import SimulatorLog, FlightLog, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation
 from accounts.models import StudentProfile
+from fleet.models import Simulator, Aircraft
 
 class SimEvaluationForm(forms.ModelForm):
+    # Add a custom simulator field that uses ModelChoiceField
+    simulator = forms.ModelChoiceField(
+        queryset=Simulator.objects.filter(is_active=True),
+        empty_label="Simulador",
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Simulador'
+    )
+    
     class Meta:
         model = SimEvaluation
         fields = [
@@ -156,7 +165,6 @@ class SimEvaluationForm(forms.ModelForm):
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
             'accumulated_sim_hours': forms.TextInput(attrs={'class': 'form-field'}),
             'session_sim_hours': forms.NumberInput(attrs={'class': 'form-field'}),
-            'simulator': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
@@ -310,6 +318,9 @@ class SimEvaluationForm(forms.ModelForm):
             if student_id and session_sim_hours:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 student_profile.sim_hours += session_sim_hours
+
+                sim = Simulator.objects.get(name=self.cleaned_data.get('simulator'))
+                student_profile.sim_balance -= round(session_sim_hours*sim.hourly_rate, 2)
                 student_profile.save()
 
         return instance

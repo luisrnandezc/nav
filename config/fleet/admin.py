@@ -1,5 +1,24 @@
 from django.contrib import admin
-from .models import Aircraft, AircraftAvailability, AircraftHours
+from .models import Simulator, Aircraft, AircraftAvailability, AircraftHours
+
+@admin.register(Simulator)
+class SimulatorAdmin(admin.ModelAdmin):
+    list_display = ['name', 'is_active', 'is_available', 'hourly_rate', 'total_hours']
+    list_filter = ['is_active', 'is_available']
+    search_fields = ['name']
+    readonly_fields = ['created_at', 'updated_at']
+    fieldsets = (
+        ('Información básica', {
+            'fields': ('name', 'is_active', 'is_available', 'hourly_rate')
+        }),
+        ('Registro de horas', {
+            'fields': ('total_hours',)
+        }),
+        ('Misceláneos', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
 
 @admin.register(Aircraft)
 class AircraftAdmin(admin.ModelAdmin):

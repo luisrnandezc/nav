@@ -7,6 +7,19 @@ from django.core.exceptions import ValidationError
 class StudentPayment(models.Model):
     """Model for tracking student payments, balances, and payment confirmations."""
 
+    #region CHOICE DEFINITIONS
+
+    # Payment type
+    FLIGHT = 'VUELO'
+    SIMULATOR = 'SIMULADOR'
+
+    PAYMENT_TYPES = [
+        (FLIGHT, 'Vuelo'),
+        (SIMULATOR, 'Simulador'),
+    ]
+    #endregion
+
+    #region MODEL FIELDS
     student_profile = models.ForeignKey(
         'accounts.StudentProfile', 
         on_delete=models.CASCADE, 
@@ -18,6 +31,12 @@ class StudentPayment(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(0)],
         verbose_name='Monto',
+    )
+    type = models.CharField(
+        max_length=20,
+        choices=PAYMENT_TYPES,
+        default=FLIGHT,
+        verbose_name='Tipo de pago',
     )
     date_added = models.DateTimeField(
         auto_now_add=True, 
@@ -53,6 +72,7 @@ class StudentPayment(models.Model):
         blank=True, 
         verbose_name='Notas'
     )
+    #endregion
 
     class Meta:
         db_table = 'student_payments'
@@ -95,8 +115,10 @@ class StudentPayment(models.Model):
         self.save()
         
         # Update balance if your StudentProfile has one
-        if hasattr(self.student_profile, 'student_balance'):
-            self.student_profile.student_balance += self.amount
+        if self.type == 'VUELO':
+            self.student_profile.flight_balance += self.amount
+        elif self.type == 'SIMULADOR':
+            self.student_profile.sim_balance += self.amount
             self.student_profile.save()
     
     def save(self, *args, **kwargs):
@@ -105,3 +127,13 @@ class StudentPayment(models.Model):
         if self.confirmed and not self.confirmation_date:
             self.confirmation_date = timezone.now()
         super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        """Override delete method to validate data before deleting"""
+        # Automatically update balance if your StudentProfile has one
+        if self.type == 'VUELO':
+            self.student_profile.flight_balance -= self.amount
+        elif self.type == 'SIMULADOR':
+            self.student_profile.sim_balance -= self.amount
+        self.student_profile.save()
+        super().delete(*args, **kwargs)

@@ -182,13 +182,18 @@ class StudentProfile(models.Model):
         verbose_name='Horas de simulador',
         default=0,
     )
-
-    @property
-    def student_balance(self):
-        """Calculate the balance as the sum of all confirmed payments."""
-        confirmed_payments = self.payments.filter(confirmed=True).aggregate(models.Sum('amount'))
-        return confirmed_payments['amount__sum'] or 0.00
-
+    sim_balance = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Balance de simulador',
+        default=0.00,
+    )
+    flight_balance = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Balance de vuelo',
+        default=0.00,
+    )
     #endregion
 
     class Meta:

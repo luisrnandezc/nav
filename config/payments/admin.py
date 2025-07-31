@@ -14,7 +14,7 @@ class StudentPaymentAdmin(admin.ModelAdmin):
             'fields': ('student_profile',)
         }),
         ('Detalles del Pago', {
-            'fields': ('amount', 'added_by', 'date_added'),
+            'fields': ('amount', 'type', 'added_by', 'date_added'),
             'description': 'El usuario que agrega el pago se registra automáticamente.'
         }),
         ('Confirmación', {

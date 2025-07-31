@@ -1,6 +1,70 @@
 from django.db import models
 from django.conf import settings
 
+class Simulator(models.Model):
+
+    #region CHOICES DEFINITIONS
+
+    # Simulators
+    FPT = 'FPT'
+    B737 = 'B737'
+
+    SIMULATOR_CHOICES = [
+        (FPT, 'FPT'),
+        (B737, 'B737'),
+    ]
+    #endregion
+
+    #region MODEL DEFINITIONS
+    name = models.CharField(
+        max_length=255,
+        choices=SIMULATOR_CHOICES,
+        verbose_name="Nombre"
+    )
+    is_active = models.BooleanField(
+        default=True, 
+        verbose_name="Activo"
+    )
+    is_available = models.BooleanField(
+        default=True, 
+        verbose_name="Disponible"
+    )
+    hourly_rate = models.DecimalField(
+        max_digits=4, 
+        decimal_places=1, 
+        default=130.0,
+        verbose_name="Precio por hora"
+    )
+    total_hours = models.DecimalField(
+        max_digits=8, 
+        decimal_places=1, 
+        default=0.0, 
+        verbose_name="Horas totales"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, 
+        verbose_name="Fecha de creación"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True, 
+        verbose_name="Fecha de actualización"
+    )
+    #endregion
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Simulador"
+        verbose_name_plural = "Simuladores"
+
+    def __str__(self):
+        return f"Simulador {self.name} - {self.total_hours} horas"
+
+    @property
+    def is_available_for_scheduling(self):
+        """Check if simulator can be scheduled"""
+        return (self.is_active and 
+                self.is_available)
+
 class Aircraft(models.Model):
 
     # Basic Information
@@ -44,13 +108,11 @@ class Aircraft(models.Model):
         default="OPERATIONAL",
         verbose_name="Estatus de mantenimiento"
     )
-    total_hours = models.IntegerField(
-        default=0, 
+    total_hours = models.DecimalField(
+        max_digits=8, 
+        decimal_places=1, 
+        default=0.0, 
         verbose_name="Horas totales"
-    )
-    total_cycles = models.IntegerField(
-        default=0, 
-        verbose_name="Ciclos totales"
     )
 
     # Scheduling configuration
@@ -62,7 +124,7 @@ class Aircraft(models.Model):
         max_digits=4, 
         decimal_places=1, 
         default=130.0,
-        verbose_name="Tasa horaria"
+        verbose_name="Precio por hora"
     )
 
     # Additional info

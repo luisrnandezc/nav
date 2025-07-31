@@ -65,15 +65,6 @@ class SimulatorLog(models.Model):
         (NON_STANDARD, 'NS'),
         (NOT_EVALUATED, 'NE'),
     ]
-
-    # Simulator
-    FPT = 'FPT'
-    B737 = 'B737'
-
-    SIMULATOR_CHOICES = [
-        (FPT, 'FPT'),
-        (B737, 'B737'),
-    ]
     #endregion
 
     evaluation_id = models.PositiveIntegerField(
@@ -459,15 +450,6 @@ class SimEvaluation(models.Model):
         ('A', 'A'),
         ('B', 'B'),
         ('C', 'C'),
-    ]
-
-    # Simulator
-    FPT = 'FPT'
-    B737 = 'B737'
-
-    SIMULATOR_CHOICES = [
-        (FPT, 'FPT'),
-        (B737, 'B737'),
     ]
     #endregion
 

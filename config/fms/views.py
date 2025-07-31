@@ -16,6 +16,25 @@ def form_selection(request):
     return render(request, 'fms/form_selection.html')
 
 @login_required
+def submit_sim_evaluation(request):
+    """Handle simulator evaluation form submission."""
+    if request.method == 'POST':
+        form = SimEvaluationForm(request.POST, user=request.user)
+        if form.is_valid():
+            try:
+                evaluation = form.save()  # Save and get the saved instance
+                # Redirect to intermediate download page
+                return redirect('fms:pdf_download_waiting_page', form_type='sim', evaluation_id=evaluation.id)
+            except Exception as e:
+                messages.error(request, f'Error al guardar la evaluación: {str(e)}')
+        else:
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
+    else:  
+        form = SimEvaluationForm(user=request.user)
+
+    return render(request, 'fms/sim_evaluation.html', {'form': form})
+
+@login_required
 def submit_flight_evaluation_0_100(request):
     """Handle flight evaluation form submission."""
     if request.method == 'POST':
@@ -71,25 +90,6 @@ def submit_flight_evaluation_120_170(request):
         form = FlightEvaluation120_170Form(user=request.user)
 
     return render(request, 'fms/flight_evaluation_120_170.html', {'form': form})
-
-@login_required
-def submit_sim_evaluation(request):
-    """Handle simulator evaluation form submission."""
-    if request.method == 'POST':
-        form = SimEvaluationForm(request.POST, user=request.user)
-        if form.is_valid():
-            try:
-                evaluation = form.save()  # Save and get the saved instance
-                # Redirect to intermediate download page
-                return redirect('fms:pdf_download_waiting_page', form_type='sim', evaluation_id=evaluation.id)
-            except Exception as e:
-                messages.error(request, f'Error al guardar la evaluación: {str(e)}')
-        else:
-            messages.error(request, 'Por favor corrija los errores en el formulario.')
-    else:  
-        form = SimEvaluationForm(user=request.user)
-
-    return render(request, 'fms/sim_evaluation.html', {'form': form})
 
 @login_required
 @require_http_methods(["GET"])

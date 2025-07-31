@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
 from accounts.models import StudentProfile
 from django.utils import timezone
+from fleet.models import Simulator, Aircraft
 
 class SimulatorLog(models.Model):
     """
@@ -162,10 +163,9 @@ class SimulatorLog(models.Model):
         default=0.0,   
         verbose_name='Horas sesión'
     )
-    simulator = models.CharField(
-        max_length=6,
-        choices=SIMULATOR_CHOICES,
-        default=FPT,
+    simulator = models.ForeignKey(
+        Simulator,
+        on_delete=models.CASCADE,
         verbose_name='Simulador'
     )
     session_grade = models.CharField(
@@ -573,10 +573,9 @@ class SimEvaluation(models.Model):
         default=0.0,
         verbose_name='Horas sesión'
     )
-    simulator = models.CharField(
-        max_length=6,
-        choices=SIMULATOR_CHOICES,
-        default=FPT,
+    simulator = models.ForeignKey(
+        Simulator,
+        on_delete=models.CASCADE,
         verbose_name='Simulador'
     )
     session_grade = models.CharField(
@@ -1131,13 +1130,14 @@ class SimEvaluation(models.Model):
         return self.accumulated_sim_hours + self.session_sim_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.simulator} - {self.session_sim_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.simulator.name} - {self.session_sim_hours} hrs'
     
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.sim_hours -= self.session_sim_hours
+            student_profile.sim_balance += round(self.session_sim_hours*self.simulator.hourly_rate, 2)
             # Ensure hours don't go negative
             if student_profile.sim_hours < 0:
                 student_profile.sim_hours = 0

@@ -54,7 +54,7 @@ class Simulator(models.Model):
         verbose_name_plural = "Simuladores"
 
     def __str__(self):
-        return f"Simulador {self.name} - {self.total_hours} horas"
+        return f"{self.name}"
 
     @property
     def is_available_for_scheduling(self):

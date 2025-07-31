@@ -4,14 +4,9 @@ from .models import SimulatorLog, FlightLog, FlightEvaluation0_100, FlightEvalua
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
 
-class SimplifiedSimulatorField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        # Return just the name (FPT or B737) instead of the full string
-        return obj.name
-
 class SimEvaluationForm(forms.ModelForm):
     # Add a custom simulator field that uses ModelChoiceField
-    simulator = SimplifiedSimulatorField(
+    simulator = forms.ModelChoiceField(
         queryset=Simulator.objects.filter(is_active=True),
         empty_label=None,
         widget=forms.Select(attrs={'class': 'form-field'}),
@@ -333,7 +328,8 @@ class SimEvaluationForm(forms.ModelForm):
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 student_profile.sim_hours += session_sim_hours
 
-                sim = Simulator.objects.get(name=self.cleaned_data.get('simulator'))
+                # Get the simulator object directly from cleaned_data (it's already a Simulator instance)
+                sim = self.cleaned_data.get('simulator')
                 student_profile.sim_balance -= round(session_sim_hours*sim.hourly_rate, 2)
                 student_profile.save()
 

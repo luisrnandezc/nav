@@ -1,19 +1,16 @@
 from django.db import models
 from django.conf import settings
 
+# Simulator choices
+FPT = 'FPT'
+B737 = 'B737'
+
+SIMULATOR_CHOICES = [
+    (FPT, 'FPT'),
+    (B737, 'B737'),
+]
+
 class Simulator(models.Model):
-
-    #region CHOICES DEFINITIONS
-
-    # Simulators
-    FPT = 'FPT'
-    B737 = 'B737'
-
-    SIMULATOR_CHOICES = [
-        (FPT, 'FPT'),
-        (B737, 'B737'),
-    ]
-    #endregion
 
     #region MODEL DEFINITIONS
     name = models.CharField(

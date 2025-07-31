@@ -168,18 +168,18 @@ class StudentProfile(models.Model):
         default=LICENSE_NA,
         verbose_name='Tipo de licencia',
     )
-    flight_hours = models.DecimalField(
-        max_digits=5,
-        decimal_places=1,
-        validators=[MinValueValidator(0)],
-        verbose_name='Horas de vuelo',
-        default=0,
-    )
     sim_hours = models.DecimalField(
         max_digits=4,
         decimal_places=1,
         validators=[MinValueValidator(0)],
         verbose_name='Horas de simulador',
+        default=0,
+    )
+    flight_hours = models.DecimalField(
+        max_digits=5,
+        decimal_places=1,
+        validators=[MinValueValidator(0)],
+        verbose_name='Horas de vuelo',
         default=0,
     )
     sim_balance = models.DecimalField(

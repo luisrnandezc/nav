@@ -4,11 +4,16 @@ from .models import SimulatorLog, FlightLog, FlightEvaluation0_100, FlightEvalua
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
 
+class SimplifiedSimulatorField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        # Return just the name (FPT or B737) instead of the full string
+        return obj.name
+
 class SimEvaluationForm(forms.ModelForm):
     # Add a custom simulator field that uses ModelChoiceField
-    simulator = forms.ModelChoiceField(
+    simulator = SimplifiedSimulatorField(
         queryset=Simulator.objects.filter(is_active=True),
-        empty_label="Simulador",
+        empty_label=None,
         widget=forms.Select(attrs={'class': 'form-field'}),
         label='Simulador'
     )
@@ -272,6 +277,15 @@ class SimEvaluationForm(forms.ModelForm):
             self.fields['instructor_last_name'].initial = user.last_name
             self.fields['instructor_license_type'].initial = profile.instructor_license_type
             self.fields['instructor_license_number'].initial = user.national_id
+        
+        # Set default simulator to FPT if no initial value is provided
+        if not self.initial.get('simulator'):
+            try:
+                default_simulator = Simulator.objects.filter(is_active=True, name='FPT').first()
+                if default_simulator:
+                    self.initial['simulator'] = default_simulator
+            except:
+                pass  # If FPT doesn't exist, just use the first available simulator
 
     def save(self, commit=True):
         """Override the save method to copy user_id to user_license_number and create FlightLog."""

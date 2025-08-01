@@ -40,18 +40,18 @@ class StudentProfileAdmin(admin.ModelAdmin):
     get_student_id.admin_order_field = 'user__national_id'
 
     fieldsets = (
-        ('User Information', {
+        ('Información del usuario', {
             'fields': ('user',)
         }),
-        ('Student Information', {
+        ('Información del estudiante', {
             'fields': ('student_age', 'student_gender', 'student_phase', 
-                       'student_license_type', 'flight_hours', 'sim_hours')
+                       'student_license_type', 'sim_hours', 'flight_hours')
         }),
-        ('Course Information', {
+        ('Información del curso', {
             'fields': ('get_course_type', 'get_course_edition'),
             'description': 'Esta información se actualiza automáticamente según la inscripción del estudiante en los cursos.'
         }),
-        ('Balance Information', {
+        ('Balance financiero', {
             'fields': ('sim_balance', 'flight_balance')
         }),
     )

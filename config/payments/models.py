@@ -119,7 +119,7 @@ class StudentPayment(models.Model):
             self.student_profile.flight_balance += self.amount
         elif self.type == 'SIMULADOR':
             self.student_profile.sim_balance += self.amount
-            self.student_profile.save()
+        self.student_profile.save()
     
     def save(self, *args, **kwargs):
         """Override save method to validate data before saving"""

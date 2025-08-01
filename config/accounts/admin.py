@@ -29,16 +29,6 @@ class StudentProfileAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
     readonly_fields = ('get_course_type', 'get_course_edition')
 
-    def get_username(self, obj):
-        return obj.user.username if obj.user else '-'
-    get_username.short_description = 'Usuario'
-    get_username.admin_order_field = 'user__username'
-
-    def get_student_id(self, obj):
-        return obj.user.national_id if obj.user else '-'
-    get_student_id.short_description = 'ID'
-    get_student_id.admin_order_field = 'user__national_id'
-
     fieldsets = (
         ('Información del usuario', {
             'fields': ('user',)
@@ -55,6 +45,16 @@ class StudentProfileAdmin(admin.ModelAdmin):
             'fields': ('sim_balance', 'flight_balance')
         }),
     )
+
+    def get_username(self, obj):
+        return obj.user.username if obj.user else '-'
+    get_username.short_description = 'Usuario'
+    get_username.admin_order_field = 'user__username'
+
+    def get_student_id(self, obj):
+        return obj.user.national_id if obj.user else '-'
+    get_student_id.short_description = 'ID'
+    get_student_id.admin_order_field = 'user__national_id'
 
     def get_course_type(self, obj):
         return obj.current_course_type

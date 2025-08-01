@@ -26,11 +26,17 @@ class Simulator(models.Model):
         default=True, 
         verbose_name="Disponible"
     )
-    hourly_rate = models.DecimalField(
+    hourly_rate_single = models.DecimalField(
         max_digits=4, 
         decimal_places=1, 
-        default=130.0,
-        verbose_name="Precio por hora"
+        default=35.0,
+        verbose_name="$/hora (Simple)"
+    )
+    hourly_rate_dual = models.DecimalField(
+        max_digits=4, 
+        decimal_places=1, 
+        default=22.5,
+        verbose_name="$/hora (Dual)"
     )
     total_hours = models.DecimalField(
         max_digits=8, 

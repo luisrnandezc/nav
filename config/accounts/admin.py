@@ -20,7 +20,7 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
     add_fieldsets = (
-        (None, {
+        ('Información del usuario', {
             'classes': ('wide',),
             'fields': ('username', 'email', 'first_name', 'last_name', 'national_id', 'role', 'password1', 'password2')
         }),

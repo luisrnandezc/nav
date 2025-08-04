@@ -63,8 +63,15 @@ class StudentPaymentAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = list(super().get_readonly_fields(request, obj))
+        
+        # Make amount and type readonly for existing payments
+        if obj and obj.pk:  # If this is an existing payment
+            readonly_fields.extend(['student_profile', 'amount', 'type'])
+        
+        # Make confirmed field readonly for users without confirmation permissions
         if not hasattr(request.user, 'staff_profile') or not request.user.staff_profile.can_confirm_payments:
             readonly_fields.extend(['confirmed'])
+        
         return readonly_fields
 
     def save_model(self, request, obj, form, change):

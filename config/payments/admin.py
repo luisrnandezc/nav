@@ -71,9 +71,30 @@ class StudentPaymentAdmin(admin.ModelAdmin):
         if not change:  # New payment
             obj.added_by = request.user
             if obj.confirmed:  # If payment is confirmed on creation
-                obj.confirmed_by = request.user
-                obj.confirmation_date = timezone.now()
-        elif obj.confirmed and not obj.confirmed_by:  # Existing payment being confirmed
-            obj.confirmed_by = request.user
-            obj.confirmation_date = timezone.now()
-        super().save_model(request, obj, form, change)
+                obj.confirm(request.user)
+            else:
+                super().save_model(request, obj, form, change)
+        elif change:  # Existing payment being modified
+            # Get the original object to check if it was previously confirmed
+            original_obj = StudentPayment.objects.get(pk=obj.pk)
+            
+            if obj.confirmed and not original_obj.confirmed:  # Payment being confirmed
+                obj.confirm(request.user)
+            elif not obj.confirmed and original_obj.confirmed:  # Payment being unconfirmed
+                obj.unconfirm()
+                # The unconfirm method already saves the object, so we don't need to call super().save_model()
+            else:
+                super().save_model(request, obj, form, change)
+    
+    def delete_model(self, request, obj):
+        """Override delete_model to handle balance updates when deleting confirmed payments"""
+        if obj.confirmed:
+            obj._update_student_balance(add=False)
+        super().delete_model(request, obj)
+    
+    def delete_queryset(self, request, queryset):
+        """Override delete_queryset to handle balance updates when bulk deleting confirmed payments"""
+        for payment in queryset:
+            if payment.confirmed:
+                payment._update_student_balance(add=False)
+        super().delete_queryset(request, queryset)

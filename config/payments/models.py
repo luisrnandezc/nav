@@ -114,11 +114,39 @@ class StudentPayment(models.Model):
         self.confirmation_date = timezone.now()
         self.save()
         
-        # Update balance if your StudentProfile has one
+        # Update student balance
+        self._update_student_balance(add=True)
+    
+    def unconfirm(self):
+        """Call this method when a payment is unconfirmed"""
+        # Get the original confirmed state from the database
+        original_obj = StudentPayment.objects.get(pk=self.pk)
+        was_confirmed = original_obj.confirmed
+        
+        self.confirmed = False
+        self.confirmed_by = None
+        self.confirmation_date = None
+        self.save()
+        
+        # If it was previously confirmed, subtract the amount from balance
+        if was_confirmed:
+            self._update_student_balance(add=False)
+    
+    def _update_student_balance(self, add=True):
+        """Helper method to update student balance"""
         if self.type == 'VUELO':
-            self.student_profile.flight_balance += self.amount
+            if add:
+                self.student_profile.flight_balance += self.amount
+            else:
+                self.student_profile.flight_balance -= self.amount
         elif self.type == 'SIMULADOR':
-            self.student_profile.sim_balance += self.amount
+            if add:
+                self.student_profile.sim_balance += self.amount
+            else:
+                self.student_profile.sim_balance -= self.amount
+        else:
+            return
+            
         self.student_profile.save()
     
     def save(self, *args, **kwargs):
@@ -130,10 +158,13 @@ class StudentPayment(models.Model):
     
     def delete(self, *args, **kwargs):
         """Override delete method to validate data before deleting"""
-        # Automatically update balance if your StudentProfile has one
-        if self.type == 'VUELO':
-            self.student_profile.flight_balance -= self.amount
-        elif self.type == 'SIMULADOR':
-            self.student_profile.sim_balance -= self.amount
-        self.student_profile.save()
+        # Get the original object from the database before deletion
+        if hasattr(self, 'pk') and self.pk:
+            try:
+                original_obj = StudentPayment.objects.get(pk=self.pk)
+                if original_obj.confirmed:
+                    # Use the original object to call the helper method
+                    original_obj._update_student_balance(add=False)
+            except StudentPayment.DoesNotExist:
+                pass
         super().delete(*args, **kwargs)

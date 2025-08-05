@@ -332,10 +332,13 @@ class SimEvaluationForm(forms.ModelForm):
 
                 # Get the simulator object directly from cleaned_data (it's already a Simulator instance)
                 sim = self.cleaned_data.get('simulator')
-                if self.cleaned_data.get('session_type') == 'Simple':
+                session_type = self.cleaned_data.get('session_type')
+                if session_type == 'Simple':
                     student_profile.sim_balance -= round(session_sim_hours*sim.hourly_rate_single, 2)
-                elif self.cleaned_data.get('session_type') == 'Dual':
+                elif session_type == 'Dual':
                     student_profile.sim_balance -= round(session_sim_hours*sim.hourly_rate_dual, 2)
+                else:
+                    student_profile.sim_balance -= round(session_sim_hours*sim.hourly_rate_single, 2)
                 student_profile.save()
 
                 # Add session hours to simulator's total hours

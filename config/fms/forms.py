@@ -21,7 +21,7 @@ class SimEvaluationForm(forms.ModelForm):
             'student_id', 'student_first_name', 'student_last_name',
             'student_license_type', 'course_type',
             'flight_rules', 'pre_solo_flight', 'session_number', 'session_letter', 'session_date',
-            'accumulated_sim_hours', 'session_sim_hours', 'simulator', 'session_grade',
+            'accumulated_sim_hours', 'session_sim_hours', 'simulator', 'session_type', 'session_grade',
             'pre_1', 'pre_2', 'pre_3',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5',
             'dep_1', 'dep_2', 'dep_3', 'dep_4', 'dep_5',
@@ -59,6 +59,7 @@ class SimEvaluationForm(forms.ModelForm):
             'accumulated_sim_hours': 'Horas de sim. totales',
             'session_sim_hours': 'Horas de la sesión',
             'simulator': 'Simulador',
+            'session_type': 'Tipo de sesión',
             'session_grade': 'Calificación de la sesión',
             'pre_1': 'Preparación del vuelo',
             'pre_2': 'Lista de chequeo',
@@ -165,6 +166,7 @@ class SimEvaluationForm(forms.ModelForm):
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
             'accumulated_sim_hours': forms.TextInput(attrs={'class': 'form-field'}),
             'session_sim_hours': forms.NumberInput(attrs={'class': 'form-field'}),
+            'session_type': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
@@ -330,8 +332,15 @@ class SimEvaluationForm(forms.ModelForm):
 
                 # Get the simulator object directly from cleaned_data (it's already a Simulator instance)
                 sim = self.cleaned_data.get('simulator')
-                student_profile.sim_balance -= round(session_sim_hours*sim.hourly_rate, 2)
+                if self.cleaned_data.get('session_type') == 'Simple':
+                    student_profile.sim_balance -= round(session_sim_hours*sim.hourly_rate_single, 2)
+                elif self.cleaned_data.get('session_type') == 'Dual':
+                    student_profile.sim_balance -= round(session_sim_hours*sim.hourly_rate_dual, 2)
                 student_profile.save()
+
+                # Add session hours to simulator's total hours
+                sim.total_hours += session_sim_hours
+                sim.save()
 
         return instance
 

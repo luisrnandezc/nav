@@ -41,7 +41,7 @@ class Simulator(models.Model):
     total_hours = models.DecimalField(
         max_digits=8, 
         decimal_places=1, 
-        default=0.0, 
+        default=0.0,
         verbose_name="Horas totales"
     )
     created_at = models.DateTimeField(

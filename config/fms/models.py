@@ -451,6 +451,15 @@ class SimEvaluation(models.Model):
         ('B', 'B'),
         ('C', 'C'),
     ]
+
+    # Session type
+    SINGLE = 'Simple'
+    DUAL = 'Dual'
+
+    SESSION_TYPE_CHOICES = [
+        (SINGLE, 'Simple'),
+        (DUAL, 'Dual'),
+    ]
     #endregion
 
     #region STUDENT DATA
@@ -542,6 +551,12 @@ class SimEvaluation(models.Model):
         blank=True,
         default='',
         verbose_name='Repetición de la sesión'
+    )
+    session_type = models.CharField(
+        max_length=6,
+        choices=SESSION_TYPE_CHOICES,
+        default=SINGLE,
+        verbose_name='Tipo de sesión'
     )
     accumulated_sim_hours = models.DecimalField(
         max_digits=5, 
@@ -1119,7 +1134,10 @@ class SimEvaluation(models.Model):
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.sim_hours -= self.session_sim_hours
-            student_profile.sim_balance += round(self.session_sim_hours*self.simulator.hourly_rate, 2)
+            if self.session_type == 'SIMPLE':
+                student_profile.sim_balance += round(self.session_sim_hours*self.simulator.hourly_rate_single, 2)
+            elif self.session_type == 'DUAL':
+                student_profile.sim_balance += round(self.session_sim_hours*self.simulator.hourly_rate_dual, 2)
             # Ensure hours don't go negative
             if student_profile.sim_hours < 0:
                 student_profile.sim_hours = 0
@@ -1127,6 +1145,10 @@ class SimEvaluation(models.Model):
         except StudentProfile.DoesNotExist:
             # If student profile doesn't exist, continue with deletion
             pass
+
+        # Subtract session hours from simulator's total hours
+        self.simulator.total_hours -= self.session_sim_hours
+        self.simulator.save()
         
         # Delete the associated SimulatorLog using the evaluation_id
         SimulatorLog.objects.filter(evaluation_id=self.id).delete()

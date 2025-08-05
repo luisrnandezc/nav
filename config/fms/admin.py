@@ -158,7 +158,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'simulator', 'session_number', 'session_sim_hours', 'session_grade'
+        'session_date', 'simulator', 'session_number', 'session_sim_hours', 'session_type', 'session_grade'
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'simulator', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -203,7 +203,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             'fields': (
                 'session_date', 'flight_rules', 'pre_solo_flight', 'session_number', 
                 'session_letter', 'accumulated_sim_hours', 'session_sim_hours',
-                'simulator', 'session_grade'
+                'simulator', 'session_grade', 'session_type'
             )
         }),
         ('Sección 4: Prevuelo', {
@@ -271,7 +271,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             'instructor_id', 'instructor_first_name', 'instructor_last_name',
             'instructor_license_type', 'instructor_license_number',
             'student_id', 'student_first_name', 'student_last_name',
-            'student_license_type', 'course_type', 'session_grade',
+            'student_license_type', 'course_type', 'session_grade', 'session_type',
             'simulator', 'session_sim_hours',
             'pre_1', 'pre_2', 'pre_3',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5',

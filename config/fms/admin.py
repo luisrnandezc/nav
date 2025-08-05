@@ -167,25 +167,6 @@ class SimEvaluationAdmin(admin.ModelAdmin):
 
     actions = ['generate_pdf']
     
-    def generate_pdf(self, request, queryset):
-        """Generate PDF for selected evaluations."""
-        if len(queryset) == 1:
-            # Single evaluation - redirect to PDF download
-            evaluation = queryset.first()
-            return redirect('fms:download_pdf', form_type='sim', evaluation_id=evaluation.id)
-        else:
-            # Multiple evaluations - show message
-            self.message_user(request, f'Seleccione solo una evaluación para generar el PDF.')
-            return
-    generate_pdf.short_description = "Generar PDF de la evaluación seleccionada"
-    
-    def delete_model(self, request, obj):
-        obj.delete()
-    
-    def delete_queryset(self, request, queryset):
-        for obj in queryset:
-            obj.delete()
-    
     fieldsets = (
         ('Sección 1: Datos del alumno', {
             'fields': (
@@ -309,6 +290,25 @@ class SimEvaluationAdmin(admin.ModelAdmin):
     def instructor_id(self, obj):
         return obj.instructor_license_number
     instructor_id.short_description = 'ID del instructor'
+
+    def generate_pdf(self, request, queryset):
+        """Generate PDF for selected evaluations."""
+        if len(queryset) == 1:
+            # Single evaluation - redirect to PDF download
+            evaluation = queryset.first()
+            return redirect('fms:download_pdf', form_type='sim', evaluation_id=evaluation.id)
+        else:
+            # Multiple evaluations - show message
+            self.message_user(request, f'Seleccione solo una evaluación para generar el PDF.')
+            return
+    generate_pdf.short_description = "Generar PDF de la evaluación seleccionada"
+    
+    def delete_model(self, request, obj):
+        obj.delete()
+    
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
 
     class Meta:
         verbose_name = 'Evaluación de simulador'

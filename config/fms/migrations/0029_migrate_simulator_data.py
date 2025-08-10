@@ -17,7 +17,8 @@ def migrate_simulator_data(apps, schema_editor):
         defaults={
             'is_active': True,
             'is_available': True,
-            'hourly_rate': 130.0,
+            'hourly_rate_single': 35.0,
+            'hourly_rate_dual': 22.5,
             'total_hours': 0.0,
         }
     )
@@ -27,7 +28,8 @@ def migrate_simulator_data(apps, schema_editor):
         defaults={
             'is_active': True,
             'is_available': True,
-            'hourly_rate': 130.0,
+            'hourly_rate_single': 100.0,
+            'hourly_rate_dual': 120.0,
             'total_hours': 0.0,
         }
     )

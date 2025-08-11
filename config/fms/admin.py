@@ -320,9 +320,9 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade'
     ]
-    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
+    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'session_date'
     ordering = ['-session_date']
@@ -365,7 +365,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             'fields': (
                 'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
-                'aircraft_registration', 'session_grade'
+                'aircraft', 'session_grade'
             )
         }),
         ('Sección 4: Prevuelo / Encendido / Taxeo', {
@@ -412,7 +412,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'session_date', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
         'instructor_license_type', 'instructor_license_number', 'student_id', 'student_first_name',
         'student_last_name', 'student_license_type', 'student_license_number', 'course_type',
-        'session_grade', 'aircraft_registration', 'session_flight_hours',
+        'session_grade', 'aircraft', 'session_flight_hours',
         'pre_1', 'pre_2', 'pre_3',
         'pre_4', 'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'mvrs_1', 'mvrs_2',
         'mvrs_3', 'mvrs_4', 'mvrs_5', 'mvrs_6', 'mvrs_7', 'mvrs_8', 'mvrs_9', 'mvrs_10', 'mvrs_11',
@@ -451,9 +451,9 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade'
     ]
-    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
+    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'session_date'
     ordering = ['-session_date']
@@ -496,7 +496,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
             'fields': (
                 'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
-                'aircraft_registration', 'session_grade'
+                'aircraft', 'session_grade'
             )
         }),
         ('Sección 4: Prevuelo / Encendido / Taxeo', {
@@ -543,7 +543,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'student_license_type', 'student_license_number', 'course_type', 'instructor_id',
         'instructor_first_name', 'instructor_last_name', 'instructor_license_type',
         'instructor_license_number', 'session_grade', 
-        'aircraft_registration', 'session_flight_hours',
+        'aircraft', 'session_flight_hours',
         'pre_1', 'pre_2', 'pre_3', 'pre_4',
         'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'b_ifr_1',
         'b_ifr_2', 'b_ifr_3', 'b_ifr_4', 'b_ifr_5', 'b_ifr_6', 'b_ifr_7', 'b_ifr_8',
@@ -583,9 +583,9 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft_registration', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade'
     ]
-    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
+    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'session_date'
     ordering = ['-session_date']
@@ -628,7 +628,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
             'fields': (
                 'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
-                'aircraft_registration', 'session_grade'
+                'aircraft', 'session_grade'
             )
         }),
         ('Sección 4: Prevuelo / Encendido / Taxeo', {
@@ -668,7 +668,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'student_license_type', 'student_license_number', 'course_type', 'instructor_id',
         'instructor_first_name', 'instructor_last_name', 'instructor_license_type',
         'instructor_license_number', 'session_grade', 
-        'aircraft_registration', 'session_flight_hours',
+        'aircraft', 'session_flight_hours',
         'pre_1', 'pre_2', 'pre_3', 'pre_4',
         'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'inst_1',
         'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9',

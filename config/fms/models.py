@@ -354,7 +354,9 @@ class FlightLog(models.Model):
         max_length=6,
         choices=AIRCRAFT_REG,
         default=YV204E,
-        verbose_name='Aeronave'
+        verbose_name='Aeronave',
+        null=True,
+        blank=True,
     )
     session_grade = models.CharField(
         max_length=2,
@@ -366,7 +368,7 @@ class FlightLog(models.Model):
     #endregion
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
     
     class Meta:
         verbose_name = 'Bitácora de vuelo'
@@ -1355,12 +1357,11 @@ class FlightEvaluation0_100(models.Model):
         default=0.0,
         verbose_name='Horas sesión'
     )
-    aircraft_registration = models.CharField(
-        max_length=6,
-        choices=AIRCRAFT_REG,
-        default=YV204E,
-        verbose_name='Aeronave'
-    )
+    aircraft = models.ForeignKey(
+        Aircraft,
+        on_delete=models.CASCADE,
+        verbose_name='Aeronave',
+    ) 
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
@@ -1751,7 +1752,7 @@ class FlightEvaluation0_100(models.Model):
         return self.accumulated_flight_hours + self.session_flight_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
     
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours
@@ -1971,12 +1972,11 @@ class FlightEvaluation100_120(models.Model):
         default=0.0,
         verbose_name='Horas sesión'
     )
-    aircraft_registration = models.CharField(
-        max_length=6,
-        choices=AIRCRAFT_REG,
-        default=YV204E,
-        verbose_name='Aeronave'
-    )
+    aircraft = models.ForeignKey(
+        Aircraft,
+        on_delete=models.CASCADE,
+        verbose_name='Aeronave',
+    ) 
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
@@ -2331,7 +2331,7 @@ class FlightEvaluation100_120(models.Model):
         return self.accumulated_flight_hours + self.session_flight_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
     
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours
@@ -2551,12 +2551,11 @@ class FlightEvaluation120_170(models.Model):
         default=0.0,
         verbose_name='Horas sesión'
     )
-    aircraft_registration = models.CharField(
-        max_length=6,
-        choices=AIRCRAFT_REG,
-        default=YV204E,
-        verbose_name='Aeronave'
-    )
+    aircraft = models.ForeignKey(
+        Aircraft,
+        on_delete=models.CASCADE,
+        verbose_name='Aeronave',
+    ) 
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
@@ -2836,7 +2835,7 @@ class FlightEvaluation120_170(models.Model):
         return self.accumulated_flight_hours + self.session_flight_hours
 
     def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft_registration} - {self.session_flight_hours} hrs'
+        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
 
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours

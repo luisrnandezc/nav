@@ -150,7 +150,7 @@ class Aircraft(models.Model):
         verbose_name_plural = "Aeronaves"
 
     def __str__(self):
-        return f"{self.registration} ({self.manufacturer} {self.model})"
+        return f"{self.registration}"
 
     @property
     def is_available_for_scheduling(self):

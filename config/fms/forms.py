@@ -370,6 +370,14 @@ class SimEvaluationForm(forms.ModelForm):
         return cleaned_data
 
 class FlightEvaluation0_100Form(forms.ModelForm):
+    # Add a custom aircraft field that uses ModelChoiceField
+    aircraft = forms.ModelChoiceField(
+        queryset=Aircraft.objects.filter(is_active=True),
+        empty_label=None,
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Aeronave'
+    )
+    
     class Meta:
         model = FlightEvaluation0_100
         fields = [
@@ -378,7 +386,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'student_id', 'student_first_name', 'student_last_name',
             'student_license_type', 'course_type',
             'flight_rules', 'solo_flight', 'session_number', 'session_letter', 'session_date',
-            'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration', 'session_grade',
+            'accumulated_flight_hours', 'session_flight_hours', 'aircraft', 'session_grade',
             'pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6',
             'mvrs_1', 'mvrs_2', 'mvrs_3', 'mvrs_4', 'mvrs_5', 'mvrs_6', 'mvrs_7', 'mvrs_8',
@@ -408,7 +416,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'session_date': 'Fecha de la sesión',
             'accumulated_flight_hours': 'Horas de vuelo acumuladas',
             'session_flight_hours': 'Horas de vuelo de la sesión',
-            'aircraft_registration': 'Registro de la aeronave',
+            'aircraft': 'Aeronave',
             'session_grade': 'Calificación de la sesión',
             'pre_1': 'Plan de vuelo VFR',
             'pre_2': 'Inspección pre-vuelo',
@@ -490,7 +498,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
             'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field'}),
             'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
-            'aircraft_registration': forms.Select(attrs={'class': 'form-field'}),
+            'aircraft': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
@@ -647,6 +655,14 @@ class FlightEvaluation0_100Form(forms.ModelForm):
         return cleaned_data
 
 class FlightEvaluation100_120Form(forms.ModelForm):
+    # Add a custom aircraft field that uses ModelChoiceField
+    aircraft = forms.ModelChoiceField(
+        queryset=Aircraft.objects.filter(is_active=True),
+        empty_label=None,
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Aeronave'
+    )
+    
     class Meta:
         model = FlightEvaluation100_120
         fields = [
@@ -655,7 +671,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'student_id', 'student_first_name', 'student_last_name',
             'student_license_type', 'course_type',
             'flight_rules', 'solo_flight', 'session_number', 'session_letter', 'session_date',
-            'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration', 'session_grade',
+            'accumulated_flight_hours', 'session_flight_hours', 'aircraft', 'session_grade',
             'pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6',
             'b_ifr_1', 'b_ifr_2', 'b_ifr_3', 'b_ifr_4', 'b_ifr_5', 'b_ifr_6', 'b_ifr_7', 'b_ifr_8', 'b_ifr_9', 'b_ifr_10', 'b_ifr_11',
@@ -684,7 +700,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'session_date': 'Fecha de la sesión',
             'accumulated_flight_hours': 'Horas de vuelo acumuladas',
             'session_flight_hours': 'Horas de vuelo de la sesión',
-            'aircraft_registration': 'Registro de la aeronave',
+            'aircraft': 'Aeronave',
             'session_grade': 'Calificación de la sesión',
             'pre_1': 'Plan de vuelo IFR',
             'pre_2': 'Inspección pre-vuelo',
@@ -760,7 +776,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
             'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field'}),
             'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
-            'aircraft_registration': forms.Select(attrs={'class': 'form-field'}),
+            'aircraft': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
@@ -911,6 +927,14 @@ class FlightEvaluation100_120Form(forms.ModelForm):
         return cleaned_data
 
 class FlightEvaluation120_170Form(forms.ModelForm):
+    # Add a custom aircraft field that uses ModelChoiceField
+    aircraft = forms.ModelChoiceField(
+        queryset=Aircraft.objects.filter(is_active=True),
+        empty_label=None,
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Aeronave'
+    )
+    
     class Meta:
         model = FlightEvaluation120_170
         fields = [
@@ -919,7 +943,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'student_id', 'student_first_name', 'student_last_name',
             'student_license_type', 'course_type',
             'flight_rules', 'solo_flight', 'session_number', 'session_letter', 'session_date',
-            'accumulated_flight_hours', 'session_flight_hours', 'aircraft_registration', 'session_grade',
+            'accumulated_flight_hours', 'session_flight_hours', 'aircraft', 'session_grade',
             'pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6',
             'inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11',
@@ -947,7 +971,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'session_date': 'Fecha de la sesión',
             'accumulated_flight_hours': 'Horas de vuelo acumuladas',
             'session_flight_hours': 'Horas de vuelo de la sesión',
-            'aircraft_registration': 'Registro de la aeronave',
+            'aircraft': 'Aeronave',
             'session_grade': 'Calificación de la sesión',
             'pre_1': 'Plan de vuelo VFR/IFR',
             'pre_2': 'Insp. pre-vuelo/briefing (Serv/WX/NOTAMs)',
@@ -1011,7 +1035,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
             'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field'}),
             'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
-            'aircraft_registration': forms.Select(attrs={'class': 'form-field'}),
+            'aircraft': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_2': forms.RadioSelect(attrs={'class': 'radio-field'}),

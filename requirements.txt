@@ -6,3 +6,4 @@ sqlparse==0.5.0
 tzdata==2024.1
 wheel==0.37.1
 weasyprint==65.1
+python-dotenv==1.0.0

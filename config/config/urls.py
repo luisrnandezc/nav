@@ -27,4 +27,5 @@ urlpatterns = [
     path('scheduler/', include("scheduler.urls", "scheduler")),
     path('fleet/', include("fleet.urls", "fleet")),
     path('payments/', include("payments.urls", "payments")),
+    path('sms/', include("sms.urls", "sms")),
 ]

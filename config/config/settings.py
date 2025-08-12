@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'scheduler',
     'fleet',
     'payments',
+    'sms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

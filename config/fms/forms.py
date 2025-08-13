@@ -615,7 +615,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
                 session_letter=self.cleaned_data.get('session_letter'),
                 accumulated_flight_hours=self.cleaned_data.get('accumulated_flight_hours'),
                 session_flight_hours=self.cleaned_data.get('session_flight_hours'),
-                aircraft_registration=self.cleaned_data.get('aircraft_registration'),
+                aircraft=self.cleaned_data.get('aircraft'),
                 session_grade=self.cleaned_data.get('session_grade'),
                 comments=self.cleaned_data.get('comments', '')
             )
@@ -628,7 +628,15 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             if student_id and session_flight_hours:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 student_profile.flight_hours += session_flight_hours
+                
+                # Get the aircraft object directly from cleaned_data (it's already an Aircraft instance)
+                aircraft = self.cleaned_data.get('aircraft')
+                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate, 2)
                 student_profile.save()
+
+                # Add session hours to aircraft's total hours
+                aircraft.total_hours += session_flight_hours
+                aircraft.save()
 
         return instance
     
@@ -887,7 +895,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
                 session_letter=self.cleaned_data.get('session_letter'),
                 accumulated_flight_hours=self.cleaned_data.get('accumulated_flight_hours'),
                 session_flight_hours=self.cleaned_data.get('session_flight_hours'),
-                aircraft_registration=self.cleaned_data.get('aircraft_registration'),
+                aircraft=self.cleaned_data.get('aircraft'),
                 session_grade=self.cleaned_data.get('session_grade'),
                 comments=self.cleaned_data.get('comments', '')
             )
@@ -900,7 +908,15 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             if student_id and session_flight_hours:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 student_profile.flight_hours += session_flight_hours
+                
+                # Get the aircraft object directly from cleaned_data (it's already an Aircraft instance)
+                aircraft = self.cleaned_data.get('aircraft')
+                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate, 2)
                 student_profile.save()
+
+                # Add session hours to aircraft's total hours
+                aircraft.total_hours += session_flight_hours
+                aircraft.save()
 
         return instance
 
@@ -1134,7 +1150,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
                 session_letter=self.cleaned_data.get('session_letter'),
                 accumulated_flight_hours=self.cleaned_data.get('accumulated_flight_hours'),
                 session_flight_hours=self.cleaned_data.get('session_flight_hours'),
-                aircraft_registration=self.cleaned_data.get('aircraft_registration'),
+                aircraft=self.cleaned_data.get('aircraft'),
                 session_grade=self.cleaned_data.get('session_grade'),
                 comments=self.cleaned_data.get('comments', '')
             )
@@ -1147,7 +1163,15 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             if student_id and session_flight_hours:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 student_profile.flight_hours += session_flight_hours
+                
+                # Get the aircraft object directly from cleaned_data (it's already an Aircraft instance)
+                aircraft = self.cleaned_data.get('aircraft')
+                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate, 2)
                 student_profile.save()
+
+                # Add session hours to aircraft's total hours
+                aircraft.total_hours += session_flight_hours
+                aircraft.save()
 
         return instance
 

@@ -83,9 +83,9 @@ class FlightLogAdmin(admin.ModelAdmin):
         'evaluation_id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft_registration', 'session_number', 'session_flight_hours'
+        'session_date', 'aircraft', 'session_number', 'session_flight_hours'
     ]
-    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft_registration', 'session_grade']
+    list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
     date_hierarchy = 'session_date'
     ordering = ['-session_date']
@@ -101,7 +101,7 @@ class FlightLogAdmin(admin.ModelAdmin):
             'fields': (
                 'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
-                'aircraft_registration', 'session_grade', 'comments'
+                'aircraft', 'session_grade', 'comments'
             )
         }),
     )
@@ -440,6 +440,13 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
     def instructor_id(self, obj):
         return obj.instructor_license_number
     instructor_id.short_description = 'ID del instructor'
+
+    def delete_model(self, request, obj):
+        obj.delete()
+    
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
     
     class Meta:
         verbose_name = 'Evaluación de vuelo 0-100'

@@ -350,13 +350,12 @@ class FlightLog(models.Model):
         default=0.0,   
         verbose_name='Horas sesión'
     )
-    aircraft_registration = models.CharField(
-        max_length=6,
-        choices=AIRCRAFT_REG,
-        default=YV204E,
+    aircraft = models.ForeignKey(
+        Aircraft,
+        on_delete=models.CASCADE,
         verbose_name='Aeronave',
-        null=True,
         blank=True,
+        null=True,
     )
     session_grade = models.CharField(
         max_length=2,
@@ -1755,10 +1754,11 @@ class FlightEvaluation0_100(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
     
     def delete(self, *args, **kwargs):
-        # Subtract session hours from student's accumulated hours
+        # Subtract session hours from student's accumulated hours and add to balance
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
+            student_profile.flight_balance += round(self.session_flight_hours*self.aircraft.hourly_rate, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
                 student_profile.flight_hours = 0
@@ -1766,6 +1766,10 @@ class FlightEvaluation0_100(models.Model):
         except StudentProfile.DoesNotExist:
             # If student profile doesn't exist, continue with deletion
             pass
+            
+        # Subtract session hours from aircraft's total hours
+        self.aircraft.total_hours -= self.session_flight_hours
+        self.aircraft.save()
         
         # Delete the associated FlightLog using the evaluation_id
         FlightLog.objects.filter(
@@ -2334,10 +2338,11 @@ class FlightEvaluation100_120(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
     
     def delete(self, *args, **kwargs):
-        # Subtract session hours from student's accumulated hours
+        # Subtract session hours from student's accumulated hours and add to balance
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
+            student_profile.flight_balance += round(self.session_flight_hours*self.aircraft.hourly_rate, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
                 student_profile.flight_hours = 0
@@ -2345,6 +2350,10 @@ class FlightEvaluation100_120(models.Model):
         except StudentProfile.DoesNotExist:
             # If student profile doesn't exist, continue with deletion
             pass
+            
+        # Subtract session hours from aircraft's total hours
+        self.aircraft.total_hours -= self.session_flight_hours
+        self.aircraft.save()
         
         # Delete the associated FlightLog using the evaluation_id
         FlightLog.objects.filter(
@@ -2838,10 +2847,11 @@ class FlightEvaluation120_170(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
 
     def delete(self, *args, **kwargs):
-        # Subtract session hours from student's accumulated hours
+        # Subtract session hours from student's accumulated hours and add to balance
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
+            student_profile.flight_balance += round(self.session_flight_hours*self.aircraft.hourly_rate, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
                 student_profile.flight_hours = 0
@@ -2849,6 +2859,10 @@ class FlightEvaluation120_170(models.Model):
         except StudentProfile.DoesNotExist:
             # If student profile doesn't exist, continue with deletion
             pass
+            
+        # Subtract session hours from aircraft's total hours
+        self.aircraft.total_hours -= self.session_flight_hours
+        self.aircraft.save()
         
         # Delete the associated FlightLog using the evaluation_id
         FlightLog.objects.filter(

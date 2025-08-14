@@ -252,8 +252,10 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             'instructor_id', 'instructor_first_name', 'instructor_last_name',
             'instructor_license_type', 'instructor_license_number',
             'student_id', 'student_first_name', 'student_last_name',
-            'student_license_type', 'course_type', 'session_grade', 'session_type',
-            'simulator', 'session_sim_hours',
+            'student_license_type', 'student_license_number', 
+            'course_type', 
+            'session_date', 'flight_rules', 'pre_solo_flight', 'session_number', 'session_letter', 
+            'accumulated_sim_hours', 'session_sim_hours', 'simulator', 'session_grade', 'session_type',
             'pre_1', 'pre_2', 'pre_3',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5',
             'dep_1', 'dep_2', 'dep_3', 'dep_4', 'dep_5',
@@ -349,16 +351,16 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             obj.delete()
     
     fieldsets = (
-        ('Sección 1: Datos del instructor', {
-            'fields': (
-                'instructor_id', 'instructor_first_name', 'instructor_last_name',
-                'instructor_license_type', 'instructor_license_number'
-            )
-        }),
-        ('Sección 2: Datos del alumno', {
+        ('Sección 1: Datos del alumno', {
             'fields': (
                 'student_id', 'student_first_name', 'student_last_name', 
                 'student_license_type', 'student_license_number', 'course_type'
+            )
+        }),
+        ('Sección 2: Datos del instructor', {
+            'fields': (
+                'instructor_id', 'instructor_first_name', 'instructor_last_name',
+                'instructor_license_type', 'instructor_license_number'
             )
         }),
         ('Sección 3: Datos de la sesión', {
@@ -409,10 +411,13 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'session_date', 'instructor_id', 'instructor_first_name', 'instructor_last_name',
-        'instructor_license_type', 'instructor_license_number', 'student_id', 'student_first_name',
-        'student_last_name', 'student_license_type', 'student_license_number', 'course_type',
-        'session_grade', 'aircraft', 'session_flight_hours',
+        'student_id', 'student_first_name', 'student_last_name', 
+        'student_license_type', 'student_license_number', 'course_type',
+        'instructor_id', 'instructor_first_name', 'instructor_last_name',
+        'instructor_license_type', 'instructor_license_number',
+        'session_date', 'flight_rules', 'solo_flight', 'session_number', 
+        'session_letter', 'accumulated_flight_hours', 'session_flight_hours', 
+        'aircraft', 'session_grade',
         'pre_1', 'pre_2', 'pre_3',
         'pre_4', 'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'mvrs_1', 'mvrs_2',
         'mvrs_3', 'mvrs_4', 'mvrs_5', 'mvrs_6', 'mvrs_7', 'mvrs_8', 'mvrs_9', 'mvrs_10', 'mvrs_11',
@@ -546,11 +551,13 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'session_date', 'student_id', 'student_first_name', 'student_last_name',
-        'student_license_type', 'student_license_number', 'course_type', 'instructor_id',
-        'instructor_first_name', 'instructor_last_name', 'instructor_license_type',
-        'instructor_license_number', 'session_grade', 
-        'aircraft', 'session_flight_hours',
+        'student_id', 'student_first_name', 'student_last_name', 
+        'student_license_type', 'student_license_number', 'course_type',
+        'instructor_id', 'instructor_first_name', 'instructor_last_name',
+        'instructor_license_type', 'instructor_license_number',
+        'session_date', 'flight_rules', 'solo_flight', 'session_number', 
+        'session_letter', 'accumulated_flight_hours', 'session_flight_hours', 
+        'aircraft', 'session_grade',
         'pre_1', 'pre_2', 'pre_3', 'pre_4',
         'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'b_ifr_1',
         'b_ifr_2', 'b_ifr_3', 'b_ifr_4', 'b_ifr_5', 'b_ifr_6', 'b_ifr_7', 'b_ifr_8',
@@ -671,11 +678,13 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-        'session_date', 'student_id', 'student_first_name', 'student_last_name',
-        'student_license_type', 'student_license_number', 'course_type', 'instructor_id',
-        'instructor_first_name', 'instructor_last_name', 'instructor_license_type',
-        'instructor_license_number', 'session_grade', 
-        'aircraft', 'session_flight_hours',
+        'student_id', 'student_first_name', 'student_last_name', 
+        'student_license_type', 'student_license_number', 'course_type',
+        'instructor_id', 'instructor_first_name', 'instructor_last_name',
+        'instructor_license_type', 'instructor_license_number',
+        'session_date', 'flight_rules', 'solo_flight', 'session_number', 
+        'session_letter', 'accumulated_flight_hours', 'session_flight_hours', 
+        'aircraft', 'session_grade',
         'pre_1', 'pre_2', 'pre_3', 'pre_4',
         'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'inst_1',
         'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9',

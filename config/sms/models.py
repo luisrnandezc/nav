@@ -60,7 +60,7 @@ class voluntary_report(models.Model):
         verbose_name_plural = "Reportes voluntarios"
         
     def __str__(self):
-        return f"{self.date} {self.area}"
+        return f"{self.date} {self.area.value()}"
     
 class report_analysis(models.Model):
     """
@@ -110,4 +110,4 @@ class report_analysis(models.Model):
         verbose_name_plural = "Análisis de reportes"
         
     def __str__(self):
-        return f"{self.report.date} {self.report.area}"
+        return f"{self.report.date} {self.report.area.value()}"

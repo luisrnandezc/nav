@@ -34,7 +34,7 @@ class VoluntaryReportAdmin(admin.ModelAdmin):
         }),
     )
     
-    readonly_fields = ['created_at', 'updated_at']
+    readonly_fields = ['created_at', 'updated_at', 'ai_analysis_status']
     
     def description_preview(self, obj):
         """Show a preview of the description in the list view"""

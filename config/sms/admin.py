@@ -1,23 +1,19 @@
 from django.contrib import admin
-from .models import voluntary_report
+from .models import voluntary_report, report_analysis
+from datetime import datetime
 
 @admin.register(voluntary_report)
 class VoluntaryReportAdmin(admin.ModelAdmin):
     list_display = [
-        'date', 'area', 'ai_analysis_preview'
+        'date', 'area', 'description_preview'
     ]
     list_filter = [
         'area'
     ]
     search_fields = [
-        'date', 'area'
+        'date', 'area', 'description'
     ]
     ordering = ['-id']
-    
-    # Make ai_analysis field read-only so users can't edit it manually
-    readonly_fields = [
-        'ai_analysis'
-    ]
     
     fieldsets = (
         ('1. Datos del reporte', {
@@ -29,22 +25,44 @@ class VoluntaryReportAdmin(admin.ModelAdmin):
         ('3. Descripción del peligro', {
             'fields': ('description',)
         }),
-        ('4. Condición del reporte', {
-            'fields': ('report_condition', 'invalid_reason')
-        }),
-        ('5. Recibido por', {
-            'fields': ('coordinator_first_name', 'coordinator_last_name', 'coordinator_id',
-                        'report_code', 'received_date')
-        }),
-        ('6. Análisis AI', {
-            'fields': ('ai_analysis',),
-            'description': 'Análisis generado automáticamente por AI (no editable manualmente)'
-        })
     )
     
-    def ai_analysis_preview(self, obj):
-        """Show a preview of the AI analysis in the list view"""
-        if obj.ai_analysis:
-            return obj.ai_analysis[:50] + "..." if len(obj.ai_analysis) > 50 else obj.ai_analysis
-        return "No hay análisis"
-    ai_analysis_preview.short_description = "Análisis AI"
+    def description_preview(self, obj):
+        """Show a preview of the description in the list view"""
+        if obj.description:
+            return obj.description[:50] + "..." if len(obj.description) > 50 else obj.description
+        return "Sin descripción"
+    description_preview.short_description = "Descripción"
+
+@admin.register(report_analysis)
+class ReportAnalysisAdmin(admin.ModelAdmin):
+    list_display = [
+        'report', 'is_valid', 'severity', 'probability', 'created_at'
+    ]
+    list_filter = [
+        'is_valid', 'severity', 'probability'
+    ]
+    search_fields = [
+        'report__date', 'report__area', 'risk_analysis', 'recommendations'
+    ]
+    readonly_fields = [
+        'report'
+    ]
+    ordering = ['-id']
+    
+    fieldsets = (
+        ('Report Information', {
+            'fields': ('report',)
+        }),
+        ('AI Analysis Results', {
+            'fields': ('is_valid', 'severity', 'probability', 'value')
+        }),
+        ('Detailed Analysis', {
+            'fields': ('risk_analysis', 'recommendations')
+        }),
+    )
+    
+    def created_at(self, obj):
+        """Show when the analysis was created"""
+        return datetime.now()
+    created_at.short_description = "Fecha de análisis"

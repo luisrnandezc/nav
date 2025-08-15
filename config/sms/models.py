@@ -1,10 +1,19 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 
 class voluntary_report(models.Model):
     """
     Voluntary Report Model for Safety Management System (SMS)
     """
+
+    # Status Choices for AI Analysis
+    STATUS_CHOICES = [
+        ('PENDING', 'Pendiente de análisis'),
+        ('PROCESSING', 'Analizando con IA'),
+        ('COMPLETED', 'Análisis completado'),
+        ('FAILED', 'Error en análisis'),
+    ]
 
     # Area Choices
     AREA_CHOICES = [
@@ -55,12 +64,38 @@ class voluntary_report(models.Model):
         verbose_name="Descripción del peligro"
     )
 
+    # AI Analysis Status
+    ai_analysis_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='PENDING',
+        verbose_name="Estado del análisis de IA"
+    )
+
+    # Timestamps
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de creación",
+        blank=True,
+        null=True
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Fecha de actualización",
+        blank=True,
+        null=True
+    )
+
     class Meta:
         verbose_name = "Reporte voluntario"
         verbose_name_plural = "Reportes voluntarios"
         
     def __str__(self):
-        return f"{self.date} {self.area.value()}"
+        return f"{self.date} {self.area}"
+    
+    def has_ai_analysis(self):
+        """Check if this report has a completed AI analysis"""
+        return hasattr(self, 'report_analysis') and self.ai_analysis_status == 'COMPLETED'
     
 class report_analysis(models.Model):
     """
@@ -105,9 +140,17 @@ class report_analysis(models.Model):
         max_length=5000,
     )
 
+    # Timestamps
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de análisis",
+        blank=True,
+        null=True
+    )
+
     class Meta:
         verbose_name = "Análisis de reporte"
         verbose_name_plural = "Análisis de reportes"
         
     def __str__(self):
-        return f"{self.report.date} {self.report.area.value()}"
+        return f"{self.report.date} {self.report.area}"

@@ -5,10 +5,10 @@ from datetime import datetime
 @admin.register(voluntary_report)
 class VoluntaryReportAdmin(admin.ModelAdmin):
     list_display = [
-        'date', 'area', 'description_preview'
+        'date', 'area', 'ai_analysis_status', 'description_preview'
     ]
     list_filter = [
-        'area'
+        'area', 'ai_analysis_status'
     ]
     search_fields = [
         'date', 'area', 'description'
@@ -25,7 +25,16 @@ class VoluntaryReportAdmin(admin.ModelAdmin):
         ('3. Descripción del peligro', {
             'fields': ('description',)
         }),
+        ('4. Estado del análisis de IA', {
+            'fields': ('ai_analysis_status',)
+        }),
+        ('5. Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
     )
+    
+    readonly_fields = ['created_at', 'updated_at']
     
     def description_preview(self, obj):
         """Show a preview of the description in the list view"""
@@ -46,7 +55,7 @@ class ReportAnalysisAdmin(admin.ModelAdmin):
         'report__date', 'report__area', 'risk_analysis', 'recommendations'
     ]
     readonly_fields = [
-        'report'
+        'report', 'created_at'
     ]
     ordering = ['-id']
     
@@ -59,6 +68,10 @@ class ReportAnalysisAdmin(admin.ModelAdmin):
         }),
         ('Análisis detallado', {
             'fields': ('risk_analysis', 'recommendations')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
         }),
     )
     

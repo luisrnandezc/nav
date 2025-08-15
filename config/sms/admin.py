@@ -51,13 +51,13 @@ class ReportAnalysisAdmin(admin.ModelAdmin):
     ordering = ['-id']
     
     fieldsets = (
-        ('Report Information', {
+        ('Información del reporte', {
             'fields': ('report',)
         }),
-        ('AI Analysis Results', {
+        ('Resultados de análisis', {
             'fields': ('is_valid', 'severity', 'probability', 'value')
         }),
-        ('Detailed Analysis', {
+        ('Análisis detallado', {
             'fields': ('risk_analysis', 'recommendations')
         }),
     )

@@ -67,12 +67,21 @@ class report_analysis(models.Model):
     Report Analysis Model for Safety Management System (SMS)
     """
 
+    # Area Choices
+    VALIDITY_CHOICES = [
+        ('YES', 'SI'),
+        ('NO', 'NO'),
+    ]
+
     report = models.ForeignKey(
         voluntary_report,
         on_delete=models.CASCADE,
     )
-    is_valid = models.BooleanField(
-        verbose_name="¿Es un reporte de seguridad válido?"
+    is_valid = models.CharField(
+        max_length=3,
+        choices=VALIDITY_CHOICES,
+        default='NO',
+        verbose_name="Es válido"
     )
     severity = models.CharField(
         max_length=1,

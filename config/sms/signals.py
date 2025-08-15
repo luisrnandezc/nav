@@ -39,7 +39,7 @@ def generate_ai_analysis_on_save(sender, instance, created, **kwargs):
                 Ejemplo: un reporte calificado como "crítico (C)" y "ocasional (4)" tiene un valor de "C4".
                 Ejemplo: un reporte calificado como "marginal (D)" y "probable (3)" tiene un valor de "D3".
 
-                2.3 Si el reporte no es válido, asigna un valor alfanumérico de "00".
+                2.3 Si el reporte no es válido, asigna un valor numérico de "0".
 
             3. Ejecuta un análisis de riesgos del reporte, considerando el valor alfanumérico asignado en el punto 2.
 

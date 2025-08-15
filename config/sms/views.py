@@ -21,20 +21,20 @@ def test_openai_key(custom_prompt=None):
         # Use custom prompt if provided, otherwise use default
         if custom_prompt:
             messages = [
-                {"role": "system", "content": "You are a SMS (Safety Management System) expert. Analyze safety incidents and provide professional recommendations."},
+                {"role": "system", "content": "Eres un experto en SMS (Safety Management System). IMPORTANTE: SIEMPRE responde ÚNICAMENTE con JSON válido. NUNCA incluyas texto explicativo antes o después del JSON."},
                 {"role": "user", "content": custom_prompt}
             ]
         else:
             messages = [
-                {"role": "system", "content": "You are a SMS (Safety Management System) assistant."},
-                {"role": "user", "content": "How can I improve my SMS?"}
+                {"role": "system", "content": "Eres un comediante."},
+                {"role": "user", "content": "Cuéntame un chiste corto"}
             ]
 
         # Make a request to the chat completions endpoint
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4",
             messages=messages,
-            max_tokens=300  # Increased for more detailed analysis
+            max_tokens=1500  # Increased for comprehensive SMS analysis
         )
 
         # Extract the content from the response

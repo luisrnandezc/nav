@@ -42,7 +42,7 @@ def test_openai_key(custom_prompt=None):
         return content
         
     except Exception as e:
-        return f"API key validation failed. Error: {e}"
+        return "API key validation failed. Error: {}".format(e)
 
 # To run the test, you can call the function:
 # print(test_openai_key())

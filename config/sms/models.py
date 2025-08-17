@@ -69,7 +69,8 @@ class voluntary_report(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default='PENDING',
-        verbose_name="Estado del análisis de IA"
+        verbose_name="Estado del análisis de IA",
+        db_index=True  # Database index for fast queries
     )
 
     # Timestamps

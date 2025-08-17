@@ -13,8 +13,9 @@ import json
 from datetime import datetime, timedelta
 
 # Add Django project to Python path
-project_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, project_dir)
+project_dir = os.path.dirname(os.path.abspath(__file__))  # First config folder
+django_dir = os.path.join(project_dir, 'config')  # Second config folder (Django project)
+sys.path.insert(0, django_dir)
 
 # Set Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')

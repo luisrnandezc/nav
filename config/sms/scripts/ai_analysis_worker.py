@@ -10,12 +10,12 @@ import sys
 import django
 import time
 import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.utils import timezone
 
 # Add Django project to Python path
-project_dir = os.path.dirname(os.path.abspath(__file__))  # First config folder
-django_dir = os.path.join(project_dir, '..', 'config')  # Second config folder (Django project)
+project_dir = os.path.dirname(os.path.abspath(__file__))
+django_dir = os.path.join(project_dir, '..', '..')
 sys.path.insert(0, django_dir)
 
 # Set Django environment

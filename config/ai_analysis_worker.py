@@ -11,6 +11,7 @@ import django
 import time
 import json
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 # Add Django project to Python path
 project_dir = os.path.dirname(os.path.abspath(__file__))  # First config folder
@@ -32,7 +33,7 @@ def run_ai_analysis_for_report(report):
     """
     try:
         print("[{}] Processing report {}: {}".format(
-            datetime.now(), report.id, report.description[:50]
+            timezone.now(), report.id, report.description[:50]
         ))
         
         # Update status to PROCESSING
@@ -85,7 +86,7 @@ def run_ai_analysis_for_report(report):
         """.format(report.date, report.time, report.area, report.description)
         
         # Call OpenAI API
-        print("[{}] Calling OpenAI API for report {}...".format(datetime.now(), report.id))
+        print("[{}] Calling OpenAI API for report {}...".format(timezone.now(), report.id))
         response = test_openai_key(custom_prompt=prompt)
         
         if not response or response.startswith("Error:"):
@@ -93,7 +94,7 @@ def run_ai_analysis_for_report(report):
         
         # Parse JSON response
         parsed_data = json.loads(response)
-        print("[{}] OpenAI response parsed successfully for report {}".format(datetime.now(), report.id))
+        print("[{}] OpenAI response parsed successfully for report {}".format(timezone.now(), report.id))
         
         # Create analysis record
         is_valid = parsed_data.get('is_valid', 'NO') == 'SI'
@@ -113,14 +114,14 @@ def run_ai_analysis_for_report(report):
         report.save(update_fields=['ai_analysis_status'])
         
         print("[{}] Successfully completed AI analysis for report {} (Analysis ID: {})".format(
-            datetime.now(), report.id, analysis_record.id
+            timezone.now(), report.id, analysis_record.id
         ))
         
         return True
         
     except Exception as e:
         error_msg = "Error processing report {}: {}".format(report.id, str(e))
-        print("[{}] {}".format(datetime.now(), error_msg))
+        print("[{}] {}".format(timezone.now(), error_msg))
         
         # Update status to FAILED
         try:
@@ -136,42 +137,42 @@ def main_worker_loop():
     """
     Main worker loop that continuously scans for pending reports.
     """
-    print("[{}] AI Analysis Worker started".format(datetime.now()))
-    print("[{}] Scanning for pending reports every 30 seconds...".format(datetime.now()))
+    print("[{}] AI Analysis Worker started".format(timezone.now()))
+    print("[{}] Scanning for pending reports every 30 seconds...".format(timezone.now()))
     
     while True:
         try:
             # Get reports from last 48 hours with PENDING status
-            yesterday = datetime.now() - timedelta(days=2)
+            yesterday = timezone.now() - timedelta(days=2)
             pending_reports = voluntary_report.objects.filter(
                 ai_analysis_status='PENDING',
                 created_at__gte=yesterday
             ).order_by('created_at')
             
             if pending_reports.exists():
-                print("[{}] Found {} pending reports".format(datetime.now(), pending_reports.count()))
+                print("[{}] Found {} pending reports".format(timezone.now(), pending_reports.count()))
                 
                 # Process one report at a time
                 for report in pending_reports:
                     success = run_ai_analysis_for_report(report)
                     if success:
-                        print("[{}] Report {} processed successfully".format(datetime.now(), report.id))
+                        print("[{}] Report {} processed successfully".format(timezone.now(), report.id))
                     else:
-                        print("[{}] Report {} processing failed".format(datetime.now(), report.id))
+                        print("[{}] Report {} processing failed".format(timezone.now(), report.id))
                     
                     # Small delay between reports to prevent API rate limiting
                     time.sleep(2)
             else:
-                print("[{}] No pending reports found".format(datetime.now()))
+                print("[{}] No pending reports found".format(timezone.now()))
             
             # Wait 30 seconds before next scan
             time.sleep(30)
             
         except KeyboardInterrupt:
-            print("[{}] Worker stopped by user".format(datetime.now()))
+            print("[{}] Worker stopped by user".format(timezone.now()))
             break
         except Exception as e:
-            print("[{}] Worker error: {}".format(datetime.now(), str(e)))
+            print("[{}] Worker error: {}".format(timezone.now(), str(e)))
             # Wait before retrying
             time.sleep(60)
 

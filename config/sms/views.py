@@ -32,9 +32,9 @@ def test_openai_key(custom_prompt=None):
 
         # Make a request to the chat completions endpoint
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-5",
             messages=messages,
-            max_tokens=1500  # Increased for comprehensive SMS analysis
+            max_completion_tokens=5000  # Increased for comprehensive SMS analysis
         )
 
         # Extract the content from the response

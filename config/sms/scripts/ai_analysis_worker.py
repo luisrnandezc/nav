@@ -24,7 +24,7 @@ django.setup()
 
 # Import Django models and functions
 from sms.models import voluntary_report, report_analysis
-from sms.views import test_openai_key
+from sms.views import run_sms_voluntary_report_analysis
 
 
 def run_ai_analysis_for_report(report):
@@ -87,7 +87,7 @@ def run_ai_analysis_for_report(report):
         
         # Call OpenAI API
         print("[{}] Calling OpenAI API for report {}...".format(timezone.now(), report.id))
-        response = test_openai_key(custom_prompt=prompt)
+        response = run_sms_voluntary_report_analysis(custom_prompt=prompt)
         
         if not response or response.startswith("Error:"):
             raise Exception("OpenAI API error: {}".format(response))

@@ -2,12 +2,12 @@ from django.shortcuts import render
 import os
 from openai import OpenAI
 
-def test_openai_key(custom_prompt=None):
+def run_sms_voluntary_report_analysis(custom_prompt=None):
     """
-    A function to test the OpenAI API key and optionally analyze custom content.
+    A function to run the SMS voluntary report analysis.
     
     Args:
-        custom_prompt (str, optional): Custom prompt for incident analysis
+        custom_prompt (str, optional): Custom prompt for voluntary report analysis
     """
     # Retrieve the API key from environment variables
     api_key = os.getenv("OPENAI_API_KEY")
@@ -18,27 +18,34 @@ def test_openai_key(custom_prompt=None):
         # Initialize the OpenAI client with the retrieved key
         client = OpenAI(api_key=api_key)
 
-        # Use custom prompt if provided, otherwise use default
-        if custom_prompt:
-            messages = [
-                {"role": "system", "content": "Eres un experto en SMS (Safety Management System). IMPORTANTE: SIEMPRE responde ÚNICAMENTE con JSON válido. NUNCA incluyas texto explicativo antes o después del JSON."},
-                {"role": "user", "content": custom_prompt}
-            ]
-        else:
-            messages = [
-                {"role": "system", "content": "Eres un comediante."},
-                {"role": "user", "content": "Cuéntame un chiste corto"}
-            ]
-
-        # Make a request to the chat completions endpoint
-        response = client.chat.completions.create(
+        # Make a request to the responses endpoint
+        response = client.responses.create(
             model="gpt-5",
-            messages=messages,
-            max_completion_tokens=5000  # Increased for comprehensive SMS analysis
+            reasoning = {"effort": "high"},
+            text = {"verbosity": "high"},
+            instructions = (
+                "Eres un experto en SMS (Safety Management System) y estás encargado de "
+                "analizar reportes de seguridad operacional para una escuela de aviación. "
+                "Debes ejercer tu función de analista siguiendo los lineamientos del "
+                "Anexo 19 de la OACI y las mejores prácticas de la industria aeronáutica. "
+                "Utiliza un tono formal y profesional. "
+                "IMPORTANTE: Responde ÚNICAMENTE con un JSON válido. NO incluyas texto explicativo antes o después del JSON. "
+                "El JSON debe tener exactamente esta estructura: "
+                '{ '
+                    '"is_valid": "SI", '
+                    '"severity": "C", '
+                    '"probability": "3", '
+                    '"value": "C3", '
+                    '"risk_analysis": "Análisis detallado de riesgos del reporte", '
+                    '"recommendations": "Recomendaciones específicas para mejorar la seguridad operacional" '
+                '} '
+                "NOTA: Reemplaza los valores de ejemplo con los valores reales para este reporte específico."
+            ),
+            input=custom_prompt,
         )
 
         # Extract the content from the response
-        content = response.choices[0].message.content
+        content = response.output_text
         return content
         
     except Exception as e:

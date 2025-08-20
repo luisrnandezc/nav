@@ -2001,6 +2001,24 @@ class FlightEvaluation100_120(models.Model):
         default=0.0,
         verbose_name='Horas de vuelo acumuladas'
     )
+    initial_hourmeter = models.DecimalField(
+        max_digits=6,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horómetro inicial'
+    )
+    final_hourmeter = models.DecimalField(
+        max_digits=6,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horómetro final'
+    )
+    fuel_consumed = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Combustible consumido (litros)'
+    )
     session_flight_hours = models.DecimalField(
         max_digits=5, 
         decimal_places=1,
@@ -2361,6 +2379,13 @@ class FlightEvaluation100_120(models.Model):
 
     comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
 
+    @property
+    def calculated_session_flight_hours(self):
+        """Return the difference between the initial and final hourmeter."""
+        if self.initial_hourmeter and self.final_hourmeter:
+            return round(self.final_hourmeter - self.initial_hourmeter, 1)
+        return 0.0
+
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""
         return self.accumulated_flight_hours + self.session_flight_hours
@@ -2368,12 +2393,18 @@ class FlightEvaluation100_120(models.Model):
     def __str__(self):
         return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
     
+    def save(self, *args, **kwargs):
+        """Override save method to calculate session flight hours."""
+        if self.initial_hourmeter and self.final_hourmeter:
+            self.session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
+        super().save(*args, **kwargs)
+
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours and add to balance
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
-            student_profile.flight_balance += round(self.session_flight_hours*self.aircraft.hourly_rate, 2)
+            student_profile.flight_balance += round(self.session_flight_hours*self.aircraft.hourly_rate + self.aircraft.fuel_cost*self.fuel_consumed, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
                 student_profile.flight_hours = 0
@@ -2584,6 +2615,24 @@ class FlightEvaluation120_170(models.Model):
         decimal_places=1,
         default=0.0,
         verbose_name='Horas de vuelo acumuladas'
+    )
+    initial_hourmeter = models.DecimalField(
+        max_digits=6,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horómetro inicial'
+    )
+    final_hourmeter = models.DecimalField(
+        max_digits=6,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horómetro final'
+    )
+    fuel_consumed = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Combustible consumido (litros)'
     )
     session_flight_hours = models.DecimalField(
         max_digits=5, 
@@ -2870,6 +2919,13 @@ class FlightEvaluation120_170(models.Model):
 
     comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
 
+    @property
+    def calculated_session_flight_hours(self):
+        """Return the difference between the initial and final hourmeter."""
+        if self.initial_hourmeter and self.final_hourmeter:
+            return round(self.final_hourmeter - self.initial_hourmeter, 1)
+        return 0.0
+
     def total_flight_hours(self):
         """Return the sum of accumulated and session flight hours."""
         return self.accumulated_flight_hours + self.session_flight_hours
@@ -2877,12 +2933,18 @@ class FlightEvaluation120_170(models.Model):
     def __str__(self):
         return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
 
+    def save(self, *args, **kwargs):
+        """Override save method to calculate session flight hours."""
+        if self.initial_hourmeter and self.final_hourmeter:
+            self.session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
+        super().save(*args, **kwargs)
+
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours and add to balance
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
-            student_profile.flight_balance += round(self.session_flight_hours*self.aircraft.hourly_rate, 2)
+            student_profile.flight_balance += round(self.session_flight_hours*self.aircraft.hourly_rate + self.aircraft.fuel_cost*self.fuel_consumed, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
                 student_profile.flight_hours = 0

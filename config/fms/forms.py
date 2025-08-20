@@ -700,7 +700,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'student_id', 'student_first_name', 'student_last_name',
             'student_license_type', 'course_type',
             'flight_rules', 'solo_flight', 'session_number', 'session_letter', 'session_date',
-            'accumulated_flight_hours', 'session_flight_hours', 'aircraft', 'session_grade',
+            'accumulated_flight_hours', 'initial_hourmeter', 'final_hourmeter', 'fuel_consumed', 'aircraft', 'session_grade',
             'pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6',
             'b_ifr_1', 'b_ifr_2', 'b_ifr_3', 'b_ifr_4', 'b_ifr_5', 'b_ifr_6', 'b_ifr_7', 'b_ifr_8', 'b_ifr_9', 'b_ifr_10', 'b_ifr_11',
@@ -728,7 +728,9 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'session_letter': 'Repetición de la sesión',
             'session_date': 'Fecha de la sesión',
             'accumulated_flight_hours': 'Horas de vuelo acumuladas',
-            'session_flight_hours': 'Horas de vuelo de la sesión',
+            'initial_hourmeter': 'Horómetro inicial',
+            'final_hourmeter': 'Horómetro final',
+            'fuel_consumed': 'Combustible consumido (litros)',
             'aircraft': 'Aeronave',
             'session_grade': 'Calificación de la sesión',
             'pre_1': 'Plan de vuelo IFR',
@@ -925,17 +927,17 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
-            
+            fuel_consumed = self.cleaned_data.get('fuel_consumed')
+            aircraft = self.cleaned_data.get('aircraft')
+            fuel_cost = aircraft.fuel_cost
+
             if student_id and session_flight_hours:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                # Update student's accumulated flight hours and flight balance
                 student_profile.flight_hours += session_flight_hours
-                
-                # Get the aircraft object directly from cleaned_data (it's already an Aircraft instance)
-                aircraft = self.cleaned_data.get('aircraft')
-                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate, 2)
+                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate + fuel_cost*fuel_consumed, 2)
                 student_profile.save()
-
-                # Add session hours to aircraft's total hours
+                # Update aircraft's total hours
                 aircraft.total_hours += session_flight_hours
                 aircraft.save()
 
@@ -944,18 +946,35 @@ class FlightEvaluation100_120Form(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         student_id = cleaned_data.get('student_id')
-        session_flight_hours = cleaned_data.get('session_flight_hours')
+        initial_hourmeter = cleaned_data.get('initial_hourmeter')
+        final_hourmeter = cleaned_data.get('final_hourmeter')
         
-        if student_id and session_flight_hours:
+        if initial_hourmeter and final_hourmeter:
+            calculated_session_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
+            if calculated_session_flight_hours < 0:
+                raise forms.ValidationError(
+                    f"El horómetro final no puede ser menor que el horómetro inicial. "
+                    f"Horómetro inicial: {initial_hourmeter}, "
+                    f"Horómetro final: {final_hourmeter}"
+                )
+        else:
+            raise forms.ValidationError(
+                f"El horómetro inicial y el horómetro final son requeridos. "
+                f"Horómetro inicial: {initial_hourmeter}, "
+                f"Horómetro final: {final_hourmeter}"
+            )
+        cleaned_data['session_flight_hours'] = calculated_session_flight_hours
+        
+        if student_id and calculated_session_flight_hours:
             try:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
-                new_total = student_profile.flight_hours + session_flight_hours
+                new_total = student_profile.flight_hours + calculated_session_flight_hours
                 
                 if new_total < 0:
                     raise forms.ValidationError(
                         f"Las horas acumuladas no pueden ser negativas. "
                         f"Horas actuales: {student_profile.flight_hours}, "
-                        f"Horas de sesión: {session_flight_hours}, "
+                        f"Horas de sesión: {calculated_session_flight_hours}, "
                         f"Total resultante: {new_total}"
                     )
             except StudentProfile.DoesNotExist:
@@ -980,7 +999,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'student_id', 'student_first_name', 'student_last_name',
             'student_license_type', 'course_type',
             'flight_rules', 'solo_flight', 'session_number', 'session_letter', 'session_date',
-            'accumulated_flight_hours', 'session_flight_hours', 'aircraft', 'session_grade',
+            'accumulated_flight_hours', 'initial_hourmeter', 'final_hourmeter', 'fuel_consumed', 'aircraft', 'session_grade',
             'pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6',
             'inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11',
@@ -1006,8 +1025,10 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'session_number': 'Número de sesión',
             'session_letter': 'Repetición de la sesión',
             'session_date': 'Fecha de la sesión',
-            'accumulated_flight_hours': 'Horas de vuelo acumuladas',
-            'session_flight_hours': 'Horas de vuelo de la sesión',
+            'accumulated_flight_hours': 'Horas de vuelo acumuladas',    
+            'initial_hourmeter': 'Horómetro inicial',
+            'final_hourmeter': 'Horómetro final',
+            'fuel_consumed': 'Combustible consumido (litros)',
             'aircraft': 'Aeronave',
             'session_grade': 'Calificación de la sesión',
             'pre_1': 'Plan de vuelo VFR/IFR',
@@ -1180,17 +1201,17 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
-            
+            fuel_consumed = self.cleaned_data.get('fuel_consumed')
+            aircraft = self.cleaned_data.get('aircraft')
+            fuel_cost = aircraft.fuel_cost
+
             if student_id and session_flight_hours:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                # Update student's accumulated flight hours and flight balance
                 student_profile.flight_hours += session_flight_hours
-                
-                # Get the aircraft object directly from cleaned_data (it's already an Aircraft instance)
-                aircraft = self.cleaned_data.get('aircraft')
-                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate, 2)
+                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate + fuel_cost*fuel_consumed, 2)
                 student_profile.save()
-
-                # Add session hours to aircraft's total hours
+                # Update aircraft's total hours
                 aircraft.total_hours += session_flight_hours
                 aircraft.save()
 
@@ -1199,18 +1220,35 @@ class FlightEvaluation120_170Form(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         student_id = cleaned_data.get('student_id')
-        session_flight_hours = cleaned_data.get('session_flight_hours')
+        initial_hourmeter = cleaned_data.get('initial_hourmeter')
+        final_hourmeter = cleaned_data.get('final_hourmeter')
         
-        if student_id and session_flight_hours:
+        if initial_hourmeter and final_hourmeter:
+            calculated_session_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
+            if calculated_session_flight_hours < 0:
+                raise forms.ValidationError(
+                    f"El horómetro final no puede ser menor que el horómetro inicial. "
+                    f"Horómetro inicial: {initial_hourmeter}, "
+                    f"Horómetro final: {final_hourmeter}"
+                )
+        else:
+            raise forms.ValidationError(
+                f"El horómetro inicial y el horómetro final son requeridos. "
+                f"Horómetro inicial: {initial_hourmeter}, "
+                f"Horómetro final: {final_hourmeter}"
+            )
+        cleaned_data['session_flight_hours'] = calculated_session_flight_hours
+        
+        if student_id and calculated_session_flight_hours:
             try:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
-                new_total = student_profile.flight_hours + session_flight_hours
+                new_total = student_profile.flight_hours + calculated_session_flight_hours
                 
                 if new_total < 0:
                     raise forms.ValidationError(
                         f"Las horas acumuladas no pueden ser negativas. "
                         f"Horas actuales: {student_profile.flight_hours}, "
-                        f"Horas de sesión: {session_flight_hours}, "
+                        f"Horas de sesión: {calculated_session_flight_hours}, "
                         f"Total resultante: {new_total}"
                     )
             except StudentProfile.DoesNotExist:

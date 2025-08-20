@@ -498,7 +498,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'session_number': forms.Select(attrs={'class': 'form-field'}),
             'session_letter': forms.Select(attrs={'class': 'form-field'}),
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
-            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field'}),
+            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field disabled-field', 'readonly': 'readonly'}),
             'initial_hourmeter': forms.NumberInput(attrs={'class': 'form-field'}),
             'final_hourmeter': forms.NumberInput(attrs={'class': 'form-field'}),
             'fuel_consumed': forms.NumberInput(attrs={'class': 'form-field'}),
@@ -630,13 +630,13 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
             fuel_consumed = self.cleaned_data.get('fuel_consumed')
             aircraft = self.cleaned_data.get('aircraft')
-            fuel_price = aircraft.fuel_cost
+            fuel_cost = aircraft.fuel_cost
 
             if student_id and session_flight_hours:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 # Update student's accumulated flight hours and flight balance
                 student_profile.flight_hours += session_flight_hours
-                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate + fuel_price*fuel_consumed, 2)
+                student_profile.flight_balance -= round(session_flight_hours*aircraft.hourly_rate + fuel_cost*fuel_consumed, 2)
                 student_profile.save()
                 # Update aircraft's total hours
                 aircraft.total_hours += session_flight_hours
@@ -803,7 +803,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'session_number': forms.Select(attrs={'class': 'form-field'}),
             'session_letter': forms.Select(attrs={'class': 'form-field'}),
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
-            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field'}),
+            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field disabled-field', 'readonly': 'readonly'}),
             'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
             'aircraft': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
@@ -1070,7 +1070,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'session_number': forms.Select(attrs={'class': 'form-field'}),
             'session_letter': forms.Select(attrs={'class': 'form-field'}),
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
-            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field'}),
+            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field disabled-field', 'readonly': 'readonly'}),
             'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
             'aircraft': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),

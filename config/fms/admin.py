@@ -367,6 +367,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             'fields': (
                 'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
+                'initial_hourmeter', 'final_hourmeter', 'fuel_consumed',
                 'aircraft', 'session_grade'
             )
         }),
@@ -417,6 +418,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'instructor_license_type', 'instructor_license_number',
         'session_date', 'flight_rules', 'solo_flight', 'session_number', 
         'session_letter', 'accumulated_flight_hours', 'session_flight_hours', 
+        'initial_hourmeter', 'final_hourmeter', 'fuel_consumed',
         'aircraft', 'session_grade',
         'pre_1', 'pre_2', 'pre_3',
         'pre_4', 'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'mvrs_1', 'mvrs_2',

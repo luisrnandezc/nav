@@ -105,6 +105,12 @@
     display: inline-block;
   }
 
+  .disabled-field {
+    background-color: #b2b2b2;
+    color: #000000;
+    cursor: not-allowed;
+  }
+
   .radio-field {
     display: flex;
     flex-direction: row;

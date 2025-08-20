@@ -131,6 +131,13 @@ class Aircraft(models.Model):
     )
 
     # Additional info
+    fuel_cost = models.DecimalField(
+        max_digits=4,
+        decimal_places=2, 
+        default=3.11,
+        verbose_name="$/Litro",
+        help_text="Precio del combustible por litro"
+    )
     notes = models.TextField(
         blank=True, 
         verbose_name="Notas"

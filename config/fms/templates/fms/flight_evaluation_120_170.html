@@ -92,15 +92,23 @@
               {{ form.session_date.label_tag }}
               {{ form.session_date }}
             </div>
-          </div>
-          <div class="right-column">
             <div class="form-row">
               {{ form.accumulated_flight_hours.label_tag }}
               {{ form.accumulated_flight_hours }}
             </div>
+          </div>
+          <div class="right-column">
             <div class="form-row">
-              {{ form.session_flight_hours.label_tag }}
-              {{ form.session_flight_hours }}
+              {{ form.initial_hourmeter.label_tag }}
+              {{ form.initial_hourmeter }}
+            </div>
+            <div class="form-row">
+              {{ form.final_hourmeter.label_tag }}
+              {{ form.final_hourmeter }}
+            </div>
+            <div class="form-row">
+              {{ form.fuel_consumed.label_tag }}
+              {{ form.fuel_consumed }}
             </div>
             <div class="form-row">
               {{ form.aircraft.label_tag }}

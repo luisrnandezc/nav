@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -29,7 +28,6 @@ class StudentPayment(models.Model):
     amount = models.DecimalField(
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(0)],
         verbose_name='Monto',
     )
     type = models.CharField(
@@ -91,8 +89,6 @@ class StudentPayment(models.Model):
 
     def clean(self):
         """Validate payment data"""
-        if self.amount <= 0:
-            raise ValidationError('El monto debe ser mayor a cero')
         
         # Validate that added_by is a staff member
         if self.added_by and self.added_by.role != 'STAFF':

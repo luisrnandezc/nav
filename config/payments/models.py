@@ -38,8 +38,8 @@ class StudentPayment(models.Model):
         default=FLIGHT,
         verbose_name='Tipo de pago',
     )
-    date_added = models.DateTimeField(
-        auto_now_add=True, 
+    date_added = models.DateField(
+        default=timezone.now,
         verbose_name='Fecha de pago'
     )
     added_by = models.ForeignKey(
@@ -132,7 +132,7 @@ class StudentPayment(models.Model):
     
     def _update_student_balance(self, add=True):
         """Helper method to update student balance"""
-        if self.type == 'VUELO':
+        if self.type == 'VUELO' or self.type == 'DEBITO':
             if add:
                 self.student_profile.flight_balance += self.amount
             else:

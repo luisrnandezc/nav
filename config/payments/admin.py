@@ -1,14 +1,13 @@
 from django.contrib import admin
 from .models import StudentPayment
-from django.utils import timezone
 
 @admin.register(StudentPayment)
 class StudentPaymentAdmin(admin.ModelAdmin):
-    list_display = ('get_student_username', 'get_student_id', 'amount', 'get_date_added',
+    list_display = ('get_student_username', 'get_student_id', 'amount', 'type', 'date_added',	
                      'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
     list_filter = ('confirmed', 'date_added', 'confirmation_date')
     search_fields = ('student_profile__user__username', 'student_profile__user__national_id')
-    readonly_fields = ('date_added', 'added_by', 'confirmation_date', 'confirmed_by')
+    readonly_fields = ('added_by', 'confirmation_date', 'confirmed_by')
     fieldsets = (
         ('Información del Estudiante', {
             'fields': ('student_profile',)
@@ -48,12 +47,6 @@ class StudentPaymentAdmin(admin.ModelAdmin):
         return obj.confirmed_by.username if obj.confirmed_by else '-'
     get_confirmed_by_username.short_description = 'Confirmado por'
     get_confirmed_by_username.admin_order_field = 'confirmed_by__username'
-
-    def get_date_added(self, obj):
-        """Return only the date part of date_added"""
-        return obj.date_added.date()
-    get_date_added.short_description = 'Fecha de pago'
-    get_date_added.admin_order_field = 'date_added'
 
     def get_confirmation_date(self, obj):
         """Return only the date part of confirmation_date"""

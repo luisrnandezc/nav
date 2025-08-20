@@ -11,10 +11,12 @@ class StudentPayment(models.Model):
     # Payment type
     FLIGHT = 'VUELO'
     SIMULATOR = 'SIMULADOR'
+    DEBIT = 'DEBITO'
 
     PAYMENT_TYPES = [
         (FLIGHT, 'Vuelo'),
         (SIMULATOR, 'Simulador'),
+        (DEBIT, 'Débito'),
     ]
     #endregion
 

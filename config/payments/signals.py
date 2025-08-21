@@ -32,9 +32,9 @@ def send_payment_confirmation_email(sender, instance, created, **kwargs):
                     date_added=instance.date_added,
                 ),
                 settings.DEFAULT_FROM_EMAIL,
-                [settings.RECEIVER_EMAIL],
+                [settings.PAYMENTS_NOTIFICATION_EMAIL],
                 fail_silently=False,
             )
-            logger.info(f"Email sent to {settings.RECEIVER_EMAIL} with subject 'Nuevo pago agregado'")
+            logger.info(f"Email sent to {settings.PAYMENTS_NOTIFICATION_EMAIL} with subject 'Nuevo pago agregado'")
         except Exception as e:
-            logger.error(f"Failed to send payment confirmation email to {settings.RECEIVER_EMAIL}: {e}")
+            logger.error(f"Failed to send payment confirmation email to {settings.PAYMENTS_NOTIFICATION_EMAIL}: {e}")

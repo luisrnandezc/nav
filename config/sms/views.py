@@ -21,8 +21,8 @@ def run_sms_voluntary_report_analysis(custom_prompt=None):
         # Make a request to the responses endpoint
         response = client.responses.create(
             model="gpt-5",
-            reasoning = {"effort": "high"},
-            text = {"verbosity": "high"},
+            reasoning = {"effort": "medium"},
+            text = {"verbosity": "medium"},
             instructions = (
                 "Eres un experto en SMS (Safety Management System) y estás encargado de "
                 "analizar reportes de seguridad operacional para una escuela de aviación. "

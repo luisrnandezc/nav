@@ -1,6 +1,36 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import voluntary_report
+from .models import voluntary_report, report_analysis
+from django.core.mail import send_mail
+from django.conf import settings
+import logging
+
+logger = logging.getLogger('sms.signals')
+
+SMS_NOTIFICATION_SUBJECT = """Nuevo análisis de reporte voluntario de SMS"""
+SMS_NOTIFICATION_MESSAGE_1 = """
+Buen día Elías. He completado el análisis de un nuevo reporte voluntario de SMS.
+
+Severidad: {severity}
+Probabilidad: {probability}
+Valor alfanumérico: {value}
+Riesgo: {risk_analysis}
+
+Atentamente,
+SARA.
+"""
+SMS_NOTIFICATION_MESSAGE_2 = """
+Buen día Cap. Raúl. He completado el análisis de un nuevo reporte voluntario de SMS.
+
+Severidad: {severity}
+Probabilidad: {probability}
+Valor alfanumérico: {value}
+Riesgo: {risk_analysis}
+
+Atentamente,
+SARA.
+"""
+
 
 @receiver(post_save, sender=voluntary_report)
 def set_ai_analysis_pending(sender, instance, created, **kwargs):
@@ -16,3 +46,44 @@ def set_ai_analysis_pending(sender, instance, created, **kwargs):
         except Exception as e:
             # If we can't set status, leave it as default
             pass
+
+@receiver(post_save, sender=report_analysis)
+def send_sms_analysis_email(sender, instance, created, **kwargs):
+    """
+    Signal handler to send SMS analysis email when report_analysis is saved.
+    """
+    if created:
+        try:
+            # Send email to the school director
+            send_mail(
+                SMS_NOTIFICATION_SUBJECT,
+                SMS_NOTIFICATION_MESSAGE_1.format(
+                    severity=instance.severity,
+                    probability=instance.probability,
+                    value=instance.value,
+                    risk_analysis=instance.risk_analysis,
+                ),
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.SMS_NOTIFICATION_EMAIL_1],
+                fail_silently=False,
+            )
+            logger.info(f"Email sent to {settings.SMS_NOTIFICATION_EMAIL_1} with subject 'Nuevo análisis de reporte voluntario de SMS'")
+        except Exception as e:
+            logger.error(f"Failed to send SMS analysis email to {settings.SMS_NOTIFICATION_EMAIL_1}: {e}")
+        try:
+            # Send email to the SMS manager
+            send_mail(
+                SMS_NOTIFICATION_SUBJECT,
+                SMS_NOTIFICATION_MESSAGE_2.format(
+                    severity=instance.severity,
+                    probability=instance.probability,
+                    value=instance.value,
+                    risk_analysis=instance.risk_analysis,
+                ),
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.SMS_NOTIFICATION_EMAIL_2],
+                fail_silently=False,
+            )
+            logger.info(f"Email sent to {settings.SMS_NOTIFICATION_EMAIL_2} with subject 'Nuevo análisis de reporte voluntario de SMS'")
+        except Exception as e:
+            logger.error(f"Failed to send SMS analysis email to {settings.SMS_NOTIFICATION_EMAIL_2}: {e}")

@@ -188,12 +188,16 @@ if ON_PYTHONANYWHERE:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_USE_SSL = False
-    RECEIVER_EMAIL = os.getenv('PROD_RECEIVER_EMAIL')
+    PAYMENTS_NOTIFICATION_EMAIL = os.getenv('DIRECTOR_EMAIL')
+    SMS_NOTIFICATION_EMAIL_1= os.getenv('DIRECTOR_EMAIL')
+    SMS_NOTIFICATION_EMAIL_2= os.getenv('SMS_MANAGER_EMAIL')
 else:
     EMAIL_PORT = 465
     EMAIL_USE_TLS = False
     EMAIL_USE_SSL = True
-    RECEIVER_EMAIL = os.getenv('DEV_RECEIVER_EMAIL')
+    PAYMENTS_NOTIFICATION_EMAIL = os.getenv('DEV_RECEIVER_EMAIL')
+    SMS_NOTIFICATION_EMAIL_1= os.getenv('DEV_RECEIVER_EMAIL')
+    SMS_NOTIFICATION_EMAIL_2= os.getenv('DEV_RECEIVER_EMAIL')
 
 # Common email settings (used in both production and development)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

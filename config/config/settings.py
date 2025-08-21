@@ -182,3 +182,22 @@ if ON_PYTHONANYWHERE:
     
     # Temporary CSRF debugging
     CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
+
+# Email settings
+if ON_PYTHONANYWHERE:
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = False
+    RECEIVER_EMAIL = os.getenv('PROD_RECEIVER_EMAIL')
+else:
+    EMAIL_PORT = 465
+    EMAIL_USE_TLS = False
+    EMAIL_USE_SSL = True
+    RECEIVER_EMAIL = os.getenv('DEV_RECEIVER_EMAIL')
+
+# Common email settings (used in both production and development)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

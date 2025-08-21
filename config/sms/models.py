@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 
-class voluntary_report(models.Model):
+class VoluntaryReport(models.Model):
     """
     Voluntary Report Model for Safety Management System (SMS)
     """
@@ -98,7 +98,7 @@ class voluntary_report(models.Model):
         """Check if this report has a completed AI analysis"""
         return hasattr(self, 'report_analysis') and self.ai_analysis_status == 'COMPLETED'
     
-class report_analysis(models.Model):
+class ReportAnalysis(models.Model):
     """
     Report Analysis Model for Safety Management System (SMS)
     """
@@ -110,7 +110,7 @@ class report_analysis(models.Model):
     ]
 
     report = models.ForeignKey(
-        voluntary_report,
+        VoluntaryReport,
         on_delete=models.CASCADE,
     )
     is_valid = models.CharField(

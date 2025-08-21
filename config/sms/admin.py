@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import voluntary_report, report_analysis
+from .models import VoluntaryReport, ReportAnalysis
 from datetime import datetime
 
-@admin.register(voluntary_report)
+@admin.register(VoluntaryReport)
 class VoluntaryReportAdmin(admin.ModelAdmin):
     list_display = [
         'date', 'area', 'ai_analysis_status', 'description_preview'
@@ -43,7 +43,7 @@ class VoluntaryReportAdmin(admin.ModelAdmin):
         return "Sin descripción"
     description_preview.short_description = "Descripción"
 
-@admin.register(report_analysis)
+@admin.register(ReportAnalysis)
 class ReportAnalysisAdmin(admin.ModelAdmin):
     list_display = [
         'report', 'is_valid', 'severity', 'probability', 'created_at'

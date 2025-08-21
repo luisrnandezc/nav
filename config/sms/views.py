@@ -1,4 +1,3 @@
-from django.shortcuts import render
 import os
 from openai import OpenAI
 
@@ -50,6 +49,3 @@ def run_sms_voluntary_report_analysis(custom_prompt=None):
         
     except Exception as e:
         return "API key validation failed. Error: {}".format(e)
-
-# To run the test, you can call the function:
-# print(test_openai_key())

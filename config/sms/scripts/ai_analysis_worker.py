@@ -23,7 +23,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 # Import Django models and functions
-from sms.models import voluntary_report, report_analysis
+from sms.models import VoluntaryReport, ReportAnalysis
 from sms.views import run_sms_voluntary_report_analysis
 
 
@@ -99,7 +99,7 @@ def run_ai_analysis_for_report(report):
         # Create analysis record
         is_valid = parsed_data.get('is_valid', 'NO') == 'SI'
         
-        analysis_record = report_analysis.objects.create(
+        analysis_record = ReportAnalysis.objects.create(
             report=report,
             is_valid=is_valid,
             severity=parsed_data.get('severity', ''),
@@ -144,7 +144,7 @@ def main_worker_loop():
         try:
             # Get reports from last 48 hours with PENDING status
             yesterday = timezone.now() - timedelta(days=2)
-            pending_reports = voluntary_report.objects.filter(
+            pending_reports = VoluntaryReport.objects.filter(
                 ai_analysis_status='PENDING',
                 created_at__gte=yesterday
             ).order_by('created_at')

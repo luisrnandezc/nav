@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import voluntary_report, report_analysis
+from .models import VoluntaryReport, ReportAnalysis
 from django.core.mail import send_mail
 from django.conf import settings
 import logging
@@ -32,7 +32,7 @@ SARA.
 """
 
 
-@receiver(post_save, sender=voluntary_report)
+@receiver(post_save, sender=VoluntaryReport)
 def set_ai_analysis_pending(sender, instance, created, **kwargs):
     """
     Signal handler to set AI analysis status to PENDING when voluntary_report is saved.
@@ -42,12 +42,12 @@ def set_ai_analysis_pending(sender, instance, created, **kwargs):
         # This is a new record that was just saved
         try:
             # Set status to PENDING - worker will process it
-            voluntary_report.objects.filter(id=instance.id).update(ai_analysis_status='PENDING')
+            VoluntaryReport.objects.filter(id=instance.id).update(ai_analysis_status='PENDING')
         except Exception as e:
             # If we can't set status, leave it as default
             pass
 
-@receiver(post_save, sender=report_analysis)
+@receiver(post_save, sender=ReportAnalysis)
 def send_sms_analysis_email(sender, instance, created, **kwargs):
     """
     Signal handler to send SMS analysis email when report_analysis is saved.

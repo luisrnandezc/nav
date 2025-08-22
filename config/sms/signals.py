@@ -33,7 +33,6 @@ Atentamente,
 SARA.
 """
 
-
 @receiver(post_save, sender=VoluntaryReport)
 def set_ai_analysis_pending(sender, instance, created, **kwargs):
     """
@@ -55,14 +54,6 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
     Signal handler to send SMS analysis email when report_analysis is saved.
     """
     if created:
-        # DEBUG: Log the configuration being used
-        print(f"=== EMAIL CONFIGURATION DEBUG ===", flush=True)
-        print(f"ON_PYTHONANYWHERE: {getattr(settings, 'ON_PYTHONANYWHERE', 'NOT SET')}", flush=True)
-        print(f"DEBUG: {getattr(settings, 'DEBUG', 'NOT SET')}", flush=True)
-        print(f"SMS_NOTIFICATION_EMAIL_1: {settings.SMS_NOTIFICATION_EMAIL_1}", flush=True)
-        print(f"SMS_NOTIFICATION_EMAIL_2: {settings.SMS_NOTIFICATION_EMAIL_2}", flush=True)
-        print(f"================================", flush=True)
-        
         # Define the recipients of the email
         recipients = [
             {
@@ -78,7 +69,7 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
                 'name': 'Cap. Raúl'
             }
         ]
-
+        
         # Track results
         sent_count = 0
         failed_count = 0
@@ -107,7 +98,7 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
                     [recipient['email']],
                     fail_silently=False,
                 )
-                logger.info(f"Email sent to {recipient['name']} {recipient['email']} with subject 'Nuevo análisis de reporte voluntario de SMS'")
+                logger.info(f"Email sent to {recipient['name']} {recipient['email']} with subject '{recipient['subject']}'")
                 sent_count += 1
             except Exception as e:
                 logger.error(f"Failed to send SMS analysis email to {recipient['name']} {recipient['email']}: {e}")

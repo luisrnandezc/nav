@@ -55,6 +55,14 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
     Signal handler to send SMS analysis email when report_analysis is saved.
     """
     if created:
+        # DEBUG: Log the configuration being used
+        print(f"=== EMAIL CONFIGURATION DEBUG ===")
+        print(f"ON_PYTHONANYWHERE: {getattr(settings, 'ON_PYTHONANYWHERE', 'NOT SET')}")
+        print(f"DEBUG: {getattr(settings, 'DEBUG', 'NOT SET')}")
+        print(f"SMS_NOTIFICATION_EMAIL_1: {settings.SMS_NOTIFICATION_EMAIL_1}")
+        print(f"SMS_NOTIFICATION_EMAIL_2: {settings.SMS_NOTIFICATION_EMAIL_2}")
+        print(f"================================")
+        
         # Define the recipients of the email
         recipients = [
             {

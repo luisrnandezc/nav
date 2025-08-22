@@ -184,6 +184,10 @@ if ON_PYTHONANYWHERE:
     CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
 # Email settings
+print("DEBUG:: SMS_NOTIFICATION_EMAIL_1 =", os.getenv("DIRECTOR_EMAIL"))
+print("DEBUG:: SMS_NOTIFICATION_EMAIL_2 =", os.getenv("SMS_MANAGER_EMAIL"))
+
+
 if ON_PYTHONANYWHERE:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True

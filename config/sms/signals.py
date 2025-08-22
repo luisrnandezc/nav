@@ -54,16 +54,19 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
     Signal handler to send SMS analysis email when report_analysis is saved.
     """
     if created:
+        SMS_NOTIFICATION_EMAIL_1 = settings.SMS_NOTIFICATION_EMAIL_1
+        SMS_NOTIFICATION_EMAIL_2 = settings.SMS_NOTIFICATION_EMAIL_2
+
         # Define the recipients of the email
         recipients = [
             {
-                'email': settings.SMS_NOTIFICATION_EMAIL_1,
+                'email': SMS_NOTIFICATION_EMAIL_1,
                 'subject': SMS_NOTIFICATION_SUBJECT_1,
                 'message': SMS_NOTIFICATION_MESSAGE_1,
                 'name': 'Elías'
             },
             {
-                'email': settings.SMS_NOTIFICATION_EMAIL_2,
+                'email': SMS_NOTIFICATION_EMAIL_2,
                 'subject': SMS_NOTIFICATION_SUBJECT_2,
                 'message': SMS_NOTIFICATION_MESSAGE_2,
                 'name': 'Cap. Raúl'

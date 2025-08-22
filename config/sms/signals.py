@@ -56,12 +56,12 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
     """
     if created:
         # DEBUG: Log the configuration being used
-        print(f"=== EMAIL CONFIGURATION DEBUG ===")
-        print(f"ON_PYTHONANYWHERE: {getattr(settings, 'ON_PYTHONANYWHERE', 'NOT SET')}")
-        print(f"DEBUG: {getattr(settings, 'DEBUG', 'NOT SET')}")
-        print(f"SMS_NOTIFICATION_EMAIL_1: {settings.SMS_NOTIFICATION_EMAIL_1}")
-        print(f"SMS_NOTIFICATION_EMAIL_2: {settings.SMS_NOTIFICATION_EMAIL_2}")
-        print(f"================================")
+        print(f"=== EMAIL CONFIGURATION DEBUG ===", flush=True)
+        print(f"ON_PYTHONANYWHERE: {getattr(settings, 'ON_PYTHONANYWHERE', 'NOT SET')}", flush=True)
+        print(f"DEBUG: {getattr(settings, 'DEBUG', 'NOT SET')}", flush=True)
+        print(f"SMS_NOTIFICATION_EMAIL_1: {settings.SMS_NOTIFICATION_EMAIL_1}", flush=True)
+        print(f"SMS_NOTIFICATION_EMAIL_2: {settings.SMS_NOTIFICATION_EMAIL_2}", flush=True)
+        print(f"================================", flush=True)
         
         # Define the recipients of the email
         recipients = [

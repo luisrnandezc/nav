@@ -91,7 +91,7 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
                 )
 
                 # Send email
-                logger.info(f"About to send email to: {recipient['email']} with subject {recipient['subject']}")
+                print(f"About to send email to: {recipient['email']} with subject {recipient['subject']}")
 
                 send_mail(
                     recipient['subject'],

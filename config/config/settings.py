@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-&^7+-ow54x%!aopkqw@lfd59h=b+b&%9mz=s1df1@n6^1y=jht
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Check if we're on PythonAnywhere (production)
-ON_PYTHONANYWHERE = 'PYTHONANYWHERE_SITE' in os.environ
+ON_PYTHONANYWHERE = os.getenv('IS_PRODUCTION', 'false').lower() == 'true'
 
 DEBUG = not ON_PYTHONANYWHERE  # False on PythonAnywhere, True locally
 

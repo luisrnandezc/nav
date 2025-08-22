@@ -90,6 +90,16 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
                     risk_analysis=instance.risk_analysis,
                 )
 
+                # DEBUG: Write to a file we can access
+                try:
+                    import datetime
+                    with open('/tmp/email_debug.txt', 'a') as f:
+                        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        f.write(f"[{timestamp}] SENDING TO: {recipient['email']} | SUBJECT: {recipient['subject']}\n")
+                        f.flush()
+                except:
+                    pass  # Don't break email sending if this fails
+                
                 # Send email
                 send_mail(
                     recipient['subject'],

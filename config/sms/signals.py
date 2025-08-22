@@ -7,7 +7,9 @@ import logging
 
 logger = logging.getLogger('sms.signals')
 
-SMS_NOTIFICATION_SUBJECT = """Nuevo análisis de reporte voluntario de SMS"""
+SMS_NOTIFICATION_SUBJECT_1 = """Nuevo análisis de reporte voluntario de SMS - Director"""
+SMS_NOTIFICATION_SUBJECT_2 = """Nuevo análisis de reporte voluntario de SMS - Gerente SMS"""
+
 SMS_NOTIFICATION_MESSAGE_1 = """
 Buen día Elías. He completado el análisis de un nuevo reporte voluntario de SMS.
 
@@ -53,37 +55,56 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
     Signal handler to send SMS analysis email when report_analysis is saved.
     """
     if created:
-        try:
-            # Send email to the school director
-            send_mail(
-                SMS_NOTIFICATION_SUBJECT,
-                SMS_NOTIFICATION_MESSAGE_1.format(
+        # Define the recipients of the email
+        recipients = [
+            {
+                'email': settings.SMS_NOTIFICATION_EMAIL_1,
+                'subject': SMS_NOTIFICATION_SUBJECT_1,
+                'message': SMS_NOTIFICATION_MESSAGE_1,
+                'name': 'Elías'
+            },
+            {
+                'email': settings.SMS_NOTIFICATION_EMAIL_2,
+                'subject': SMS_NOTIFICATION_SUBJECT_2,
+                'message': SMS_NOTIFICATION_MESSAGE_2,
+                'name': 'Cap. Raúl'
+            }
+        ]
+
+        # Track results
+        sent_count = 0
+        failed_count = 0
+
+        for recipient in recipients:
+            try:
+                # Validate email address
+                if not recipient['email']:
+                    logger.error(f"Email address is not configured for {recipient['name']}")
+                    failed_count += 1
+                    continue
+
+                # Format the message
+                message = recipient['message'].format(
                     severity=instance.severity,
                     probability=instance.probability,
                     value=instance.value,
                     risk_analysis=instance.risk_analysis,
-                ),
-                settings.DEFAULT_FROM_EMAIL,
-                [settings.SMS_NOTIFICATION_EMAIL_1],
-                fail_silently=False,
-            )
-            logger.info(f"Email sent to {settings.SMS_NOTIFICATION_EMAIL_1} with subject 'Nuevo análisis de reporte voluntario de SMS'")
-        except Exception as e:
-            logger.error(f"Failed to send SMS analysis email to {settings.SMS_NOTIFICATION_EMAIL_1}: {e}")
-        try:
-            # Send email to the SMS manager
-            send_mail(
-                SMS_NOTIFICATION_SUBJECT,
-                SMS_NOTIFICATION_MESSAGE_2.format(
-                    severity=instance.severity,
-                    probability=instance.probability,
-                    value=instance.value,
-                    risk_analysis=instance.risk_analysis,
-                ),
-                settings.DEFAULT_FROM_EMAIL,
-                [settings.SMS_NOTIFICATION_EMAIL_2],
-                fail_silently=False,
-            )
-            logger.info(f"Email sent to {settings.SMS_NOTIFICATION_EMAIL_2} with subject 'Nuevo análisis de reporte voluntario de SMS'")
-        except Exception as e:
-            logger.error(f"Failed to send SMS analysis email to {settings.SMS_NOTIFICATION_EMAIL_2}: {e}")
+                )
+
+                # Send email
+                send_mail(
+                    recipient['subject'],
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [recipient['email']],
+                    fail_silently=False,
+                )
+                logger.info(f"Email sent to {recipient['name']} {recipient['email']} with subject 'Nuevo análisis de reporte voluntario de SMS'")
+                sent_count += 1
+            except Exception as e:
+                logger.error(f"Failed to send SMS analysis email to {recipient['name']} {recipient['email']}: {e}")
+                failed_count += 1
+        
+        # Summary log
+        logger.info(f"Email sent to {sent_count} recipients out of {len(recipients)} recipients")
+        logger.info(f"Email failed to send to {failed_count} recipients out of {len(recipients)} recipients")

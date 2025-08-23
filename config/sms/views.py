@@ -19,7 +19,7 @@ def run_sms_voluntary_report_analysis(custom_prompt=None):
 
         # Make a request to the responses endpoint
         response = client.responses.create(
-            model="gpt-5",
+            model="gpt-5-nano",
             reasoning = {"effort": "medium"},
             text = {"verbosity": "medium"},
             instructions = (

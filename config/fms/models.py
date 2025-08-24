@@ -3,375 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, MinLeng
 from accounts.models import StudentProfile
 from django.utils import timezone
 from fleet.models import Simulator, Aircraft
-
-class SimulatorLog(models.Model):
-    """
-    Simulator Log Model
-
-    This model receives data directly from the FlightEvaluationSim form.
-    It generates records that allow students and authorized staff 
-    to track and monitor students' simulator training progress.
-    """
-
-    #region CHOICES DEFINITIONS
-
-    # Course types
-    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
-
-    # Flight rules
-    VFR = 'VFR'
-    IFR = 'IFR'
-    DUAL = 'DUAL'
-
-    FLIGHT_RULES_CHOICES = [
-        (VFR, 'VFR'),
-        (IFR, 'IFR'),
-        (DUAL, 'Dual'),
-    ]
-
-    # Pre-solo flight
-    NO = 'NO'
-    YES = 'SI'
-
-    PRE_SOLO_FLIGHT_CHOICES = [
-        (NO, 'NO'),
-        (YES, 'SI'),
-    ]
-
-    # Session number
-    def generate_choices():
-        choices = []
-        for i in range(1, 11):
-            choices.append((str(i), str(i)))
-        return choices
-    
-    # Session letter
-    SESSION_LETTER_CHOICES = [
-        ('', ''),
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
-    ]
-
-    # Flight session grades
-    SUPER_STANDARD = 'SS'
-    STANDARD = 'S'
-    NON_STANDARD = 'NS'
-    NOT_EVALUATED = 'NE'
-
-    SESSION_GRADE_CHOICES = [
-        (SUPER_STANDARD, 'SS'),
-        (STANDARD, 'S'),
-        (NON_STANDARD, 'NS'),
-        (NOT_EVALUATED, 'NE'),
-    ]
-    #endregion
-
-    evaluation_id = models.PositiveIntegerField(
-        verbose_name='ID',
-        help_text='ID única de evaluación asociada',
-    )
-
-    #region STUDENT DATA
-    student_id = models.PositiveIntegerField(
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
-        verbose_name='ID alumno'
-    )
-    student_first_name = models.CharField(
-        max_length=50,
-        default='',
-        verbose_name='Nombre'
-    )
-    student_last_name = models.CharField(
-        max_length=50,
-        default='',
-        verbose_name='Apellido'
-    )
-    course_type = models.CharField(
-        max_length=10,
-        choices=COURSE_TYPE_CHOICES,
-        default=StudentProfile.COURSE_PPA_P,
-        verbose_name='Tipo de curso'
-    )
-    #endregion
-
-    #region INSTRUCTOR DATA
-    instructor_id = models.PositiveIntegerField(
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
-        verbose_name='ID instructor'
-    )
-    instructor_first_name = models.CharField(
-        max_length=50,
-        default='',
-        verbose_name='Nombre'
-    )
-    instructor_last_name = models.CharField(
-        max_length=50,
-        default='',
-        verbose_name='Apellido'
-    )
-    #endregion
-
-    #region SESSION DATA
-    session_date = models.DateField(
-        default=timezone.now,
-        verbose_name='Fecha'
-    )
-    flight_rules = models.CharField(
-        max_length=4, 
-        choices=FLIGHT_RULES_CHOICES,
-        default=VFR,
-        verbose_name='Reglas de vuelo'
-    )
-    pre_solo_flight = models.CharField(
-        max_length=3,
-        choices=PRE_SOLO_FLIGHT_CHOICES,
-        default=NO,
-        verbose_name='Sesión pre-solo'
-    )
-    session_number = models.CharField(
-        max_length=3,
-        choices=generate_choices(),
-        default='1',
-        verbose_name='Sesión'
-    )
-    session_letter = models.CharField(
-        max_length=1,
-        choices=SESSION_LETTER_CHOICES,
-        blank=True,
-        default='',
-        verbose_name='Repetición de la sesión'
-    )
-    accumulated_sim_hours = models.DecimalField(
-        max_digits=5, 
-        decimal_places=1,
-        default=0.0,
-        verbose_name='Horas de simulador acumuladas'
-    )
-    session_sim_hours = models.DecimalField(
-        max_digits=5, 
-        decimal_places=1,
-        default=0.0,   
-        verbose_name='Horas sesión'
-    )
-    simulator = models.ForeignKey(
-        Simulator,
-        on_delete=models.CASCADE,
-        verbose_name='Simulador'
-    )
-    session_grade = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-        verbose_name='Nota'
-    )
-    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
-    #endregion
-
-    def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.simulator} - {self.session_grade}'
-    
-    class Meta:
-        verbose_name = 'Bitácora de simulador'
-        verbose_name_plural = 'Bitácoras de simulador'
-
-class FlightLog(models.Model):
-    """
-    Flight Log Model
-
-    This model receives data directly from the FlightEvaluation form.
-    It generates records that allow students and authorized staff 
-    to track and monitor students' flight training progress.
-    """
-
-    #region CHOICES DEFINITIONS
-
-    # Course types
-    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
-
-    # Session type
-    SIM = 'SIMULADOR'
-    FLIGHT = 'VUELO'
-
-    SESSION_TYPE_CHOICES = [
-        (SIM, 'SIMULADOR'),
-        (FLIGHT, 'VUELO'),
-    ]
-
-    # Flight rules
-    VFR = 'VFR'
-    IFR = 'IFR'
-    DUAL = 'DUAL'
-
-    FLIGHT_RULES_CHOICES = [
-        (VFR, 'VFR'),
-        (IFR, 'IFR'),
-        (DUAL, 'Dual'),
-    ]
-
-    # Solo flight
-    NO = 'NO'
-    YES = 'SI'
-
-    SOLO_FLIGHT_CHOICES = [
-        (NO, 'NO'),
-        (YES, 'SI'),
-    ]
-
-    # Session number
-    def generate_choices():
-        choices = []
-        for i in range(1, 21):
-            choices.append((str(i), str(i)))
-        return choices
-    
-    # Session letter
-    SESSION_LETTER_CHOICES = [
-        ('', ''),
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
-    ]
-
-    # Flight session grades
-    SUPER_STANDARD = 'SS'
-    STANDARD = 'S'
-    NON_STANDARD = 'NS'
-    NOT_EVALUATED = 'NE'
-
-    SESSION_GRADE_CHOICES = [
-        (SUPER_STANDARD, 'SS'),
-        (STANDARD, 'S'),
-        (NON_STANDARD, 'NS'),
-        (NOT_EVALUATED, 'NE'),
-    ]
-
-    # Aircraft registration
-    YV204E = 'YV204E'           
-    YV206E = 'YV206E'
-
-    AIRCRAFT_REG = [
-        (YV204E, 'YV204E'),
-        (YV206E, 'YV206E'),
-    ]
-
-    #endregion
-
-    evaluation_id = models.PositiveIntegerField(
-        verbose_name='ID',
-        help_text='ID única de evaluación asociada',
-    )
-
-    evaluation_type = models.CharField(
-        max_length=50,
-        verbose_name='Tipo de evaluación',
-        default='No type',
-    )
-
-    #region STUDENT DATA
-    student_id = models.PositiveIntegerField(
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
-        verbose_name='ID alumno'
-    )
-    student_first_name = models.CharField(
-        max_length=50,
-        default='',
-        verbose_name='Nombre'
-    )
-    student_last_name = models.CharField(
-        max_length=50,
-        default='',
-        verbose_name='Apellido'
-    )
-    course_type = models.CharField(
-        max_length=10,
-        choices=COURSE_TYPE_CHOICES,
-        default=StudentProfile.COURSE_PPA_P,
-        verbose_name='Tipo de curso'
-    )
-    #endregion
-
-    #region INSTRUCTOR DATA
-    instructor_id = models.PositiveIntegerField(
-        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
-        verbose_name='ID instructor'
-    )
-    instructor_first_name = models.CharField(
-        max_length=50,
-        default='',
-        verbose_name='Nombre'
-    )
-    instructor_last_name = models.CharField(
-        max_length=50,
-        default='',
-        verbose_name='Apellido'
-    )
-    #endregion
-
-    #region SESSION DATA
-    session_date = models.DateField(
-        default=timezone.now,
-        verbose_name='Fecha'
-    )
-    flight_rules = models.CharField(
-        max_length=4, 
-        choices=FLIGHT_RULES_CHOICES,
-        default=VFR,
-        verbose_name='Reglas de vuelo'
-    )
-    solo_flight = models.CharField(
-        max_length=3,
-        choices=SOLO_FLIGHT_CHOICES,
-        default=YES,
-        verbose_name='Vuelo solo'
-    )
-    session_number = models.CharField(
-        max_length=3,
-        choices=generate_choices(),
-        default='1',
-        verbose_name='Sesión'
-    )
-    session_letter = models.CharField(
-        max_length=1,
-        choices=SESSION_LETTER_CHOICES,
-        blank=True,
-        default='',
-        verbose_name='Repetición de la sesión'
-    )
-    accumulated_flight_hours = models.DecimalField(
-        max_digits=5, 
-        decimal_places=1,
-        default=0.0,
-        verbose_name='Horas de vuelo acumuladas'
-    )
-    session_flight_hours = models.DecimalField(
-        max_digits=5, 
-        decimal_places=1,
-        default=0.0,   
-        verbose_name='Horas sesión'
-    )
-    aircraft = models.ForeignKey(
-        Aircraft,
-        on_delete=models.CASCADE,
-        verbose_name='Aeronave',
-        blank=True,
-        null=True,
-    )
-    session_grade = models.CharField(
-        max_length=2,
-        choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
-        verbose_name='Nota'
-    )
-    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
-    #endregion
-
-    def __str__(self):
-        return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.aircraft.registration} - {self.session_flight_hours} hrs'
-    
-    class Meta:
-        verbose_name = 'Bitácora de vuelo'
-        verbose_name_plural = 'Bitácoras de vuelo'
+from constants import COURSE_TYPES
 
 class SimEvaluation(models.Model):
     """
@@ -401,9 +33,6 @@ class SimEvaluation(models.Model):
         (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
-
-    # Course types
-    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -490,8 +119,8 @@ class SimEvaluation(models.Model):
     )
     course_type = models.CharField(
         max_length=10,
-        choices=StudentProfile.COURSE_TYPES,
-        default=StudentProfile.COURSE_PPA_P,
+        choices=COURSE_TYPES,
+        default='PPA-P',
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -1154,9 +783,6 @@ class SimEvaluation(models.Model):
         self.simulator.total_hours -= self.session_sim_hours
         self.simulator.save()
         
-        # Delete the associated SimulatorLog using the evaluation_id
-        SimulatorLog.objects.filter(evaluation_id=self.id).delete()
-    
         # Delete the evaluation record using the evaluation_id
         super().delete(*args, **kwargs)
 
@@ -1192,9 +818,6 @@ class FlightEvaluation0_100(models.Model):
         (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
-
-    # Course types
-    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -1281,8 +904,8 @@ class FlightEvaluation0_100(models.Model):
     )
     course_type = models.CharField(
         max_length=10,
-        choices=StudentProfile.COURSE_TYPES,
-        default=StudentProfile.COURSE_PPA_P,
+        choices=COURSE_TYPES,
+        default='PPA-P',
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -1802,12 +1425,6 @@ class FlightEvaluation0_100(models.Model):
         self.aircraft.total_hours -= self.session_flight_hours
         self.aircraft.save()
         
-        # Delete the associated FlightLog using the evaluation_id
-        FlightLog.objects.filter(
-            evaluation_id=self.id,
-            evaluation_type='FlightEvaluation0_100'
-        ).delete()
-    
         # Delete the evaluation record using the primary id
         super().delete(*args, **kwargs)
     
@@ -1843,9 +1460,6 @@ class FlightEvaluation100_120(models.Model):
         (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
-
-    # Course types
-    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -1932,8 +1546,8 @@ class FlightEvaluation100_120(models.Model):
     )
     course_type = models.CharField(
         max_length=10,
-        choices=StudentProfile.COURSE_TYPES,
-        default=StudentProfile.COURSE_HVI_P,
+        choices=COURSE_TYPES,
+        default='HVI-P',
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -2417,12 +2031,6 @@ class FlightEvaluation100_120(models.Model):
         self.aircraft.total_hours -= self.session_flight_hours
         self.aircraft.save()
         
-        # Delete the associated FlightLog using the evaluation_id
-        FlightLog.objects.filter(
-            evaluation_id=self.id,
-            evaluation_type='FlightEvaluation100_120'
-        ).delete()
-    
         # Delete the evaluation record using the evaluation_id
         super().delete(*args, **kwargs)
     
@@ -2458,9 +2066,6 @@ class FlightEvaluation120_170(models.Model):
         (LICENSE_PCA, 'PCA'),
         (LICENSE_TLA, 'TLA'),
     ]
-
-    # Course types
-    COURSE_TYPE_CHOICES = StudentProfile.COURSE_TYPES
 
     # Flight rules
     VFR = 'VFR'
@@ -2547,8 +2152,8 @@ class FlightEvaluation120_170(models.Model):
     )
     course_type = models.CharField(
         max_length=10,
-        choices=StudentProfile.COURSE_TYPES,
-        default=StudentProfile.COURSE_PCA_P,
+        choices=COURSE_TYPES,
+        default='PCA-P',
         verbose_name='Tipo de curso'
     )
     #endregion
@@ -2957,12 +2562,6 @@ class FlightEvaluation120_170(models.Model):
         self.aircraft.total_hours -= self.session_flight_hours
         self.aircraft.save()
         
-        # Delete the associated FlightLog using the evaluation_id
-        FlightLog.objects.filter(
-            evaluation_id=self.id,
-            evaluation_type='FlightEvaluation120_170'
-        ).delete()
-    
         # Delete the evaluation record using the evaluation_id
         super().delete(*args, **kwargs)
 

@@ -1,6 +1,6 @@
 from django import forms
 from django.db import transaction
-from .models import SimulatorLog, FlightLog, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation
+from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
 
@@ -299,29 +299,6 @@ class SimEvaluationForm(forms.ModelForm):
             instance.student_license_number = instance.student_id
             instance.save()
 
-            # Create and save a SimulatorLog instance with the evaluation_id
-            simlog_instance = SimulatorLog(
-                evaluation_id=instance.id,
-                student_id=self.cleaned_data.get('student_id'),
-                student_first_name=self.cleaned_data.get('student_first_name'),
-                student_last_name=self.cleaned_data.get('student_last_name'),
-                course_type=self.cleaned_data.get('course_type'),
-                instructor_id=self.cleaned_data.get('instructor_id'),
-                instructor_first_name=self.cleaned_data.get('instructor_first_name'),
-                instructor_last_name=self.cleaned_data.get('instructor_last_name'),
-                session_date=self.cleaned_data.get('session_date'),
-                flight_rules=self.cleaned_data.get('flight_rules'),
-                pre_solo_flight=self.cleaned_data.get('pre_solo_flight'),
-                session_number=self.cleaned_data.get('session_number'),
-                session_letter=self.cleaned_data.get('session_letter'),
-                accumulated_sim_hours=self.cleaned_data.get('accumulated_sim_hours'),
-                session_sim_hours=self.cleaned_data.get('session_sim_hours'),
-                simulator=self.cleaned_data.get('simulator'),
-                session_grade=self.cleaned_data.get('session_grade'),
-                comments=self.cleaned_data.get('comments', '')
-            )
-            simlog_instance.save()
-
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')
             session_sim_hours = self.cleaned_data.get('session_sim_hours')
@@ -601,30 +578,6 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             instance.student_license_number = instance.student_id
             instance.save()
 
-            # Create and save a FlightLog instance with the evaluation_id
-            flightlog_instance = FlightLog(
-                evaluation_id=instance.id,
-                evaluation_type='FlightEvaluation0_100',
-                student_id=self.cleaned_data.get('student_id'),
-                student_first_name=self.cleaned_data.get('student_first_name'),
-                student_last_name=self.cleaned_data.get('student_last_name'),
-                course_type=self.cleaned_data.get('course_type'),
-                instructor_id=self.cleaned_data.get('instructor_id'),
-                instructor_first_name=self.cleaned_data.get('instructor_first_name'),
-                instructor_last_name=self.cleaned_data.get('instructor_last_name'),
-                session_date=self.cleaned_data.get('session_date'),
-                flight_rules=self.cleaned_data.get('flight_rules'),
-                solo_flight=self.cleaned_data.get('solo_flight'),
-                session_number=self.cleaned_data.get('session_number'),
-                session_letter=self.cleaned_data.get('session_letter'),
-                accumulated_flight_hours=self.cleaned_data.get('accumulated_flight_hours'),
-                session_flight_hours=self.cleaned_data.get('session_flight_hours'),
-                aircraft=self.cleaned_data.get('aircraft'),
-                session_grade=self.cleaned_data.get('session_grade'),
-                comments=self.cleaned_data.get('comments', '')
-            )
-            flightlog_instance.save()
-
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
@@ -900,30 +853,6 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             instance.student_license_number = instance.student_id
             instance.save()
 
-            # Create and save a FlightLog instance with the evaluation_id
-            flightlog_instance = FlightLog(
-                evaluation_id=instance.id,
-                evaluation_type='FlightEvaluation100_120',
-                student_id=self.cleaned_data.get('student_id'),
-                student_first_name=self.cleaned_data.get('student_first_name'),
-                student_last_name=self.cleaned_data.get('student_last_name'),
-                course_type=self.cleaned_data.get('course_type'),
-                instructor_id=self.cleaned_data.get('instructor_id'),
-                instructor_first_name=self.cleaned_data.get('instructor_first_name'),
-                instructor_last_name=self.cleaned_data.get('instructor_last_name'),
-                session_date=self.cleaned_data.get('session_date'),
-                flight_rules=self.cleaned_data.get('flight_rules'),
-                solo_flight=self.cleaned_data.get('solo_flight'),
-                session_number=self.cleaned_data.get('session_number'),
-                session_letter=self.cleaned_data.get('session_letter'),
-                accumulated_flight_hours=self.cleaned_data.get('accumulated_flight_hours'),
-                session_flight_hours=self.cleaned_data.get('session_flight_hours'),
-                aircraft=self.cleaned_data.get('aircraft'),
-                session_grade=self.cleaned_data.get('session_grade'),
-                comments=self.cleaned_data.get('comments', '')
-            )
-            flightlog_instance.save()
-
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
@@ -1173,30 +1102,6 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             instance = super().save(commit=False)
             instance.student_license_number = instance.student_id
             instance.save()
-
-            # Create and save a FlightLog instance with the evaluation_id
-            flightlog_instance = FlightLog(
-                evaluation_id=instance.id,
-                evaluation_type='FlightEvaluation120_170',
-                student_id=self.cleaned_data.get('student_id'),
-                student_first_name=self.cleaned_data.get('student_first_name'),
-                student_last_name=self.cleaned_data.get('student_last_name'),
-                course_type=self.cleaned_data.get('course_type'),
-                instructor_id=self.cleaned_data.get('instructor_id'),
-                instructor_first_name=self.cleaned_data.get('instructor_first_name'),
-                instructor_last_name=self.cleaned_data.get('instructor_last_name'),
-                session_date=self.cleaned_data.get('session_date'),
-                flight_rules=self.cleaned_data.get('flight_rules'),
-                solo_flight=self.cleaned_data.get('solo_flight'),
-                session_number=self.cleaned_data.get('session_number'),
-                session_letter=self.cleaned_data.get('session_letter'),
-                accumulated_flight_hours=self.cleaned_data.get('accumulated_flight_hours'),
-                session_flight_hours=self.cleaned_data.get('session_flight_hours'),
-                aircraft=self.cleaned_data.get('aircraft'),
-                session_grade=self.cleaned_data.get('session_grade'),
-                comments=self.cleaned_data.get('comments', '')
-            )
-            flightlog_instance.save()
 
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')

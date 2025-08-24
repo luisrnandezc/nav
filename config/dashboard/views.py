@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from accounts.models import StudentProfile, InstructorProfile
-from fms.models import FlightLog, SimulatorLog
+from fms.models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
 from django.contrib import messages
 from academic.models import StudentGrade
 
@@ -40,13 +40,24 @@ def student_logs(request):
     # Get student's national ID
     student_id = user.national_id
     
-    # Fetch flight logs for the student (last 10)
-    flight_logs = FlightLog.objects.filter(
+    # Query flight evaluations for the student
+    flight_logs = []
+    flight_logs.extend(FlightEvaluation0_100.objects.filter(
         student_id=student_id
-    ).order_by('-session_date')[:10]
+    ).order_by('-session_date')[:5])
+    flight_logs.extend(FlightEvaluation100_120.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')[:5])
+    flight_logs.extend(FlightEvaluation120_170.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')[:5])
+
+    # Sort by date and take last 10
+    flight_logs.sort(key=lambda x: x.session_date, reverse=True)
+    flight_logs = flight_logs[:10]
     
     # Fetch simulator logs for the student (last 10)
-    simulator_logs = SimulatorLog.objects.filter(
+    simulator_logs = SimEvaluation.objects.filter(
         student_id=student_id
     ).order_by('-session_date')[:10]
     
@@ -68,13 +79,24 @@ def instructor_logs(request):
     # Get instructor's national ID
     instructor_id = user.national_id
     
-    # Fetch flight logs for the instructor (last 10)
-    flight_logs = FlightLog.objects.filter(
+    # Query flight evaluations for the instructor
+    flight_logs = []
+    flight_logs.extend(FlightEvaluation0_100.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')[:10]
+    ).order_by('-session_date')[:5])
+    flight_logs.extend(FlightEvaluation100_120.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')[:5])
+    flight_logs.extend(FlightEvaluation120_170.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')[:5])
+
+    # Sort by date and take last 10
+    flight_logs.sort(key=lambda x: x.session_date, reverse=True)
+    flight_logs = flight_logs[:10]
     
     # Fetch simulator logs for the instructor (last 10)
-    simulator_logs = SimulatorLog.objects.filter(
+    simulator_logs = SimEvaluation.objects.filter(
         instructor_id=instructor_id
     ).order_by('-session_date')[:10]
     

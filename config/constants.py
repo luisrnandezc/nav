@@ -1,0 +1,28 @@
+# Course type
+COURSE_NA = 'N/A'
+COURSE_PPA_T = 'PPA-T'
+COURSE_PPA_P = 'PPA-P'
+COURSE_HVI_T = 'HVI-T'
+COURSE_HVI_P = 'HVI-P'
+COURSE_PCA_T = 'PCA-T'
+COURSE_PCA_P = 'PCA-P'
+COURSE_IVA_T = 'IVA-T'
+COURSE_IVA_P = 'IVA-P'
+COURSE_IVS_T = 'IVS-T'
+COURSE_IVS_P = 'IVS-P'
+COURSE_RCL = 'RCL'
+
+COURSE_TYPES = [
+    (COURSE_NA, 'No inscrito'),
+    (COURSE_PPA_T, 'PPA-T'),
+    (COURSE_PPA_P, 'PPA-P'),
+    (COURSE_HVI_T, 'HVI-T'),
+    (COURSE_HVI_P, 'HVI-P'),
+    (COURSE_PCA_T, 'PCA-T'),
+    (COURSE_PCA_P, 'PCA-P'),
+    (COURSE_IVA_T, 'IVA-T'),
+    (COURSE_IVA_P, 'IVA-P'),
+    (COURSE_IVS_T, 'IVS-T'),
+    (COURSE_IVS_P, 'IVS-P'),
+    (COURSE_RCL, 'RCL'),
+]

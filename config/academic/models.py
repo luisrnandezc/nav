@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils import timezone
 import datetime
-from accounts.models import User
 
 #region Choices
 
@@ -172,7 +171,7 @@ class CourseEdition(models.Model):
         null=True,
     )
     students = models.ManyToManyField(
-        User,
+        'accounts.User',
         limit_choices_to={'role': 'STUDENT'},
         related_name='enrolled_courses',
         blank=True
@@ -255,7 +254,7 @@ class SubjectEdition(models.Model):
         null=True
     )
     instructor = models.ForeignKey(
-        User, 
+        'accounts.User', 
         on_delete=models.SET_NULL,
         null=True,
         limit_choices_to=Q(instructor_profile__instructor_type='TIERRA') | Q(instructor_profile__instructor_type='DUAL'),
@@ -263,7 +262,7 @@ class SubjectEdition(models.Model):
         verbose_name='Instructor'
     )
     students = models.ManyToManyField(
-        User,
+        'accounts.User',
         limit_choices_to={'role': 'STUDENT'},
         related_name='enrolled_subjects',
         blank=True,
@@ -325,7 +324,7 @@ class StudentGrade(models.Model):
 
     #region RELATIONSHIPS
     student = models.ForeignKey(
-        User,
+        'accounts.User',
         on_delete=models.CASCADE,
         limit_choices_to={'role': 'STUDENT'},
         related_name='grades',
@@ -334,7 +333,7 @@ class StudentGrade(models.Model):
         blank=False,
     )
     instructor = models.ForeignKey(
-        User,
+        'accounts.User',
         on_delete=models.CASCADE,
         limit_choices_to=Q(instructor_profile__instructor_type='TIERRA') | Q(instructor_profile__instructor_type='DUAL'),
         related_name='submitted_grades',

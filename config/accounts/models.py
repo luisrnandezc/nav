@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.conf import settings
+from constants import COURSE_NA
 
 # Custom User Manager
 class CustomUserManager(BaseUserManager):
@@ -90,35 +90,6 @@ class StudentProfile(models.Model):
     STUDENT_PHASE = [
         (GROUND, 'Escuela en tierra'),
         (FLYING, 'Línea de vuelo'),
-    ]
-
-    # Course type
-    COURSE_NA = 'N/A'
-    COURSE_PPA_T = 'PPA-T'
-    COURSE_PPA_P = 'PPA-P'
-    COURSE_HVI_T = 'HVI-T'
-    COURSE_HVI_P = 'HVI-P'
-    COURSE_PCA_T = 'PCA-T'
-    COURSE_PCA_P = 'PCA-P'
-    COURSE_IVA_T = 'IVA-T'
-    COURSE_IVA_P = 'IVA-P'
-    COURSE_IVS_T = 'IVS-T'
-    COURSE_IVS_P = 'IVS-P'
-    COURSE_RCL = 'RCL'
-
-    COURSE_TYPES = [
-        (COURSE_NA, 'No inscrito'),
-        (COURSE_PPA_T, 'PPA-T'),
-        (COURSE_PPA_P, 'PPA-P'),
-        (COURSE_HVI_T, 'HVI-T'),
-        (COURSE_HVI_P, 'HVI-P'),
-        (COURSE_PCA_T, 'PCA-T'),
-        (COURSE_PCA_P, 'PCA-P'),
-        (COURSE_IVA_T, 'IVA-T'),
-        (COURSE_IVA_P, 'IVA-P'),
-        (COURSE_IVS_T, 'IVS-T'),
-        (COURSE_IVS_P, 'IVS-P'),
-        (COURSE_RCL, 'RCL'),
     ]
 
     # Student license
@@ -210,7 +181,7 @@ class StudentProfile(models.Model):
         """Get the current course type code or 'N/A' if not enrolled."""
         from academic.models import CourseEdition
         current_course = CourseEdition.objects.filter(students=self.user).order_by('-start_date').first()
-        return current_course.course_type.code if current_course else self.COURSE_NA
+        return current_course.course_type.code if current_course else COURSE_NA
 
     @property
     def current_course_edition(self):
@@ -218,13 +189,6 @@ class StudentProfile(models.Model):
         from academic.models import CourseEdition
         current_course = CourseEdition.objects.filter(students=self.user).order_by('-start_date').first()
         return current_course.edition if current_course else None
-
-    def get_total_flying_time(self):
-        """
-        Calculate total flight time from the FlightLog table.
-        """
-        total_time = self.flightlog_set.aggregate(models.Sum('flight_hours'))['flight_hours__sum'] or 0
-        return total_time
     
     def get_current_course(self):
         """
@@ -239,8 +203,8 @@ class StudentProfile(models.Model):
         Update student_course_type and student_course_edition based on current enrollment.
         If not enrolled, sets course_type to "No inscrito" and course_edition to None.
         """
-        from academic.models import CourseEdition
         # Get the most recent course enrollment
+        from academic.models import CourseEdition
         current_course = CourseEdition.objects.filter(students=self.user).order_by('-start_date').first()
         
         if current_course:
@@ -248,7 +212,7 @@ class StudentProfile(models.Model):
             self.student_course_edition = current_course.edition
         else:
             # Student is not enrolled in any course
-            self.student_course_type = self.COURSE_NA
+            self.student_course_type = COURSE_NA
             self.student_course_edition = None
 
 class InstructorProfile(models.Model):

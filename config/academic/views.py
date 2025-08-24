@@ -27,7 +27,8 @@ def submit_student_grade(request):
                     'student_id': form.cleaned_data['student'].id,
                     'instructor_id': request.user.id,
                     'grade': float(form.cleaned_data['grade']),
-                    'test_type': form.cleaned_data['test_type']
+                    'test_type': form.cleaned_data['test_type'],
+                    'test_type_display': dict(StudentGrade._meta.get_field('test_type').choices)[form.cleaned_data['test_type']]
                 }
                 
                 # Check for duplicates in temp storage

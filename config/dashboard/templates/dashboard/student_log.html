@@ -32,7 +32,7 @@
                              <tr>
                                 <td>{{ log.session_date|date:"d/m/Y" }}</td>
                                 <td>{{ log.instructor_first_name }} {{ log.instructor_last_name }}</td>
-                                <td>{{ log.aircraft_registration }}</td>
+                                <td>{{ log.aircraft.registration }}</td>
                                 <td>{{ log.flight_rules }}</td>
                                 <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
                                 <td>{{ log.session_flight_hours }} hrs</td>
@@ -77,7 +77,7 @@
                                 <tr>
                                     <td>{{ log.session_date|date:"d/m/Y" }}</td>
                                     <td>{{ log.instructor_first_name }} {{ log.instructor_last_name }}</td>
-                                    <td>{{ log.simulator }}</td>
+                                    <td>{{ log.simulator.name }}</td>
                                     <td>{{ log.flight_rules }}</td>
                                     <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
                                     <td>{{ log.session_sim_hours }} hrs</td>

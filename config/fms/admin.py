@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.shortcuts import redirect
-from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
+from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport
 
 @admin.register(SimEvaluation)
 class SimEvaluationAdmin(admin.ModelAdmin):
@@ -571,3 +571,56 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
     class Meta:
         verbose_name = 'Evaluación de vuelo 120-170'
         verbose_name_plural = 'Evaluaciones de vuelo 120-170'
+
+@admin.register(FlightReport)
+class FlightReportAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'pilot_full_name', 'pilot_id', 'flight_date', 'aircraft', 
+        'flight_reason', 'flight_hours', 'fuel_consumed'
+    ]
+    list_filter = ['flight_date', 'pilot_id', 'aircraft', 'flight_reason']
+    search_fields = ['pilot_id', 'pilot_first_name', 'pilot_last_name']
+    date_hierarchy = 'flight_date'
+    ordering = ['-flight_date']
+
+    def delete_model(self, request, obj):
+        obj.delete()
+    
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
+    
+    fieldsets = (
+        ('Sección 1: Datos del piloto', {
+            'fields': (
+                'pilot_id', 'pilot_first_name', 'pilot_last_name', 
+                'pilot_license_number'
+            )
+        }),
+        ('Sección 2: Datos del vuelo', {
+            'fields': (
+                'flight_date', 'flight_reason', 'aircraft', 'initial_hourmeter',
+                'final_hourmeter', 'fuel_consumed'
+            )
+        }),
+        ('Sección 3: Comentarios', {
+            'fields': ('comments',)
+        }),
+    )
+    readonly_fields = [
+        'pilot_id', 'pilot_first_name', 'pilot_last_name', 
+        'pilot_license_number', 'flight_date', 'flight_reason', 'aircraft', 
+        'initial_hourmeter', 'final_hourmeter', 'fuel_consumed', 'comments'
+    ]
+    
+    def has_add_permission(self, request):
+        return False
+    
+    def pilot_full_name(self, obj):
+        return f"{obj.pilot_first_name} {obj.pilot_last_name}"
+    pilot_full_name.short_description = 'Piloto'
+    
+    class Meta:
+        verbose_name = 'Reporte de vuelo'
+        verbose_name_plural = 'Reportes de vuelo'

@@ -2665,7 +2665,7 @@ class FlightReport(models.Model):
     )
     #endregion
 
-    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MaxLengthValidator(1000)])
 
     @property
     def calculated_flight_hours(self):

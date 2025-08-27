@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Dashboard</title>
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="main-container">
+      <div class="data-container">
+        <div class="data-header">
+          <h1>Bienvenido</h1>
+        </div>
+        <div class="user-data">
+          <p>Nombres: {{ user.first_name }}</p>
+          <p>Apellidos: {{ user.last_name }}</p>
+          <p>Usuario: {{ user.username }}</p>
+          <p>ID: {{ user.national_id }}</p>
+          <p>Email: {{ user.email }}</p>
+          <p>Cargo: {{ user.staff_profile.position }}</p>
+        </div>
+        <div class="buttons">
+          <div class="button-container">
+            <a href="{% url 'accounts:password_change' %}">
+              <button class='button' id="password-change" type="submit">Actualizar contraseña</button>
+            </a>
+          </div>
+          <div class="button-container">
+            <a href="{% url 'accounts:login' %}">
+              <button class='button' id="logout" type="submit">Cerrar sesión</button>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-container">
+          <div class="left-column">
+            <div class="dashboard-square">
+              <h1 class="square-header">Cargar vuelo</h1>
+                <a class="image-link" href="{% url 'fms:flight_report' %}">
+                  <img class="logo-img" src="{% static 'img/plane.png' %}" alt="Cargar vuelo">
+                </a>
+            </div>
+            <div class="dashboard-square">
+              <h1 class="square-header">Reporte SMS</h1>
+                <a class="image-link" href="#">
+                  <img class="logo-img" src="{% static 'img/shield.png' %}" alt="Reporte SMS">
+                </a>
+            </div>
+          </div>
+          <div class="right-column">
+            <div class="dashboard-square">
+              <h1 class="square-header">Por definir</h1>
+              <!-- TODO: pending -->
+                <a class="image-link" href="#">
+                  <img class="logo-img" src="{% static 'img/x.png' %}" alt="X">
+                </a>
+            </div>
+            <div class="dashboard-square">
+              <h1 class="square-header">Por definir</h1>
+              <!-- TODO: pending -->
+                <a class="image-link" href="#">
+                  <img class="logo-img" src="{% static 'img/x.png' %}" alt="X">
+                </a>
+            </div>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>

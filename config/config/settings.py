@@ -191,13 +191,15 @@ if ON_PYTHONANYWHERE:
     PAYMENTS_NOTIFICATION_EMAIL = os.getenv('NAV_EMAIL_1')
     SMS_NOTIFICATION_EMAIL_1= os.getenv('NAV_EMAIL_1')
     SMS_NOTIFICATION_EMAIL_2= os.getenv('NAV_EMAIL_2')
+    SMS_NOTIFICATION_EMAIL_3= os.getenv('NAV_EMAIL_3')
 else:
     EMAIL_PORT = 465
     EMAIL_USE_TLS = False
     EMAIL_USE_SSL = True
     PAYMENTS_NOTIFICATION_EMAIL = os.getenv('DEV_EMAIL_1')
     SMS_NOTIFICATION_EMAIL_1= os.getenv('DEV_EMAIL_1')
-    SMS_NOTIFICATION_EMAIL_2= os.getenv('DEV_EMAIL_2')
+    SMS_NOTIFICATION_EMAIL_2= os.getenv('DEV_EMAIL_2')  
+    SMS_NOTIFICATION_EMAIL_3= os.getenv('DEV_EMAIL_3')
 
 # Common email settings (used in both production and development)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

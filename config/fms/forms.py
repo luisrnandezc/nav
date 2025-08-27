@@ -1,6 +1,6 @@
 from django import forms
 from django.db import transaction
-from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation
+from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation, FlightReport
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
 
@@ -285,7 +285,7 @@ class SimEvaluationForm(forms.ModelForm):
                 pass  # If FPT doesn't exist, just use the first available simulator
 
     def save(self, commit=True):
-        """Override the save method to copy user_id to user_license_number and create FlightLog."""
+        """Override the save method to copy user_id to user_license_number and create SimEvaluation."""
         if not commit:
             # If not committing, just return the instance without saving
             instance = super().save(commit=False)
@@ -564,7 +564,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             self.fields['instructor_license_number'].initial = user.national_id
 
     def save(self, commit=True):
-        """Override the save method to copy user_id to user_license_number and create FlightLog."""
+        """Override the save method to copy user_id to user_license_number and create FlightEvaluation0_100."""
         if not commit:
             # If not committing, just return the instance without saving
             instance = super().save(commit=False)
@@ -759,7 +759,6 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'session_letter': forms.Select(attrs={'class': 'form-field'}),
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
             'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field disabled-field', 'readonly': 'readonly'}),
-            'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
             'aircraft': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
@@ -839,7 +838,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             self.fields['instructor_license_number'].initial = user.national_id
 
     def save(self, commit=True):
-        """Override the save method to copy user_id to user_license_number and create FlightLog."""
+        """Override the save method to copy user_id to user_license_number and create FlightEvaluation100_120."""
         if not commit:
             # If not committing, just return the instance without saving
             instance = super().save(commit=False)
@@ -1021,7 +1020,6 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'session_letter': forms.Select(attrs={'class': 'form-field'}),
             'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
             'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field disabled-field', 'readonly': 'readonly'}),
-            'session_flight_hours': forms.NumberInput(attrs={'class': 'form-field'}),
             'aircraft': forms.Select(attrs={'class': 'form-field'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'pre_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
@@ -1089,7 +1087,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             self.fields['instructor_license_number'].initial = user.national_id
 
     def save(self, commit=True):
-        """Override the save method to copy user_id to user_license_number and create FlightLog."""
+        """Override the save method to copy user_id to user_license_number and create FlightEvaluation120_170."""
         if not commit:
             # If not committing, just return the instance without saving
             instance = super().save(commit=False)
@@ -1159,4 +1157,109 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             except StudentProfile.DoesNotExist:
                 raise forms.ValidationError(f"No se encontró un perfil de estudiante con ID: {student_id}")
         
+        return cleaned_data
+    
+class FlightReportForm(forms.ModelForm):
+    # Add a custom aircraft field that uses ModelChoiceField
+    aircraft = forms.ModelChoiceField(
+        queryset=Aircraft.objects.filter(is_active=True),
+        empty_label=None,
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Aeronave'
+    )
+    
+    class Meta:
+        model = FlightReport
+        fields = [
+            'pilot_id', 'pilot_first_name', 'pilot_last_name',
+            'pilot_license_number', 'flight_date', 'flight_reason',
+            'initial_hourmeter', 'final_hourmeter', 'fuel_consumed', 'aircraft',
+            'comments',
+        ]
+
+        labels = {
+            'pilot_id': 'Número de cédula',
+            'pilot_first_name': 'Nombre',
+            'pilot_last_name': 'Apellido',
+            'pilot_license_number': 'Número de licencia',
+            'flight_date': 'Fecha',
+            'flight_reason': 'Motivo',
+            'initial_hourmeter': 'Horómetro inicial',
+            'final_hourmeter': 'Horómetro final',
+            'fuel_consumed': 'Combustible consumido (litros)',
+            'aircraft': 'Aeronave',
+            'comments': '',
+        }
+
+        widgets = {
+            'pilot_id': forms.NumberInput(attrs={'class': 'form-field'}),
+            'pilot_first_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'pilot_last_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'pilot_license_number': forms.NumberInput(attrs={'class': 'form-field'}),
+            'flight_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
+            'flight_reason': forms.Select(attrs={'class': 'form-field'}),
+            'initial_hourmeter': forms.NumberInput(attrs={'class': 'form-field'}),
+            'final_hourmeter': forms.NumberInput(attrs={'class': 'form-field'}),
+            'fuel_consumed': forms.NumberInput(attrs={'class': 'form-field'}),
+            'aircraft': forms.Select(attrs={'class': 'form-field'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Extract the 'user' argument from kwargs
+        super().__init__(*args, **kwargs)
+        
+        if user:
+            self.fields['pilot_id'].initial = user.national_id
+            self.fields['pilot_first_name'].initial = user.first_name
+            self.fields['pilot_last_name'].initial = user.last_name
+            self.fields['pilot_license_number'].initial = user.national_id
+
+    def save(self, commit=True):
+        """Override the save method to copy user_id to user_license_number and create FlightReport."""
+        if not commit:
+            # If not committing, just return the instance without saving
+            instance = super().save(commit=False)
+            instance.pilot_license_number = instance.pilot_id
+            return instance
+        
+        # Use transaction to ensure atomicity
+        with transaction.atomic():
+            # First save the report
+            instance = super().save(commit=False)
+            instance.pilot_license_number = instance.pilot_id
+            instance.save()
+
+            # Update aircraft's total hours.
+            flight_hours = self.cleaned_data.get('flight_hours')
+            aircraft = self.cleaned_data.get('aircraft')
+
+            if flight_hours:
+                # Update aircraft's total hours
+                aircraft.total_hours += flight_hours
+                aircraft.save()
+
+        return instance
+
+    def clean(self):
+        cleaned_data = super().clean()
+        initial_hourmeter = cleaned_data.get('initial_hourmeter')
+        final_hourmeter = cleaned_data.get('final_hourmeter')
+        
+        if initial_hourmeter and final_hourmeter:
+            calculated_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
+            if calculated_flight_hours < 0:
+                raise forms.ValidationError(
+                    f"El horómetro final no puede ser menor que el horómetro inicial. "
+                    f"Horómetro inicial: {initial_hourmeter}, "
+                    f"Horómetro final: {final_hourmeter}"
+                )
+        else:
+            raise forms.ValidationError(
+                f"El horómetro inicial y el horómetro final son requeridos. "
+                f"Horómetro inicial: {initial_hourmeter}, "
+                f"Horómetro final: {final_hourmeter}"
+            )
+        cleaned_data['flight_hours'] = calculated_flight_hours
+    
         return cleaned_data

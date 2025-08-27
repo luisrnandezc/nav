@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Reporte de vuelo</title>
+    <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/flight_evaluation.js' %}"></script>
+  </head>
+
+  <body>
+    <div class="main-container">
+      <h1 class="main-header">Reporte de vuelo</h1>
+      <form class="form-container" method="post"  action="{% url 'fms:flight_report' %}">
+        {% csrf_token %}
+        <h1 class="subsection-header">Sección 1: Datos del piloto</h1>
+        <div class="fixed-fields-container">
+            <div class="left-column">
+                <div class="form-row">
+                    {{ form.pilot_id.label_tag }}
+                    {{ form.pilot_id }}
+                </div>
+                <div class="form-row">
+                    {{ form.pilot_license_number.label_tag }}
+                    {{ form.pilot_license_number }}
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="form-row">
+                    {{ form.pilot_first_name.label_tag }}
+                    {{ form.pilot_first_name }}
+                </div>
+                <div class="form-row">
+                    {{ form.pilot_last_name.label_tag }}
+                    {{ form.pilot_last_name }}
+                </div>
+          </div>
+        </div>
+        <h1 class="subsection-header">Sección 2: Datos del vuelo</h1>
+        <div class="fixed-fields-container">
+            <div class="left-column">
+                <div class="form-row">
+                    {{ form.flight_date.label_tag }}
+                    {{ form.flight_date }}
+                </div>
+                <div class="form-row">
+                    {{ form.flight_reason.label_tag }}
+                    {{ form.flight_reason }}
+                </div>
+                <div class="form-row">
+                    {{ form.aircraft.label_tag }}
+                    {{ form.aircraft }}
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="form-row">
+                    {{ form.initial_hourmeter.label_tag }}
+                    {{ form.initial_hourmeter }}
+                </div>
+                <div class="form-row">
+                    {{ form.final_hourmeter.label_tag }}
+                    {{ form.final_hourmeter }}
+                </div>
+                <div class="form-row">
+                    {{ form.fuel_consumed.label_tag }}
+                    {{ form.fuel_consumed }}
+                </div>
+            </div>
+        </div>
+        <h1 class="subsection-header">Sección 3: Comentarios (opcional)</h1>
+        <div class="form-row comments-row">
+          {{ form.comments }}
+        </div>
+
+        {% if form.errors %}
+          <ul>
+            {% for field, errors in form.errors.items %}
+              <li>{{ field }}: {{ errors }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <div class="submit-button-container">
+          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

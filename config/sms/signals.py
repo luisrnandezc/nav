@@ -14,12 +14,18 @@ Buen día,
 He completado el análisis de un nuevo reporte voluntario de SMS.
 
 Severidad: {severity}
+
 Probabilidad: {probability}
+
 Valor alfanumérico: {value}
-Riesgo: {risk_analysis}
+
+Análisis de riesgo: {risk_analysis}
+
+Recomendaciones: {recommendations}
 
 Atentamente,
-SARA.
+SARA
+(Safety Analyst and Reporting Assistant)
 """
 
 @receiver(post_save, sender=ReportAnalysis)
@@ -31,6 +37,7 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
     recipients = [
         settings.SMS_NOTIFICATION_EMAIL_1,
         settings.SMS_NOTIFICATION_EMAIL_2,
+        settings.SMS_NOTIFICATION_EMAIL_3,
     ]
 
     try:
@@ -38,7 +45,8 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
             severity=instance.severity,
             probability=instance.probability,
             value=instance.value,
-            risk_analysis=instance.risk_analysis
+            risk_analysis=instance.risk_analysis,
+            recommendations=instance.recommendations
         )
 
         email = EmailMessage(

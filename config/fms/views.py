@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
 from accounts.models import User
-from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
+from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm, FlightReportForm
 import weasyprint
 from pathlib import Path
 
@@ -90,6 +90,24 @@ def submit_flight_evaluation_120_170(request):
         form = FlightEvaluation120_170Form(user=request.user)
 
     return render(request, 'fms/flight_evaluation_120_170.html', {'form': form})
+
+@login_required
+def submit_flight_report(request):
+    """Handle flight report form submission."""
+    if request.method == 'POST':
+        form = FlightReportForm(request.POST, user=request.user)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('dashboard:dashboard')
+            except Exception as e:
+                messages.error(request, f'Error al guardar el reporte: {str(e)}')
+        else:
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
+    else:  
+        form = FlightReportForm(user=request.user)
+
+    return render(request, 'fms/flight_report.html', {'form': form})
 
 @login_required
 @require_http_methods(["GET"])

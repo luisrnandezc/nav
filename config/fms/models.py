@@ -2568,3 +2568,129 @@ class FlightEvaluation120_170(models.Model):
     class Meta:
         verbose_name = 'Evaluación de vuelo 120-170'
         verbose_name_plural = 'Evaluaciones de vuelo 120-170'
+
+class FlightReport(models.Model):
+    """
+    Flight Report Model
+
+    This model receives data directly from the FlightReport form.
+    It generates flight reports that are used to account for all the
+    flights not related with the flight training sessions.
+    """
+
+    #region CHOICES DEFINITIONS
+
+    # License types
+    LICENSE_PPA = 'PPA'
+    LICENSE_PCA = 'PCA'
+    LICENSE_TLA = 'TLA'
+
+    INSTRUCTOR_LICENSE_CHOICES = [ 
+        (LICENSE_PCA, 'PCA'),
+        (LICENSE_TLA, 'TLA'),
+    ]
+
+    # Flight reasons
+    TRANSFER = 'TRF'
+    FLIGHT_TEST = 'FLT'
+    OTHER = 'OTH'
+
+    FLIGHT_REASONS_CHOICES = [
+        (TRANSFER, 'Traslado'),
+        (FLIGHT_TEST, 'Chequeo'),
+        (OTHER, 'Otro'),
+    ]
+    #endregion
+
+    #region PILOT DATA
+    pilot_id = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='ID piloto'
+    )
+    pilot_first_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Nombre'
+    )
+    pilot_last_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Apellido'
+    )
+    pilot_license_number = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='Número de licencia'
+    )
+    #endregion
+
+    #region SESSION DATA
+    flight_date = models.DateField(
+        default=timezone.now,
+        verbose_name='Fecha'
+    )
+    flight_reason = models.CharField(
+        max_length=3,
+        choices=FLIGHT_REASONS_CHOICES,
+        default=TRANSFER,
+        verbose_name='Motivo'
+    )
+    initial_hourmeter = models.DecimalField(
+        max_digits=6,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horómetro inicial'
+    )
+    final_hourmeter = models.DecimalField(
+        max_digits=6,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horómetro final'
+    )
+    fuel_consumed = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Combustible consumido (litros)'
+    )
+    flight_hours = models.DecimalField(
+        max_digits=2, 
+        decimal_places=1,
+        default=0.0,
+        verbose_name='Horas sesión'
+    )
+    aircraft = models.ForeignKey(
+        Aircraft,
+        on_delete=models.CASCADE,
+        verbose_name='Aeronave',
+    )
+    #endregion
+
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
+
+    @property
+    def calculated_flight_hours(self):
+        """Return the difference between the initial and final hourmeter."""
+        if self.initial_hourmeter and self.final_hourmeter:
+            return round(self.final_hourmeter - self.initial_hourmeter, 1)
+        return 0.0
+
+    def __str__(self):
+        return f'{self.flight_date} - {self.aircraft.registration} - {self.flight_hours} hrs'
+    
+    def save(self, *args, **kwargs):
+        """Override save method to calculate flight hours."""
+        if self.initial_hourmeter and self.final_hourmeter:
+            self.flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        # Subtract flight hours from aircraft's total hours
+        self.aircraft.total_hours -= self.flight_hours
+        self.aircraft.save()
+        
+        # Delete the flight report record using the primary id
+        super().delete(*args, **kwargs)
+    
+    class Meta:
+        verbose_name = 'Reporte de vuelo'
+        verbose_name_plural = 'Reportes de vuelo'

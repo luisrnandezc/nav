@@ -288,6 +288,11 @@ class StaffProfile(models.Model):
         on_delete=models.CASCADE, 
         related_name='staff_profile'
     )
+    position = models.CharField(
+        max_length=100,
+        default='Staff',
+        verbose_name='Cargo',
+    )
     can_confirm_payments = models.BooleanField(
         default=False,
         verbose_name='Puede confirmar pagos'
@@ -300,4 +305,4 @@ class StaffProfile(models.Model):
         verbose_name_plural = 'Staff'
 
     def __str__(self):
-        return f'{self.user.username} [ID: {self.user.national_id}]'
+        return f'{self.user.username} [ID: {self.user.national_id}] ({self.position})'

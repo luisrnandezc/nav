@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from accounts.models import StudentProfile, InstructorProfile
+from accounts.models import StudentProfile, InstructorProfile, StaffProfile
 from fms.models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
 from django.contrib import messages
 from academic.models import StudentGrade
@@ -20,13 +20,16 @@ def dashboard(request):
         elif user.role == 'INSTRUCTOR':
             context['user_profile'] = user.instructor_profile
             template = 'dashboard/instructor_dashboard.html'
+        elif user.role == 'STAFF':
+            context['user_profile'] = user.staff_profile
+            template = 'dashboard/staff_dashboard.html'
         else:
             messages.error(request, 'Perfil de usuario inválido.')
             return redirect('accounts:login')
             
         return render(request, template, context)
     
-    except (StudentProfile.DoesNotExist, InstructorProfile.DoesNotExist):
+    except (StudentProfile.DoesNotExist, InstructorProfile.DoesNotExist, StaffProfile.DoesNotExist):
         messages.error(request, 'No se encontró el perfil de usuario.')
         return redirect('accounts:login')
 

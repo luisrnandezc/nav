@@ -38,6 +38,7 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
         settings.SMS_NOTIFICATION_EMAIL_1,
         settings.SMS_NOTIFICATION_EMAIL_2,
         settings.SMS_NOTIFICATION_EMAIL_3,
+        settings.SMS_NOTIFICATION_EMAIL_4,
     ]
 
     try:

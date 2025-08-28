@@ -1,0 +1,83 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Reporte SMS voluntario</title>
+    <link href="{% static 'voluntary_report.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="main-container">
+      <h1 class="main-header">Reporte SMS voluntario</h1>
+      <form class="form-container" method="post"  action="{% url 'sms:voluntary_report' %}">
+        {% csrf_token %}
+        <h1 class="subsection-header">Sección 1: Datos del reportante (Opcional)</h1>
+        <div class="fixed-fields-container">
+            <div class="left-column">
+                <div class="form-row">
+                    {{ form.is_anonymous.label_tag }}
+                    {{ form.is_anonymous }}
+                </div>
+                <div class="form-row">
+                    {{ form.role.label_tag }}
+                    {{ form.role }}
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="form-row">
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+                </div>
+                <div class="form-row">
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+                </div>
+            </div>
+        </div>
+        <h1 class="subsection-header">Sección 2: Datos del evento</h1>
+        <div class="fixed-fields-container">
+            <div class="left-column">
+                <div class="form-row">
+                    {{ form.date.label_tag }}
+                    {{ form.date }}
+                </div>
+                <div class="form-row">
+                    {{ form.time.label_tag }}
+                    {{ form.time }}
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="form-row">
+                    {{ form.area.label_tag }}
+                    {{ form.area }}
+                </div>
+            </div>
+        </div>
+        <h1 class="subsection-header">Sección 3: Descripción del evento</h1>
+        <div class="form-row comments-row">
+            {{ form.description }}
+        </div>
+
+        {% if form.errors %}
+          <ul>
+            {% for field, errors in form.errors.items %}
+              <li>{{ field }}: {{ errors }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <div class="submit-button-container">
+          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>
+        </div>
+      </form>
+    </div>
+    <script>
+        function confirmSubmission() {
+            return confirm('¿Está seguro de que desea enviar este reporte? Esta acción no se puede deshacer.');
+        }
+    </script>
+  </body>
+</html>

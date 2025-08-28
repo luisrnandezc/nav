@@ -69,12 +69,12 @@ class VoluntaryReport(models.Model):
         null=True
     )
     date = models.DateField(
-        default=timezone.now().date(),
+        default=timezone.now,
         verbose_name="Fecha"
     )
     time = models.TimeField(
+        default=timezone.localtime,
         verbose_name="Hora",
-        default=timezone.localtime().time()
     )
 
     # Area of danger.

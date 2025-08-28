@@ -14,7 +14,7 @@
       <h1 class="main-header">Reporte SMS voluntario</h1>
       <form class="form-container" method="post"  action="{% url 'sms:voluntary_report' %}">
         {% csrf_token %}
-        <h1 class="subsection-header">Sección 1: Datos del reportante (Opcional)</h1>
+        <h1 class="subsection-header" id="section-1-header">Sección 1: Datos del reportante (Opcional)</h1>
         <div class="fixed-fields-container">
             <div class="left-column">
                 <div class="form-row">

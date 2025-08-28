@@ -52,6 +52,6 @@ class SMSVoluntaryReportForm(forms.ModelForm):
         if is_anonymous:
             cleaned_data['first_name'] = 'Anónimo'
             cleaned_data['last_name'] = 'Anónimo'
-            cleaned_data['role'] = 'Anónimo'
+            cleaned_data['role'] = 'OTHER'
 
         return cleaned_data

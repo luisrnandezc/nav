@@ -13,6 +13,17 @@ class VoluntaryReport(models.Model):
         ('NO', 'NO'),
     ]
 
+    # Role Choices
+    ROLE_CHOICES = [
+        ('DIRECTOR', 'Dirección'),
+        ('OPERATIONS', 'Operaciones'),
+        ('GROUND_INSTRUCTOR', 'Instructor de tierra'),
+        ('FLIGHT_INSTRUCTOR', 'Instructor de vuelo'),
+        ('STUDENT', 'Alumno'),
+        ('ADMIN', 'Administrativo'),
+        ('OTHER', 'Otro'),
+    ]
+
     # Status Choices for AI Analysis
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente de análisis'),
@@ -50,8 +61,10 @@ class VoluntaryReport(models.Model):
         null=True
     )
     role = models.CharField(
-        max_length=200, 
-        verbose_name="Cargo o función que ocupa en la institución",
+        max_length=20, 
+        choices=ROLE_CHOICES,
+        default='OTHER',
+        verbose_name="Cargo o función",
         blank=True,
         null=True
     )

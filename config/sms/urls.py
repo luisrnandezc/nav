@@ -4,6 +4,5 @@ from . import views
 app_name = 'sms'
 
 urlpatterns = [
-    # Define your URL patterns here
-    # path('', views.index, name='index'),
+    path('voluntary_report/', views.voluntary_report, name='voluntary_report'),
 ]

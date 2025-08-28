@@ -1,5 +1,33 @@
 import os
+from django.shortcuts import render, redirect
 from openai import OpenAI
+from .forms import SMSVoluntaryReportForm
+from django.contrib import messages
+
+def voluntary_report(request):
+    """
+    A view to handle the SMS voluntary report.
+    """
+    if request.method == 'POST':
+        is_anonymous = request.POST.get('is_anonymous') == 'YES'
+
+        if is_anonymous:
+            form = SMSVoluntaryReportForm(request.POST)
+        else:
+            form = SMSVoluntaryReportForm(request.POST, user=request.user)
+
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('dashboard:dashboard')
+            except Exception as e:
+                messages.error(request, f'Error al guardar el reporte: {str(e)}')
+        else:
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
+    else:  
+        form = SMSVoluntaryReportForm(user=request.user)
+
+    return render(request, 'sms/voluntary_report.html', {'form': form})
 
 def run_sms_voluntary_report_analysis(custom_prompt=None):
     """

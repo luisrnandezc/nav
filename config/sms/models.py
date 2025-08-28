@@ -7,6 +7,12 @@ class VoluntaryReport(models.Model):
     Voluntary Report Model for Safety Management System (SMS)
     """
 
+    # Anonymous Choices
+    ANONYMOUS_CHOICES = [
+        ('YES', 'SI'),
+        ('NO', 'NO'),
+    ]
+
     # Status Choices for AI Analysis
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente de análisis'),
@@ -25,6 +31,12 @@ class VoluntaryReport(models.Model):
     ]
     
     # Report data.
+    is_anonymous = models.CharField(
+        max_length=3,
+        choices=ANONYMOUS_CHOICES,
+        default='NO',
+        verbose_name="Reporte anónimo"
+    )
     first_name = models.CharField(
         max_length=200, 
         verbose_name="Nombre",
@@ -44,10 +56,12 @@ class VoluntaryReport(models.Model):
         null=True
     )
     date = models.DateField(
+        default=timezone.now().date(),
         verbose_name="Fecha"
     )
     time = models.TimeField(
-        verbose_name="Hora"
+        verbose_name="Hora",
+        default=timezone.now().time()
     )
 
     # Area of danger.

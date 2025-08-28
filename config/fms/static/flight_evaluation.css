@@ -196,7 +196,7 @@
       justify-content: center;
     }
 
-    #id_notes {
-      width: 100%;
+    #id_notes, #id_comments {
+      width: 90%;
     }
   }

@@ -63,7 +63,7 @@ class VoluntaryReport(models.Model):
     role = models.CharField(
         max_length=20, 
         choices=ROLE_CHOICES,
-        default='OTHER',
+        default='',
         verbose_name="Cargo o función",
         blank=True,
         null=True

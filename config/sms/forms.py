@@ -24,7 +24,7 @@ class SMSVoluntaryReportForm(forms.ModelForm):
             'is_anonymous': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'first_name': forms.TextInput(attrs={'class': 'form-field'}),
             'last_name': forms.TextInput(attrs={'class': 'form-field'}),
-            'role': forms.TextInput(attrs={'class': 'form-field'}),
+            'role': forms.Select(attrs={'class': 'form-field'}),
             'date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
             'time': forms.TimeInput(format='%H:%M', attrs={'type': 'time'}),
             'area': forms.Select(attrs={'class': 'form-field', 'placeholder': 'Seleccione una opción'}),

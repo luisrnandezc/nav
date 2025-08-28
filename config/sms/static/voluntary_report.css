@@ -196,7 +196,7 @@
       justify-content: center;
     }
 
-    #id_notes {
-      width: 100%;
+    #id_description {
+      width: 90%;
     }
   }

@@ -92,21 +92,10 @@
               {% endif %}
             </div>
             <div class="dashboard-square">
-              <h1 class="square-header">Calendario de vuelos</h1>
-              {% if request.user.is_authenticated and request.user.instructor_profile.instructor_type in 'VUELO,DUAL' %}
-                <a class="image-link" href="{% url 'dashboard:dashboard' %}">
-                  <img class="logo-img" src="{% static 'img/calendar.png' %}" alt="Calendario">
+              <h1 class="square-header">Reporte SMS</h1>
+                <a class="image-link" href="{% url 'sms:voluntary_report' %}">
+                  <img class="logo-img" src="{% static 'img/shield.png' %}" alt="Reporte SMS">
                 </a>
-              {% else %}
-                <div class="image-link disabled">
-                  <img 
-                  class="logo-img" 
-                  src="{% static 'img/calendar.png' %}" 
-                  alt="Calenario" 
-                  title="Solo disponible para instructores de vuelo."
-                  >
-                </div>
-              {% endif %}
             </div>
           </div>
       </div>

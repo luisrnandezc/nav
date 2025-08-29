@@ -4,6 +4,12 @@ from openai import OpenAI
 from .forms import SMSVoluntaryReportForm
 from django.contrib import messages
 
+def main_sms(request):
+    """
+    A view to handle the SMS main page.
+    """
+    return render(request, 'sms/main_sms.html')
+
 def voluntary_report(request):
     """
     A view to handle the SMS voluntary report.

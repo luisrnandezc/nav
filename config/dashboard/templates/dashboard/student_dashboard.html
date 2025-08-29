@@ -23,6 +23,8 @@
           <p>Email: {{ user.email }}</p>
           <p>Curso: {{ user_profile.current_course_type }}-{{ user_profile.current_course_edition }}</p>
           <p>Fase: {{ user_profile.student_phase }}</p>
+          <p>Balance: $ {{ user_profile.flight_balance }}</p>
+
         </div>
         <div class="buttons">
           <div class="button-container">
@@ -41,8 +43,10 @@
           <div class="left-column">
 
             <div class="dashboard-square">
-              <h1 class="square-header" id="balance-header">Balance Línea de Vuelo</h1>
-              <p id="balance-amount">$ {{ user_profile.flight_balance }}</p>
+              <h1 class="square-header" id="balance-header">Reporte SMS</h1>
+              <a class="image-link" href="{% url 'sms:voluntary_report' %}">
+                <img class="logo-img" src="{% static 'img/shield.png' %}" alt="Reporte SMS">
+              </a>
             </div>
 
             <div class="dashboard-square">

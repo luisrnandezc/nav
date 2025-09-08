@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Reportes SMS</title>
+        <link href="{% static 'report_list.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="main-container">
+            <div class="logs-container">
+                <h1>Registro de reportes SMS</h1>
+                <div class="logs-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Reporte</th>
+                                <th>Área</th>
+                                <th>Valor</th>
+                                <th>Estatus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for report in reports %}
+                            <tr class="clickable-row" data-href="{% url 'sms:report_detail' report.id %}">
+                                <td>{{ report.report.date|date:"d/m/Y" }}</td>
+                                <td>{{ report.report.description|truncatechars:100 }}</td>
+                                <td>{{ report.report.area }}</td>
+                                <td>{{ report.value }}</td>
+                                <td class="{% if report.is_valid == 'YES' %}status-passed{% else %}status-failed{% endif %}">
+                                    {% if report.is_valid == 'YES' %}Válido{% else %}No válido{% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" style="text-align: center;">No hay registros de reportes disponibles</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // Make table rows clickable
+            document.addEventListener('DOMContentLoaded', function() {
+                const clickableRows = document.querySelectorAll('.clickable-row');
+                
+                clickableRows.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        const href = this.getAttribute('data-href');
+                        if (href) {
+                            window.location.href = href;
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

@@ -42,6 +42,20 @@ def run_ai_analysis_for_report(report):
         
         # Create the AI prompt
         prompt = """
+        "Eres un experto en SMS (Safety Management System) y estás encargado de
+        analizar reportes de seguridad operacional para una escuela de aviación.
+        Debes ejercer tu función de analista tomando como base los siguientes documentos:
+
+            1. Anexo 19 de la OACI.
+            2. Documento 9859 de la OACI.
+
+        Así mismo, toma en consideración los siguientes factores:
+
+            1. La escuela utiliza dos aeronaves marca Piper, un PA-28-161 y un PA-28-235.
+            2. Es una escuela pequeña con un equipo de 8 personas y 3 instructores de vuelo.
+            3. Las recomendaciones deben ser específicas, realistas y ajustadas al tamaño de la escuela.
+            4. Utiliza un tono formal y profesional.
+
         Analiza este reporte de seguridad operacional:
         
         Fecha: {}
@@ -51,26 +65,48 @@ def run_ai_analysis_for_report(report):
         
         Por favor, ejecuta las siguientes tareas:
 
-        1. Analiza el reporte y determina si es un reporte de seguridad válido, es decir, que el contenido del reporte contiene
-        información de una condición, situación o suceso relacionado con la seguridad operacional. Debes ser muy estricto con este criterio, por
-        ejemplo, si el reporte es sobre un problema con uno de las pizarras electrónicas usadas para dar clases, no es un reporte de seguridad válido.
+        1. Analiza el reporte y determina si es un reporte de seguridad válido, es decir, 
+        que el contenido del reporte contiene información de una condición, situación o
+        suceso relacionado con la seguridad operacional. Debes ser muy estricto con este 
+        criterio, por ejemplo, si el reporte es sobre un problema con uno de las pizarras 
+        electrónicas usadas para dar clases, no es un reporte de seguridad válido.
 
-        2. Si es un reporte de seguridad válido, asígnale un Nivel de Severidad y un Nivel de Probabilidad de acuerdo a la siguiente escala:
-            2.1 Nivel de severidad: insignificante (E), marginal (D), significativo (C), crítico (B) y catastrófico (A).
-            2.2 Nivel de probabilidad: improbable (1), remoto (2), probable (3), ocasional (4) y frecuente (5).
+        2. Si es un reporte de seguridad válido, asígnale un Nivel de Severidad y 
+        un Nivel de Probabilidad de acuerdo a la siguiente escala:
+
+            2.1 Nivel de severidad:
+            - Insignificante (A)
+            - Marginal (B)
+            - Significativo (C)
+            - Crítico (D)
+            - Catastrófico (E)
+
+            2.2 Nivel de probabilidad:
+            - Improbable (1)
+            - Remoto (2)
+            - Probable (3)
+            - Ocasional (4)
+            - Frecuente (5)
 
             Une los valores de Severidad y Probabilidad para obtener un valor alfanumérico.
 
-            Ejemplo: un reporte calificado como "crítico (C)" y "ocasional (4)" tiene un valor de "C4".
-            Ejemplo: un reporte calificado como "marginal (D)" y "probable (3)" tiene un valor de "D3".
+            Ejemplo: un reporte calificado como "crítico (D)" y "ocasional (4)" tiene un valor de "D4".
+            Ejemplo: un reporte calificado como "marginal (B)" y "probable (3)" tiene un valor de "B3".
 
             2.3 Si el reporte no es válido, asigna un valor numérico de "0".
 
-        3. Ejecuta un análisis de riesgos del reporte, considerando el valor alfanumérico asignado en el punto 2.
+        3. Ejecuta un análisis de riesgos del reporte, considerando el valor alfanumérico 
+        asignado en el punto 2.
 
-        4. Genera recomendaciones para mejorar la seguridad operacional, considerando el análisis de riesgos y el valor alfanumérico asignado en el punto 2.
+        4. Genera recomendaciones para mejorar la seguridad operacional, considerando 
+        el análisis de riesgos y el valor alfanumérico asignado en el punto 2. Las recomendaciones
+        deben ser específicas, realistas y ajustadas al tamaño de la escuela. Así mismo, separa
+        cada una de las recomendaciones de forma clara y organizada. Estas serán enviadas a un
+        analista humano para su revisión y aprobación.
 
-        5. IMPORTANTE: Responde ÚNICAMENTE con un JSON válido. NO incluyas texto explicativo antes o después del JSON.
+        5. Utiliza el idioma español con tono formal, profesional y lenguaje técnico.
+
+        6. IMPORTANTE: Responde ÚNICAMENTE con un JSON válido. NO incluyas texto explicativo antes o después del JSON.
         
         El JSON debe tener exactamente esta estructura:
         {{
@@ -97,7 +133,8 @@ def run_ai_analysis_for_report(report):
         print("[{}] OpenAI response parsed successfully for report {}".format(timezone.now(), report.id))
         
         # Create analysis record
-        is_valid = parsed_data.get('is_valid', 'NO') == 'SI'
+        is_valid_value = parsed_data.get('is_valid', 'NO')
+        is_valid = 'YES' if is_valid_value == 'SI' else 'NO'
         
         analysis_record = ReportAnalysis.objects.create(
             report=report,

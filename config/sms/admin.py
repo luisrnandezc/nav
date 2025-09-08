@@ -36,6 +36,14 @@ class VoluntaryReportAdmin(admin.ModelAdmin):
     
     readonly_fields = ['created_at', 'updated_at', 'ai_analysis_status']
     
+    def has_add_permission(self, request):
+        """Disable adding new reports through admin - reports must be created through the website"""
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        """Disable editing reports through admin - reports must be managed through the website"""
+        return False
+    
     def description_preview(self, obj):
         """Show a preview of the description in the list view"""
         if obj.description:

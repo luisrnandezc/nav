@@ -16,12 +16,11 @@
           <h1>Sistema SMS</h1>
         </div>
         <div class="user-data">
-          <p>Nombres: {{ user.first_name }}</p>
-          <p>Apellidos: {{ user.last_name }}</p>
-          <p>Usuario: {{ user.username }}</p>
-          <p>ID: {{ user.national_id }}</p>
-          <p>Email: {{ user.email }}</p>
-          <p>Cargo: {{ user.staff_profile.position }}</p>
+          <p>Reportes generados:</p>
+          <p>Reportes pendientes:</p>
+          <p>Acciones completadas:</p>
+          <p>Acciones pendientes:</p>
+          <p>Estatus SMS:</p>
         </div>
         <div class="buttons">
           <div class="button-container">
@@ -39,29 +38,29 @@
       <div class="dashboard-container">
           <div class="left-column">
             <div class="dashboard-square">
-              <h1 class="square-header">Reporte SMS</h1>
+              <h1 class="square-header">Agregar reporte</h1>
                 <a class="image-link" href="{% url 'sms:voluntary_report' %}">
-                  <img class="logo-img" src="{% static 'img/shield.png' %}" alt="Reporte SMS">
+                  <img class="logo-img" src="{% static 'img/addReport.png' %}" alt="Reporte SMS">
                 </a>
             </div>
             <div class="dashboard-square">
               <h1 class="square-header">Chat SARA</h1>
                 <a class="image-link" href="">
-                  <img class="logo-img" src="" alt="">
+                  <img class="logo-img" src="{% static 'img/chatSMS.png' %}" alt="Chat SMS">
                 </a>
             </div>
           </div>
           <div class="right-column">
             <div class="dashboard-square">
               <h1 class="square-header">Ver reportes</h1>
-                <a class="image-link" href="">
-                  <img class="logo-img" src="" alt="">
+                <a class="image-link" href="{% url 'sms:report_list' %}">
+                  <img class="logo-img" src="{% static 'img/viewReport.png' %}" alt="Ver reportes SMS">
                 </a>
             </div>
             <div class="dashboard-square">
               <h1 class="square-header">Performance</h1>
                 <a class="image-link" href="">
-                  <img class="logo-img" src="" alt="">
+                  <img class="logo-img" src="{% static 'img/performanceSMS.png' %}" alt="Performance">
                 </a>
             </div>
           </div>

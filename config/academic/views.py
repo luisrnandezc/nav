@@ -126,3 +126,22 @@ def load_students(request):
         return JsonResponse({'students': student_list})
     except SubjectEdition.DoesNotExist:
         return JsonResponse({'error': 'Edición de materia no encontrada'}, status=404)
+    
+@login_required
+def grade_logs(request):
+    """
+    Display the grade logs page for the current student.
+    """
+    user = request.user
+    
+    # Fetch grade logs for the student (last 10)
+    grade_logs = StudentGrade.objects.filter(
+        student=user
+    ).order_by('-date')[:10]
+    
+    context = {
+        'grade_logs': grade_logs,
+        'user': user,
+    }
+    
+    return render(request, 'academic/grade_log.html', context)

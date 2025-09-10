@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Agregar Pago</title>
+    <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    <link href="{% static 'add_payment.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="main-container">
+      <div class="back-button">
+        <a href="{% url 'payments:payments_dashboard' %}" class="button">&larr; Volver</a>
+      </div>
+      
+      <h1 class="main-header">Agregar Pago</h1>
+      <form class="form-container" method="post" action="{% url 'payments:add_payment' %}">
+        {% csrf_token %}
+        
+        <h1 class="subsection-header">Datos del Pago</h1>
+        <div class="single-column-container">
+          <div class="form-row">
+            {{ form.student_profile.label_tag }}
+            {{ form.student_profile }}
+            {% if form.student_profile.errors %}
+              <div class="field-error">{{ form.student_profile.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <div class="form-row">
+            {{ form.amount.label_tag }}
+            {{ form.amount }}
+            {% if form.amount.errors %}
+              <div class="field-error">{{ form.amount.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <div class="form-row">
+            {{ form.type.label_tag }}
+            {{ form.type }}
+            {% if form.type.errors %}
+              <div class="field-error">{{ form.type.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <div class="form-row">
+            {{ form.date_added.label_tag }}
+            {{ form.date_added }}
+            {% if form.date_added.errors %}
+              <div class="field-error">{{ form.date_added.errors.0 }}</div>
+            {% endif %}
+          </div>
+          {% if form.confirmed %}
+            <div class="form-row checkbox-row">
+              {{ form.confirmed.label_tag }}
+              {{ form.confirmed }}
+              {% if form.confirmed.errors %}
+                <div class="field-error">{{ form.confirmed.errors.0 }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        <h1 class="subsection-header">Notas (Opcional)</h1>
+        <div class="form-row comments-row">
+          {{ form.notes }}
+        </div>
+
+
+        {% if messages %}
+          <div class="success-messages">
+            {% for message in messages %}
+              <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="submit-button-container">
+          <button class="submit-button" type="submit">Agregar Pago</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

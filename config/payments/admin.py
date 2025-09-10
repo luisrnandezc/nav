@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils import timezone
 from .models import StudentPayment
 
 @admin.register(StudentPayment)
@@ -7,7 +8,14 @@ class StudentPaymentAdmin(admin.ModelAdmin):
                      'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
     list_filter = ('confirmed', 'date_added', 'confirmation_date')
     search_fields = ('student_profile__user__username', 'student_profile__user__national_id')
-    readonly_fields = ('added_by', 'confirmation_date', 'confirmed_by')
+    readonly_fields = ('student_profile', 'amount', 'type', 'date_added', 'added_by', 'confirmed', 'confirmed_by', 'confirmation_date', 'notes')
+    
+    # Disable add and change functionality
+    def has_add_permission(self, request):
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        return False
     fieldsets = (
         ('Información del Estudiante', {
             'fields': ('student_profile',)
@@ -54,47 +62,14 @@ class StudentPaymentAdmin(admin.ModelAdmin):
     get_confirmation_date.short_description = 'Fecha de confirmación'
     get_confirmation_date.admin_order_field = 'confirmation_date'
 
-    def get_readonly_fields(self, request, obj=None):
-        readonly_fields = list(super().get_readonly_fields(request, obj))
-        
-        # Make amount and type readonly for existing payments
-        if obj and obj.pk:  # If this is an existing payment
-            readonly_fields.extend(['student_profile', 'amount', 'type'])
-        
-        # Make confirmed field readonly for users without confirmation permissions
-        if not hasattr(request.user, 'staff_profile') or not request.user.staff_profile.can_confirm_payments:
-            readonly_fields.extend(['confirmed'])
-        
-        return readonly_fields
-
-    def save_model(self, request, obj, form, change):
-        if not change:  # New payment
-            obj.added_by = request.user
-            if obj.confirmed:  # If payment is confirmed on creation
-                obj.confirm(request.user)
-            else:
-                super().save_model(request, obj, form, change)
-        elif change:  # Existing payment being modified
-            # Get the original object to check if it was previously confirmed
-            original_obj = StudentPayment.objects.get(pk=obj.pk)
-            
-            if obj.confirmed and not original_obj.confirmed:  # Payment being confirmed
-                obj.confirm(request.user)
-            elif not obj.confirmed and original_obj.confirmed:  # Payment being unconfirmed
-                obj.unconfirm()
-                # The unconfirm method already saves the object, so we don't need to call super().save_model()
-            else:
-                super().save_model(request, obj, form, change)
     
     def delete_model(self, request, obj):
-        """Override delete_model to handle balance updates when deleting confirmed payments"""
-        if obj.confirmed:
-            obj._update_student_balance(add=False)
-        super().delete_model(request, obj)
+        """Override delete_model to ensure balance updates"""
+        # Call the model's delete method to trigger balance updates
+        obj.delete()
     
     def delete_queryset(self, request, queryset):
-        """Override delete_queryset to handle balance updates when bulk deleting confirmed payments"""
-        for payment in queryset:
-            if payment.confirmed:
-                payment._update_student_balance(add=False)
-        super().delete_queryset(request, queryset)
+        """Override delete_queryset to ensure balance updates"""
+        # Call each object's delete method to trigger balance updates
+        for obj in queryset:
+            obj.delete()

@@ -7,8 +7,29 @@ from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
 from accounts.models import User
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm, FlightReportForm
+from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport
 import weasyprint
 from pathlib import Path
+
+@login_required
+def fms_dashboard(request):
+    """FMS Dashboard view showing latest flights and sessions."""
+    # Get latest 10 records for each category
+    latest_sim_sessions = SimEvaluation.objects.all().order_by('-session_date')[:50]
+    latest_flight_0_100 = FlightEvaluation0_100.objects.all().order_by('-session_date')[:50]
+    latest_flight_100_120 = FlightEvaluation100_120.objects.all().order_by('-session_date')[:50]
+    latest_flight_120_170 = FlightEvaluation120_170.objects.all().order_by('-session_date')[:50]
+    latest_flight_reports = FlightReport.objects.all().order_by('-flight_date')[:50]
+    
+    context = {
+        'latest_sim_sessions': latest_sim_sessions,
+        'latest_flight_0_100': latest_flight_0_100,
+        'latest_flight_100_120': latest_flight_100_120,
+        'latest_flight_120_170': latest_flight_120_170,
+        'latest_flight_reports': latest_flight_reports,
+    }
+    
+    return render(request, 'fms/fms_dashboard.html', context)
 
 @login_required
 def form_selection(request):

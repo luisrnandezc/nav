@@ -110,28 +110,22 @@ class StudentPayment(models.Model):
         self.confirmed = True
         self.confirmed_by = user
         self.confirmation_date = timezone.now()
+        # The save() method will handle balance updates
         self.save()
-        
-        # Update student balance
-        self._update_student_balance(add=True)
     
     def unconfirm(self):
         """Call this method when a payment is unconfirmed"""
-        # Get the original confirmed state from the database
-        original_obj = StudentPayment.objects.get(pk=self.pk)
-        was_confirmed = original_obj.confirmed
-        
         self.confirmed = False
         self.confirmed_by = None
         self.confirmation_date = None
+        # The save() method will handle balance updates
         self.save()
-        
-        # If it was previously confirmed, subtract the amount from balance
-        if was_confirmed:
-            self._update_student_balance(add=False)
     
     def _update_student_balance(self, add=True):
         """Helper method to update student balance"""
+        # Refresh the student profile from database to get current balance
+        self.student_profile.refresh_from_db()
+        
         if self.type == 'VUELO' or self.type == 'DEBITO':
             if add:
                 self.student_profile.flight_balance += self.amount
@@ -148,10 +142,33 @@ class StudentPayment(models.Model):
         self.student_profile.save()
     
     def save(self, *args, **kwargs):
-        """Override save method to validate data before saving"""
+        """Override save method to handle balance updates and validation"""
+        # Get the original object from the database if this is an existing payment
+        original_obj = None
+        if hasattr(self, 'pk') and self.pk:
+            try:
+                original_obj = StudentPayment.objects.get(pk=self.pk)
+            except StudentPayment.DoesNotExist:
+                pass
+        
         # Automatically update confirmation_date if confirmed is set to True
         if self.confirmed and not self.confirmation_date:
             self.confirmation_date = timezone.now()
+        
+        # Handle balance updates based on confirmation status changes
+        if original_obj:
+            # Existing payment being modified
+            if not original_obj.confirmed and self.confirmed:
+                # Payment being confirmed - add to balance
+                self._update_student_balance(add=True)
+            elif original_obj.confirmed and not self.confirmed:
+                # Payment being unconfirmed - subtract from balance
+                self._update_student_balance(add=False)
+        else:
+            # New payment - only update balance if it's confirmed
+            if self.confirmed:
+                self._update_student_balance(add=True)
+        
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):

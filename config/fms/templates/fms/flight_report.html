@@ -11,6 +11,10 @@
   </head>
 
   <body>
+    <div class="back-button">
+      <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
+    </div>
+    
     <div class="main-container">
       <h1 class="main-header">Reporte de vuelo</h1>
       <form class="form-container" method="post"  action="{% url 'fms:flight_report' %}">

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | FMS Dashboard</title>
     <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
   </head>
 
@@ -26,7 +27,7 @@
       </div>
 
       <div class="sections-container">
-        <!-- Flight Evaluations 0-100 -->
+        <!-- Evaluations 0-100 -->
         <div class="section">
           <div class="section-header">
             <h2>Evaluaciones 0-100h</h2>
@@ -66,7 +67,7 @@
           </div>
         </div>
 
-        <!-- Flight Evaluations 100-120 -->
+        <!-- Evaluations 100-120 -->
         <div class="section">
           <div class="section-header">
             <h2>Evaluaciones 100-120h</h2>
@@ -106,7 +107,7 @@
           </div>
         </div>
 
-        <!-- Flight Evaluations 120-170 -->
+        <!-- Evaluations 120-170 -->
         <div class="section">
           <div class="section-header">
             <h2>Evaluaciones 120-170h</h2>
@@ -241,7 +242,6 @@
       });
 
       function showSessionDetails(type, id) {
-        // For now, we'll show an alert. In the future, this could open a modal or redirect to a detail page
         alert(`Mostrando detalles de ${type} con ID: ${id}\n\nEsta funcionalidad se implementará en el futuro para mostrar los datos completos de la sesión en modo de solo lectura.`);
       }
     </script>

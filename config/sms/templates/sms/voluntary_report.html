@@ -7,9 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Reporte SMS voluntario</title>
     <link href="{% static 'voluntary_report.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
   </head>
 
   <body>
+    <div class="back-button">
+      <a href="javascript:history.back()" class="button">&larr; Volver</a>
+    </div>
+
     <div class="main-container">
       <h1 class="main-header">Reporte SMS voluntario</h1>
       <form class="form-container" method="post"  action="{% url 'sms:voluntary_report' %}">

@@ -14,7 +14,7 @@
   <body></body>
     <div class="main-container">
       <div class="back-button">
-        <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
+        <a href="javascript:history.back()" class="button">&larr; Volver</a>
       </div>
       <h1 class="main-header">Reporte de vuelo</h1>
       <form class="form-container" method="post"  action="{% url 'fms:flight_report' %}">

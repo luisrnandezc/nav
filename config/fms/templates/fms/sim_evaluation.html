@@ -7,10 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Evaluación de simulador</title>
     <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <script src="{% static 'js/flight_evaluation_dynamics.js' %}"></script>
   </head>
 
   <body>
+    <div class="back-button">
+      <a href="javascript:history.back()" class="button">&larr; Volver</a>
+    </div>
+
     <div class="main-container">
       <h1 class="main-header">Evaluación de simulador</h1>
       <form class="form-container" method="post"  action="{% url 'fms:sim_evaluation' %}">

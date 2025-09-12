@@ -17,7 +17,7 @@
 
         <div class="main-container">
             <div class="logs-container">
-                <h1>Bitácora de vuelo</h1>
+                <h1>Bitácora de Vuelo</h1>
                 <div class="logs-table">
                     <table>
                         <thead>
@@ -43,12 +43,11 @@
                                 <td>{{ log.session_flight_hours }} hrs</td>
                                 <td>{{ log.session_grade }}</td>
                                 <td class="comment-cell" {% if log.comments %}title="{{ log.comments }}"{% endif %}>
-                                    {% if log.comments %}
-                                        <span class="comment-text">{{ log.comments|truncatechars:30 }}</span>
-                                        <span class="comment-tooltip">{{ log.comments }}</span>
-                                    {% else %}
-                                        -
-                                    {% endif %}
+                                        {% if log.comments %}
+                                            {{ log.comments|truncatechars:15 }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
                                 </td>
                             </tr>
                         {% empty %}
@@ -62,7 +61,7 @@
             </div>
             
             <div class="logs-container">
-                <h1>Bitácora de simulador</h1>
+                <h1>Bitácora de Simulador</h1>
                 <div class="logs-table">
                     <table>
                         <thead>
@@ -89,8 +88,7 @@
                                     <td>{{ log.session_grade }}</td>
                                     <td class="comment-cell" {% if log.comments %}title="{{ log.comments }}"{% endif %}>
                                         {% if log.comments %}
-                                            <span class="comment-text">{{ log.comments|truncatechars:30 }}</span>
-                                            <span class="comment-tooltip">{{ log.comments }}</span>
+                                            {{ log.comments|truncatechars:20 }}
                                         {% else %}
                                             -
                                         {% endif %}

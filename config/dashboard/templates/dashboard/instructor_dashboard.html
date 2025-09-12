@@ -77,7 +77,7 @@
             <div class="dashboard-square">
               <h1 class="square-header">Bitácora</h1>
               {% if request.user.is_authenticated and request.user.instructor_profile.instructor_type in 'VUELO,DUAL' %}
-                <a class="image-link" href="{% url 'dashboard:instructor_logs' %}">
+                <a class="image-link" href="{% url 'fms:instructor_flightlog' %}">
                   <img class="logo-img" src="{% static 'img/flightlog.png' %}" alt="Bitácora">
                 </a>
               {% else %}

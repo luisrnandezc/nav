@@ -12,6 +12,84 @@ import weasyprint
 from pathlib import Path
 
 @login_required
+def student_flightlog(request):
+    """
+    Display the flightlog page with flight and simulator logs for the current student.
+    """
+    user = request.user
+    
+    # Get student's national ID
+    student_id = user.national_id
+    
+    # Query flight evaluations for the student
+    flight_logs = []
+    flight_logs.extend(FlightEvaluation0_100.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')[:5])
+    flight_logs.extend(FlightEvaluation100_120.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')[:5])
+    flight_logs.extend(FlightEvaluation120_170.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')[:5])
+
+    # Sort by date and take last 10
+    flight_logs.sort(key=lambda x: x.session_date, reverse=True)
+    flight_logs = flight_logs[:10]
+    
+    # Fetch simulator logs for the student (last 10)
+    simulator_logs = SimEvaluation.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')[:10]
+    
+    context = {
+        'flight_logs': flight_logs,
+        'simulator_logs': simulator_logs,
+        'user': user,
+    }
+    
+    return render(request, 'fms/student_flightlog.html', context)
+
+@login_required
+def instructor_flightlog(request):
+    """
+    Display the flightlog page with flight and simulator logs for the current instructor.
+    """
+    user = request.user
+    
+    # Get instructor's national ID
+    instructor_id = user.national_id
+    
+    # Query flight evaluations for the instructor
+    flight_logs = []
+    flight_logs.extend(FlightEvaluation0_100.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')[:5])
+    flight_logs.extend(FlightEvaluation100_120.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')[:5])
+    flight_logs.extend(FlightEvaluation120_170.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')[:5])
+
+    # Sort by date and take last 10
+    flight_logs.sort(key=lambda x: x.session_date, reverse=True)
+    flight_logs = flight_logs[:10]
+    
+    # Fetch simulator logs for the instructor (last 10)
+    simulator_logs = SimEvaluation.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')[:10]
+    
+    context = {
+        'flight_logs': flight_logs,
+        'simulator_logs': simulator_logs,
+        'user': user,
+    }
+    
+    return render(request, 'fms/instructor_flightlog.html', context)
+
+@login_required
 def fms_dashboard(request):
     """FMS Dashboard view showing latest flights and sessions."""
     # Get latest 10 records for each category

@@ -23,8 +23,8 @@ class SimulatorAdmin(admin.ModelAdmin):
 @admin.register(Aircraft)
 class AircraftAdmin(admin.ModelAdmin):
     list_display = ['registration', 'manufacturer', 'model', 'is_active', 'is_available', 'maintenance_status', 'total_hours']
-    list_filter = ['is_active', 'is_available', 'maintenance_status', 'manufacturer']
-    search_fields = ['registration', 'manufacturer', 'model', 'serial_number']
+    list_filter = ['is_active', 'is_available', 'maintenance_status']
+    search_fields = ['registration', 'model', 'serial_number']
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Basic Information', {
@@ -34,7 +34,7 @@ class AircraftAdmin(admin.ModelAdmin):
             'fields': ('is_active', 'is_available', 'maintenance_status', 'total_hours')
         }),
         ('Scheduling Configuration', {
-            'fields': ('max_daily_slots', 'hourly_rate')
+            'fields': ('max_daily_slots', 'hourly_rate', 'fuel_cost')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),

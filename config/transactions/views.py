@@ -101,7 +101,7 @@ def add_transaction(request):
         cache_key = f"transaction_rate_limit_{request.user.id}"
         transaction_count = cache.get(cache_key, 0)
         
-        if transaction_count >= 10:
+        if transaction_count >= 20:
             messages.error(request, 'Has alcanzado el límite de transacciones por hora. Intenta más tarde.')
             form = StudentTransactionForm(user=request.user)
             return render(request, 'transactions/add_transaction.html', {'form': form})

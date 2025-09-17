@@ -5,7 +5,7 @@ from .models import StudentTransaction
 class StudentTransactionAdmin(admin.ModelAdmin):
     list_display = ('get_student_username', 'get_student_id', 'amount', 'type', 'date_added',	
                      'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
-    list_filter = ('confirmed', 'date_added', 'confirmation_date')
+    list_filter = ('confirmed', 'type', 'date_added', 'confirmation_date')
     search_fields = ('student_profile__user__username', 'student_profile__user__national_id')
     readonly_fields = ('student_profile', 'amount', 'type', 'date_added', 'added_by', 'confirmed', 'confirmed_by', 'confirmation_date', 'notes')
     

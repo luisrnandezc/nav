@@ -8,7 +8,7 @@
     <title>NAV | Agregar Pago</title>
     <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
     <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
-    <link href="{% static 'add_payment.css' %}" rel="stylesheet" />
+    <link href="{% static 'add_transaction.css' %}" rel="stylesheet" />
   </head>
 
   <body>
@@ -17,11 +17,11 @@
         <a href="javascript:history.back()" class="button">&larr; Volver</a>
       </div>
       
-      <h1 class="main-header">Agregar Pago</h1>
-      <form class="form-container" method="post" action="{% url 'payments:add_payment' %}">
+      <h1 class="main-header">Agregar Transacción</h1>
+      <form class="form-container" method="post" action="{% url 'payments:add_transaction' %}">
         {% csrf_token %}
         
-        <h1 class="subsection-header">Datos del Pago</h1>
+        <h1 class="subsection-header">Datos de la Transacción</h1>
         <div class="single-column-container">
           <div class="form-row">
             {{ form.student_profile.label_tag }}
@@ -42,6 +42,13 @@
             {{ form.type }}
             {% if form.type.errors %}
               <div class="field-error">{{ form.type.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <div class="form-row">
+            {{ form.category.label_tag }}
+            {{ form.category }}
+            {% if form.category.errors %}
+              <div class="field-error">{{ form.category.errors.0 }}</div>
             {% endif %}
           </div>
           <div class="form-row">
@@ -77,7 +84,7 @@
         {% endif %}
 
         <div class="submit-button-container">
-          <button class="submit-button" type="submit">Agregar Pago</button>
+          <button class="submit-button" type="submit">Agregar</button>
         </div>
       </form>
     </div>

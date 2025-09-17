@@ -1,7 +1,7 @@
 /* Payments Dashboard Styles */
 /* Following the same design pattern as FMS Dashboard */
 
-.payments-container {
+.transactions-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,28 +11,28 @@
   overflow-x: auto;
 }
 
-.payments-header {
+.transactions-header {
   text-align: center;
   margin-bottom: 30px;
 }
 
-.payments-header h1 {
+.transactions-header h1 {
   font-size: 3.0rem;
   letter-spacing: 5px;
   margin: 0 0 10px 0;
 }
 
-.payments-header p {
+.transactions-header p {
   font-size: 1.25rem;
   margin: 0;
   opacity: 0.8;
 }
 
-.add-payment-button {
+.add-transaction-button {
   margin-bottom: 30px;
 }
 
-.add-payment-button .button {
+.add-transaction-button .button {
   background-color: rgba(218, 225, 255, 0.2);
   border: 1px solid #dae1ff;
   color: #dae1ff;
@@ -49,12 +49,12 @@
   text-align: center;
 }
 
-.add-payment-button .button:hover {
+.add-transaction-button .button:hover {
   background-color: #d63e20;
   border-color: #d63e20;
 }
 
-.payments-list-container {
+.transactions-list-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -62,7 +62,7 @@
   max-width: 1200px;
 }
 
-.payments-section {
+.transactions-section {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid #dae1ff;
   border-radius: 15px;
@@ -90,14 +90,14 @@
   opacity: 0.7;
 }
 
-.payments-list {
+.transactions-list {
   max-height: 600px;
   overflow-y: auto;
   padding-right: 10px;
   margin-right: -10px;
 }
 
-.payment-item {
+.transaction-item {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -107,16 +107,16 @@
   transition: all 0.3s ease;
 }
 
-.payment-item:hover {
+.transaction-item:hover {
   background: rgba(218, 225, 255, 0.2);
   border-color: #dae1ff;
 }
 
-.payment-item:last-child {
+.transaction-item:last-child {
   margin-bottom: 0;
 }
 
-.payment-info {
+.transaction-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -129,7 +129,7 @@
   color: #dae1ff;
 }
 
-.payment-amount {
+.transaction-amount {
   background: #e84728;
   color: #fff;
   padding: 4px 8px;
@@ -138,7 +138,7 @@
   font-weight: bold;
 }
 
-.payment-details {
+.transaction-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
@@ -178,7 +178,7 @@
   margin-bottom: 0;
 }
 
-.payment-actions {
+.transaction-actions {
   margin-top: 10px;
   text-align: center;
 }
@@ -242,19 +242,19 @@
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
-  .payments-container {
+  .transactions-container {
     padding: 10px;
   }
 
-  .payments-header h1 {
+  .transactions-header h1 {
     font-size: 2.0rem;
   }
 
-  .payment-details {
+  .transaction-details {
     grid-template-columns: 1fr;
   }
 
-  .add-payment-button .button {
+  .add-transaction-button .button {
     padding: 12px 20px;
     min-width: 250px;
     display: inline-flex;
@@ -264,13 +264,13 @@
 }
 
 @media screen and (max-width: 480px) {
-  .payment-info {
+  .transaction-info {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
 
-  .add-payment-button .button {
+  .add-transaction-button .button {
     font-size: 0.8rem;
     padding: 10px 15px;
     min-width: 220px;

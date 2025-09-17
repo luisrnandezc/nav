@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.utils import timezone
-from .models import StudentPayment
+from .models import StudentTransaction
 
-@admin.register(StudentPayment)
-class StudentPaymentAdmin(admin.ModelAdmin):
+@admin.register(StudentTransaction)
+class StudentTransactionAdmin(admin.ModelAdmin):
     list_display = ('get_student_username', 'get_student_id', 'amount', 'type', 'date_added',	
                      'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
     list_filter = ('confirmed', 'date_added', 'confirmation_date')
@@ -20,15 +20,15 @@ class StudentPaymentAdmin(admin.ModelAdmin):
         ('Información del Estudiante', {
             'fields': ('student_profile',)
         }),
-        ('Detalles del Pago', {
-            'fields': ('amount', 'type', 'added_by', 'date_added'),
-            'description': 'El usuario que agrega el pago se registra automáticamente.'
+        ('Detalles de la Transacción', {
+            'fields': ('amount', 'type', 'category', 'added_by', 'date_added'),
+            'description': 'El usuario que agrega la transacción se registra automáticamente.'
         }),
-        ('Confirmación', {
+        ('Confirmación de la Transacción', {
             'fields': ('confirmed', 'confirmed_by', 'confirmation_date'),
-            'description': 'El usuario que confirma el pago se registra automáticamente.'
+            'description': 'El usuario que confirma la transacción se registra automáticamente.'
         }),
-        ('Notas', {
+        ('Notas de la Transacción', {
             'fields': ('notes',)
         }),
     )
@@ -45,13 +45,13 @@ class StudentPaymentAdmin(admin.ModelAdmin):
     get_student_id.admin_order_field = 'student_profile__user__national_id'
 
     def get_added_by_username(self, obj):
-        """Return the username of the user who added the payment"""
+        """Return the username of the user who added the transaction"""
         return obj.added_by.username if obj.added_by else '-'
     get_added_by_username.short_description = 'Agregado por'
     get_added_by_username.admin_order_field = 'added_by__username'
 
     def get_confirmed_by_username(self, obj):
-        """Return the username of the user who confirmed the payment"""
+        """Return the username of the user who confirmed the transaction"""
         return obj.confirmed_by.username if obj.confirmed_by else '-'
     get_confirmed_by_username.short_description = 'Confirmado por'
     get_confirmed_by_username.admin_order_field = 'confirmed_by__username'

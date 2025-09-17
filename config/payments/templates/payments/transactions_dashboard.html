@@ -1,0 +1,109 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Panel de Transacciones</title>
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    <link href="{% static 'transactions_dashboard.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/transactions_dashboard_dynamics.js' %}"></script>
+  </head>
+
+  <body>
+    <div class="transactions-container">
+      <div class="back-button">
+        <a href="javascript:history.back()" class="button">&larr; Volver</a>
+      </div>
+
+      <div class="transactions-header">
+        <h1>Panel de Transacciones</h1>
+        <p>Sistema de Gestión de Transacciones</p>
+      </div>
+
+      <div class="add-transaction-button">
+        <a href="{% url 'payments:add_transaction' %}" class="button">+ Agregar Transacción</a>
+      </div>
+
+      <div class="transactions-list-container">
+        <div class="transactions-section">
+          <div class="section-header">
+            <h2>Últimas 50 Transacciones</h2>
+            <p>Lista de transacciones recientes</p>
+          </div>
+          <div class="transactions-list">
+            {% if latest_transactions %}
+              {% for transaction in latest_transactions %}
+                <div class="transaction-item" data-transaction-id="{{ transaction.id }}">
+                  <div class="transaction-info">
+                    <span class="student-name">{{ transaction.get_student_full_name }}</span>
+                    <span class="payment-amount">${{ transaction.amount }}</span>
+                  </div>
+                  <div class="transaction-details">
+                    <div class="detail-item">
+                      <span class="detail-label">Tipo:</span>
+                      <span class="detail-value">{{ transaction.get_type_display }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Fecha:</span>
+                      <span class="detail-value">{{ transaction.date_added|date:"d/m/Y" }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Agregado por:</span>
+                      <span class="detail-value">{{ transaction.added_by.first_name }} {{ transaction.added_by.last_name }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Estado:</span>
+                      <span class="detail-value">
+                        {% if transaction.confirmed %}
+                          <span class="status-confirmed">Confirmado</span>
+                        {% else %}
+                          <span class="status-pending">Pendiente</span>
+                        {% endif %}
+                      </span>
+                    </div>
+                  </div>
+                  {% if transaction.confirmed %}
+                    <div class="confirmation-transaction-info">
+                      <div class="detail-item">
+                        <span class="detail-label">Confirmado por:</span>
+                        <span class="detail-value">{{ transaction.confirmed_by.first_name }} {{ transaction.confirmed_by.last_name }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Fecha confirmación:</span>
+                        <span class="detail-value">{{ transaction.confirmation_date|date:"d/m/Y H:i" }}</span>
+                      </div>
+                    </div>
+                    <div class="transaction-actions">
+                      {% if can_confirm_transactions %}
+                        <button class="unconfirm-button" data-transaction-id="{{ transaction.id }}">
+                          Desconfirmar
+                        </button>
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    <div class="transaction-actions">
+                      {% if can_confirm_transactions %}
+                        <button class="confirm-button" data-transaction-id="{{ transaction.id }}">
+                          Confirmar
+                        </button>
+                      {% else %}
+                        <span class="no-permission">Sin permisos para confirmar</span>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="no-payments">No hay transacciones registradas</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% csrf_token %}
+  </body>
+</html>

@@ -1,4 +1,4 @@
-/* Payments Dashboard Styles */
+/* Transactions Dashboard Styles */
 /* Following the same design pattern as FMS Dashboard */
 
 .transactions-container {
@@ -130,12 +130,19 @@
 }
 
 .transaction-amount {
-  background: #e84728;
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.9rem;
   font-weight: bold;
+}
+
+.amount-credit {
+  background: #28a745; /* Green for credits */
+}
+
+.amount-debit {
+  background: #dc3545; /* Red for debits */
 }
 
 .transaction-details {
@@ -233,7 +240,7 @@
   font-weight: bold;
 }
 
-.no-payments {
+.no-transactions {
   text-align: center;
   padding: 40px 20px;
   opacity: 0.6;

@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 import logging
 
-logger = logging.getLogger('payments.signals')
+logger = logging.getLogger('transactions.signals')
 
 TRANSACTION_NOTIFICATION_SUBJECT = """Nueva transacción agregada"""
 TRANSACTION_NOTIFICATION_MESSAGE = """

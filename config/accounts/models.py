@@ -153,16 +153,10 @@ class StudentProfile(models.Model):
         verbose_name='Horas de vuelo',
         default=0,
     )
-    sim_balance = models.DecimalField(
+    balance = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        verbose_name='Balance de simulador',
-        default=0.00,
-    )
-    flight_balance = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name='Balance de vuelo',
+        verbose_name='Balance',
         default=0.00,
     )
     #endregion
@@ -293,9 +287,9 @@ class StaffProfile(models.Model):
         default='Staff',
         verbose_name='Cargo',
     )
-    can_confirm_payments = models.BooleanField(
+    can_confirm_transactions = models.BooleanField(
         default=False,
-        verbose_name='Puede confirmar pagos'
+        verbose_name='Puede confirmar transacciones'
     )
 
     class Meta:

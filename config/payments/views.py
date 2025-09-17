@@ -5,84 +5,87 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.core.cache import cache
-from .models import StudentPayment
-from .forms import StudentPaymentForm
+from .models import StudentTransaction
+from .forms import StudentTransactionForm
 
 
 @login_required
-def payments_dashboard(request):
-    """Payments Dashboard view showing latest 50 payments."""
-    latest_payments = StudentPayment.objects.select_related(
+def transactions_dashboard(request):
+    """Transactions Dashboard view showing latest 50 transactions."""
+    latest_transactions = StudentTransaction.objects.select_related(
         'student_profile__user', 
         'added_by', 
         'confirmed_by'
     ).all().order_by('-date_added')[:50]
     
-    can_confirm_payments = (
+    can_confirm_transactions = (
         hasattr(request.user, 'staff_profile') and 
-        request.user.staff_profile.can_confirm_payments
+        request.user.staff_profile.can_confirm_transactions
     )
     
     context = {
-        'latest_payments': latest_payments,
-        'can_confirm_payments': can_confirm_payments,
+        'latest_transactions': latest_transactions,
+        'can_confirm_transactions': can_confirm_transactions,
     }
     
-    return render(request, 'payments/payments_dashboard.html', context)
+    return render(request, 'payments/transactions_dashboard.html', context)
 
 
 @login_required
-def confirm_payment(request, payment_id):
-    """Confirm a payment - only for users with permission."""
+def confirm_transaction(request, transaction_id):
+    """Confirm a transaction - only for users with permission."""
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
     
     if not (hasattr(request.user, 'staff_profile') and 
-            request.user.staff_profile.can_confirm_payments):
-        return JsonResponse({'success': False, 'error': 'No tiene permisos para confirmar pagos'})
+            request.user.staff_profile.can_confirm_transactions):
+        return JsonResponse({'success': False, 'error': 'No tiene permisos para confirmar transacciones'})
     
     try:
-        payment = get_object_or_404(StudentPayment, id=payment_id)
+        transaction = get_object_or_404(StudentTransaction, id=transaction_id)
         
-        if payment.confirmed:
-            return JsonResponse({'success': False, 'error': 'El pago ya ha sido confirmado'})
+        if transaction.confirmed:
+            return JsonResponse({'success': False, 'error': 'La transacción ya ha sido confirmada'})
         
-        payment.confirm(request.user)
+        transaction.confirm(request.user)
         
         return JsonResponse({
             'success': True, 
-            'message': 'Pago confirmado exitosamente',
+            'message': 'Transacción confirmada exitosamente',
             'confirmed_by': f"{request.user.first_name} {request.user.last_name}",
-            'confirmation_date': payment.confirmation_date.strftime('%d/%m/%Y %H:%M')
+            'confirmation_date': transaction.confirmation_date.strftime('%d/%m/%Y %H:%M')
         })
         
     except ValidationError as e:
         return JsonResponse({'success': False, 'error': str(e)})
     except Exception as e:
-        return JsonResponse({'success': False, 'error': 'An error occurred'})
+        import traceback
+        print(f"Error in confirm_transaction: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        return JsonResponse({'success': False, 'error': f'An error occurred: {str(e)}'})
 
 
 @login_required
-def unconfirm_payment(request, payment_id):
-    """Unconfirm a payment - only for users with permission."""
+def unconfirm_transaction(request, transaction_id):
+    """Unconfirm a transaction - only for users with permission."""
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
     
     if not (hasattr(request.user, 'staff_profile') and 
-            request.user.staff_profile.can_confirm_payments):
-        return JsonResponse({'success': False, 'error': 'No tiene permisos para desconfirmar pagos'})
+            request.user.staff_profile.can_confirm_transactions):
+        return JsonResponse({'success': False, 'error': 'No tiene permisos para desconfirmar transacciones'})
     
     try:
-        payment = get_object_or_404(StudentPayment, id=payment_id)
+        transaction = get_object_or_404(StudentTransaction, id=transaction_id)
         
-        if not payment.confirmed:
-            return JsonResponse({'success': False, 'error': 'El pago no está confirmado'})
+        if not transaction.confirmed:
+            return JsonResponse({'success': False, 'error': 'La transacción no está confirmada'})
         
-        payment.unconfirm()
+        transaction.unconfirm()
         
         return JsonResponse({
             'success': True, 
-            'message': 'Pago desconfirmado exitosamente'
+            'message': 'Transacción desconfirmada exitosamente'
         })
         
     except ValidationError as e:
@@ -92,45 +95,45 @@ def unconfirm_payment(request, payment_id):
 
 
 @login_required
-def add_payment(request):
-    """Add new payment form view."""
+def add_transaction(request):
+    """Add new transaction form view."""
     if request.method == 'POST':
-        cache_key = f"payment_rate_limit_{request.user.id}"
-        payment_count = cache.get(cache_key, 0)
+        cache_key = f"transaction_rate_limit_{request.user.id}"
+        transaction_count = cache.get(cache_key, 0)
         
-        if payment_count >= 10:
-            messages.error(request, 'Has alcanzado el límite de pagos por hora. Intenta más tarde.')
-            form = StudentPaymentForm(user=request.user)
-            return render(request, 'payments/add_payment.html', {'form': form})
+        if transaction_count >= 10:
+            messages.error(request, 'Has alcanzado el límite de transacciones por hora. Intenta más tarde.')
+            form = StudentTransactionForm(user=request.user)
+            return render(request, 'payments/add_transaction.html', {'form': form})
         
-        form = StudentPaymentForm(request.POST, user=request.user)
+        form = StudentTransactionForm(request.POST, user=request.user)
         if form.is_valid():
             if request.user.role != 'STAFF':
-                messages.error(request, 'Solo el personal autorizado puede agregar pagos.')
-                return render(request, 'payments/add_payment.html', {'form': form})
+                messages.error(request, 'Solo el personal autorizado puede agregar transacciones.')
+                return render(request, 'payments/add_transaction.html', {'form': form})
             
             try:
-                payment = form.save(commit=False)
-                payment.added_by = request.user
+                transaction = form.save(commit=False)
+                transaction.added_by = request.user
                 
-                # If payment is being confirmed, set confirmed_by
-                if payment.confirmed:
-                    payment.confirmed_by = request.user
-                    payment.confirmation_date = timezone.now()
+                # If transaction is being confirmed, set confirmed_by
+                if transaction.confirmed:
+                    transaction.confirmed_by = request.user
+                    transaction.confirmation_date = timezone.now()
                 
-                payment.save()
+                transaction.save()
                 
-                cache.set(cache_key, payment_count + 1, 3600)
+                cache.set(cache_key, transaction_count + 1, 3600)
                 
-                return redirect('payments:payments_dashboard')
+                return redirect('payments:transactions_dashboard')
             except ValidationError as e:
-                messages.error(request, f'Error al guardar el pago: {str(e)}')
-                return render(request, 'payments/add_payment.html', {'form': form})
+                messages.error(request, f'Error al guardar la transacción: {str(e)}')
+                return render(request, 'payments/add_transaction.html', {'form': form})
     else:
-        form = StudentPaymentForm(user=request.user)
+        form = StudentTransactionForm(user=request.user)
     
     context = {
         'form': form,
     }
     
-    return render(request, 'payments/add_payment.html', context)
+    return render(request, 'payments/add_transaction.html', context)

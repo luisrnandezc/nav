@@ -1,18 +1,19 @@
 from django import forms
 from django.utils import timezone
-from .models import StudentPayment
+from .models import StudentTransaction
 from accounts.models import StudentProfile
 
 
-class StudentPaymentForm(forms.ModelForm):
-    """Form for adding new student payments."""
+class StudentTransactionForm(forms.ModelForm):
+    """Form for adding new student transactions."""
     
     class Meta:
-        model = StudentPayment
+        model = StudentTransaction
         fields = [
             'student_profile',
             'amount',
             'type',
+            'category',
             'date_added',
             'confirmed',
             'notes'
@@ -28,6 +29,10 @@ class StudentPaymentForm(forms.ModelForm):
                 'required': True
             }),
             'type': forms.Select(attrs={
+                'class': 'form-field',
+                'required': True
+            }),
+            'category': forms.Select(attrs={
                 'class': 'form-field',
                 'required': True
             }),
@@ -48,9 +53,10 @@ class StudentPaymentForm(forms.ModelForm):
         labels = {
             'student_profile': 'Estudiante',
             'amount': 'Monto ($)',
-            'type': 'Tipo de Pago',
-            'date_added': 'Fecha de Pago',
-            'confirmed': 'Confirmar Pago',
+            'type': 'Tipo de Transacción',
+            'category': 'Categoría de Transacción',
+            'date_added': 'Fecha de Transacción',
+            'confirmed': 'Confirmar Transacción',
             'notes': 'Notas'
         }
 
@@ -61,7 +67,7 @@ class StudentPaymentForm(forms.ModelForm):
         self.fields['date_added'].initial = timezone.now().date()
         
         # Hide confirmed field if user doesn't have permission
-        if not self.user or not hasattr(self.user, 'staff_profile') or not self.user.staff_profile.can_confirm_payments:
+        if not self.user or not hasattr(self.user, 'staff_profile') or not self.user.staff_profile.can_confirm_transactions:
             self.fields.pop('confirmed', None)
 
     def clean_amount(self):
@@ -76,5 +82,5 @@ class StudentPaymentForm(forms.ModelForm):
     def clean_date_added(self):
         date_added = self.cleaned_data.get('date_added')
         if date_added and date_added > timezone.now().date():
-            raise forms.ValidationError('La fecha de pago no puede ser futura.')
+            raise forms.ValidationError('La fecha de transacción no puede ser futura.')
         return date_added

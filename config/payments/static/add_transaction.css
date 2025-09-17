@@ -1,5 +1,5 @@
-/* Add Payment Form Styles */
-/* Additional styles for the payment form */
+/* Add Transaction Form Styles */
+/* Additional styles for the transaction form */
 
 .single-column-container {
   display: flex;
@@ -96,7 +96,7 @@
 
 /* Submit button styling */
 .submit-button {
-  min-width: 250px;
+  min-width: 175px;
   padding: 12px 30px;
   display: inline-flex;
   align-items: center;
@@ -116,14 +116,14 @@
   }
   
   .submit-button {
-    min-width: 220px;
+    min-width: 150px;
     padding: 10px 25px;
   }
 }
 
 @media screen and (max-width: 480px) {
   .submit-button {
-    min-width: 220px;
+    min-width: 150px;
     padding: 8px 20px;
   }
 }

@@ -32,15 +32,18 @@ NAV Aviation is a complete flight school management system designed to streamlin
 - **Authentication**: Secure login system with password management
 - **Permission Control**: Granular permissions for different user roles
 
-### 💰 Financial Management
-- **Payment Tracking**: Student payment records and confirmation system
-- **Balance Management**: Real-time student account balance tracking
-- **Payment Confirmation**: Staff approval workflow for payments
+### 💰 Transaction Management
+- **Transaction Tracking**: Student transaction records (credits and debits) with confirmation system
+- **Balance Management**: Real-time student account balance tracking with automatic updates
+- **Transaction Confirmation**: Staff approval workflow for all transactions
+- **Transaction Categories**: Organized by type (Flight, Simulator, Material, Other)
+- **Transaction Types**: Credit and Debit transactions with proper accounting
 
 ### 📊 Dashboard & Reporting
 - **Student Dashboard**: Personal progress tracking, grades, and flight hours
 - **Instructor Dashboard**: Teaching assignments, student progress, and evaluation tools
 - **Staff Dashboard**: Administrative overview and management tools
+- **Transaction Dashboard**: Real-time transaction monitoring and confirmation
 - **PDF Generation**: Automated report generation for flight logs and evaluations
 
 ### 🌐 Website & Marketing
@@ -52,7 +55,7 @@ NAV Aviation is a complete flight school management system designed to streamlin
 ## 🛠️ Technology Stack
 
 - **Backend**: Django 5.2.3
-- **Database**: PostgreSQL
+- **Database**: SQLite (Development) / PostgreSQL (Production)
 - **Frontend**: HTML5, CSS3, JavaScript
 - **PDF Generation**: WeasyPrint
 - **3D Visualization**: Three.js
@@ -61,7 +64,7 @@ NAV Aviation is a complete flight school management system designed to streamlin
 ## 📋 Prerequisites
 
 - Python 3.8+
-- PostgreSQL
+- SQLite (Development) / PostgreSQL (Production)
 - Git
 
 ## 🎯 Key Applications
@@ -83,6 +86,14 @@ NAV Aviation is a complete flight school management system designed to streamlin
 - Profile management
 - Authentication and authorization
 - Role-based permissions
+- Staff profile permissions for transaction confirmation
+
+### Transaction Management (`transactions/`)
+- Student transaction recording (credits and debits)
+- Transaction confirmation workflow
+- Real-time balance updates
+- Transaction categorization and reporting
+- Staff permission management for transaction approval
 
 ### Dashboard (`dashboard/`)
 - Student progress dashboards
@@ -96,7 +107,7 @@ NAV Aviation is a complete flight school management system designed to streamlin
 - View personal progress and grades
 - Access flight training records
 - View course materials
-- Track payment history
+- Track transaction history and balance
 
 ### Instructor
 - Manage assigned students
@@ -106,9 +117,10 @@ NAV Aviation is a complete flight school management system designed to streamlin
 
 ### Staff
 - Administrative oversight
-- Payment confirmation
+- Transaction confirmation and management
 - User management
 - System configuration
+- Permission management for transaction approval
 
 ## 🛫 Flight Training Features
 
@@ -139,6 +151,24 @@ The system includes comprehensive evaluation forms for different training phases
 - Performance evaluation
 - Progress monitoring
 
+## 💳 Transaction System Features
+
+### Transaction Types
+- **Credit Transactions**: Payments, refunds, and account credits
+- **Debit Transactions**: Course fees, material costs, and other charges
+
+### Transaction Categories
+- **Flight**: Flight training related transactions
+- **Simulator**: Simulator training costs
+- **Material**: Books, equipment, and supplies
+- **Other**: Miscellaneous transactions
+
+### Balance Management
+- **Automatic Updates**: Real-time balance calculation on transaction confirmation
+- **Transaction History**: Complete audit trail of all student transactions
+- **Confirmation Workflow**: Staff approval required for all transactions
+- **Balance Validation**: Prevents negative balances and invalid transactions
+
 ## 📱 Mobile Responsiveness
 
 The application is fully responsive and optimized for:
@@ -156,6 +186,24 @@ The application is configured for deployment on PythonAnywhere with:
 - SSL certificate support
 - Domain configuration
 
+## 🔄 Recent Updates
+
+### Model Rename (StudentPayment → StudentTransaction)
+- Renamed the main transaction model for better clarity
+- Updated all references across the application
+- Maintained data integrity through proper migrations
+
+### App Rename (payments → transactions)
+- Renamed the payments app to transactions for better semantic clarity
+- Updated all URL patterns and references
+- Maintained backward compatibility through proper URL mapping
+
+### Enhanced Transaction Management
+- Improved transaction confirmation workflow
+- Added detailed transaction categorization
+- Enhanced balance management with automatic updates
+- Improved staff permission system for transaction approval
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -168,4 +216,4 @@ For support and questions:
 
 ---
 
-**NAV Aviation** - Empowering the next generation of pilots through innovative technology and comprehensive training management. 
+**NAV Aviation** - Empowering the next generation of pilots through innovative technology and comprehensive training management.

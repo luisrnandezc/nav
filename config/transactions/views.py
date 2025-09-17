@@ -28,7 +28,7 @@ def transactions_dashboard(request):
         'can_confirm_transactions': can_confirm_transactions,
     }
     
-    return render(request, 'payments/transactions_dashboard.html', context)
+    return render(request, 'transactions/transactions_dashboard.html', context)
 
 
 @login_required
@@ -104,13 +104,13 @@ def add_transaction(request):
         if transaction_count >= 10:
             messages.error(request, 'Has alcanzado el límite de transacciones por hora. Intenta más tarde.')
             form = StudentTransactionForm(user=request.user)
-            return render(request, 'payments/add_transaction.html', {'form': form})
+            return render(request, 'transactions/add_transaction.html', {'form': form})
         
         form = StudentTransactionForm(request.POST, user=request.user)
         if form.is_valid():
             if request.user.role != 'STAFF':
                 messages.error(request, 'Solo el personal autorizado puede agregar transacciones.')
-                return render(request, 'payments/add_transaction.html', {'form': form})
+                return render(request, 'transactions/add_transaction.html', {'form': form})
             
             try:
                 transaction = form.save(commit=False)
@@ -125,10 +125,10 @@ def add_transaction(request):
                 
                 cache.set(cache_key, transaction_count + 1, 3600)
                 
-                return redirect('payments:transactions_dashboard')
+                return redirect('transactions:transactions_dashboard')
             except ValidationError as e:
                 messages.error(request, f'Error al guardar la transacción: {str(e)}')
-                return render(request, 'payments/add_transaction.html', {'form': form})
+                return render(request, 'transactions/add_transaction.html', {'form': form})
     else:
         form = StudentTransactionForm(user=request.user)
     
@@ -136,4 +136,4 @@ def add_transaction(request):
         'form': form,
     }
     
-    return render(request, 'payments/add_transaction.html', context)
+    return render(request, 'transactions/add_transaction.html', context)

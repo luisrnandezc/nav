@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payments', '0004_alter_studentpayment_date_added_and_more'),
+        ('transactions', '0004_alter_studentpayment_date_added_and_more'),
     ]
 
     operations = [
@@ -38,6 +38,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelTable(
             name='studentpayment',
-            table='student_transactions',
+            table='student_transactions_db',
         ),
     ]

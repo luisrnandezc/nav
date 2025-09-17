@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NAV | Agregar Pago</title>
+    <title>NAV | Agregar Transacción</title>
     <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
     <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <link href="{% static 'add_transaction.css' %}" rel="stylesheet" />
@@ -18,7 +18,7 @@
       </div>
       
       <h1 class="main-header">Agregar Transacción</h1>
-      <form class="form-container" method="post" action="{% url 'payments:add_transaction' %}">
+      <form class="form-container" method="post" action="{% url 'transactions:add_transaction' %}">
         {% csrf_token %}
         
         <h1 class="subsection-header">Datos de la Transacción</h1>

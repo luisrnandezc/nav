@@ -27,9 +27,9 @@ function confirmTransaction(transactionId) {
 
   const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
   
-  console.log('Making fetch request to:', `/payments/confirm/${transactionId}/`);
+  console.log('Making fetch request to:', `/transactions/confirm/${transactionId}/`);
   
-  fetch(`/payments/confirm/${transactionId}/`, {
+  fetch(`/transactions/confirm/${transactionId}/`, {
     method: 'POST',
     headers: {
       'X-CSRFToken': csrfToken,
@@ -69,7 +69,7 @@ function unconfirmTransaction(transactionId) {
 
   const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
   
-  fetch(`/payments/unconfirm/${transactionId}/`, {
+  fetch(`/transactions/unconfirm/${transactionId}/`, {
     method: 'POST',
     headers: {
       'X-CSRFToken': csrfToken,

@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('accounts', '0025_remove_staffprofile_can_confirm_payments_and_more'),
-        ('payments', '0006_rename_studentpayment_to_studenttransaction'),
+        ('transactions', '0006_rename_studentpayment_to_studenttransaction'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

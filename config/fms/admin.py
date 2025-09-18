@@ -237,23 +237,23 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             ),
             'classes': ('collapse',)
         }),
-        ('Sección 7: Emergencias', {
-            'fields': ('emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5', 'emer_6'),
-            'classes': ('collapse',)
-        }),
-        ('Sección 8: Navegación VFR', {
+        ('Sección 7: Navegación VFR', {
             'fields': ('nav_1', 'nav_2', 'nav_3', 'nav_4', 'nav_5', 'nav_6'),
             'classes': ('collapse',)
         }),
-        ('Sección 9: General', {
-            'fields': ('gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'),
-            'classes': ('collapse',)
-        }),
-        ('Sección 10: Circuito / Procedimiento', {
+        ('Sección 8: Circuito / Procedimiento', {
             'fields': (
                 'land_1', 'land_2', 'land_3', 'land_4', 'land_5',
                 'land_6', 'land_7', 'land_8', 'land_9', 'land_10'
             ),
+            'classes': ('collapse',)
+        }),
+        ('Sección 9: Emergencias', {
+            'fields': ('emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5', 'emer_6'),
+            'classes': ('collapse',)
+        }),
+        ('Sección 10: General', {
+            'fields': ('gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'),
             'classes': ('collapse',)
         }),
         ('Sección 11: Comentarios', {

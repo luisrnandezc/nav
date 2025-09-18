@@ -370,7 +370,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'mvrs_9', 'mvrs_10', 'mvrs_11', 'mvrs_12', 'mvrs_13', 'mvrs_14', 'mvrs_15', 'mvrs_16', 'mvrs_17', 'mvrs_18',
             'nav_1', 'nav_2', 'nav_3', 'nav_4', 'nav_5', 'nav_6',
             'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7', 'land_8', 'land_9', 'land_10',
-            'emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5',
+            'emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5', 'emer_6',
             'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7',
             'comments',
         ]

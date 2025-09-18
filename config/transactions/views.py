@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -10,6 +10,7 @@ from .forms import StudentTransactionForm
 
 
 @login_required
+@permission_required('accounts.can_manage_transactions')
 def transactions_dashboard(request):
     """Transactions Dashboard view showing latest 50 transactions."""
     latest_transactions = StudentTransaction.objects.select_related(
@@ -18,10 +19,7 @@ def transactions_dashboard(request):
         'confirmed_by'
     ).all().order_by('-date_added')[:50]
     
-    can_confirm_transactions = (
-        hasattr(request.user, 'staff_profile') and 
-        request.user.staff_profile.can_confirm_transactions
-    )
+    can_confirm_transactions = request.user.has_perm('accounts.can_confirm_transactions')
     
     context = {
         'latest_transactions': latest_transactions,
@@ -34,11 +32,13 @@ def transactions_dashboard(request):
 @login_required
 def confirm_transaction(request, transaction_id):
     """Confirm a transaction - only for users with permission."""
+    
+    can_confirm_transactions = request.user.has_perm('accounts.can_confirm_transactions')
+    
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
     
-    if not (hasattr(request.user, 'staff_profile') and 
-            request.user.staff_profile.can_confirm_transactions):
+    if not can_confirm_transactions:
         return JsonResponse({'success': False, 'error': 'No tiene permisos para confirmar transacciones'})
     
     try:
@@ -68,11 +68,12 @@ def confirm_transaction(request, transaction_id):
 @login_required
 def unconfirm_transaction(request, transaction_id):
     """Unconfirm a transaction - only for users with permission."""
+    can_confirm_transactions = request.user.has_perm('accounts.can_confirm_transactions')
+    
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
     
-    if not (hasattr(request.user, 'staff_profile') and 
-            request.user.staff_profile.can_confirm_transactions):
+    if not can_confirm_transactions:
         return JsonResponse({'success': False, 'error': 'No tiene permisos para desconfirmar transacciones'})
     
     try:

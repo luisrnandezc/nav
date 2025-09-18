@@ -54,15 +54,20 @@
           <div class="right-column">
             <div class="dashboard-square">
               <h1 class="square-header">Transacciones</h1>
+              {% if request.user.is_authenticated and can_manage_transactions %}
                 <a class="image-link" href="{% url 'transactions:transactions_dashboard' %}">
                   <img class="logo-img" src="{% static 'img/money.png' %}" alt="Transacciones">
                 </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img class="logo-img" src="{% static 'img/money.png' %}" alt="Transacciones" title="No tiene permisos para acceder al panel de transacciones.">
+                </div>
+              {% endif %}
             </div>
             <div class="dashboard-square">
-              <h1 class="square-header">X</h1>
-              <!-- TODO: pending -->
+              <h1 class="square-header">Calendario</h1>
                 <a class="image-link" href="#">
-                  <img class="logo-img" src="{% static 'img/x.png' %}" alt="X">
+                  <img class="logo-img" src="{% static 'img/calendar.png' %}" alt="Calendario">
                 </a>
             </div>
           </div>

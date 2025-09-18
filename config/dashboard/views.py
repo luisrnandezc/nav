@@ -8,8 +8,13 @@ def dashboard(request):
     """
     Display the appropriate dashboard based on user role.
     """
+
     user = request.user
-    context = {'user': user}
+    context = {
+        'user': user,
+        'can_manage_transactions': request.user.has_perm('accounts.can_manage_transactions'),
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+    }
 
     try:
         if user.role == 'STUDENT':

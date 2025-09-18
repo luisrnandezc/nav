@@ -11,7 +11,10 @@ def main_sms(request):
     """
     A view to handle the SMS main page.
     """
-    return render(request, 'sms/main_sms.html')
+    context = {
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+    }
+    return render(request, 'sms/main_sms.html', context)
 
 def voluntary_report(request):
     """

@@ -33,28 +33,74 @@
             <div class="dashboard-square">
               <h1 class="square-header">Agregar reporte</h1>
                 <a class="image-link" href="{% url 'sms:voluntary_report' %}">
-                  <img class="logo-img" src="{% static 'img/addReport.png' %}" alt="Reporte SMS">
+                  <img 
+                    class="logo-img" 
+                    src="{% static 'img/addReport.png' %}" 
+                    alt="Reporte SMS" 
+                    title="Agregar reporte SMS.">
                 </a>
             </div>
             <div class="dashboard-square">
               <h1 class="square-header">Chat SARA</h1>
+              {% if request.user.is_authenticated and can_manage_sms %}
                 <a class="image-link" href="">
-                  <img class="logo-img" src="{% static 'img/chatSMS.png' %}" alt="Chat SMS">
+                  <img 
+                    class="logo-img" 
+                    src="{% static 'img/chatSMS.png' %}" 
+                    alt="Chat SMS" 
+                    title="Chat SARA.">
                 </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img 
+                    class="logo-img" 
+                    src="{% static 'img/chatSMS.png' %}" 
+                    alt="Chat SMS" 
+                    title="No tiene permisos para acceder.">
+                </div>
+              {% endif %}
             </div>
           </div>
           <div class="right-column">
             <div class="dashboard-square">
               <h1 class="square-header">Ver reportes</h1>
+              {% if request.user.is_authenticated and can_manage_sms %}
                 <a class="image-link" href="{% url 'sms:report_list' %}">
-                  <img class="logo-img" src="{% static 'img/viewReport.png' %}" alt="Ver reportes SMS">
+                  <img
+                   class="logo-img" 
+                   src="{% static 'img/viewReport.png' %}" 
+                   alt="Ver reportes SMS" 
+                   title="Ver reportes SMS.">
                 </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img
+                    class="logo-img" 
+                    src="{% static 'img/viewReport.png' %}" 
+                    alt="Ver reportes SMS" 
+                    title="No tiene permisos para acceder.">
+                </div>
+              {% endif %}
             </div>
             <div class="dashboard-square">
               <h1 class="square-header">Performance</h1>
+              {% if request.user.is_authenticated and can_manage_sms %}
                 <a class="image-link" href="">
-                  <img class="logo-img" src="{% static 'img/performanceSMS.png' %}" alt="Performance">
+                  <img 
+                    class="logo-img" 
+                    src="{% static 'img/performanceSMS.png' %}" 
+                    alt="Performance" 
+                    title="Performance SMS.">
                 </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img 
+                    class="logo-img" 
+                    src="{% static 'img/performanceSMS.png' %}" 
+                    alt="Performance" 
+                    title="No tiene permisos para acceder.">
+                </div>
+              {% endif %}
             </div>
           </div>
       </div>

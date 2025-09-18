@@ -81,7 +81,7 @@ class StudentTransaction(models.Model):
         null=True,
         blank=True,
         related_name='confirmed_student_transactions',
-        limit_choices_to={'staff_profile__can_confirm_transactions': True},
+        limit_choices_to={'role': 'STAFF'},
         verbose_name='Confirmado por',
     )
     confirmation_date = models.DateTimeField(
@@ -119,13 +119,13 @@ class StudentTransaction(models.Model):
         
         if self.confirmed_by and (
             not hasattr(self.confirmed_by, 'staff_profile') or 
-            not self.confirmed_by.staff_profile.can_confirm_transactions
+            not self.confirmed_by.has_perm('accounts.can_confirm_transactions')
         ):
             raise ValidationError('Solo el personal autorizado puede confirmar transacciones')
 
     def confirm(self, user):
         """Call this method when a director confirms the transaction"""
-        if not hasattr(user, 'staff_profile') or not user.staff_profile.can_confirm_transactions:
+        if not hasattr(user, 'staff_profile') or not user.has_perm('accounts.can_confirm_transactions'):
             raise ValidationError('Solo el personal autorizado puede confirmar transacciones')
             
         self.confirmed = True

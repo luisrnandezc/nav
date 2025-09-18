@@ -1,4 +1,145 @@
 /* Transaction Detail Page Styles */
+
+* {
+  font-family: 'Renogare-Regular', 'Arial', sans-serif;
+  color: #ffffff;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/background.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.transactions-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.transactions-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.transactions-header h1 {
+  font-size: 3.0rem;
+  letter-spacing: 5px;
+  margin: 0 0 10px 0;
+}
+
+.transactions-header p {
+  font-size: 1.25rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.button {
+  text-transform: uppercase;
+  font-size: 1.0rem;
+  width: 200px;
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgb(0, 0, 0, 0.25);
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.amount-credit {
+  background: #28a745; /* Green for credits */
+  color: white;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.amount-debit {
+  background: #dc3545; /* Red for debits */
+  color: white;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.status-confirmed {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #FF9800;
+  font-weight: bold;
+}
+
+.transaction-actions {
+  margin: 10px 0 0px 0;
+  padding: 10px 0px 0px 0px;
+  text-align: center;
+}
+
+.confirm-button {
+  background-color: #e84728;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.confirm-button:hover {
+  background-color: #d63e20;
+}
+
+.unconfirm-button {
+  background-color: #e84728;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.unconfirm-button:hover {
+  background-color: #d63e20;
+}
+
+.no-permission {
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+}
 .transaction-detail-container {
   width: 100%;
   max-width: 1000px;
@@ -123,8 +264,24 @@
   text-decoration: none;
 }
 
-/* Responsive design for detail page */
-@media (max-width: 768px) {
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+  .transactions-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .transactions-container {
+    padding: 10px;
+  }
+
+  .transactions-header h1 {
+    font-size: 2.0rem;
+  }
+
   .transaction-detail-card {
     padding: 20px;
   }
@@ -141,5 +298,26 @@
   
   .transaction-detail-container .transaction-actions .button.secondary {
     text-align: center;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .transactions-header h1 {
+    font-size: 2.0rem;
+  }
+
+  .transactions-container {
+    padding: 10px;
+  }
+
+  .button {
+    font-size: 1.0rem;
+    width: 150px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .button {
+    font-size: 0.75rem;
   }
 }

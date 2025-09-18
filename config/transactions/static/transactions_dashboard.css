@@ -120,7 +120,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 15px;
 }
 
 .student-name {
@@ -151,7 +151,8 @@
   gap: 10px;
   font-size: 0.9rem;
   opacity: 0.8;
-  margin-bottom: 10px;
+  margin: 10px 0 10px 0;
+  padding: 10px 10px 10px 10px;
 }
 
 .detail-item {
@@ -175,6 +176,7 @@
   border-radius: 5px;
   padding: 10px;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .confirmation-info .detail-item {
@@ -186,7 +188,8 @@
 }
 
 .transaction-actions {
-  margin-top: 10px;
+  margin: 10px 0 0px 0;
+  padding: 10px 0px 0px 0px;
   text-align: center;
 }
 
@@ -204,7 +207,6 @@
 
 .confirm-button:hover {
   background-color: #d63e20;
-  transform: translateY(-1px);
 }
 
 .unconfirm-button {
@@ -221,7 +223,6 @@
 
 .unconfirm-button:hover {
   background-color: #d63e20;
-  transform: translateY(-1px);
 }
 
 .no-permission {
@@ -282,4 +283,32 @@
     padding: 10px 15px;
     min-width: 220px;
   }
+}
+
+/* Transaction Link Styles */
+.transaction-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 10px 10px 10px 10px;
+  margin: -10px 0 10px 0;
+}
+
+.transaction-link .transaction-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.transaction-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.transaction-link:hover .student-name {
+  color: #dae1ff;
 }

@@ -67,7 +67,7 @@ class StudentTransactionForm(forms.ModelForm):
         self.fields['date_added'].initial = timezone.now().date()
         
         # Hide confirmed field if user doesn't have permission
-        if not self.user or not hasattr(self.user, 'staff_profile') or not self.user.staff_profile.can_confirm_transactions:
+        if not self.user or not self.user.has_perm('accounts.can_confirm_transactions'):
             self.fields.pop('confirmed', None)
 
     def clean_amount(self):

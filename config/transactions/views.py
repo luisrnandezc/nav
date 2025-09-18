@@ -96,6 +96,7 @@ def unconfirm_transaction(request, transaction_id):
 
 
 @login_required
+@permission_required('accounts.can_manage_transactions')
 def add_transaction(request):
     """Add new transaction form view."""
     if request.method == 'POST':
@@ -109,7 +110,7 @@ def add_transaction(request):
         
         form = StudentTransactionForm(request.POST, user=request.user)
         if form.is_valid():
-            if request.user.role != 'STAFF':
+            if not request.user.has_perm('accounts.can_manage_transactions'):
                 messages.error(request, 'Solo el personal autorizado puede agregar transacciones.')
                 return render(request, 'transactions/add_transaction.html', {'form': form})
             
@@ -138,3 +139,26 @@ def add_transaction(request):
     }
     
     return render(request, 'transactions/add_transaction.html', context)
+
+
+@login_required
+@permission_required('accounts.can_manage_transactions')
+def transaction_detail(request, transaction_id):
+    """Transaction detail view showing full transaction information."""
+    transaction = get_object_or_404(
+        StudentTransaction.objects.select_related(
+            'student_profile__user', 
+            'added_by', 
+            'confirmed_by'
+        ), 
+        id=transaction_id
+    )
+    
+    can_confirm_transactions = request.user.has_perm('accounts.can_confirm_transactions')
+    
+    context = {
+        'transaction': transaction,
+        'can_confirm_transactions': can_confirm_transactions,
+    }
+    
+    return render(request, 'transactions/transaction_detail.html', context)

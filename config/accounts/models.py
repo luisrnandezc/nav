@@ -287,16 +287,17 @@ class StaffProfile(models.Model):
         default='Staff',
         verbose_name='Cargo',
     )
-    can_confirm_transactions = models.BooleanField(
-        default=False,
-        verbose_name='Puede confirmar transacciones'
-    )
 
     class Meta:
         db_table = 'staff_db'
         ordering = ['user__national_id']
         verbose_name = 'Staff'
         verbose_name_plural = 'Staff'
+        permissions = [
+            ('can_confirm_transactions', 'Can confirm transactions'),
+            ('can_manage_transactions', 'Can manage transactions'),
+            ('can_manage_sms', 'Can manage SMS'),
+        ]
 
     def __str__(self):
         return f'{self.user.username} [ID: {self.user.national_id}] ({self.position})'

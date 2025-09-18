@@ -1,0 +1,180 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Detalle de Transacción</title>
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    <link href="{% static 'transactions_dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'transaction_detail.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/transactions_dashboard_dynamics.js' %}"></script>
+  </head>
+
+  <body>
+    <div class="transactions-container">
+      <div class="back-button">
+        <a href="{% url 'transactions:transactions_dashboard' %}" class="button">&larr; Volver</a>
+      </div>
+
+      <div class="transactions-header">
+        <h1>Detalle de Transacción</h1>
+        <p>Información completa de la transacción #{{ transaction.id }}</p>
+      </div>
+
+      <div class="transaction-detail-container">
+        <div class="transaction-detail-card">
+          <div class="detail-section">
+            <h2>Información del Estudiante</h2>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Nombre completo:</span>
+                <span class="detail-value">{{ transaction.get_student_full_name }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">ID:</span>
+                <span class="detail-value">{{ transaction.student_profile.user.national_id }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{ transaction.student_profile.user.email }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Fase del estudiante:</span>
+                <span class="detail-value">{{ transaction.student_profile.get_student_phase_display }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Tipo de curso:</span>
+                <span class="detail-value">{{ transaction.student_profile.current_course_type }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h2>Información de la Transacción</h2>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">ID de transacción:</span>
+                <span class="detail-value">#{{ transaction.id }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Monto:</span>
+                <span class="detail-value amount-{% if transaction.type == 'CREDITO' %}credit{% else %}debit{% endif %}">
+                  {% if transaction.type == 'DEBITO' %}-{% else %}+{% endif %}${{ transaction.amount }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Tipo:</span>
+                <span class="detail-value">{{ transaction.get_type_display }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Categoría:</span>
+                <span class="detail-value">{{ transaction.get_category_display }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Fecha de transacción:</span>
+                <span class="detail-value">{{ transaction.date_added|date:"d/m/Y" }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Estado:</span>
+                <span class="detail-value">
+                  {% if transaction.confirmed %}
+                    <span class="status-confirmed">Confirmado</span>
+                  {% else %}
+                    <span class="status-pending">Pendiente</span>
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h2>Información de Gestión</h2>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Agregado por:</span>
+                <span class="detail-value">
+                  {% if transaction.added_by %}
+                    {{ transaction.added_by.first_name }} {{ transaction.added_by.last_name }}
+                  {% else %}
+                    Usuario eliminado
+                  {% endif %}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Cargo:</span>
+                <span class="detail-value">
+                  {% if transaction.added_by and transaction.added_by.staff_profile %}
+                    {{ transaction.added_by.staff_profile.position }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </span>
+              </div>
+              {% if transaction.confirmed %}
+                <div class="detail-item">
+                  <span class="detail-label">Confirmado por:</span>
+                  <span class="detail-value">
+                    {% if transaction.confirmed_by %}
+                      {{ transaction.confirmed_by.first_name }} {{ transaction.confirmed_by.last_name }}
+                    {% else %}
+                      Usuario eliminado
+                    {% endif %}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Fecha de confirmación:</span>
+                  <span class="detail-value">{{ transaction.confirmation_date|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Cargo del confirmador:</span>
+                  <span class="detail-value">
+                    {% if transaction.confirmed_by and transaction.confirmed_by.staff_profile %}
+                      {{ transaction.confirmed_by.staff_profile.position }}
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  </span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if transaction.notes %}
+            <div class="detail-section">
+              <h2>Notas</h2>
+              <div class="notes-container">
+                <p class="notes-text">{{ transaction.notes }}</p>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="detail-section">
+            <h2>Acciones</h2>
+            <div class="transaction-actions">
+              {% if transaction.confirmed %}
+                {% if can_confirm_transactions %}
+                  <button class="unconfirm-button" data-transaction-id="{{ transaction.id }}">
+                    Desconfirmar
+                  </button>
+                {% endif %}
+              {% else %}
+                {% if can_confirm_transactions %}
+                  <button class="confirm-button" data-transaction-id="{{ transaction.id }}">
+                    Confirmar
+                  </button>
+                {% else %}
+                  <span class="no-permission">Sin permisos para confirmar transacciones</span>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% csrf_token %}
+  </body>
+</html>

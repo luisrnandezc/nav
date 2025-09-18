@@ -15,7 +15,7 @@
   <body>
     <div class="transactions-container">
       <div class="back-button">
-        <a href="javascript:history.back()" class="button">&larr; Volver</a>
+        <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
       </div>
 
       <div class="transactions-header">
@@ -37,12 +37,14 @@
             {% if latest_transactions %}
               {% for transaction in latest_transactions %}
                 <div class="transaction-item" data-transaction-id="{{ transaction.id }}">
-                  <div class="transaction-info">
-                    <span class="student-name">{{ transaction.get_student_full_name }}</span>
-                    <span class="transaction-amount {% if transaction.type == 'CREDITO' %}amount-credit{% else %}amount-debit{% endif %}">
-                      {% if transaction.type == 'DEBITO' %}-{% else %}+{% endif %}${{ transaction.amount }}
-                    </span>
-                  </div>
+                  <a href="{% url 'transactions:transaction_detail' transaction.id %}" class="transaction-link">
+                    <div class="transaction-info">
+                      <span class="student-name">{{ transaction.get_student_full_name }}</span>
+                      <span class="transaction-amount {% if transaction.type == 'CREDITO' %}amount-credit{% else %}amount-debit{% endif %}">
+                        {% if transaction.type == 'DEBITO' %}-{% else %}+{% endif %}${{ transaction.amount }}
+                      </span>
+                    </div>
+                  </a>
                   <div class="transaction-details">
                     <div class="detail-item">
                       <span class="detail-label">Tipo:</span>

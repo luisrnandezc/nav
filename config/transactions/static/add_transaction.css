@@ -1,18 +1,118 @@
 /* Add Transaction Form Styles */
 /* Additional styles for the transaction form */
 
+* {
+  font-family: 'Renogare-Regular', 'Arial', sans-serif;
+  color: #000000;
+  font-size: 16px;
+  letter-spacing: 0px;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  text-transform: uppercase;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/login1.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.main-header {
+  color: rgb(232, 71, 40);
+  font-size: 2.0rem;
+  margin: 25px 0px 25px 0px;
+  text-align: center;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.subsection-header {
+  color: #ffffff;
+  margin: 40px 0px 25px 0px;
+  text-decoration: underline solid 2px rgb(232, 71, 40);
+  text-underline-offset: 10px;
+  align-self: center;
+}
+
+.button {
+  text-transform: uppercase;
+  font-size: 1.0rem;
+  width: 200px;
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgb(0, 0, 0, 0.25);
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 275px;
+  color: #ffffff;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.submit-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
 .single-column-container {
   display: flex;
   flex-direction: column;
   gap: 15px;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
+  align-items: center;
 }
 
 .form-row {
   position: relative;
   margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .error-messages {
@@ -57,12 +157,20 @@
 
 .comments-row {
   margin-bottom: 20px;
+  max-width: 1000px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.comments-row textarea {
-  width: 100%;
-  min-height: 80px;
+.comments-row textarea,
+#id_notes {
+  width: 600px;
+  min-height: 120px;
   resize: vertical;
+  font-size: 14px;
+  padding: 12px;
 }
 
 /* Form field styling improvements */
@@ -75,7 +183,25 @@
   transition: border-color 0.3s ease;
 }
 
-.form-field:focus {
+/* Form input styling for flex layout */
+.form-row input,
+.form-row select,
+.form-row textarea {
+  width: 250px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  background-color: #fff;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.form-field:focus,
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
   outline: none;
   border-color: #dae1ff;
   box-shadow: 0 0 5px rgba(218, 225, 255, 0.3);
@@ -96,6 +222,13 @@
 
 /* Submit button styling */
 .submit-button {
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  width: 125px;
+  height: 40px;
+  border-radius: 3px;
+  color: #ffffff;
+  background-color: transparent;
   min-width: 175px;
   padding: 12px 30px;
   display: inline-flex;
@@ -104,7 +237,91 @@
   text-align: center;
 }
 
+.submit-button:hover {
+  background-color: rgb(232, 71, 40);
+  color: #ffffff;
+  border: 0px solid #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
 /* Responsive adjustments */
+@media (max-width: 1150px) {
+  .fixed-fields-container, div.collapsible-section {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .left-column,
+  .right-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 650px) {
+  .main-container {
+    padding: 10px;
+  }
+
+  label {
+    justify-content: center;
+    text-align: center;
+    margin: 0;
+  }
+
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .form-row label {
+    width: auto;
+    min-width: auto;
+    max-width: none;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .form-row input,
+  .form-row select {
+    width: 250px;
+  }
+  
+  .form-row textarea {
+    width: 100%;
+  }
+
+  .radio-field {
+    align-items: center;
+    justify-content: center;
+  }
+
+  #id_notes, #id_comments {
+    width: 90%;
+  }
+  
+  .comments-row {
+    max-width: 100%;
+    margin: 0 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .comments-row textarea,
+  #id_notes {
+    width: 90%;
+    min-height: 100px;
+    margin: 0 auto;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .fixed-fields-container {
     flex-direction: column;

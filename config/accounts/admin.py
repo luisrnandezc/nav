@@ -31,7 +31,7 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'get_student_id', 'student_phase', 'get_course_type',
-                    'get_course_edition', 'balance', 'sim_hours', 'flight_hours')
+                    'get_course_edition', 'balance', 'flight_hours', 'sim_hours')
     list_filter = ('student_phase',)
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
     readonly_fields = ('get_course_type', 'get_course_edition')

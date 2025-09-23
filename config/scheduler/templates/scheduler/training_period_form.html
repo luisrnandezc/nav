@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nuevo periodo de entrenamiento</title>
+    <link rel="stylesheet" href="{% static 'training_period_form.css' %}">
+    <link rel="stylesheet" href="{% static 'shared_components.css' %}">
+</head>
+<body>
+    <div class="back-button">
+      <a href="{% url 'scheduler:flight_requests_dashboard' %}" class="button">&larr; Volver</a>
+    </div>
+
+    <div class="main-container">
+        <h1 class="main-header">Nuevo periodo de entrenamiento</h1>
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    <label for="id_start_date">{{ form.start_date.label }}</label>
+                    <div class="form-field">
+                        {{ form.start_date }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="id_end_date">{{ form.end_date.label }}</label>
+                    <div class="form-field">
+                        {{ form.end_date }}
+                    </div>
+                </div>
+                <div class="form-row" id="duration-row">
+                    <label for="period-duration">Duración del período:</label>
+                    <div class="form-field">
+                        <div id="period-duration" class="duration-display">0 días</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="id_aircraft">{{ form.aircraft.label }}</label>
+                    <div class="form-field">
+                        {{ form.aircraft }}
+                    </div>
+                </div>
+                <div class="form-row checkbox-row">
+                    <label for="id_is_active">{{ form.is_active.label }}</label>
+                    <div class="form-field checkbox-field">
+                        {{ form.is_active }}
+                    </div>
+                </div>
+                <div class="actions">
+                    <button type="submit">Crear</button>
+                </div>
+                
+                {% if form.errors %}
+                <div class="form-errors">
+                    <h3>Errores encontrados:</h3>
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+    <script src="{% static 'js/training_period_form_dynamics.js' %}"></script>
+</body>
+</html>
+
+

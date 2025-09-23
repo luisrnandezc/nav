@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
 
 class TrainingPeriod(models.Model):
     """Periodo de entrenamiento"""
@@ -12,8 +13,15 @@ class TrainingPeriod(models.Model):
         help_text="Fecha de cierre",
     )
     is_active = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name="Activo",
+    )
+    aircraft = models.ForeignKey(
+        'fleet.Aircraft',
+        on_delete=models.CASCADE,
+        related_name="training_periods",
+        verbose_name="Aeronave",
+        help_text="Aeronave",
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -30,6 +38,31 @@ class TrainingPeriod(models.Model):
         verbose_name = "Periodo de entrenamiento"
         verbose_name_plural = "Periodos de entrenamiento"
         ordering = ['-start_date']
+
+    def generate_slots(self):
+        """
+        Create FlightSlot objects for each day, each block, and each aircraft.
+        """
+        from scheduler.models import FlightSlot
+
+        blocks = ['A', 'B', 'C']
+        day = self.start_date
+        aircraft = self.aircraft
+        created = 0
+
+        while day <= self.end_date:
+            for block in blocks:
+                FlightSlot.objects.get_or_create(
+                    training_period=self,
+                    date=day,
+                    block=block,
+                    aircraft=aircraft,
+                    defaults={'status': 'free'}
+                )
+                created += 1
+            day += timedelta(days=1)
+
+        return created
 
     def __str__(self):
         return f"Ciclo: {self.start_date} → {self.end_date}"

@@ -5,9 +5,9 @@ from .models import TrainingPeriod, FlightSlot, FlightRequest
 
 @admin.register(TrainingPeriod)
 class TrainingPeriodAdmin(admin.ModelAdmin):
-    list_display = ('start_date', 'end_date', 'is_active', 'created_at')
-    list_filter = ('is_active', 'start_date', 'end_date', 'created_at')
-    search_fields = ('start_date', 'end_date')
+    list_display = ('start_date', 'end_date', 'aircraft', 'is_active', 'created_at')
+    list_filter = ('is_active', 'aircraft', 'start_date', 'end_date', 'created_at')
+    search_fields = ('start_date', 'end_date', 'aircraft__registration')
     list_editable = ('is_active',)
     date_hierarchy = 'start_date'
     ordering = ('-start_date',)
@@ -15,7 +15,7 @@ class TrainingPeriodAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Información del período', {
-            'fields': ('start_date', 'end_date', 'is_active')
+            'fields': ('start_date', 'end_date', 'aircraft', 'is_active')
         }),
         ('Fechas del sistema', {
             'fields': ('created_at', 'updated_at'),

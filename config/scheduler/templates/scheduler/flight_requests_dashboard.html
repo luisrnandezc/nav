@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Sistema de Solicitudes de Vuelo</title>
+        <link href="{% static 'flight_requests_dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="flight-requests-container">
+            <div class="back-button">
+                <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+            </div>
+            <div class="flight-requests-header">
+                <h1>Sistema de Solicitudes de Vuelo</h1>
+            </div>
+
+            <div class="buttons-container">
+                <div class="add-flight-period-button">
+                    <a
+                        href="{% url 'scheduler:create_training_period' %}" 
+                        class="button">+ Crear Periodo de Entrenamiento
+                    </a>
+                </div>
+                <div class="see-period-calendar-button">
+                    <a 
+                        href="#" 
+                        class="button">+ Ver Calendario de Entrenamiento
+                    </a>
+                </div>
+            </div>
+
+            <div class="flight-requests-list-container">
+                <div class="flight-requests-section" id="pending-flight-requests-section">
+                    <h2>Últimas 50 solicitudes de vuelo pendientes</h2>
+                    <p>Lista de solicitudes de vuelo pendientes</p>
+                </div>
+                <div class="flight-requests-section" id="approved-flight-requests-section">
+                    <h2>Últimas 50 solicitudes de vuelo aprobadas</h2>
+                    <p>Lista de solicitudes de vuelo aprobadas</p>
+                </div>
+                <div class="flight-requests-section" id="cancelled-flight-requests-section">
+                    <h2>Últimas 50 solicitudes de vuelo canceladas</h2>
+                    <p>Lista de solicitudes de vuelo canceladas</p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

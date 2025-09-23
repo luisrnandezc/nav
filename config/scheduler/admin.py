@@ -5,7 +5,7 @@ from .models import TrainingPeriod, FlightSlot, FlightRequest
 
 @admin.register(TrainingPeriod)
 class TrainingPeriodAdmin(admin.ModelAdmin):
-    list_display = ('start_date', 'end_date', 'aircraft', 'is_active', 'created_at')
+    list_display = ('__str__', 'start_date', 'end_date', 'aircraft', 'is_active', 'created_at')
     list_filter = ('is_active', 'aircraft', 'start_date', 'end_date', 'created_at')
     search_fields = ('start_date', 'end_date', 'aircraft__registration')
     list_editable = ('is_active',)
@@ -15,7 +15,7 @@ class TrainingPeriodAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Información del período', {
-            'fields': ('start_date', 'end_date', 'aircraft', 'is_active')
+            'fields': ('__str__', 'start_date', 'end_date', 'aircraft', 'is_active')
         }),
         ('Fechas del sistema', {
             'fields': ('created_at', 'updated_at'),
@@ -25,7 +25,7 @@ class TrainingPeriodAdmin(admin.ModelAdmin):
 
 @admin.register(FlightSlot)
 class FlightSlotAdmin(admin.ModelAdmin):
-    list_display = ('date', 'block', 'aircraft', 'instructor', 'student', 'status')
+    list_display = ('training_period', 'date', 'block', 'aircraft', 'instructor', 'student', 'status')
     list_filter = ('date', 'block', 'status', 'aircraft', 'instructor')
     search_fields = ('aircraft__registration', 'instructor__first_name', 'instructor__last_name', 'student__first_name', 'student__last_name')
     list_editable = ('status',)
@@ -34,7 +34,7 @@ class FlightSlotAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Información básica', {
-            'fields': ('date', 'block', 'status')
+            'fields': ('training_period', 'date', 'block', 'status')
         }),
         ('Personal', {
             'fields': ('instructor', 'student')

@@ -23,28 +23,28 @@
                 <div class="add-flight-period-button">
                     <a
                         href="{% url 'scheduler:create_training_period' %}" 
-                        class="button">+ Crear Periodo de Entrenamiento
+                        class="button">+ Crear Periodo
                     </a>
                 </div>
                 <div class="see-period-calendar-button">
                     <a 
-                        href="#" 
-                        class="button">+ Ver Calendario de Entrenamiento
+                        href="{% url 'scheduler:training_period_calendar' %}" 
+                        class="button">+ Ver Calendario
                     </a>
                 </div>
             </div>
 
             <div class="flight-requests-list-container">
                 <div class="flight-requests-section" id="pending-flight-requests-section">
-                    <h2>Últimas 50 solicitudes de vuelo pendientes</h2>
+                    <h2>Solicitudes de vuelo pendientes</h2>
                     <p>Lista de solicitudes de vuelo pendientes</p>
                 </div>
                 <div class="flight-requests-section" id="approved-flight-requests-section">
-                    <h2>Últimas 50 solicitudes de vuelo aprobadas</h2>
+                    <h2>Últimas 20 solicitudes de vuelo aprobadas</h2>
                     <p>Lista de solicitudes de vuelo aprobadas</p>
                 </div>
                 <div class="flight-requests-section" id="cancelled-flight-requests-section">
-                    <h2>Últimas 50 solicitudes de vuelo canceladas</h2>
+                    <h2>Últimas 20 solicitudes de vuelo canceladas</h2>
                     <p>Lista de solicitudes de vuelo canceladas</p>
                 </div>
             </div>

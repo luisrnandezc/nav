@@ -1,8 +1,6 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import transaction
-from django.utils import timezone
 from datetime import timedelta
 
 from .forms import TrainingPeriodForm
@@ -15,6 +13,11 @@ def flight_requests_dashboard(request):
 
 def create_training_period(request):
     """Create a TrainingPeriod and generate slots."""
+    # Check if there's already an active period
+    if TrainingPeriod.objects.filter(is_active=True).exists():
+        messages.warning(request, 'Ya existe un período de entrenamiento activo. Debe desactivar el período actual antes de crear uno nuevo.')
+        return redirect('scheduler:flight_requests_dashboard')
+    
     if request.method == 'POST':
         form = TrainingPeriodForm(request.POST)
         if form.is_valid():
@@ -22,15 +25,20 @@ def create_training_period(request):
                 period = form.save()
                 created = period.generate_slots()
             messages.success(request, f"Periodo creado. {created} slots generados.")
-            return redirect(reverse('scheduler:training_period_calendar', args=[period.id]))
+            return redirect('scheduler:flight_requests_dashboard')
     else:
         form = TrainingPeriodForm()
     return render(request, 'scheduler/training_period_form.html', {'form': form})
 
 
-def training_period_calendar(request, pk):
+def training_period_calendar(request):
     """Display a grid calendar per aircraft for a training period."""
-    period = get_object_or_404(TrainingPeriod, pk=pk)
+    try:
+        period = TrainingPeriod.objects.get(is_active=True)
+    except TrainingPeriod.DoesNotExist:
+        messages.info(request, 'No hay un período de entrenamiento activo. Cree un nuevo período para comenzar.')
+        return redirect('scheduler:flight_requests_dashboard')
+    
     aircraft_list = Aircraft.objects.filter(is_active=True)
 
     # Build a simple in-memory structure: {aircraft: {date: {block: slot}}}

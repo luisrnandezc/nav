@@ -72,6 +72,18 @@ class TrainingPeriodForm(forms.ModelForm):
             # Check if period is too short (less than 1 week)
             if (end_date - start_date).days < 7:
                 self.add_error('end_date', 'El período debe ser de al menos 1 semana.')
+            
+            # Check for existing slots in the date range
+            if aircraft and start_date and end_date:
+                from scheduler.models import FlightSlot
+                
+                existing_slots = FlightSlot.objects.filter(
+                    aircraft=aircraft,
+                    date__range=[start_date, end_date]
+                ).exists()
+                
+                if existing_slots:
+                    self.add_error('end_date', f'Ya existen slots creados para la aeronave {aircraft.registration} en el rango de fechas seleccionado. Por favor, seleccione un rango de fechas diferente.')
         
         if aircraft and aircraft not in Aircraft.objects.filter(is_active=True, is_available=True):
             self.add_error('aircraft', 'La aeronave no está activa o disponible.')

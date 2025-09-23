@@ -5,12 +5,12 @@ from datetime import timedelta
 class TrainingPeriod(models.Model):
     """Periodo de entrenamiento"""
     start_date = models.DateField(
-        verbose_name="Fecha de inicio",
-        help_text="Fecha de inicio",
+        verbose_name="Inicio",
+        help_text="Inicio",
     )
     end_date = models.DateField(
-        verbose_name="Fecha de cierre",
-        help_text="Fecha de cierre",
+        verbose_name="Cierre",
+        help_text="Cierre",
     )
     is_active = models.BooleanField(
         default=False,
@@ -52,12 +52,12 @@ class TrainingPeriod(models.Model):
 
         while day <= self.end_date:
             for block in blocks:
-                FlightSlot.objects.get_or_create(
+                FlightSlot.objects.create(
                     training_period=self,
                     date=day,
                     block=block,
                     aircraft=aircraft,
-                    defaults={'status': 'free'}
+                    status='free'
                 )
                 created += 1
             day += timedelta(days=1)

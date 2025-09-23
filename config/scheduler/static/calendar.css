@@ -1,0 +1,77 @@
+body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    margin: 16px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.grid {
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.aircraft {
+    margin-bottom: 24px;
+}
+
+.aircraft h2 {
+    font-size: 16px;
+    margin: 12px 0;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 720px;
+}
+
+th,
+td {
+    border: 1px solid #e5e7eb;
+    padding: 8px;
+    text-align: center;
+    font-size: 12px;
+}
+
+th {
+    background: #f3f4f6;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.slot-free {
+    background: #ecfdf5;
+}
+
+.slot-pending {
+    background: #fff7ed;
+}
+
+.slot-confirmed {
+    background: #eff6ff;
+}
+
+.slot-cancelled {
+    background: #fef2f2;
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.block-label {
+    font-weight: 600;
+    color: #374151;
+    width: 60px;
+}
+
+.date-label {
+    font-weight: 600;
+    color: #374151;
+}
+

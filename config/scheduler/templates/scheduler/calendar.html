@@ -1,0 +1,60 @@
+{% load static %}
+{% load dict_extras %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Calendario - {{ period.start_date }} → {{ period.end_date }}</title>
+    <link rel="stylesheet" href="{% static 'calendar.css' %}">
+    </head>
+<body>
+    <div class="toolbar">
+        <h1>Calendario del ciclo</h1>
+        <div>
+            <a href="{% url 'scheduler:create_training_period' %}">Nuevo ciclo</a>
+        </div>
+    </div>
+
+    {% for aircraft, per_aircraft in grid.items %}
+        <div class="aircraft">
+            <h2>Aeronave: {{ aircraft.registration }}</h2>
+            <div class="grid">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bloque / Fecha</th>
+                            {% for d in dates %}
+                                <th class="date-label">{{ d }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for block in blocks %}
+                        <tr>
+                            <td class="block-label">{{ block }}</td>
+                            {% for d in dates %}
+                                {% with day_map=per_aircraft|getitem:d %}
+                                    {% with slot=day_map|getitem:block %}
+                                        <td class="slot-{{ slot.status }}">
+                                            {% if slot %}
+                                                {{ slot.get_status_display }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+                                        </td>
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% empty %}
+        <p>No hay aeronaves activas.</p>
+    {% endfor %}
+
+</body>
+</html>
+

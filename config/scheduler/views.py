@@ -95,3 +95,22 @@ def create_training_period_grids(request):
         'grids': grids,
     }
     return render(request, 'scheduler/training_periods.html', context)
+
+def student_scheduler_dashboard(request):
+    """Display the student scheduler dashboard."""
+    has_active_periods = TrainingPeriod.objects.filter(is_active=True).exists()
+    user = request.user
+    base_qs = (FlightSlot.objects
+               .filter(student=user)
+               .select_related('aircraft', 'instructor')
+               .order_by('date'))
+    approved_slots = base_qs.filter(status='confirmed')[:5]
+    pending_slots = base_qs.filter(status='pending')[:5]
+    cancelled_slots = base_qs.filter(status='cancelled')[:5]
+    return render(request, 'scheduler/student_scheduler_dashboard.html', {
+        'has_active_periods': has_active_periods,
+        'approved_slots': approved_slots,
+        'pending_slots': pending_slots,
+        'cancelled_slots': cancelled_slots,
+        'user': user,
+    })

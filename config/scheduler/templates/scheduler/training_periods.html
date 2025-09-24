@@ -13,7 +13,13 @@
 <body>
     <div class="training-periods-container">
         <div class="back-button">
-            <a href="{% url 'scheduler:flight_requests_dashboard' %}" class="button">&larr; Volver</a>
+            {% if user.role == 'STUDENT' %}
+                <a href="{% url 'scheduler:student_scheduler_dashboard' %}" class="button">&larr; Volver</a>
+            {% elif user.role == 'STAFF' %}
+                <a href="{% url 'scheduler:flight_requests_dashboard' %}" class="button">&larr; Volver</a>
+            {% else %}
+                <a href="{% url 'scheduler:flight_requests_dashboard' %}" class="button">&larr; Volver</a>
+            {% endif %}
         </div>
 
         <div class="training-periods-header">
@@ -47,7 +53,7 @@
                                 <div class="aircraft-item">
                                     <div class="aircraft-header">
                                         <h3>{{ aircraft_data.aircraft.registration }}</h3>
-                                        <span class="aircraft-type">{{ aircraft_data.aircraft.aircraft_type }}</span>
+                                        <span class="aircraft-type">{{ aircraft_data.aircraft.model }}</span>
                                     </div>
                                     
                                     <div class="grid-container">

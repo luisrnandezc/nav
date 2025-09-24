@@ -193,46 +193,89 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
 }
 
 .grid {
-  overflow-x: auto;
+  display: grid;
+  grid-template-columns: 60px repeat(5, 1fr);
+  gap: 2px;
+  max-width: 100%;
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-  min-width: 600px;
+/* Grid sections for multiple rows */
+.grid-section {
+  display: grid;
+  grid-template-columns: 60px repeat(5, 1fr);
+  gap: 2px;
+  max-width: 100%;
+  margin-bottom: 20px;
 }
 
-th,
-td {
+.grid-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Mobile: Reduce block column width */
+@media screen and (max-width: 768px) {
+  .grid-section {
+    grid-template-columns: 40px repeat(5, 1fr);
+  }
+}
+
+.grid-header {
+  display: contents;
+}
+
+.grid-row {
+  display: contents;
+}
+
+.block-label-header,
+.date-label,
+.block-label,
+.slot-free,
+.slot-pending,
+.slot-confirmed,
+.slot-cancelled,
+.slot-empty {
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px;
+  padding: 12px 8px;
   text-align: center;
   font-size: 12px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-th {
+.block-label-header {
   background: rgba(218, 225, 255, 0.1);
+  color: #dae1ff;
+  font-weight: bold;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.date-label {
+  background: rgba(218, 225, 255, 0.1);
+  color: #dae1ff;
+  font-weight: bold;
   position: sticky;
   top: 0;
   z-index: 1;
-  color: #dae1ff;
-  font-weight: bold;
 }
 
 .block-label {
   font-weight: 600;
   color: #dae1ff;
-  width: 60px;
   background: rgba(218, 225, 255, 0.05);
-}
-
-.date-label {
-  font-weight: 600;
-  color: #dae1ff;
-  min-width: 80px;
+  position: sticky;
+  left: 0;
+  z-index: 1;
 }
 
 /* Slot status styling */
@@ -266,6 +309,38 @@ th {
   color: #9ca3af;
 }
 
+/* Hover effects for clickable cells */
+td {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+td:hover {
+  background: rgba(218, 225, 255, 0.1) !important;
+  border-color: rgba(218, 225, 255, 0.3) !important;
+}
+
+/* Override hover for specific slot statuses */
+.slot-free:hover {
+  background: rgba(40, 167, 69, 0.3) !important;
+}
+
+.slot-pending:hover {
+  background: rgba(255, 193, 7, 0.3) !important;
+}
+
+.slot-confirmed:hover {
+  background: rgba(23, 162, 184, 0.3) !important;
+}
+
+.slot-cancelled:hover {
+  background: rgba(220, 53, 69, 0.3) !important;
+}
+
+.slot-empty:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
 .no-aircraft,
 .no-periods {
   text-align: center;
@@ -290,17 +365,21 @@ th {
   }
   
   .training-periods-header h1 {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 800px) {
   .training-periods-container {
     padding: 10px;
   }
 
   .training-periods-header h1 {
-    font-size: 2.0rem;
+    font-size: 1.25rem;
+  }
+
+  .training-periods-header p {
+    font-size: 1.0rem;
   }
 
   .aircraft-header {
@@ -320,7 +399,11 @@ th {
 
 @media screen and (max-width: 650px) {
   .training-periods-header h1 {
-    font-size: 1.8rem;
+    font-size: 1.25rem;
+  }
+
+  .training-periods-header p {
+    font-size: 1.0rem;
   }
 
   .training-periods-container {
@@ -332,13 +415,20 @@ th {
     width: 150px;
   }
 
-  table {
-    min-width: 500px;
+  .grid-section {
+    grid-template-columns: 35px repeat(5, 1fr);
   }
 
-  th,
-  td {
-    padding: 6px;
+
+  .block-label-header,
+  .date-label,
+  .block-label,
+  .slot-free,
+  .slot-pending,
+  .slot-confirmed,
+  .slot-cancelled,
+  .slot-empty {
+    padding: 8px 4px;
     font-size: 11px;
   }
 }
@@ -368,13 +458,20 @@ th {
     min-width: 220px;
   }
 
-  table {
-    min-width: 400px;
+  .grid-section {
+    grid-template-columns: 30px repeat(5, 1fr);
   }
 
-  th,
-  td {
-    padding: 4px;
+
+  .block-label-header,
+  .date-label,
+  .block-label,
+  .slot-free,
+  .slot-pending,
+  .slot-confirmed,
+  .slot-cancelled,
+  .slot-empty {
+    padding: 6px 2px;
     font-size: 10px;
   }
 }

@@ -1,5 +1,6 @@
 {% load static %}
 {% load dict_extras %}
+{% load scheduler_extras %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,36 +51,36 @@
                                     </div>
                                     
                                     <div class="grid-container">
-                                        <div class="grid">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Bloque / Fecha</th>
-                                                        {% for date in period_data.dates %}
-                                                            <th class="date-label">{{ date|date:"M d" }}</th>
-                                                        {% endfor %}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for block in period_data.blocks %}
-                                                    <tr>
-                                                        <td class="block-label">{{ block }}</td>
-                                                        {% for date in period_data.dates %}
-                                                            {% with slot=aircraft_data.grid|getitem:date|getitem:block %}
-                                                                <td class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %}">
-                                                                    {% if slot %}
-                                                                        {{ slot.get_status_display }}
-                                                                    {% else %}
-                                                                        —
-                                                                    {% endif %}
-                                                                </td>
-                                                            {% endwith %}
-                                                        {% endfor %}
-                                                    </tr>
+                                        <!-- Create grid sections for every 5 dates -->
+                                        {% for date_chunk in period_data.dates|chunk_list:5 %}
+                                            <div class="grid-section">
+                                                <!-- Header row with dates -->
+                                                <div class="grid-header">
+                                                    <div class="block-label-header"></div>
+                                                    {% for date in date_chunk %}
+                                                        <div class="date-label">{{ date|date:"M d" }}</div>
                                                     {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                </div>
+                                                
+                                                <!-- Block rows -->
+                                                {% for block in period_data.blocks %}
+                                                <div class="grid-row">
+                                                    <div class="block-label">{{ block }}</div>
+                                                    {% for date in date_chunk %}
+                                                        {% with slot=aircraft_data.grid|getitem:date|getitem:block %}
+                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %}">
+                                                                {% if slot %}
+                                                                    {{ slot.get_status_display }}
+                                                                {% else %}
+                                                                    —
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endwith %}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             {% empty %}
@@ -96,4 +97,3 @@
 
 </body>
 </html>
-

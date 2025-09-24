@@ -15,7 +15,7 @@ class TrainingPeriodAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Información del período', {
-            'fields': ('__str__', 'start_date', 'end_date', 'aircraft', 'is_active')
+            'fields': ('start_date', 'end_date', 'aircraft', 'is_active')
         }),
         ('Fechas del sistema', {
             'fields': ('created_at', 'updated_at'),

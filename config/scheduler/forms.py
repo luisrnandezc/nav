@@ -4,7 +4,7 @@ from .models import TrainingPeriod
 from fleet.models import Aircraft
 
 
-class TrainingPeriodForm(forms.ModelForm):
+class CreateTrainingPeriodForm(forms.ModelForm):
     class Meta:
         model = TrainingPeriod
         fields = [
@@ -70,13 +70,13 @@ class TrainingPeriodForm(forms.ModelForm):
                 self.add_error('end_date', 'El período no puede ser mayor a 6 meses.')
             
             # Check if period is too short (less than 1 week)
-            if (end_date - start_date).days < 7:
+            if (end_date - start_date).days + 1 < 5:
                 self.add_error('end_date', 'El período debe ser de al menos 1 semana.')
             
             # Check for existing slots in the date range
             if aircraft and start_date and end_date:
                 from scheduler.models import FlightSlot
-                
+
                 existing_slots = FlightSlot.objects.filter(
                     aircraft=aircraft,
                     date__range=[start_date, end_date]

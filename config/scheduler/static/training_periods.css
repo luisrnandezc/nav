@@ -1,0 +1,380 @@
+/* Training Periods Styles */
+/* Following the same design pattern as Transactions Dashboard */
+
+* {
+  font-family: 'Renogare-Regular', 'Arial', sans-serif;
+  color: #ffffff;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./img/background.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.button {
+  text-transform: uppercase;
+  font-size: 1.0rem;
+  width: 200px;
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.training-periods-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.training-periods-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.training-periods-header h1 {
+  font-size: 3.0rem;
+  letter-spacing: 5px;
+  margin: 0 0 10px 0;
+}
+
+.training-periods-header p {
+  font-size: 1.25rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.refresh-button {
+  margin-bottom: 30px;
+}
+
+.refresh-button .button {
+  background-color: rgba(218, 225, 255, 0.2);
+  border: 1px solid #dae1ff;
+  color: #dae1ff;
+  font-size: 1rem;
+  padding: 15px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 250px;
+  text-align: center;
+}
+
+.refresh-button .button:hover {
+  background-color: #d63e20;
+  border-color: #d63e20;
+}
+
+.training-periods-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 1400px;
+}
+
+.training-periods-section {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #dae1ff;
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dae1ff;
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  margin: 0;
+  color: #dae1ff;
+}
+
+.section-header p {
+  font-size: 0.9rem;
+  margin: 5px 0 0 0;
+  opacity: 0.7;
+}
+
+.status-active {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: #FF9800;
+  font-weight: bold;
+}
+
+.aircraft-grids {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aircraft-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.aircraft-item:hover {
+  background: rgba(218, 225, 255, 0.1);
+  border-color: #dae1ff;
+}
+
+.aircraft-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.aircraft-header h3 {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #dae1ff;
+  margin: 0;
+}
+
+.aircraft-type {
+  color: #dae1ff;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  background: rgba(218, 225, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.grid-container {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.grid {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 600px;
+}
+
+th,
+td {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  text-align: center;
+  font-size: 12px;
+}
+
+th {
+  background: rgba(218, 225, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  color: #dae1ff;
+  font-weight: bold;
+}
+
+.block-label {
+  font-weight: 600;
+  color: #dae1ff;
+  width: 60px;
+  background: rgba(218, 225, 255, 0.05);
+}
+
+.date-label {
+  font-weight: 600;
+  color: #dae1ff;
+  min-width: 80px;
+}
+
+/* Slot status styling */
+.slot-free {
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  font-weight: bold;
+}
+
+.slot-pending {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.slot-confirmed {
+  background: rgba(23, 162, 184, 0.2);
+  color: #17a2b8;
+  font-weight: bold;
+}
+
+.slot-cancelled {
+  background: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+  font-weight: bold;
+  text-decoration: line-through;
+}
+
+.slot-empty {
+  background: rgba(255, 255, 255, 0.05);
+  color: #9ca3af;
+}
+
+.no-aircraft,
+.no-periods {
+  text-align: center;
+  padding: 40px 20px;
+  opacity: 0.6;
+  font-style: italic;
+  color: #dae1ff;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1400px) {
+  .training-periods-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .training-periods-container {
+    padding: 15px;
+  }
+  
+  .training-periods-header h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .training-periods-container {
+    padding: 10px;
+  }
+
+  .training-periods-header h1 {
+    font-size: 2.0rem;
+  }
+
+  .aircraft-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .refresh-button .button {
+    padding: 12px 20px;
+    min-width: 250px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .training-periods-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .training-periods-container {
+    padding: 10px;
+  }
+
+  .button {
+    font-size: 1.0rem;
+    width: 150px;
+  }
+
+  table {
+    min-width: 500px;
+  }
+
+  th,
+  td {
+    padding: 6px;
+    font-size: 11px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .button {
+    font-size: 0.75rem;
+  }
+
+  .aircraft-header h3 {
+    font-size: 1rem;
+  }
+
+  .aircraft-type {
+    font-size: 0.8rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .training-periods-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .refresh-button .button {
+    font-size: 0.8rem;
+    padding: 10px 15px;
+    min-width: 220px;
+  }
+
+  table {
+    min-width: 400px;
+  }
+
+  th,
+  td {
+    padding: 4px;
+    font-size: 10px;
+  }
+}

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nuevo periodo de entrenamiento</title>
-    <link rel="stylesheet" href="{% static 'training_period_form.css' %}">
+    <link rel="stylesheet" href="{% static 'create_training_period.css' %}">
     <link rel="stylesheet" href="{% static 'shared_components.css' %}">
 </head>
 <body>
@@ -52,6 +52,16 @@
                     <button type="submit">Crear</button>
                 </div>
                 
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message message-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
                 {% if form.errors %}
                 <div class="form-errors">
                     <h3>Errores encontrados:</h3>
@@ -67,7 +77,7 @@
             </form>
         </div>
     </div>
-    <script src="{% static 'js/training_period_form_dynamics.js' %}"></script>
+    <script src="{% static 'js/create_training_period_dynamics.js' %}"></script>
 </body>
 </html>
 

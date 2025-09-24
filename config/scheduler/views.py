@@ -9,7 +9,10 @@ from fleet.models import Aircraft
 
 def flight_requests_dashboard(request): 
     """Display the flight requests dashboard."""
-    return render(request, 'scheduler/flight_requests_dashboard.html')
+    has_active_periods = TrainingPeriod.objects.filter(is_active=True).exists()
+    return render(request, 'scheduler/flight_requests_dashboard.html', {
+        'has_active_periods': has_active_periods,
+    })
 
 def check_training_period_overlap(period):
     """Check if there is a training period overlap for the same aircraft."""
@@ -43,9 +46,9 @@ def create_training_period(request):
 
 def create_training_period_grids(request):
     """Generate a grid of slots for created training period."""
-    available_periods = TrainingPeriod.objects.all()
+    available_periods = TrainingPeriod.objects.filter(is_active=True)
     if not available_periods.exists():
-        messages.info(request, 'No hay períodos de entrenamiento disponibles. Cree un nuevo período para comenzar.')
+        messages.info(request, 'No hay períodos de entrenamiento activos en este momento.')
         return redirect('scheduler:flight_requests_dashboard')
 
     # Build grids for each period

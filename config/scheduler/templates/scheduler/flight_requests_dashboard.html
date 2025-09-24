@@ -11,6 +11,15 @@
     </head>
 
     <body>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="flight-requests-container">
             <div class="back-button">
                 <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
@@ -27,10 +36,17 @@
                     </a>
                 </div>
                 <div class="see-period-calendar-button">
-                    <a 
-                        href="{% url 'scheduler:create_training_period_grids' %}" 
-                        class="button">+ Ver Calendario
-                    </a>
+                    {% if has_active_periods %}
+                        <a 
+                            href="{% url 'scheduler:create_training_period_grids' %}" 
+                            class="button">+ Ver Calendario
+                        </a>
+                    {% else %}
+                        <a 
+                            href="#" 
+                            class="button" style="opacity:.6; cursor:not-allowed; pointer-events:none;">No Disponible
+                        </a>
+                    {% endif %}
                 </div>
             </div>
 
@@ -49,5 +65,7 @@
                 </div>
             </div>
         </div>
+
+        
     </body>
 </html>

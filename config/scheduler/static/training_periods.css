@@ -285,6 +285,26 @@ body {
   font-weight: bold;
 }
 
+.clickable-slot {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.clickable-slot:hover {
+  background: rgba(40, 167, 69, 0.4) !important;
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+  z-index: 10;
+}
+
+.clickable-slot::after {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
 .slot-pending {
   background: rgba(255, 193, 7, 0.2);
   color: #ffc107;

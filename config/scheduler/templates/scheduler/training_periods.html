@@ -9,6 +9,10 @@
     <title>NAV | Períodos de Entrenamiento</title>
     <link rel="stylesheet" href="{% static 'training_periods.css' %}">
     <link rel="stylesheet" href="{% static 'shared_components.css' %}">
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+    </script>
+    <script src="{% static 'js/training_periods.js' %}"></script>
 </head>
 <body>
     <div class="training-periods-container">
@@ -74,7 +78,14 @@
                                                     <div class="block-label">{{ block }}</div>
                                                     {% for date in date_chunk %}
                                                         {% with slot=aircraft_data.grid|getitem:date|getitem:block %}
-                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %}">
+                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and slot.status == 'free' and user.role == 'STUDENT' %}clickable-slot{% endif %}" 
+                                                                 {% if slot and slot.status == 'free' and user.role == 'STUDENT' %}
+                                                                 data-slot-id="{{ slot.id }}"
+                                                                 data-date="{{ slot.date|date:'Y-m-d' }}"
+                                                                 data-block="{{ slot.block }}"
+                                                                 data-aircraft="{{ slot.aircraft.registration }}"
+                                                                 title="Click para reservar esta sesión"
+                                                                 {% endif %}>
                                                                 {% if slot %}
                                                                     {{ slot.get_status_display }}
                                                                 {% else %}
@@ -100,6 +111,5 @@
             {% endif %}
         </div>
     </div>
-
 </body>
 </html>

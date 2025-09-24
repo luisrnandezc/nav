@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from datetime import timedelta
 
 from .forms import CreateTrainingPeriodForm
-from .models import TrainingPeriod, FlightSlot
+from .models import TrainingPeriod, FlightSlot, FlightRequest
 from fleet.models import Aircraft
 
 def flight_requests_dashboard(request): 
@@ -93,8 +95,56 @@ def create_training_period_grids(request):
 
     context = {
         'grids': grids,
+        'user': request.user,
     }
     return render(request, 'scheduler/training_periods.html', context)
+
+@login_required
+def create_flight_request(request, slot_id):
+    """Create a flight request for a specific slot."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    # Only students can create flight requests
+    if request.user.role != 'STUDENT':
+        return JsonResponse({'error': 'Only students can create flight requests'}, status=403)
+    
+    try:
+        slot = get_object_or_404(FlightSlot, id=slot_id)
+        
+        # Check if slot is free
+        if slot.status != 'free':
+            return JsonResponse({'error': 'Slot is not available'}, status=400)
+        
+        # Check if student already has a request for this slot
+        existing_request = FlightRequest.objects.filter(
+            student=request.user,
+            slot=slot
+        ).exists()
+        
+        if existing_request:
+            return JsonResponse({'error': 'You already have a request for this slot'}, status=400)
+        
+        # Create the flight request
+        with transaction.atomic():
+            flight_request = FlightRequest.objects.create(
+                student=request.user,
+                slot=slot,
+                status='pending'
+            )
+            # Update slot status to pending
+            slot.status = 'pending'
+            slot.student = request.user
+            slot.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Flight request created successfully',
+            'request_id': flight_request.id
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 def student_scheduler_dashboard(request):
     """Display the student scheduler dashboard."""

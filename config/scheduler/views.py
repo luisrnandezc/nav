@@ -92,6 +92,3 @@ def create_training_period_grids(request):
         'grids': grids,
     }
     return render(request, 'scheduler/training_periods.html', context)
-
-
-# Create your views here.

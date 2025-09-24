@@ -73,6 +73,11 @@ class CreateTrainingPeriodForm(forms.ModelForm):
             if (end_date - start_date).days + 1 < 5:
                 self.add_error('end_date', 'El período debe ser de al menos 1 semana.')
             
+            # Check if duration is a multiple of 5
+            duration = (end_date - start_date).days + 1
+            if duration % 5 != 0:
+                self.add_error('end_date', 'La duración del período debe ser un múltiplo de 5 días (5, 10, 15, 20, etc.).')
+            
             # Check for existing slots in the date range
             if aircraft and start_date and end_date:
                 from scheduler.models import FlightSlot

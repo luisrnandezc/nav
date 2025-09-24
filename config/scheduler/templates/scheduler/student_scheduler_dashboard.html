@@ -1,0 +1,132 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Agenda tu vuelo</title>
+        <link href="{% static 'student_scheduler_dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="flight-requests-container">
+            <div class="back-button">
+                {% if user.role == 'STUDENT' %}
+                    <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+                {% elif user.role == 'STAFF' %}
+                    <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+                {% else %}
+                    <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+                {% endif %}
+            </div>
+            <div class="flight-requests-header">
+                <h1>Agenda tu vuelo</h1>
+            </div>
+
+            <div class="buttons-container">
+                <div class="see-period-calendar-button">
+                    {% if has_active_periods %}
+                        <a 
+                            href="{% url 'scheduler:create_training_period_grids' %}" 
+                            class="button">+ Agendar vuelo
+                        </a>
+                    {% else %}
+                        <a 
+                            href="#" 
+                            class="button" style="opacity:.6; cursor:not-allowed; pointer-events:none;">No Disponible
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flight-requests-list-container">
+                <div class="flight-requests-section" id="approved-flight-requests-section">
+                    <h2>Próximos vuelos aprobados</h2>
+                    <div class="flight-requests-list">
+                        {% for slot in approved_slots %}
+                            <div class="slot-card status-confirmed">
+                                <div class="slot-top">
+                                    <div class="slot-left">
+                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ slot.date|date:"d/m/Y" }}</div>
+                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="slot-center">
+                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ slot.aircraft.registration }}</div>
+                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ slot.aircraft.model }}</div>
+                                    </div>
+                                    <div class="slot-right">
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if slot.instructor %}{{ slot.instructor.first_name }} {{ slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="slot-badge">Status: <span class="badge badge-confirmed">{{ slot.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay vuelos aprobados</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="flight-requests-section" id="pending-flight-requests-section">
+                    <h2>Solicitudes de vuelo pendientes</h2>
+                    <div class="flight-requests-list">
+                        {% for slot in pending_slots %}
+                            <div class="slot-card status-pending">
+                                <div class="slot-top">
+                                    <div class="slot-left">
+                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ slot.date|date:"d/m/Y" }}</div>
+                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="slot-center">
+                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ slot.aircraft.registration }}</div>
+                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ slot.aircraft.model }}</div>
+                                    </div>
+                                    <div class="slot-right">
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if slot.instructor %}{{ slot.instructor.first_name }} {{ slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="slot-badge">Status: <span class="badge badge-pending">{{ slot.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay solicitudes pendientes</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="flight-requests-section" id="cancelled-flight-requests-section">
+                    <h2>Últimas 5 solicitudes de vuelo canceladas</h2>
+                    <div class="flight-requests-list">
+                        {% for slot in cancelled_slots %}
+                            <div class="slot-card" style="opacity:.8;">
+                                <div class="slot-top">
+                                    <div class="slot-left">
+                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ slot.date|date:"d/m/Y" }}</div>
+                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="slot-center">
+                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ slot.aircraft.registration }}</div>
+                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ slot.aircraft.model }}</div>
+                                    </div>
+                                    <div class="slot-right">
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if slot.instructor %}{{ slot.instructor.first_name }} {{ slot.instructor.last_name }}{% else %}N/A{% endif %}</div>
+                                        <div class="slot-badge">Status: <span class="badge badge-cancelled">{{ slot.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay vuelos cancelados recientes</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

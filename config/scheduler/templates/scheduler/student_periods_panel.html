@@ -7,32 +7,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Períodos de Entrenamiento</title>
-    <link rel="stylesheet" href="{% static 'training_periods.css' %}">
+    <link rel="stylesheet" href="{% static 'periods_panel.css' %}">
     <link rel="stylesheet" href="{% static 'shared_components.css' %}">
     <script>
         window.csrfToken = '{{ csrf_token }}';
     </script>
-    <script src="{% static 'js/training_periods.js' %}"></script>
+    <script src="{% static 'js/periods_panel_dynamics.js' %}"></script>
 </head>
 <body>
     <div class="training-periods-container">
         <div class="back-button">
-            {% if user.role == 'STUDENT' %}
-                <a href="{% url 'scheduler:student_scheduler_dashboard' %}" class="button">&larr; Volver</a>
-            {% elif user.role == 'STAFF' %}
-                <a href="{% url 'scheduler:flight_requests_dashboard' %}" class="button">&larr; Volver</a>
-            {% else %}
-                <a href="{% url 'scheduler:flight_requests_dashboard' %}" class="button">&larr; Volver</a>
-            {% endif %}
+            <a href="{% url 'scheduler:student_scheduler_dashboard' %}" class="button">&larr; Volver</a>
         </div>
 
         <div class="training-periods-header">
             <h1>Períodos de Entrenamiento</h1>
-            <p>Sistema de Gestión de Horarios de Vuelo</p>
+            <p>Sistema de Gestión de Solicitudes de Vuelo</p>
         </div>
 
         <div class="refresh-button">
-            <a href="{% url 'scheduler:create_training_period_grids' %}" class="button">🔄 Actualizar</a>
+            <a href="{% url 'scheduler:create_student_training_period_grids' %}" class="button">🔄 Actualizar</a>
         </div>
 
         <div class="training-periods-list-container">

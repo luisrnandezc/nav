@@ -40,17 +40,10 @@
                     </a>
                 </div>
                 <div class="see-period-calendar-button">
-                    {% if has_active_periods %}
-                        <a 
-                            href="{% url 'scheduler:create_training_period_grids' %}" 
-                            class="button">+ Ver Calendario
-                        </a>
-                    {% else %}
-                        <a 
-                            href="#" 
-                            class="button" style="opacity:.6; cursor:not-allowed; pointer-events:none;">No Disponible
-                        </a>
-                    {% endif %}
+                    <a 
+                        href="{% url 'scheduler:create_staff_training_period_grids' %}" 
+                        class="button">+ Ver Calendario
+                    </a>
                 </div>
             </div>
 

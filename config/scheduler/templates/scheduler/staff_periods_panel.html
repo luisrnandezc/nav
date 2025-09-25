@@ -1,0 +1,115 @@
+{% load static %}
+{% load dict_extras %}
+{% load scheduler_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Períodos de Entrenamiento</title>
+    <link rel="stylesheet" href="{% static 'periods_panel.css' %}">
+    <link rel="stylesheet" href="{% static 'shared_components.css' %}">
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+    </script>
+    <script src="{% static 'js/periods_panel_dynamics.js' %}"></script>
+</head>
+<body>
+    <div class="training-periods-container">
+        <div class="back-button">
+            <a href="{% url 'scheduler:flight_requests_dashboard' %}" class="button">&larr; Volver</a>
+        </div>
+
+        <div class="training-periods-header">
+            <h1>Períodos de Entrenamiento</h1>
+            <p>Sistema de Gestión de Solicitudes de Vuelo</p>
+        </div>
+
+        <div class="refresh-button">
+            <a href="{% url 'scheduler:create_staff_training_period_grids' %}" class="button">🔄 Actualizar</a>
+        </div>
+
+        <div class="training-periods-list-container">
+            {% if grids %}
+                {% for period_data in grids %}
+                    <div class="training-periods-section">
+                        <div class="section-header">
+                            <h2>{{ period_data.period }}</h2>
+                            <p>
+                                <strong>Aeronave:</strong> {{ period_data.period.aircraft.registration }} | 
+                                <strong>Estado:</strong> 
+                                {% if period_data.period.is_active %}
+                                    <span class="status-active">Activo</span>
+                                {% else %}
+                                    <span class="status-inactive">Inactivo</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="aircraft-grids">
+                            {% for aircraft_data in period_data.aircraft_grids %}
+                                <div class="aircraft-item">
+                                    <div class="aircraft-header">
+                                        <h3>{{ aircraft_data.aircraft.registration }}</h3>
+                                        <span class="aircraft-type">{{ aircraft_data.aircraft.model }}</span>
+                                    </div>
+                                    
+                                    <div class="grid-container">
+                                        <!-- Create grid sections for every 7 dates (complete weeks) -->
+                                        {% for date_chunk in period_data.dates|chunk_list:7 %}
+                                            <div class="grid-section">
+                                                <!-- Header row with dates -->
+                                                <div class="grid-header">
+                                                    <div class="block-label-header"></div>
+                                                    {% for date in date_chunk %}
+                                                        <div class="date-label">
+                                                            <div class="day-abbrev">
+                                                                {% if date.weekday == 0 %}L{% elif date.weekday == 1 %}M{% elif date.weekday == 2 %}X{% elif date.weekday == 3 %}J{% elif date.weekday == 4 %}V{% elif date.weekday == 5 %}S{% elif date.weekday == 6 %}D{% endif %}
+                                                            </div>
+                                                            <div class="date-number">{{ date|date:"d" }}</div>
+                                                            <div class="month-abbrev">{{ date|date:"M" }}</div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                                
+                                                <!-- Block rows -->
+                                                {% for block in period_data.blocks %}
+                                                <div class="grid-row">
+                                                    <div class="block-label">{{ block }}</div>
+                                                    {% for date in date_chunk %}
+                                                        {% with slot=aircraft_data.grid|getitem:date|getitem:block %}
+                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and slot.status == 'available' and user.role == 'STAFF' %}clickable-slot{% endif %}" 
+                                                                 {% if slot and slot.status == 'available' and user.role == 'STAFF' %}
+                                                                 data-slot-id="{{ slot.id }}"
+                                                                 data-date="{{ slot.date|date:'Y-m-d' }}"
+                                                                 data-block="{{ slot.block }}"
+                                                                 data-aircraft="{{ slot.aircraft.registration }}"
+                                                                 title="Click para aprobar esta sesión"
+                                                                 {% endif %}>
+                                                                {% if slot %}
+                                                                    {{ slot.get_status_display }}
+                                                                {% else %}
+                                                                    —
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endwith %}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="no-aircraft">No hay aeronaves disponibles para este período.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-periods">No hay períodos de entrenamiento disponibles.</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

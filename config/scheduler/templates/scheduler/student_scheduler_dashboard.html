@@ -11,24 +11,9 @@
     </head>
 
     <body>
-
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="message message-{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
         <div class="flight-requests-container">
             <div class="back-button">
-                {% if user.role == 'STUDENT' %}
-                    <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-                {% elif user.role == 'STAFF' %}
-                    <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-                {% else %}
-                    <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-                {% endif %}
+                <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
             </div>
             <div class="flight-requests-header">
                 <h1>Agenda tu vuelo</h1>
@@ -38,7 +23,7 @@
                 <div class="see-period-calendar-button">
                     {% if has_active_periods %}
                         <a 
-                            href="{% url 'scheduler:create_training_period_grids' %}" 
+                            href="{% url 'scheduler:create_student_training_period_grids' %}" 
                             class="button">+ Agendar vuelo
                         </a>
                     {% else %}
@@ -52,77 +37,77 @@
 
             <div class="flight-requests-list-container">
                 <div class="flight-requests-section" id="approved-flight-requests-section">
-                    <h2>Próximos vuelos aprobados</h2>
+                    <h2>Solicitudes de vuelo aprobadas</h2>
                     <div class="flight-requests-list">
-                        {% for slot in approved_slots %}
-                            <div class="slot-card status-confirmed">
-                                <div class="slot-top">
-                                    <div class="slot-left">
-                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ slot.date|date:"d/m/Y" }}</div>
-                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ slot.get_block_display }}</div>
+                        {% for request in approved_flight_requests %}
+                            <div class="request-card status-approved">
+                                <div class="request-top">
+                                    <div class="request-left">
+                                        <div class="request-line"><span class="request-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="request-line"><span class="request-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
                                     </div>
-                                    <div class="slot-center">
-                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ slot.aircraft.registration }}</div>
-                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ slot.aircraft.model }}</div>
+                                    <div class="request-center">
+                                        <div class="request-line"><span class="request-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="request-line"><span class="request-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
                                     </div>
-                                    <div class="slot-right">
-                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if slot.instructor %}{{ slot.instructor.first_name }} {{ slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
-                                        <div class="slot-badge">Status: <span class="badge badge-confirmed">{{ slot.get_status_display }}</span></div>
+                                    <div class="request-right">
+                                        <div class="request-line"><span class="request-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="request-badge">Status: <span class="badge badge-confirmed">{{ request.get_status_display }}</span></div>
                                     </div>
                                 </div>
                             </div>
                         {% empty %}
-                            <div class="no-transactions">No hay vuelos aprobados</div>
+                            <div class="no-transactions">No hay solicitudes de vuelo aprobadas</div>
                         {% endfor %}
                     </div>
                 </div>
                 <div class="flight-requests-section" id="pending-flight-requests-section">
                     <h2>Solicitudes de vuelo pendientes</h2>
                     <div class="flight-requests-list">
-                        {% for slot in pending_slots %}
-                            <div class="slot-card status-pending">
-                                <div class="slot-top">
-                                    <div class="slot-left">
-                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ slot.date|date:"d/m/Y" }}</div>
-                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ slot.get_block_display }}</div>
+                        {% for request in pending_flight_requests %}
+                            <div class="request-card status-pending">
+                                <div class="request-top">
+                                    <div class="request-left">
+                                        <div class="request-line"><span class="request-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="request-line"><span class="request-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
                                     </div>
-                                    <div class="slot-center">
-                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ slot.aircraft.registration }}</div>
-                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ slot.aircraft.model }}</div>
+                                    <div class="request-center">
+                                        <div class="request-line"><span class="request-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="request-line"><span class="request-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
                                     </div>
-                                    <div class="slot-right">
-                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if slot.instructor %}{{ slot.instructor.first_name }} {{ slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
-                                        <div class="slot-badge">Status: <span class="badge badge-pending">{{ slot.get_status_display }}</span></div>
+                                    <div class="request-right">
+                                        <div class="request-line"><span class="request-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="request-badge">Status: <span class="badge badge-pending">{{ request.get_status_display }}</span></div>
                                     </div>
                                 </div>
                             </div>
                         {% empty %}
-                            <div class="no-transactions">No hay solicitudes pendientes</div>
+                            <div class="no-transactions">No hay solicitudes de vuelo pendientes</div>
                         {% endfor %}
                     </div>
                 </div>
                 <div class="flight-requests-section" id="cancelled-flight-requests-section">
                     <h2>Últimas 5 solicitudes de vuelo canceladas</h2>
                     <div class="flight-requests-list">
-                        {% for slot in cancelled_slots %}
-                            <div class="slot-card" style="opacity:.8;">
-                                <div class="slot-top">
-                                    <div class="slot-left">
-                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ slot.date|date:"d/m/Y" }}</div>
-                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ slot.get_block_display }}</div>
+                        {% for request in cancelled_flight_requests %}
+                            <div class="request-card" style="opacity:.8;">
+                                <div class="request-top">
+                                    <div class="request-left">
+                                        <div class="request-line"><span class="request-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="request-line"><span class="request-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
                                     </div>
-                                    <div class="slot-center">
-                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ slot.aircraft.registration }}</div>
-                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ slot.aircraft.model }}</div>
+                                    <div class="request-center">
+                                        <div class="request-line"><span class="request-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="request-line"><span class="request-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
                                     </div>
-                                    <div class="slot-right">
-                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if slot.instructor %}{{ slot.instructor.first_name }} {{ slot.instructor.last_name }}{% else %}N/A{% endif %}</div>
-                                        <div class="slot-badge">Status: <span class="badge badge-cancelled">{{ slot.get_status_display }}</span></div>
+                                    <div class="request-right">
+                                        <div class="request-line"><span class="request-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}N/A{% endif %}</div>
+                                        <div class="request-badge">Status: <span class="badge badge-cancelled">{{ request.get_status_display }}</span></div>
                                     </div>
                                 </div>
                             </div>
                         {% empty %}
-                            <div class="no-transactions">No hay vuelos cancelados recientes</div>
+                            <div class="no-transactions">No hay solicitudes de vuelo canceladas</div>
                         {% endfor %}
                     </div>
                 </div>

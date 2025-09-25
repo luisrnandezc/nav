@@ -5,9 +5,10 @@ app_name = "scheduler"
 
 urlpatterns = [
     path('', views.flight_requests_dashboard, name='flight_requests_dashboard'),
-    path('period/new/', views.create_training_period, name='create_training_period'),
-    path('period/calendar/', views.create_training_period_grids, name='create_training_period_grids'),
-    path('scheduler/student_dashboard/', views.student_scheduler_dashboard, name='student_scheduler_dashboard'),
+    path('period/new_period/', views.create_training_period, name='create_training_period'),
+    path('student_scheduler_dashboard/', views.student_scheduler_dashboard, name='student_scheduler_dashboard'),
+    path('student_periods_panel/', views.create_student_training_period_grids, name='create_student_training_period_grids'),
+    path('staff_periods_panel/', views.create_staff_training_period_grids, name='create_staff_training_period_grids'),
     path('flight-request/create/<int:slot_id>/', views.create_flight_request, name='create_flight_request'),
     path('flight-request/approve/<int:request_id>/', views.approve_flight_request, name='approve_flight_request'),
     path('flight-request/cancel/<int:request_id>/', views.cancel_flight_request, name='cancel_flight_request'),

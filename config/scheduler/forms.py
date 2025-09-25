@@ -17,12 +17,12 @@ class CreateTrainingPeriodForm(forms.ModelForm):
             'start_date': DateInput(attrs={
                 'type': 'date',
                 'class': 'form-control',
-                'placeholder': 'Seleccione fecha de inicio'
+                'placeholder': 'Seleccione un lunes'
             }),
             'end_date': DateInput(attrs={
                 'type': 'date',
                 'class': 'form-control',
-                'placeholder': 'Seleccione fecha de cierre'
+                'placeholder': 'Seleccione un domingo'
             }),
             'aircraft': forms.Select(attrs={
                 'class': 'form-control',
@@ -33,8 +33,8 @@ class CreateTrainingPeriodForm(forms.ModelForm):
             })
         }
         labels = {
-            'start_date': 'Fecha de inicio:',
-            'end_date': 'Fecha de cierre:',
+            'start_date': 'Inicio (debe ser lunes):',
+            'end_date': 'Cierre (debe ser domingo):',
             'aircraft': 'Aeronave:',
             'is_active': 'Publicar:'
         }
@@ -55,6 +55,22 @@ class CreateTrainingPeriodForm(forms.ModelForm):
         # Set minimum date to start_date for end_date (will be updated via JavaScript)
         self.fields['end_date'].widget.attrs['min'] = date.today().strftime('%Y-%m-%d')
 
+    def clean_start_date(self):
+        start_date = self.cleaned_data.get('start_date')
+        if start_date:
+            # Check if start_date is a Monday (weekday() returns 0 for Monday)
+            if start_date.weekday() != 0:
+                self.add_error('start_date', 'La fecha de inicio debe ser un lunes.')
+        return start_date
+
+    def clean_end_date(self):
+        end_date = self.cleaned_data.get('end_date')
+        if end_date:
+            # Check if end_date is a Sunday (weekday() returns 6 for Sunday)
+            if end_date.weekday() != 6:
+                self.add_error('end_date', 'La fecha de cierre debe ser un domingo.')
+        return end_date
+
     def clean(self):
         cleaned_data = super().clean()
         start_date = cleaned_data.get('start_date')
@@ -65,17 +81,14 @@ class CreateTrainingPeriodForm(forms.ModelForm):
             if end_date < start_date:
                 self.add_error('end_date', 'La fecha de cierre debe ser posterior a la fecha de inicio.')
             
-            # Check if period is too long (more than 6 months)
-            if (end_date - start_date).days > 28:
-                self.add_error('end_date', 'El período no puede ser mayor a 28 días.')
+            # Check if period is a multiple of 7 days
+            period_days = (end_date - start_date).days + 1
+            if period_days % 7 != 0:
+                self.add_error('end_date', 'El período debe ser un múltiplo de 7 días (1 semana, 2 semanas, etc.).')
             
-            # Check if period is too short (less than 1 week)
-            if (end_date - start_date).days + 1 < 7:
-                self.add_error('end_date', 'El período debe ser de al menos 7 días.')
-
-            # Check if the period is a multiple of 7 days
-            if (end_date - start_date).days + 1 % 7 != 0:
-                self.add_error('end_date', 'El período debe ser un múltiplo de 7 días.')
+            # Check if period is too long (more than 12 weeks)
+            if period_days > 21:  # 3 weeks
+                self.add_error('end_date', 'El período no puede ser mayor a 3 semanas (21 días).')
             
             # Check for existing slots in the date range
             if aircraft and start_date and end_date:

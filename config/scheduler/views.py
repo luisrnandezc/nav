@@ -121,8 +121,8 @@ def create_flight_request(request, slot_id):
     try:
         slot = get_object_or_404(FlightSlot, id=slot_id)
         
-        # Check if slot is free
-        if slot.status != 'free':
+        # Check if slot is available
+        if slot.status != 'available':
             return JsonResponse({'error': 'La sesión no está disponible'}, status=400)
         
         # Check if student already has a request for this slot
@@ -134,15 +134,15 @@ def create_flight_request(request, slot_id):
         if existing_request:
             return JsonResponse({'error': 'Ya tiene una solicitud de vuelo para esta sesión'}, status=400)
         
-        # Check student balance
+        # Check student balance (safety net)
         try:
             student_profile = request.user.student_profile
             if student_profile.balance < 500:
                 return JsonResponse({
-                    'error': f'Saldo insuficiente. Su saldo actual es ${student_profile.balance}. Se requiere un mínimo de $500 para solicitar vuelos.'
+                    'error': f'Balance insuficiente. Su balance actual es ${student_profile.balance}. Se requiere un mínimo de $500 para solicitar vuelos.'
                 }, status=400)
-        except Exception as e:
-            return JsonResponse({'error': 'No se pudo verificar el saldo del estudiante'}, status=400)
+        except Exception:
+            return JsonResponse({'error': 'No se pudo verificar el balance del estudiante'}, status=400)
         
         # Create the flight request
         with transaction.atomic():
@@ -151,8 +151,8 @@ def create_flight_request(request, slot_id):
                 slot=slot,
                 status='pending'
             )
-            # Update slot status to pending
-            slot.status = 'pending'
+            # Update slot status to unavailable
+            slot.status = 'unavailable'
             slot.student = request.user
             slot.save()
         
@@ -162,12 +162,12 @@ def create_flight_request(request, slot_id):
             'request_id': flight_request.id
         })
         
-    except Exception as e:
+    except Exception:
         return JsonResponse({'error': 'Error al crear la solicitud de vuelo'}, status=500)
 
 @login_required
 def approve_flight_request(request, request_id):
-    """Approve a flight request and update the slot status to confirmed."""
+    """Approve a flight request and update the slot status to reserved."""
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     

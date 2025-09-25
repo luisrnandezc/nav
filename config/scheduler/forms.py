@@ -66,12 +66,16 @@ class CreateTrainingPeriodForm(forms.ModelForm):
                 self.add_error('end_date', 'La fecha de cierre debe ser posterior a la fecha de inicio.')
             
             # Check if period is too long (more than 6 months)
-            if (end_date - start_date).days > 180:
-                self.add_error('end_date', 'El período no puede ser mayor a 6 meses.')
+            if (end_date - start_date).days > 28:
+                self.add_error('end_date', 'El período no puede ser mayor a 28 días.')
             
             # Check if period is too short (less than 1 week)
-            if (end_date - start_date).days + 1 < 5:
-                self.add_error('end_date', 'El período debe ser de al menos 5 días.')
+            if (end_date - start_date).days + 1 < 7:
+                self.add_error('end_date', 'El período debe ser de al menos 7 días.')
+
+            # Check if the period is a multiple of 7 days
+            if (end_date - start_date).days + 1 % 7 != 0:
+                self.add_error('end_date', 'El período debe ser un múltiplo de 7 días.')
             
             # Check for existing slots in the date range
             if aircraft and start_date and end_date:

@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
             );
             
             if (confirmed) {
+                // Show loading state
+                const button = this;
+                const originalText = button.textContent;
+                button.textContent = 'Procesando...';
+                button.disabled = true;
+                
                 // Make the request
                 fetch(`/scheduler/flight-request/create/${slotId}/`, {
                     method: 'POST',
@@ -36,11 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.reload();
                     } else {
                         alert('Error al reservar la sesión: ' + data.error);
+                        // Restore button state
+                        button.textContent = originalText;
+                        button.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error al reservar la sesión:', error);
                     alert('Error al reservar la sesión');
+                    // Restore button state
+                    button.textContent = originalText;
+                    button.disabled = false;
                 });
             }
         });

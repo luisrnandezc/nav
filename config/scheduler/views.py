@@ -12,8 +12,17 @@ from fleet.models import Aircraft
 def flight_requests_dashboard(request): 
     """Display the flight requests dashboard."""
     has_active_periods = TrainingPeriod.objects.filter(is_active=True).exists()
+    
+    # Get flight requests data for all students
+    pending_requests = FlightRequest.objects.filter(status='pending').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('requested_at')[:20]
+    approved_requests = FlightRequest.objects.filter(status='approved').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('-requested_at')[:20]
+    cancelled_requests = FlightRequest.objects.filter(status='cancelled').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('-requested_at')[:20]
+    
     return render(request, 'scheduler/flight_requests_dashboard.html', {
         'has_active_periods': has_active_periods,
+        'pending_requests': pending_requests,
+        'approved_requests': approved_requests,
+        'cancelled_requests': cancelled_requests,
     })
 
 def check_training_period_overlap(period):
@@ -103,18 +112,18 @@ def create_training_period_grids(request):
 def create_flight_request(request, slot_id):
     """Create a flight request for a specific slot."""
     if request.method != 'POST':
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
     
     # Only students can create flight requests
     if request.user.role != 'STUDENT':
-        return JsonResponse({'error': 'Only students can create flight requests'}, status=403)
+        return JsonResponse({'error': 'Solo estudiantes pueden crear solicitudes de vuelo'}, status=403)
     
     try:
         slot = get_object_or_404(FlightSlot, id=slot_id)
         
         # Check if slot is free
         if slot.status != 'free':
-            return JsonResponse({'error': 'Slot is not available'}, status=400)
+            return JsonResponse({'error': 'La sesión no está disponible'}, status=400)
         
         # Check if student already has a request for this slot
         existing_request = FlightRequest.objects.filter(
@@ -123,7 +132,17 @@ def create_flight_request(request, slot_id):
         ).exists()
         
         if existing_request:
-            return JsonResponse({'error': 'You already have a request for this slot'}, status=400)
+            return JsonResponse({'error': 'Ya tiene una solicitud de vuelo para esta sesión'}, status=400)
+        
+        # Check student balance
+        try:
+            student_profile = request.user.student_profile
+            if student_profile.balance < 500:
+                return JsonResponse({
+                    'error': f'Saldo insuficiente. Su saldo actual es ${student_profile.balance}. Se requiere un mínimo de $500 para solicitar vuelos.'
+                }, status=400)
+        except Exception as e:
+            return JsonResponse({'error': 'No se pudo verificar el saldo del estudiante'}, status=400)
         
         # Create the flight request
         with transaction.atomic():
@@ -139,10 +158,73 @@ def create_flight_request(request, slot_id):
         
         return JsonResponse({
             'success': True,
-            'message': 'Flight request created successfully',
+            'message': 'Solicitud de vuelo creada exitosamente',
             'request_id': flight_request.id
         })
         
+    except Exception as e:
+        return JsonResponse({'error': 'Error al crear la solicitud de vuelo'}, status=500)
+
+@login_required
+def approve_flight_request(request, request_id):
+    """Approve a flight request and update the slot status to confirmed."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    # Only staff can approve flight requests
+    if request.user.role != 'STAFF':
+        return JsonResponse({'error': 'Solo el staff puede aprobar solicitudes de vuelo'}, status=403)
+    
+    try:
+        flight_request = get_object_or_404(FlightRequest, id=request_id)
+        
+        # Check if request is pending
+        if flight_request.status != 'pending':
+            return JsonResponse({'error': 'Solo solicitudes pendientes pueden ser aprobadas'}, status=400)
+        
+        # Approve the request (this will also update the slot status)
+        flight_request.approve()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Solicitud de vuelo aprobada exitosamente',
+            'request_id': flight_request.id,
+            'slot_id': flight_request.slot.id
+        })
+        
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def cancel_flight_request(request, request_id):
+    """Cancel a flight request and free up the slot."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    # Only staff or the student who made the request can cancel
+    flight_request = get_object_or_404(FlightRequest, id=request_id)
+    if request.user.role != 'STAFF' and request.user != flight_request.student:
+        return JsonResponse({'error': 'Solo el staff o el estudiante puede cancelar sus propias solicitudes'}, status=403)
+    
+    try:
+        # Check if request can be cancelled
+        if flight_request.status not in ['pending', 'approved']:
+            return JsonResponse({'error': 'Solo solicitudes pendientes o aprobadas pueden ser canceladas'}, status=400)
+        
+        # Cancel the request (this will also free up the slot)
+        flight_request.cancel()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Solicitud de vuelo cancelada exitosamente',
+            'request_id': flight_request.id,
+            'slot_id': flight_request.slot.id
+        })
+        
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 

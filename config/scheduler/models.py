@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 from datetime import timedelta
 
@@ -178,7 +178,6 @@ class FlightRequest(models.Model):
     slot = models.ForeignKey(
         'scheduler.FlightSlot', 
         on_delete=models.CASCADE,
-        limit_choices_to={'status': 'free'},
         related_name="flight_requests",
         verbose_name="Sesión de vuelo",
         help_text="Sesión de vuelo de la solicitud",
@@ -210,6 +209,44 @@ class FlightRequest(models.Model):
         help_text="Notas de la solicitud",
     )
     #endregion
+
+    def approve(self, original_status=None):
+        """Approve the flight request and update the slot status to confirmed."""
+        # Check if we can approve (use original_status if provided, otherwise current status)
+        status_to_check = original_status if original_status is not None else self.status
+        if status_to_check != 'pending':
+            raise ValueError("Solo solicitudes pendientes pueden ser aprobadas")
+        
+        # Secondary balance check (safety net)
+        try:
+            if self.student.student_profile.balance < 500:
+                raise ValueError(f"Saldo insuficiente para aprobar. Saldo actual: ${self.student.student_profile.balance}")
+        except Exception as e:
+            raise ValueError(f"No se pudo verificar el saldo del estudiante: {str(e)}")
+        
+        with transaction.atomic():
+            # Update flight request status
+            self.status = 'approved'
+            self.save()
+            
+            # Update slot status to confirmed
+            self.slot.status = 'confirmed'
+            self.slot.save()
+    
+    def cancel(self):
+        """Cancel the flight request and free up the slot."""
+        if self.status not in ['pending', 'approved']:
+            raise ValueError("Solo solicitudes pendientes o aprobadas pueden ser canceladas")
+        
+        with transaction.atomic():
+            # Update flight request status
+            self.status = 'cancelled'
+            self.save()
+            
+            # Free up the slot
+            self.slot.status = 'free'
+            self.slot.student = None
+            self.slot.save()
 
     def __str__(self):
         return f"Solicitud de vuelo. Estudiante: {self.student} - Estado: {self.get_status_display()}"

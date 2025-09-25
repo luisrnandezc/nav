@@ -39,13 +39,13 @@ class TrainingPeriod(models.Model):
         verbose_name_plural = "Periodos de entrenamiento"
         ordering = ['-start_date']
 
-    def generate_slots(self, filling_dates):
+    def generate_slots(self):
         """
         Create FlightSlot objects for each day, each block, and each aircraft.
         """
         from scheduler.models import FlightSlot
 
-        blocks = ['A', 'B', 'C']
+        blocks = ['AM', 'M', 'PM']
         aircraft = self.aircraft
         created = 0
         
@@ -53,18 +53,12 @@ class TrainingPeriod(models.Model):
         current_date = self.start_date
         while current_date <= self.end_date:
             for block in blocks:
-                # Check if this date is a filling date (should be unavailable)
-                if current_date in filling_dates:
-                    status = 'unavailable'
-                else:
-                    status = 'available'
-                
                 FlightSlot.objects.create(
                     training_period=self,
                     date=current_date,
                     block=block,
                     aircraft=aircraft,
-                    status=status
+                    status='available'
                 )
                 created += 1
             current_date += timedelta(days=1)
@@ -79,9 +73,9 @@ class FlightSlot(models.Model):
 
     #region choices definitions
     BLOCK_CHOICES = [
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
+        ('AM', 'AM'),
+        ('M', 'M'),
+        ('PM', 'PM'),
     ]
 
     # available: the slot is available for scheduling.
@@ -112,7 +106,7 @@ class FlightSlot(models.Model):
         verbose_name="Bloque",
         help_text="Bloque de la sesión",
         choices=BLOCK_CHOICES,
-        max_length=1
+        max_length=2
     )
     instructor = models.ForeignKey(
         'accounts.User',

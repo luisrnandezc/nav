@@ -234,10 +234,10 @@ body {
 .block-label-header,
 .date-label,
 .block-label,
-.slot-free,
+.slot-available,
 .slot-pending,
-.slot-confirmed,
-.slot-cancelled,
+.slot-reserved,
+.slot-unavailable,
 .slot-empty {
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 12px 8px;
@@ -279,7 +279,7 @@ body {
 }
 
 /* Slot status styling */
-.slot-free {
+.slot-available {
   background: rgba(40, 167, 69, 0.2);
   color: #28a745;
   font-weight: bold;
@@ -311,13 +311,13 @@ body {
   font-weight: bold;
 }
 
-.slot-confirmed {
+.slot-reserved {
   background: rgba(23, 162, 184, 0.2);
   color: #17a2b8;
   font-weight: bold;
 }
 
-.slot-cancelled {
+.slot-unavailable {
   background: rgba(220, 53, 69, 0.2);
   color: #dc3545;
   font-weight: bold;
@@ -340,7 +340,7 @@ td:hover {
 }
 
 /* Override hover for specific slot statuses */
-.slot-free:hover {
+.slot-available:hover {
   background: rgba(40, 167, 69, 0.3) !important;
 }
 
@@ -348,11 +348,11 @@ td:hover {
   background: rgba(255, 193, 7, 0.3) !important;
 }
 
-.slot-confirmed:hover {
+.slot-reserved:hover {
   background: rgba(23, 162, 184, 0.3) !important;
 }
 
-.slot-cancelled:hover {
+.slot-unavailable:hover {
   background: rgba(220, 53, 69, 0.3) !important;
 }
 
@@ -442,10 +442,10 @@ td:hover {
   .block-label-header,
   .date-label,
   .block-label,
-  .slot-free,
+  .slot-available,
   .slot-pending,
-  .slot-confirmed,
-  .slot-cancelled,
+  .slot-reserved,
+  .slot-unavailable,
   .slot-empty {
     padding: 8px 4px;
     font-size: 11px;
@@ -485,10 +485,10 @@ td:hover {
   .block-label-header,
   .date-label,
   .block-label,
-  .slot-free,
+  .slot-available,
   .slot-pending,
-  .slot-confirmed,
-  .slot-cancelled,
+  .slot-reserved,
+  .slot-unavailable,
   .slot-empty {
     padding: 6px 2px;
     font-size: 10px;

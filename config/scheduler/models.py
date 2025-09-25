@@ -57,7 +57,7 @@ class TrainingPeriod(models.Model):
                     date=day,
                     block=block,
                     aircraft=aircraft,
-                    status='free'
+                    status='available'
                 )
                 created += 1
             day += timedelta(days=1)
@@ -77,11 +77,14 @@ class FlightSlot(models.Model):
         ('C', 'C'),
     ]
 
+    # available: the slot is available for scheduling.
+    # reserved: there is an approved flight request for this slot.
+    # unavailable: the slot is unavailable for scheduling because of maintenance, weather, etc.
+
     STATUS_CHOICES = [
-        ('free', 'Libre'),
-        ('pending', 'Pendiente de confirmación'),
-        ('confirmed', 'Confirmado'),
-        ('cancelled', 'Cancelado'),
+        ('available', 'Disponible'),
+        ('reserved', 'Reservado'),
+        ('unavailable', 'No disponible'),
     ]
     #endregion
 
@@ -135,11 +138,11 @@ class FlightSlot(models.Model):
         help_text="Aeronave de la sesión",
     )
     status = models.CharField(
-        max_length=10,
+        max_length=15,
         choices=STATUS_CHOICES,
         null=False,
         blank=False,
-        default='free',
+        default='available',
         verbose_name="Estado",
         help_text="Estado de la sesión",
     )
@@ -160,9 +163,9 @@ class FlightRequest(models.Model):
 
     #region choices definitions
     STATUS_CHOICES = [
-        ('pending', 'Pendiente'),
-        ('approved', 'Aprobado'),
-        ('cancelled', 'Cancelado'),
+        ('pending', 'En revisión'),
+        ('approved', 'Aprobada'),
+        ('cancelled', 'Cancelada'),
     ]
     #endregion
 
@@ -188,9 +191,11 @@ class FlightRequest(models.Model):
         help_text="Si es selecciona, el estudiante acepta cualquier bloque en esta fecha",
     )
     status = models.CharField(
-        max_length=10, 
+        max_length=15, 
         choices=STATUS_CHOICES, 
-        default='pending'
+        default='pending',
+        verbose_name="Estado",
+        help_text="Estado de la solicitud",
     )
     requested_at = models.DateTimeField(
         auto_now_add=True,
@@ -211,26 +216,30 @@ class FlightRequest(models.Model):
     #endregion
 
     def approve(self, original_status=None):
-        """Approve the flight request and update the slot status to confirmed."""
+        """Approve the flight request and update the slot status to reserved."""
         # Check if we can approve (use original_status if provided, otherwise current status)
         status_to_check = original_status if original_status is not None else self.status
         if status_to_check != 'pending':
             raise ValueError("Solo solicitudes pendientes pueden ser aprobadas")
         
+        # Check if the slot is available
+        if self.slot.status != 'available':
+            raise ValueError("La sesión de vuelo no está disponible")
+        
         # Secondary balance check (safety net)
         try:
             if self.student.student_profile.balance < 500:
-                raise ValueError(f"Saldo insuficiente para aprobar. Saldo actual: ${self.student.student_profile.balance}")
+                raise ValueError(f"Balance insuficiente para aprobar. Balance actual: ${self.student.student_profile.balance}")
         except Exception as e:
-            raise ValueError(f"No se pudo verificar el saldo del estudiante: {str(e)}")
+            raise ValueError(f"No se pudo verificar el balance del estudiante: {str(e)}")
         
         with transaction.atomic():
             # Update flight request status
             self.status = 'approved'
             self.save()
             
-            # Update slot status to confirmed
-            self.slot.status = 'confirmed'
+            # Update slot status to reserved
+            self.slot.status = 'reserved'
             self.slot.save()
     
     def cancel(self):
@@ -244,7 +253,7 @@ class FlightRequest(models.Model):
             self.save()
             
             # Free up the slot
-            self.slot.status = 'free'
+            self.slot.status = 'available'
             self.slot.student = None
             self.slot.save()
 

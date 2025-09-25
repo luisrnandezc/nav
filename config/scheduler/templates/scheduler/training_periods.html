@@ -78,8 +78,8 @@
                                                     <div class="block-label">{{ block }}</div>
                                                     {% for date in date_chunk %}
                                                         {% with slot=aircraft_data.grid|getitem:date|getitem:block %}
-                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and slot.status == 'free' and user.role == 'STUDENT' %}clickable-slot{% endif %}" 
-                                                                 {% if slot and slot.status == 'free' and user.role == 'STUDENT' %}
+                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and slot.status == 'available' and user.role == 'STUDENT' %}clickable-slot{% endif %}" 
+                                                                 {% if slot and slot.status == 'available' and user.role == 'STUDENT' %}
                                                                  data-slot-id="{{ slot.id }}"
                                                                  data-date="{{ slot.date|date:'Y-m-d' }}"
                                                                  data-block="{{ slot.block }}"
@@ -101,7 +101,7 @@
                                     </div>
                                 </div>
                             {% empty %}
-                                <div class="no-aircraft">No hay aeronaves activas para este período.</div>
+                                <div class="no-aircraft">No hay aeronaves disponibles para este período.</div>
                             {% endfor %}
                         </div>
                     </div>

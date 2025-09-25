@@ -70,8 +70,8 @@ class CreateTrainingPeriodForm(forms.ModelForm):
                 self.add_error('end_date', 'El período no puede ser mayor a 6 meses.')
             
             # Check if period is too short (less than 1 week)
-            if (end_date - start_date).days + 1 < 5:
-                self.add_error('end_date', 'El período debe ser de al menos 1 semana.')
+            if (end_date - start_date).days + 1 < 7:
+                self.add_error('end_date', 'El período debe ser de al menos 7 días.')
             
             # Check if duration is a multiple of 5
             duration = (end_date - start_date).days + 1

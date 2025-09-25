@@ -9,4 +9,6 @@ urlpatterns = [
     path('period/calendar/', views.create_training_period_grids, name='create_training_period_grids'),
     path('scheduler/student_dashboard/', views.student_scheduler_dashboard, name='student_scheduler_dashboard'),
     path('flight-request/create/<int:slot_id>/', views.create_flight_request, name='create_flight_request'),
+    path('flight-request/approve/<int:request_id>/', views.approve_flight_request, name='approve_flight_request'),
+    path('flight-request/cancel/<int:request_id>/', views.cancel_flight_request, name='cancel_flight_request'),
 ]

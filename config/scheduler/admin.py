@@ -49,10 +49,10 @@ class FlightRequestAdmin(admin.ModelAdmin):
     list_display = ('student', 'slot', 'status', 'flexible', 'requested_at')
     list_filter = ('status', 'flexible', 'requested_at', 'slot__date', 'slot__block')
     search_fields = ('student__first_name', 'student__last_name', 'slot__aircraft__registration', 'notes')
-    list_editable = ('status',)
     date_hierarchy = 'requested_at'
     ordering = ('-requested_at',)
     readonly_fields = ('requested_at', 'updated_at')
+    actions = ['approve_requests', 'cancel_requests']
     
     fieldsets = (
         ('Información básica', {
@@ -69,3 +69,53 @@ class FlightRequestAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def approve_requests(self, request, queryset):
+        """Approve selected flight requests."""
+        approved_count = 0
+        for flight_request in queryset.filter(status='pending'):
+            try:
+                flight_request.approve()
+                approved_count += 1
+            except ValueError as e:
+                self.message_user(request, f"Error aprobando solicitud {flight_request.id}: {str(e)}", level='ERROR')
+        
+        if approved_count > 0:
+            self.message_user(request, f"{approved_count} solicitud(es) de vuelo aprobadas exitosamente.")
+    
+    approve_requests.short_description = "Aprobar solicitudes de vuelo seleccionadas"
+    
+    def cancel_requests(self, request, queryset):
+        """Cancel selected flight requests."""
+        cancelled_count = 0
+        for flight_request in queryset.filter(status__in=['pending', 'approved']):
+            try:
+                flight_request.cancel()
+                cancelled_count += 1
+            except ValueError as e:
+                self.message_user(request, f"Error cancelando solicitud {flight_request.id}: {str(e)}", level='ERROR')
+        
+        if cancelled_count > 0:
+            self.message_user(request, f"{cancelled_count} solicitud(es) de vuelo canceladas exitosamente.")
+    
+    cancel_requests.short_description = "Cancelar solicitudes de vuelo seleccionadas"
+    
+    def save_model(self, request, obj, form, change):
+        """Override save to use custom approve/cancel methods when status changes."""
+        if change:  # Only for existing objects
+            # Get the original object from database BEFORE any changes
+            original = FlightRequest.objects.get(pk=obj.pk)
+            original_status = original.status
+            # Check if status changed
+            if original_status != obj.status:
+                if obj.status == 'approved' and original_status == 'pending':
+                    # Use our custom approve method with original status
+                    obj.approve(original_status=original_status)
+                    return
+                elif obj.status == 'cancelled' and original_status in ['pending', 'approved']:
+                    # Use our custom cancel method
+                    obj.cancel()
+                    return
+        
+        # For new objects or no status change, use normal save
+        super().save_model(request, obj, form, change)

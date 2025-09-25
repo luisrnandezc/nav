@@ -8,6 +8,10 @@
         <title>NAV | Sistema de Solicitudes de Vuelo</title>
         <link href="{% static 'flight_requests_dashboard.css' %}" rel="stylesheet" />
         <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+        <script>
+            window.csrfToken = '{{ csrf_token }}';
+        </script>
+        <script src="{% static 'js/flight_request_dashboard_dynamics.js' %}"></script>
     </head>
 
     <body>
@@ -53,19 +57,98 @@
             <div class="flight-requests-list-container">
                 <div class="flight-requests-section" id="pending-flight-requests-section">
                     <h2>Solicitudes de vuelo pendientes</h2>
-                    <p>Lista de solicitudes de vuelo pendientes</p>
+                    <div class="flight-requests-list">
+                        {% for request in pending_requests %}
+                            <div class="slot-card status-pending">
+                                <div class="slot-top">
+                                    <div class="slot-left">
+                                        <div class="slot-line"><span class="slot-label">Estudiante:</span> {{ request.student.first_name }} {{ request.student.last_name }}</div>
+                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="slot-center">
+                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
+                                        <div class="slot-line"><span class="slot-label">Solicitado:</span> {{ request.requested_at|date:"d/m/Y H:i" }}</div>
+                                    </div>
+                                    <div class="slot-right">
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="slot-line"><span class="slot-label">Status:</span> <span class="badge badge-pending">{{ request.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                                {% if user.role == 'STAFF' %}
+                                <div class="request-actions">
+                                    <button class="approve-btn" onclick="approveRequest('{{ request.id }}')">✓ Aprobar</button>
+                                    <button class="cancel-btn" onclick="cancelRequest('{{ request.id }}')">✗ Cancelar</button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay solicitudes pendientes</div>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="flight-requests-section" id="approved-flight-requests-section">
                     <h2>Últimas 20 solicitudes de vuelo aprobadas</h2>
-                    <p>Lista de solicitudes de vuelo aprobadas</p>
+                    <div class="flight-requests-list">
+                        {% for request in approved_requests %}
+                            <div class="slot-card status-confirmed">
+                                <div class="slot-top">
+                                    <div class="slot-left">
+                                        <div class="slot-line"><span class="slot-label">Estudiante:</span> {{ request.student.first_name }} {{ request.student.last_name }}</div>
+                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="slot-center">
+                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
+                                        <div class="slot-line"><span class="slot-label">Aprobado:</span> {{ request.updated_at|date:"d/m/Y H:i" }}</div>
+                                    </div>
+                                    <div class="slot-right">
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="slot-line"><span class="slot-label">Status:</span> <span class="badge badge-confirmed">{{ request.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                                {% if user.role == 'STAFF' %}
+                                <div class="request-actions">
+                                    <button class="cancel-btn" onclick="cancelRequest('{{ request.id }}')">✗ Cancelar</button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay solicitudes aprobadas</div>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="flight-requests-section" id="cancelled-flight-requests-section">
                     <h2>Últimas 20 solicitudes de vuelo canceladas</h2>
-                    <p>Lista de solicitudes de vuelo canceladas</p>
+                    <div class="flight-requests-list">
+                        {% for request in cancelled_requests %}
+                            <div class="slot-card" style="opacity:.8;">
+                                <div class="slot-top">
+                                    <div class="slot-left">
+                                        <div class="slot-line"><span class="slot-label">Estudiante:</span> {{ request.student.first_name }} {{ request.student.last_name }}</div>
+                                        <div class="slot-line"><span class="slot-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="slot-line"><span class="slot-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="slot-center">
+                                        <div class="slot-line"><span class="slot-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="slot-line"><span class="slot-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
+                                        <div class="slot-line"><span class="slot-label">Cancelado:</span> {{ request.updated_at|date:"d/m/Y H:i" }}</div>
+                                    </div>
+                                    <div class="slot-right">
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}N/A{% endif %}</div>
+                                        <div class="slot-line"><span class="slot-label">Status:</span> <span class="badge badge-cancelled">{{ request.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay solicitudes canceladas</div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
-
         
     </body>
 </html>

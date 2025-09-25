@@ -61,14 +61,20 @@
                                     </div>
                                     
                                     <div class="grid-container">
-                                        <!-- Create grid sections for every 5 dates -->
-                                        {% for date_chunk in period_data.dates|chunk_list:5 %}
+                                        <!-- Create grid sections for every 7 dates (complete weeks) -->
+                                        {% for date_chunk in period_data.dates|chunk_list:7 %}
                                             <div class="grid-section">
                                                 <!-- Header row with dates -->
                                                 <div class="grid-header">
                                                     <div class="block-label-header"></div>
                                                     {% for date in date_chunk %}
-                                                        <div class="date-label">{{ date|date:"M d" }}</div>
+                                                        <div class="date-label">
+                                                            <div class="day-abbrev">
+                                                                {% if date.weekday == 0 %}L{% elif date.weekday == 1 %}M{% elif date.weekday == 2 %}X{% elif date.weekday == 3 %}J{% elif date.weekday == 4 %}V{% elif date.weekday == 5 %}S{% elif date.weekday == 6 %}D{% endif %}
+                                                            </div>
+                                                            <div class="date-number">{{ date|date:"d" }}</div>
+                                                            <div class="month-abbrev">{{ date|date:"M" }}</div>
+                                                        </div>
                                                     {% endfor %}
                                                 </div>
                                                 

@@ -36,6 +36,39 @@ def check_training_period_overlap(period):
         return False
     return False
 
+def complete_training_period_dates(period):
+    """Complete the training period dates, such that the period start date
+    is always the closest previous monday and the period ends on the closest next sunday."""
+    # Calculate days to subtract to get to Monday (weekday() returns 0 for Monday, 6 for Sunday)
+    days_to_monday = period.start_date.weekday()
+    dummy_start_date = period.start_date - timedelta(days=days_to_monday)
+    
+    # Calculate days to add to get to Sunday (6 - weekday() gives days to Sunday)
+    days_to_sunday = 6 - period.end_date.weekday()
+    dummy_end_date = period.end_date + timedelta(days=days_to_sunday)
+    
+    return dummy_start_date, dummy_end_date
+
+def obtain_filling_dates(period, dummy_start_date, dummy_end_date):
+    """Find the dates between the initial dummy start date and real start date, and 
+    between the initial dummy end date and real end date.
+    """
+    filling_dates = []
+    
+    # Add dates before the real start date
+    current_date = dummy_start_date
+    while current_date < period.start_date:
+        filling_dates.append(current_date)
+        current_date += timedelta(days=1)
+    
+    # Add dates after the real end date
+    current_date = period.end_date + timedelta(days=1)
+    while current_date <= dummy_end_date:
+        filling_dates.append(current_date)
+        current_date += timedelta(days=1)
+    
+    return filling_dates
+
 def create_training_period(request):
     """Create a TrainingPeriod and generate slots."""
     if request.method == 'POST':
@@ -44,9 +77,13 @@ def create_training_period(request):
             if check_training_period_overlap(form.instance):
                 form.add_error('end_date', 'Ya existe un período de entrenamiento en el rango de fechas seleccionado.')
                 return render(request, 'scheduler/create_training_period.html', {'form': form})
+            dummy_start_date, dummy_end_date = complete_training_period_dates(form.instance)
+            filling_dates = obtain_filling_dates(form.instance, dummy_start_date, dummy_end_date)
+            form.instance.start_date = dummy_start_date
+            form.instance.end_date = dummy_end_date
             with transaction.atomic():
                 period = form.save()
-                created = period.generate_slots()
+                created = period.generate_slots(filling_dates)
             messages.success(request, f"Periodo creado. {created} slots generados.")
             form = CreateTrainingPeriodForm()  # Reset form with empty data
             return render(request, 'scheduler/create_training_period.html', {'form': form})

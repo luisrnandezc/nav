@@ -198,7 +198,7 @@ body {
 
 .grid {
   display: grid;
-  grid-template-columns: 60px repeat(5, 1fr);
+  grid-template-columns: 60px repeat(7, 1fr);
   gap: 2px;
   max-width: 100%;
 }
@@ -206,7 +206,7 @@ body {
 /* Grid sections for multiple rows */
 .grid-section {
   display: grid;
-  grid-template-columns: 60px repeat(5, 1fr);
+  grid-template-columns: 60px repeat(7, 1fr);
   gap: 2px;
   max-width: 100%;
   margin-bottom: 20px;
@@ -219,7 +219,7 @@ body {
 /* Mobile: Reduce block column width */
 @media screen and (max-width: 768px) {
   .grid-section {
-    grid-template-columns: 40px repeat(5, 1fr);
+    grid-template-columns: 40px repeat(7, 1fr);
   }
 }
 
@@ -255,9 +255,6 @@ body {
   background: rgba(218, 225, 255, 0.1);
   color: #dae1ff;
   font-weight: bold;
-  position: sticky;
-  left: 0;
-  z-index: 2;
 }
 
 .date-label {
@@ -267,15 +264,34 @@ body {
   position: sticky;
   top: 0;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.day-abbrev {
+  font-size: 12px;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+.date-number {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.month-abbrev {
+  font-size: 10px;
+  font-weight: normal;
+  opacity: 0.7;
 }
 
 .block-label {
   font-weight: 600;
   color: #dae1ff;
   background: rgba(218, 225, 255, 0.05);
-  position: sticky;
-  left: 0;
-  z-index: 1;
 }
 
 /* Slot status styling */
@@ -328,6 +344,12 @@ body {
   color: #9ca3af;
 }
 
+.slot-unavailable {
+  background: rgba(108, 117, 125, 0.2);
+  color: #6c757d;
+  font-weight: bold;
+}
+
 /* Hover effects for clickable cells */
 td {
   cursor: pointer;
@@ -353,7 +375,7 @@ td:hover {
 }
 
 .slot-unavailable:hover {
-  background: rgba(220, 53, 69, 0.3) !important;
+  background: rgba(108, 117, 125, 0.3) !important;
 }
 
 .slot-empty:hover {
@@ -435,7 +457,7 @@ td:hover {
   }
 
   .grid-section {
-    grid-template-columns: 35px repeat(5, 1fr);
+    grid-template-columns: 35px repeat(7, 1fr);
   }
 
 
@@ -449,6 +471,18 @@ td:hover {
   .slot-empty {
     padding: 8px 4px;
     font-size: 11px;
+  }
+
+  .day-abbrev {
+    font-size: 10px;
+  }
+
+  .date-number {
+    font-size: 12px;
+  }
+
+  .month-abbrev {
+    font-size: 9px;
   }
 }
 
@@ -478,7 +512,7 @@ td:hover {
   }
 
   .grid-section {
-    grid-template-columns: 30px repeat(5, 1fr);
+    grid-template-columns: 30px repeat(7, 1fr);
   }
 
 
@@ -492,5 +526,17 @@ td:hover {
   .slot-empty {
     padding: 6px 2px;
     font-size: 10px;
+  }
+
+  .day-abbrev {
+    font-size: 9px;
+  }
+
+  .date-number {
+    font-size: 11px;
+  }
+
+  .month-abbrev {
+    font-size: 8px;
   }
 }

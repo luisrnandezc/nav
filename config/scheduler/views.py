@@ -4,10 +4,8 @@ from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from datetime import timedelta
-
 from .forms import CreateTrainingPeriodForm
 from .models import TrainingPeriod, FlightSlot, FlightRequest
-from fleet.models import Aircraft
 
 def flight_requests_dashboard(request): 
     """Display the flight requests dashboard."""
@@ -91,17 +89,11 @@ def create_training_period(request):
         form = CreateTrainingPeriodForm()
     return render(request, 'scheduler/create_training_period.html', {'form': form})
 
-
-def create_training_period_grids(request):
-    """Generate a grid of slots for created training period."""
-    available_periods = TrainingPeriod.objects.filter(is_active=True)
-    if not available_periods.exists():
-        messages.info(request, 'No hay períodos de entrenamiento activos en este momento.')
-        return redirect('scheduler:flight_requests_dashboard')
-
+def create_period_grids(periods):
+    """Generate a grid of slots for specified training periods."""
     # Build grids for each period
     grids = []
-    for period in available_periods:
+    for period in periods:
         # Generate dates for this period
         dates = []
         day = period.start_date
@@ -138,12 +130,36 @@ def create_training_period_grids(request):
         
         period_data['aircraft_grids'].append(aircraft_data)
         grids.append(period_data)
+    return grids
+
+@login_required
+def create_student_training_period_grids(request):
+    """Generate a grid of slots for active training periods."""
+    active_periods = TrainingPeriod.objects.filter(is_active=True)
+    if not active_periods.exists():
+        messages.info(request, 'No hay períodos de entrenamiento activos en este momento.')
+        return redirect('scheduler:flight_requests_dashboard')
+
+    grids = create_period_grids(active_periods)
 
     context = {
         'grids': grids,
         'user': request.user,
     }
-    return render(request, 'scheduler/training_periods.html', context)
+    return render(request, 'scheduler/student_periods_panel.html', context)
+
+@login_required
+def create_staff_training_period_grids(request):
+    """Generate a grid of slots for active and inactive training periods."""
+    periods = TrainingPeriod.objects.all()
+
+    grids = create_period_grids(periods)
+
+    context = {
+        'grids': grids,
+        'user': request.user,
+    }
+    return render(request, 'scheduler/staff_periods_panel.html', context)
 
 @login_required
 def create_flight_request(request, slot_id):
@@ -165,7 +181,8 @@ def create_flight_request(request, slot_id):
         # Check if student already has a request for this slot
         existing_request = FlightRequest.objects.filter(
             student=request.user,
-            slot=slot
+            slot=slot,
+            status__in=['pending', 'approved']
         ).exists()
         
         if existing_request:
@@ -269,17 +286,17 @@ def student_scheduler_dashboard(request):
     """Display the student scheduler dashboard."""
     has_active_periods = TrainingPeriod.objects.filter(is_active=True).exists()
     user = request.user
-    base_qs = (FlightSlot.objects
+    base_qs = (FlightRequest.objects
                .filter(student=user)
-               .select_related('aircraft', 'instructor')
-               .order_by('date'))
-    approved_slots = base_qs.filter(status='confirmed')[:5]
-    pending_slots = base_qs.filter(status='pending')[:5]
-    cancelled_slots = base_qs.filter(status='cancelled')[:5]
+               .select_related('slot', 'slot__aircraft', 'slot__instructor')
+               .order_by('requested_at'))
+    approved_flight_requests = base_qs.filter(status='approved')[:5]
+    pending_flight_requests = base_qs.filter(status='pending')[:5]
+    cancelled_flight_requests = base_qs.filter(status='cancelled')[:5]
     return render(request, 'scheduler/student_scheduler_dashboard.html', {
         'has_active_periods': has_active_periods,
-        'approved_slots': approved_slots,
-        'pending_slots': pending_slots,
-        'cancelled_slots': cancelled_slots,
+        'approved_flight_requests': approved_flight_requests,
+        'pending_flight_requests': pending_flight_requests,
+        'cancelled_flight_requests': cancelled_flight_requests,
         'user': user,
     })

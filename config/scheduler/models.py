@@ -229,9 +229,9 @@ class FlightRequest(models.Model):
         if status_to_check != 'pending':
             raise ValueError("Solo solicitudes pendientes pueden ser aprobadas")
         
-        # Check if the slot is available
-        if self.slot.status != 'available':
-            raise ValueError("La sesión de vuelo no está disponible")
+        # Check if the slot is reserved
+        if self.slot.status == 'reserved':
+            raise ValueError("La sesión de vuelo ya está reservada")
         
         # Secondary balance check (safety net)
         try:
@@ -247,6 +247,7 @@ class FlightRequest(models.Model):
             
             # Update slot status to reserved
             self.slot.status = 'reserved'
+            self.slot.student = self.student
             self.slot.save()
     
     def cancel(self):

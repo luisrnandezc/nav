@@ -307,10 +307,62 @@ body {
   position: relative;
 }
 
+.staff-clickable-slot {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
 .clickable-slot:hover {
   background: rgba(40, 167, 69, 0.4) !important;
   box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
   z-index: 10;
+}
+
+.staff-clickable-slot:hover {
+  box-shadow: 0 0 10px rgba(218, 225, 255, 0.5);
+  z-index: 10;
+  border: 2px solid #dae1ff !important;
+}
+
+.staff-clickable-slot::after {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  content: "⚙️";
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Period activation button */
+.period-actions {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.activate-period-button {
+  background-color: rgba(40, 167, 69, 0.2);
+  border: 1px solid #28a745;
+  color: #28a745;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.activate-period-button:hover {
+  background-color: #28a745;
+  color: white;
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+
+.activate-period-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: rgba(40, 167, 69, 0.1);
 }
 
 .clickable-slot::after {

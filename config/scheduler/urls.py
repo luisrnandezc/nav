@@ -12,4 +12,6 @@ urlpatterns = [
     path('flight-request/create/<int:slot_id>/', views.create_flight_request, name='create_flight_request'),
     path('flight-request/approve/<int:request_id>/', views.approve_flight_request, name='approve_flight_request'),
     path('flight-request/cancel/<int:request_id>/', views.cancel_flight_request, name='cancel_flight_request'),
+    path('slot/change-status/<int:slot_id>/', views.change_slot_status, name='change_slot_status'),
+    path('period/activate/<int:period_id>/', views.activate_training_period, name='activate_training_period'),
 ]

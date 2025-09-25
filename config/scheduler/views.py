@@ -191,12 +191,22 @@ def create_flight_request(request, slot_id):
         # Check student balance (safety net)
         try:
             student_profile = request.user.student_profile
-            if student_profile.balance < 500:
+            balance = student_profile.balance
+            if balance < 500:
                 return JsonResponse({
-                    'error': f'Balance insuficiente. Su balance actual es ${student_profile.balance}. Se requiere un mínimo de $500 para solicitar vuelos.'
+                    'error': f'Balance insuficiente. Su balance actual es ${balance}. Se requiere un mínimo de $500 para solicitar vuelos.'
                 }, status=400)
         except Exception:
             return JsonResponse({'error': 'No se pudo verificar el balance del estudiante'}, status=400)
+        
+        # Check student approved or pending requests
+        max_requests = balance // 500
+        existing_requests = FlightRequest.objects.filter(
+            student=request.user,
+            status__in=['pending', 'approved']
+        )
+        if existing_requests.exists() and existing_requests.count() >= max_requests:
+            return JsonResponse({'error': f'Ya tiene el máximo de {max_requests} solicitudes de vuelo aprobadas o pendientes'}, status=400)
         
         # Create the flight request
         with transaction.atomic():
@@ -281,6 +291,105 @@ def cancel_flight_request(request, request_id):
         return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def change_slot_status(request, slot_id):
+    """Change the status of a flight slot (staff only)."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    # Only staff can change slot status
+    if request.user.role != 'STAFF':
+        return JsonResponse({'error': 'Solo el staff puede cambiar el estado de las sesiones'}, status=403)
+    
+    try:
+        import json
+        data = json.loads(request.body)
+        action = data.get('action')
+        new_status = data.get('new_status')
+        
+        if not action or not new_status:
+            return JsonResponse({'error': 'Acción y nuevo estado requeridos'}, status=400)
+        
+        slot = get_object_or_404(FlightSlot, id=slot_id)
+        
+        with transaction.atomic():
+            if action == 'cancel_and_unavailable':
+                # First cancel any existing flight request for this slot
+                flight_request = FlightRequest.objects.filter(slot=slot).first()
+                if flight_request:
+                    flight_request.cancel()
+                
+                # Then set slot to unavailable
+                slot.status = 'unavailable'
+                slot.student = None
+                slot.save()
+                
+            elif action in ['available', 'unavailable']:
+                # Simply change the slot status
+                slot.status = new_status
+                if new_status == 'available':
+                    slot.student = None  # Clear student if making available
+                slot.save()
+                
+            else:
+                return JsonResponse({'error': 'Acción no válida'}, status=400)
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Estado de la sesión cambiado a {slot.get_status_display()}',
+            'slot_id': slot.id,
+            'new_status': slot.status
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Datos JSON inválidos'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': f'Error al cambiar el estado: {str(e)}'}, status=500)
+
+@login_required
+def activate_training_period(request, period_id):
+    """Activate a training period (staff only)."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    # Only staff can activate periods
+    if request.user.role != 'STAFF':
+        return JsonResponse({'error': 'Solo el staff puede activar períodos de entrenamiento'}, status=403)
+    
+    try:
+        period = get_object_or_404(TrainingPeriod, id=period_id)
+        
+        # Check if period is already active
+        if period.is_active:
+            return JsonResponse({'error': 'Este período ya está activo'}, status=400)
+        
+        # Check if there's already an active period for this aircraft
+        existing_active_period = TrainingPeriod.objects.filter(
+            aircraft=period.aircraft,
+            is_active=True
+        ).exclude(id=period.id).first()
+        
+        if existing_active_period:
+            return JsonResponse({
+                'error': f'Ya existe un período activo para la aeronave {period.aircraft.registration}. ' +
+                        f'Debe desactivar el período actual ({existing_active_period.start_date} - {existing_active_period.end_date}) ' +
+                        'antes de activar este período.'
+            }, status=400)
+        
+        # Activate the period
+        with transaction.atomic():
+            period.is_active = True
+            period.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Período activado exitosamente para {period.aircraft.registration}',
+            'period_id': period.id
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': f'Error al activar el período: {str(e)}'}, status=500)
 
 def student_scheduler_dashboard(request):
     """Display the student scheduler dashboard."""

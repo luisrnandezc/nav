@@ -12,7 +12,7 @@
     <script>
         window.csrfToken = '{{ csrf_token }}';
     </script>
-    <script src="{% static 'js/periods_panel_dynamics.js' %}"></script>
+    <script src="{% static 'js/staff_periods_panel_dynamics.js' %}"></script>
 </head>
 <body>
     <div class="training-periods-container">
@@ -44,6 +44,16 @@
                                     <span class="status-inactive">Inactivo</span>
                                 {% endif %}
                             </p>
+                            {% if not period_data.period.is_active %}
+                                <div class="period-actions">
+                                    <button class="activate-period-button" 
+                                            data-period-id="{{ period_data.period.id }}"
+                                            data-aircraft="{{ period_data.period.aircraft.registration }}"
+                                            title="Activar este período de entrenamiento">
+                                        ✅ Activar Período
+                                    </button>
+                                </div>
+                            {% endif %}
                         </div>
                         
                         <div class="aircraft-grids">
@@ -78,13 +88,14 @@
                                                     <div class="block-label">{{ block }}</div>
                                                     {% for date in date_chunk %}
                                                         {% with slot=aircraft_data.grid|getitem:date|getitem:block %}
-                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and slot.status == 'available' and user.role == 'STAFF' %}clickable-slot{% endif %}" 
-                                                                 {% if slot and slot.status == 'available' and user.role == 'STAFF' %}
+                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and user.role == 'STAFF' %}staff-clickable-slot{% endif %}" 
+                                                                 {% if slot and user.role == 'STAFF' %}
                                                                  data-slot-id="{{ slot.id }}"
                                                                  data-date="{{ slot.date|date:'Y-m-d' }}"
                                                                  data-block="{{ slot.block }}"
                                                                  data-aircraft="{{ slot.aircraft.registration }}"
-                                                                 title="Click para aprobar esta sesión"
+                                                                 data-current-status="{{ slot.status }}"
+                                                                 title="Click para cambiar el estado de esta sesión"
                                                                  {% endif %}>
                                                                 {% if slot %}
                                                                     {{ slot.get_status_display }}

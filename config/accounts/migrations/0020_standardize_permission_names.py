@@ -11,30 +11,45 @@ def standardize_accounts_permissions(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     
     # Get the content types for all accounts models
-    user_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='user'
-    )
+    try:
+        user_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='user'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    studentprofile_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='studentprofile'
-    )
+    try:
+        studentprofile_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='studentprofile'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    instructorprofile_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='instructorprofile'
-    )
+    try:
+        instructorprofile_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='instructorprofile'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    staffprofile_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='staffprofile'
-    )
+    try:
+        staffprofile_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='staffprofile'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    studentpayment_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='studentpayment'
-    )
+    try:
+        studentpayment_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='studentpayment'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
     # Define all permission updates
     permission_updates = [
@@ -102,30 +117,45 @@ def reverse_standardize_accounts_permissions(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     
     # Get the content types for all accounts models
-    user_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='user'
-    )
+    try:
+        user_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='user'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    studentprofile_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='studentprofile'
-    )
+    try:
+        studentprofile_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='studentprofile'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    instructorprofile_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='instructorprofile'
-    )
+    try:
+        instructorprofile_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='instructorprofile'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    staffprofile_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='staffprofile'
-    )
+    try:
+        staffprofile_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='staffprofile'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    studentpayment_ct = ContentType.objects.get(
-        app_label='accounts',
-        model='studentpayment'
-    )
+    try:
+        studentpayment_ct = ContentType.objects.get(
+            app_label='accounts',
+            model='studentpayment'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
     # Define all permission reversions
     permission_reversions = [

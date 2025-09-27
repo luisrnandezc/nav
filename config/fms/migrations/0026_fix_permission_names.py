@@ -11,35 +11,53 @@ def update_simevaluation_permissions(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     
     # Get the content types for all models
-    simulatorlog_ct = ContentType.objects.get(
-        app_label='fms',
-        model='simulatorlog'
-    )
+    try:
+        simulatorlog_ct = ContentType.objects.get(
+            app_label='fms',
+            model='simulatorlog'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    flightlog_ct = ContentType.objects.get(
-        app_label='fms',
-        model='flightlog'
-    )
+    try:
+        flightlog_ct = ContentType.objects.get(
+            app_label='fms',
+            model='flightlog'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    simevaluation_ct = ContentType.objects.get(
-        app_label='fms',
-        model='simevaluation'
-    )
+    try:
+        simevaluation_ct = ContentType.objects.get(
+            app_label='fms',
+            model='simevaluation'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    flightevaluation0_100_ct = ContentType.objects.get(
-        app_label='fms',
-        model='flightevaluation0_100'
-    )
+    try:
+        flightevaluation0_100_ct = ContentType.objects.get(
+            app_label='fms',
+            model='flightevaluation0_100'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    flightevaluation100_120_ct = ContentType.objects.get(
-        app_label='fms',
-        model='flightevaluation100_120'
-    )
+    try:
+        flightevaluation100_120_ct = ContentType.objects.get(
+            app_label='fms',
+            model='flightevaluation100_120'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    flightevaluation120_170_ct = ContentType.objects.get(
-        app_label='fms',
-        model='flightevaluation120_170'
-    )
+    try:
+        flightevaluation120_170_ct = ContentType.objects.get(
+            app_label='fms',
+            model='flightevaluation120_170'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
     # Define all permission updates
     permission_updates = [
@@ -115,35 +133,53 @@ def reverse_update_simevaluation_permissions(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     
     # Get the content types for all models
-    simulatorlog_ct = ContentType.objects.get(
-        app_label='fms',
-        model='simulatorlog'
-    )
+    try:
+        simulatorlog_ct = ContentType.objects.get(
+            app_label='fms',
+            model='simulatorlog'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    flightlog_ct = ContentType.objects.get(
-        app_label='fms',
-        model='flightlog'
-    )
+    try:
+        flightlog_ct = ContentType.objects.get(
+            app_label='fms',
+            model='flightlog'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    simevaluation_ct = ContentType.objects.get(
-        app_label='fms',
-        model='simevaluation'
-    )
+    try:
+        simevaluation_ct = ContentType.objects.get(
+            app_label='fms',
+            model='simevaluation'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    flightevaluation0_100_ct = ContentType.objects.get(
-        app_label='fms',
-        model='flightevaluation0_100'
-    )
+    try:
+        flightevaluation0_100_ct = ContentType.objects.get(
+            app_label='fms',
+            model='flightevaluation0_100'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    flightevaluation100_120_ct = ContentType.objects.get(
-        app_label='fms',
-        model='flightevaluation100_120'
-    )
+    try:
+        flightevaluation100_120_ct = ContentType.objects.get(
+            app_label='fms',
+            model='flightevaluation100_120'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    flightevaluation120_170_ct = ContentType.objects.get(
-        app_label='fms',
-        model='flightevaluation120_170'
-    )
+    try:
+        flightevaluation120_170_ct = ContentType.objects.get(
+            app_label='fms',
+            model='flightevaluation120_170'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
     # Define all permission reversions
     permission_reversions = [

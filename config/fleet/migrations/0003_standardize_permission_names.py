@@ -11,20 +11,29 @@ def standardize_fleet_permissions(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     
     # Get the content types for all fleet models
-    aircraft_ct = ContentType.objects.get(
-        app_label='fleet',
-        model='aircraft'
-    )
+    try:
+        aircraft_ct = ContentType.objects.get(
+            app_label='fleet',
+            model='aircraft'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    aircraftavailability_ct = ContentType.objects.get(
-        app_label='fleet',
-        model='aircraftavailability'
-    )
+    try:
+        aircraftavailability_ct = ContentType.objects.get(
+            app_label='fleet',
+            model='aircraftavailability'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    aircrafthours_ct = ContentType.objects.get(
-        app_label='fleet',
-        model='aircrafthours'
-    )
+    try:
+        aircrafthours_ct = ContentType.objects.get(
+            app_label='fleet',
+            model='aircrafthours'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
     # Define all permission updates
     permission_updates = [
@@ -76,20 +85,29 @@ def reverse_standardize_fleet_permissions(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     
     # Get the content types for all fleet models
-    aircraft_ct = ContentType.objects.get(
-        app_label='fleet',
-        model='aircraft'
-    )
+    try:
+        aircraft_ct = ContentType.objects.get(
+            app_label='fleet',
+            model='aircraft'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    aircraftavailability_ct = ContentType.objects.get(
-        app_label='fleet',
-        model='aircraftavailability'
-    )
+    try:
+        aircraftavailability_ct = ContentType.objects.get(
+            app_label='fleet',
+            model='aircraftavailability'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    aircrafthours_ct = ContentType.objects.get(
-        app_label='fleet',
-        model='aircrafthours'
-    )
+    try:
+        aircrafthours_ct = ContentType.objects.get(
+            app_label='fleet',
+            model='aircrafthours'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
     # Define all permission reversions
     permission_reversions = [

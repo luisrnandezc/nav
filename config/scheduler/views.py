@@ -155,7 +155,7 @@ def create_flight_request(request, slot_id):
         try:
             student_profile = request.user.student_profile
             balance = student_profile.balance
-            if balance < 500:
+            if balance < 500.00:
                 return JsonResponse({
                     'error': f'Balance insuficiente. Su balance actual es ${balance}. Se requiere un mínimo de $500 para solicitar vuelos.'
                 }, status=400)

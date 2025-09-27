@@ -11,30 +11,45 @@ def standardize_academic_permissions(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     
     # Get the content types for all academic models
-    coursetype_ct = ContentType.objects.get(
-        app_label='academic',
-        model='coursetype'
-    )
+    try:
+        coursetype_ct = ContentType.objects.get(
+            app_label='academic',
+            model='coursetype'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    courseedition_ct = ContentType.objects.get(
-        app_label='academic',
-        model='courseedition'
-    )
+    try:
+        courseedition_ct = ContentType.objects.get(
+            app_label='academic',
+            model='courseedition'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    subjecttype_ct = ContentType.objects.get(
-        app_label='academic',
-        model='subjecttype'
-    )
+    try:
+        subjecttype_ct = ContentType.objects.get(
+            app_label='academic',
+            model='subjecttype'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    subjectedition_ct = ContentType.objects.get(
-        app_label='academic',
-        model='subjectedition'
-    )
+    try:
+        subjectedition_ct = ContentType.objects.get(
+            app_label='academic',
+            model='subjectedition'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    studentgrade_ct = ContentType.objects.get(
-        app_label='academic',
-        model='studentgrade'
-    )
+    try:
+        studentgrade_ct = ContentType.objects.get(
+            app_label='academic',
+            model='studentgrade'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
     # Define all permission updates
     permission_updates = [
@@ -102,30 +117,45 @@ def reverse_standardize_academic_permissions(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
     
     # Get the content types for all academic models
-    coursetype_ct = ContentType.objects.get(
-        app_label='academic',
-        model='coursetype'
-    )
+    try:
+        coursetype_ct = ContentType.objects.get(
+            app_label='academic',
+            model='coursetype'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    courseedition_ct = ContentType.objects.get(
-        app_label='academic',
-        model='courseedition'
-    )
+    try:
+        courseedition_ct = ContentType.objects.get(
+            app_label='academic',
+            model='courseedition'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    subjecttype_ct = ContentType.objects.get(
-        app_label='academic',
-        model='subjecttype'
-    )
+    try:
+        subjecttype_ct = ContentType.objects.get(
+            app_label='academic',
+            model='subjecttype'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    subjectedition_ct = ContentType.objects.get(
-        app_label='academic',
-        model='subjectedition'
-    )
+    try:
+        subjectedition_ct = ContentType.objects.get(
+            app_label='academic',
+            model='subjectedition'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
-    studentgrade_ct = ContentType.objects.get(
-        app_label='academic',
-        model='studentgrade'
-    )
+    try:
+        studentgrade_ct = ContentType.objects.get(
+            app_label='academic',
+            model='studentgrade'
+        )
+    except ContentType.DoesNotExist:
+        return  # Skip if model doesn't exist
     
     # Define all permission reversions
     permission_reversions = [

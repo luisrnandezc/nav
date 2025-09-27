@@ -1,6 +1,8 @@
 from django.db import models, transaction
 from django.utils import timezone
 from datetime import timedelta
+from django.core.exceptions import ObjectDoesNotExist
+from accounts.models import StudentProfile
 
 class TrainingPeriod(models.Model):
     """Periodo de entrenamiento"""
@@ -229,11 +231,12 @@ class FlightRequest(models.Model):
         
         # Secondary balance check (safety net)
         try:
-            if self.student.student_profile.balance < 500:
-                raise ValueError(f"Balance insuficiente para aprobar. Balance actual: ${self.student.student_profile.balance}")
-        except Exception as e:
-            raise ValueError(f"No se pudo verificar el balance del estudiante: {str(e)}")
-        
+            balance = self.student.student_profile.balance
+            if balance < 500.00:
+                raise ValueError(f"Balance insuficiente para aprobar. Balance actual: ${balance:.2f}")
+        except StudentProfile.DoesNotExist:
+            raise ValueError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
+
         with transaction.atomic():
             # Update flight request status
             self.status = 'approved'

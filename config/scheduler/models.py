@@ -1,5 +1,5 @@
 from django.db import models, transaction
-from django.utils import timezone
+from django.utils.timezone import localdate
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from accounts.models import StudentProfile
@@ -165,7 +165,7 @@ class FlightSlot(models.Model):
     date = models.DateField(
         verbose_name="Fecha",
         help_text="Fecha del slot",
-        default=timezone.now
+        default=localdate
     )
     block = models.CharField(
         verbose_name="Bloque",

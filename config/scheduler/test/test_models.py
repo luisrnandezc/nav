@@ -1,13 +1,12 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from datetime import date, timedelta
 from scheduler.models import FlightPeriod, FlightSlot, FlightRequest
 from scheduler.exceptions import (
     InvalidPeriodDurationError, PeriodOverlapError, AircraftNotAvailableError,
-    PeriodNotActiveError, SlotNotAvailableError, InsufficientBalanceError, MaxRequestsExceededError
+    PeriodNotActiveError, SlotNotAvailableError, InsufficientBalanceError,
 )
 from .factories import *
 

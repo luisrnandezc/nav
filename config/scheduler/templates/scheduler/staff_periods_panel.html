@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NAV | Períodos de Entrenamiento</title>
+    <title>NAV | Períodos de Vuelo</title>
     <link rel="stylesheet" href="{% static 'periods_panel.css' %}">
     <link rel="stylesheet" href="{% static 'shared_components.css' %}">
     <script>
@@ -21,12 +21,12 @@
         </div>
 
         <div class="training-periods-header">
-            <h1>Períodos de Entrenamiento</h1>
+            <h1>Períodos de Vuelo</h1>
             <p>Sistema de Gestión de Solicitudes de Vuelo</p>
         </div>
 
         <div class="refresh-button">
-            <a href="{% url 'scheduler:create_staff_training_period_grids' %}" class="button">🔄 Actualizar</a>
+            <a href="{% url 'scheduler:create_staff_flight_period_grids' %}" class="button">🔄 Actualizar</a>
         </div>
 
         <div class="training-periods-list-container">
@@ -49,7 +49,7 @@
                                     <button class="activate-period-button" 
                                             data-period-id="{{ period_data.period.id }}"
                                             data-aircraft="{{ period_data.period.aircraft.registration }}"
-                                            title="Activar este período de entrenamiento">
+                                            title="Activar este período de vuelo">
                                         ✅ Activar Período
                                     </button>
                                 </div>
@@ -118,7 +118,7 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="no-periods">No hay períodos de entrenamiento disponibles.</div>
+                <div class="no-periods">No hay períodos de vuelo disponibles.</div>
             {% endif %}
         </div>
     </div>

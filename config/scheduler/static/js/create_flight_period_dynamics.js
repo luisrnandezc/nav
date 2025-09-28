@@ -1,4 +1,4 @@
-// Training Period Form Dynamic Behavior
+// Flight Period Form Dynamic Behavior
 // Handles date field interactions and period duration calculation
 
 document.addEventListener('DOMContentLoaded', function() {

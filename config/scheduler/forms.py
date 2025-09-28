@@ -1,12 +1,12 @@
 from django import forms
 from django.forms.widgets import DateInput
-from .models import TrainingPeriod
+from .models import FlightPeriod
 from fleet.models import Aircraft
 
 
-class CreateTrainingPeriodForm(forms.ModelForm):
+class CreateFlightPeriodForm(forms.ModelForm):
     class Meta:
-        model = TrainingPeriod
+        model = FlightPeriod
         fields = [
             'start_date',
             'end_date',
@@ -75,36 +75,9 @@ class CreateTrainingPeriodForm(forms.ModelForm):
         cleaned_data = super().clean()
         start_date = cleaned_data.get('start_date')
         end_date = cleaned_data.get('end_date')
-        aircraft = cleaned_data.get('aircraft')
 
         if start_date and end_date:
             if end_date < start_date:
                 self.add_error('end_date', 'La fecha de cierre debe ser posterior a la fecha de inicio.')
-            
-            # Check if period is a multiple of 7 days
-            period_days = (end_date - start_date).days + 1
-            if period_days % 7 != 0:
-                self.add_error('end_date', 'El período debe ser un múltiplo de 7 días (1 semana, 2 semanas, etc.).')
-            
-            # Check if period is too long (more than 12 weeks)
-            if period_days > 21:  # 3 weeks
-                self.add_error('end_date', 'El período no puede ser mayor a 3 semanas (21 días).')
-            
-            # Check for existing slots in the date range
-            if aircraft and start_date and end_date:
-                from scheduler.models import FlightSlot
-
-                existing_slots = FlightSlot.objects.filter(
-                    aircraft=aircraft,
-                    date__range=[start_date, end_date]
-                ).exists()
-                
-                if existing_slots:
-                    self.add_error('end_date', f'Ya existen slots creados para la aeronave {aircraft.registration} en el rango de fechas seleccionado. Por favor, seleccione un rango de fechas diferente.')
-        
-        if aircraft and aircraft not in Aircraft.objects.filter(is_active=True, is_available=True):
-            self.add_error('aircraft', 'La aeronave no está activa o disponible.')
 
         return cleaned_data
-
-

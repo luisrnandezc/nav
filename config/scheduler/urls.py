@@ -5,13 +5,13 @@ app_name = "scheduler"
 
 urlpatterns = [
     path('', views.flight_requests_dashboard, name='flight_requests_dashboard'),
-    path('period/new_period/', views.create_training_period, name='create_training_period'),
+    path('period/new_period/', views.create_flight_period, name='create_flight_period'),
     path('student_scheduler_dashboard/', views.student_scheduler_dashboard, name='student_scheduler_dashboard'),
-    path('student_periods_panel/', views.create_student_training_period_grids, name='create_student_training_period_grids'),
-    path('staff_periods_panel/', views.create_staff_training_period_grids, name='create_staff_training_period_grids'),
+    path('student_periods_panel/', views.create_student_flight_period_grids, name='create_student_flight_period_grids'),
+    path('staff_periods_panel/', views.create_staff_flight_period_grids, name='create_staff_flight_period_grids'),
     path('flight-request/create/<int:slot_id>/', views.create_flight_request, name='create_flight_request'),
     path('flight-request/approve/<int:request_id>/', views.approve_flight_request, name='approve_flight_request'),
     path('flight-request/cancel/<int:request_id>/', views.cancel_flight_request, name='cancel_flight_request'),
     path('slot/change-status/<int:slot_id>/', views.change_slot_status, name='change_slot_status'),
-    path('period/activate/<int:period_id>/', views.activate_training_period, name='activate_training_period'),
+    path('period/activate/<int:period_id>/', views.activate_flight_period, name='activate_flight_period'),
 ]

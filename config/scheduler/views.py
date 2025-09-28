@@ -2,14 +2,34 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from datetime import timedelta
-from .forms import CreateTrainingPeriodForm
-from .models import TrainingPeriod, FlightSlot, FlightRequest
+from .forms import CreateFlightPeriodForm
+from .models import FlightPeriod, FlightSlot, FlightRequest
 
+def staff_required(view_func):
+    """Decorator to check if the user is a staff member."""
+    def wrapper(request, *args, **kwargs):
+        if request.user.role != 'STAFF':
+            return JsonResponse({'error': 'Acceso denegado'}, status=403)
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def student_required(view_func):
+    """Decorator to check if the user is a student."""
+    def wrapper(request, *args, **kwargs):
+        if request.user.role != 'STUDENT':
+            return JsonResponse({'error': 'Acceso denegado'}, status=403)
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+@login_required
+@staff_required
 def flight_requests_dashboard(request): 
     """Display the flight requests dashboard."""
-    has_active_periods = TrainingPeriod.objects.filter(is_active=True).exists()
+    has_active_periods = FlightPeriod.objects.filter(is_active=True).exists()
     
     # Get flight requests data for all students
     pending_requests = FlightRequest.objects.filter(status='pending').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('requested_at')[:20]
@@ -23,37 +43,33 @@ def flight_requests_dashboard(request):
         'cancelled_requests': cancelled_requests,
     })
 
-def check_training_period_overlap(period):
-    """Check if there is a training period overlap for the same aircraft."""
-    existing_periods = TrainingPeriod.objects.filter(aircraft=period.aircraft)
-    if existing_periods.exists():
-        for existing_period in existing_periods:
-            # Two periods overlap if: start1 < end2 AND start2 < end1
-            if period.start_date <= existing_period.end_date and existing_period.start_date <= period.end_date:
-                return True
-        return False
-    return False
-
-def create_training_period(request):
-    """Create a TrainingPeriod and generate slots."""
+@login_required
+@staff_required
+def create_flight_period(request):
+    """Create a FlightPeriod and generate slots."""
     if request.method == 'POST':
-        form = CreateTrainingPeriodForm(request.POST)
+        form = CreateFlightPeriodForm(request.POST)
         if form.is_valid():
-            if check_training_period_overlap(form.instance):
-                form.add_error('end_date', 'Ya existe un período de entrenamiento en el rango de fechas seleccionado.')
-                return render(request, 'scheduler/create_training_period.html', {'form': form})
-            with transaction.atomic():
-                period = form.save()
-                created = period.generate_slots()
-            messages.success(request, f"Periodo creado. {created} slots generados.")
-            form = CreateTrainingPeriodForm()  # Reset form with empty data
-            return render(request, 'scheduler/create_training_period.html', {'form': form})
+            try:
+                with transaction.atomic():
+                    period = form.save()
+                    created = period.generate_slots()
+                messages.success(request, f"Periodo creado. {created} slots generados.")
+                form = CreateFlightPeriodForm()  # Reset form with empty data
+                return render(request, 'scheduler/create_flight_period.html', {'form': form})
+            except (ValidationError, ValueError) as e:
+                messages.error(request, f'Error al crear el período: {str(e)}')
+                return render(request, 'scheduler/create_flight_period.html', {'form': form})
+        else:
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
     else:
-        form = CreateTrainingPeriodForm()
-    return render(request, 'scheduler/create_training_period.html', {'form': form})
+        form = CreateFlightPeriodForm()
+    return render(request, 'scheduler/create_flight_period.html', {'form': form})
 
+@login_required
+@staff_required
 def create_period_grids(periods):
-    """Generate a grid of slots for specified training periods."""
+    """Generate a grid of slots for specified flight periods."""
     # Build grids for each period
     grids = []
     for period in periods:
@@ -67,7 +83,7 @@ def create_period_grids(periods):
         blocks = ['AM', 'M', 'PM']
 
         # Get all slots for this period (only for the period's aircraft)
-        slots = FlightSlot.objects.filter(training_period=period)
+        slots = FlightSlot.objects.filter(flight_period=period)
         # Create index by (date, block) since all slots belong to the same aircraft
         slot_index = {(s.date, s.block): s for s in slots}
         
@@ -96,11 +112,12 @@ def create_period_grids(periods):
     return grids
 
 @login_required
-def create_student_training_period_grids(request):
-    """Generate a grid of slots for active training periods."""
-    active_periods = TrainingPeriod.objects.filter(is_active=True)
+@student_required
+def create_student_flight_period_grids(request):
+    """Generate a grid of slots for active flight periods."""
+    active_periods = FlightPeriod.objects.filter(is_active=True)
     if not active_periods.exists():
-        messages.info(request, 'No hay períodos de entrenamiento activos en este momento.')
+        messages.info(request, 'No hay períodos de vuelo activos en este momento.')
         return redirect('scheduler:flight_requests_dashboard')
 
     grids = create_period_grids(active_periods)
@@ -109,12 +126,13 @@ def create_student_training_period_grids(request):
         'grids': grids,
         'user': request.user,
     }
-    return render(request, 'scheduler/student_periods_panel.html', context)
+    return render(request, 'scheduler/student_flight_periods_panel.html', context)
 
 @login_required
-def create_staff_training_period_grids(request):
-    """Generate a grid of slots for active and inactive training periods."""
-    periods = TrainingPeriod.objects.all()
+@staff_required
+def create_staff_flight_period_grids(request):
+    """Generate a grid of slots for active and inactive flight periods."""
+    periods = FlightPeriod.objects.all()
 
     grids = create_period_grids(periods)
 
@@ -122,95 +140,35 @@ def create_staff_training_period_grids(request):
         'grids': grids,
         'user': request.user,
     }
-    return render(request, 'scheduler/staff_periods_panel.html', context)
+    return render(request, 'scheduler/staff_flight_periods_panel.html', context)
 
 @login_required
+@student_required
+@require_POST
 def create_flight_request(request, slot_id):
     """Create a flight request for a specific slot."""
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
-    
-    # Only students can create flight requests
-    if request.user.role != 'STUDENT':
-        return JsonResponse({'error': 'Solo estudiantes pueden crear solicitudes de vuelo'}, status=403)
-    
+    slot = get_object_or_404(FlightSlot, id=slot_id)
     try:
-        slot = get_object_or_404(FlightSlot, id=slot_id)
-        
-        # Check if slot is available
-        if slot.status != 'available':
-            return JsonResponse({'error': 'La sesión no está disponible'}, status=400)
-        
-        # Check if student already has a request for this slot
-        existing_request = FlightRequest.objects.filter(
-            student=request.user,
-            slot=slot,
-            status__in=['pending', 'approved']
-        ).exists()
-        
-        if existing_request:
-            return JsonResponse({'error': 'Ya tiene una solicitud de vuelo para esta sesión'}, status=400)
-        
-        # Check student balance (safety net)
-        try:
-            student_profile = request.user.student_profile
-            balance = student_profile.balance
-            if balance < 500.00:
-                return JsonResponse({
-                    'error': f'Balance insuficiente. Su balance actual es ${balance}. Se requiere un mínimo de $500 para solicitar vuelos.'
-                }, status=400)
-        except Exception:
-            return JsonResponse({'error': 'No se pudo verificar el balance del estudiante'}, status=400)
-        
-        # Check student approved or pending requests
-        max_requests = balance // 500
-        existing_requests = FlightRequest.objects.filter(
-            student=request.user,
-            status__in=['pending', 'approved']
-        )
-        if existing_requests.exists() and existing_requests.count() >= max_requests:
-            return JsonResponse({'error': f'Ya tiene el máximo de {max_requests} solicitudes de vuelo aprobadas o pendientes'}, status=400)
-        
-        # Create the flight request
-        with transaction.atomic():
-            flight_request = FlightRequest.objects.create(
-                student=request.user,
-                slot=slot,
-                status='pending'
-            )
-            # Update slot status to unavailable
-            slot.status = 'unavailable'
-            slot.student = request.user
-            slot.save()
-        
+        flight_request = FlightRequest()
+        flight_request.create_request(request.user, slot)
         return JsonResponse({
             'success': True,
             'message': 'Solicitud de vuelo creada exitosamente',
             'request_id': flight_request.id
-        })
-        
-    except Exception:
-        return JsonResponse({'error': 'Error al crear la solicitud de vuelo'}, status=500)
+        }) 
+    except (ValidationError, ValueError) as e:
+        return JsonResponse({"error": str(e)}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": f"Error al crear la solicitud de vuelo: {str(e)}"}, status=500)
 
 @login_required
+@staff_required
+@require_POST
 def approve_flight_request(request, request_id):
     """Approve a flight request and update the slot status to reserved."""
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
-    
-    # Only staff can approve flight requests
-    if request.user.role != 'STAFF':
-        return JsonResponse({'error': 'Solo el staff puede aprobar solicitudes de vuelo'}, status=403)
-    
     try:
         flight_request = get_object_or_404(FlightRequest, id=request_id)
-        
-        # Check if request is pending
-        if flight_request.status != 'pending':
-            return JsonResponse({'error': 'Solo solicitudes pendientes pueden ser aprobadas'}, status=400)
-        
-        # Approve the request (this will also update the slot status)
-        flight_request.approve()
+        flight_request.approve(flight_request.status)
         
         return JsonResponse({
             'success': True,
@@ -219,28 +177,20 @@ def approve_flight_request(request, request_id):
             'slot_id': flight_request.slot.id
         })
         
-    except ValueError as e:
+    except (ValidationError, ValueError) as e:
         return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
+@staff_required
+@student_required
+@require_POST
 def cancel_flight_request(request, request_id):
     """Cancel a flight request and free up the slot."""
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
-    
-    # Only staff or the student who made the request can cancel
     flight_request = get_object_or_404(FlightRequest, id=request_id)
-    if request.user.role != 'STAFF' and request.user != flight_request.student:
-        return JsonResponse({'error': 'Solo el staff o el estudiante puede cancelar sus propias solicitudes'}, status=403)
     
     try:
-        # Check if request can be cancelled
-        if flight_request.status not in ['pending', 'approved']:
-            return JsonResponse({'error': 'Solo solicitudes pendientes o aprobadas pueden ser canceladas'}, status=400)
-        
-        # Cancel the request (this will also free up the slot)
         flight_request.cancel()
         
         return JsonResponse({
@@ -250,21 +200,17 @@ def cancel_flight_request(request, request_id):
             'slot_id': flight_request.slot.id
         })
         
-    except ValueError as e:
+    except (ValidationError, ValueError) as e:
         return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
+@staff_required
 def change_slot_status(request, slot_id):
     """Change the status of a flight slot (staff only)."""
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-    
-    # Only staff can change slot status
-    if request.user.role != 'STAFF':
-        return JsonResponse({'error': 'Solo el staff puede cambiar el estado de las sesiones'}, status=403)
-    
     try:
         import json
         data = json.loads(request.body)
@@ -275,7 +221,6 @@ def change_slot_status(request, slot_id):
             return JsonResponse({'error': 'Acción y nuevo estado requeridos'}, status=400)
         
         slot = get_object_or_404(FlightSlot, id=slot_id)
-        
         with transaction.atomic():
             if action == 'cancel_and_unavailable':
                 # First cancel any existing flight request for this slot
@@ -287,14 +232,12 @@ def change_slot_status(request, slot_id):
                 slot.status = 'unavailable'
                 slot.student = None
                 slot.save()
-                
             elif action in ['available', 'unavailable']:
                 # Simply change the slot status
                 slot.status = new_status
                 if new_status == 'available':
                     slot.student = None  # Clear student if making available
                 slot.save()
-                
             else:
                 return JsonResponse({'error': 'Acción no válida'}, status=400)
         
@@ -307,28 +250,24 @@ def change_slot_status(request, slot_id):
         
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Datos JSON inválidos'}, status=400)
+    except (ValidationError, ValueError) as e:
+        return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'error': f'Error al cambiar el estado: {str(e)}'}, status=500)
 
 @login_required
-def activate_training_period(request, period_id):
-    """Activate a training period (staff only)."""
+@staff_required
+def activate_flight_period(request, period_id):
+    """Activate a flight period (staff only)."""
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-    
-    # Only staff can activate periods
-    if request.user.role != 'STAFF':
-        return JsonResponse({'error': 'Solo el staff puede activar períodos de entrenamiento'}, status=403)
-    
     try:
-        period = get_object_or_404(TrainingPeriod, id=period_id)
-        
+        period = get_object_or_404(FlightPeriod, id=period_id)
         # Check if period is already active
         if period.is_active:
             return JsonResponse({'error': 'Este período ya está activo'}, status=400)
-        
         # Check if there's already an active period for this aircraft
-        existing_active_period = TrainingPeriod.objects.filter(
+        existing_active_period = FlightPeriod.objects.filter(
             aircraft=period.aircraft,
             is_active=True
         ).exclude(id=period.id).first()
@@ -339,7 +278,6 @@ def activate_training_period(request, period_id):
                         f'Debe desactivar el período actual ({existing_active_period.start_date} - {existing_active_period.end_date}) ' +
                         'antes de activar este período.'
             }, status=400)
-        
         # Activate the period
         with transaction.atomic():
             period.is_active = True
@@ -350,13 +288,17 @@ def activate_training_period(request, period_id):
             'message': f'Período activado exitosamente para {period.aircraft.registration}',
             'period_id': period.id
         })
-        
+    
+    except (ValidationError, ValueError) as e:
+        return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'error': f'Error al activar el período: {str(e)}'}, status=500)
 
+@login_required
+@student_required
 def student_scheduler_dashboard(request):
     """Display the student scheduler dashboard."""
-    has_active_periods = TrainingPeriod.objects.filter(is_active=True).exists()
+    has_active_periods = FlightPeriod.objects.filter(is_active=True).exists()
     user = request.user
     base_qs = (FlightRequest.objects
                .filter(student=user)

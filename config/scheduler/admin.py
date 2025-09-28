@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import TrainingPeriod, FlightSlot, FlightRequest
+from .models import FlightPeriod, FlightSlot, FlightRequest
 
 # Register your models here.
 
-@admin.register(TrainingPeriod)
-class TrainingPeriodAdmin(admin.ModelAdmin):
+@admin.register(FlightPeriod)
+class FlightPeriodAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'start_date', 'end_date', 'aircraft', 'is_active', 'created_at')
     list_filter = ('is_active', 'aircraft', 'start_date', 'end_date', 'created_at')
     search_fields = ('start_date', 'end_date', 'aircraft__registration')
@@ -25,7 +25,7 @@ class TrainingPeriodAdmin(admin.ModelAdmin):
 
 @admin.register(FlightSlot)
 class FlightSlotAdmin(admin.ModelAdmin):
-    list_display = ('training_period', 'date', 'block', 'aircraft', 'instructor', 'student', 'status')
+    list_display = ('flight_period', 'date', 'block', 'aircraft', 'instructor', 'student', 'status')
     list_filter = ('date', 'block', 'status', 'aircraft', 'instructor')
     search_fields = ('aircraft__registration', 'instructor__first_name', 'instructor__last_name', 'student__first_name', 'student__last_name')
     list_editable = ('status',)
@@ -34,7 +34,7 @@ class FlightSlotAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Información básica', {
-            'fields': ('training_period', 'date', 'block', 'status')
+            'fields': ('flight_period', 'date', 'block', 'status')
         }),
         ('Personal', {
             'fields': ('instructor', 'student')
@@ -46,8 +46,8 @@ class FlightSlotAdmin(admin.ModelAdmin):
 
 @admin.register(FlightRequest)
 class FlightRequestAdmin(admin.ModelAdmin):
-    list_display = ('student', 'slot', 'status', 'flexible', 'requested_at')
-    list_filter = ('status', 'flexible', 'requested_at', 'slot__date', 'slot__block')
+    list_display = ('student', 'slot', 'status', 'requested_at')
+    list_filter = ('status', 'requested_at', 'slot__date', 'slot__block')
     search_fields = ('student__first_name', 'student__last_name', 'slot__aircraft__registration', 'notes')
     date_hierarchy = 'requested_at'
     ordering = ('-requested_at',)
@@ -57,9 +57,6 @@ class FlightRequestAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Información básica', {
             'fields': ('student', 'slot', 'status')
-        }),
-        ('Opciones', {
-            'fields': ('flexible',)
         }),
         ('Notas', {
             'fields': ('notes',)

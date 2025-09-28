@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nuevo periodo de entrenamiento</title>
-    <link rel="stylesheet" href="{% static 'create_training_period.css' %}">
+    <title>Nuevo periodo de vuelo</title>
+    <link rel="stylesheet" href="{% static 'create_flight_period.css' %}">
     <link rel="stylesheet" href="{% static 'shared_components.css' %}">
 </head>
 <body>
@@ -14,7 +14,7 @@
     </div>
 
     <div class="main-container">
-        <h1 class="main-header">Nuevo periodo de entrenamiento</h1>
+        <h1 class="main-header">Nuevo periodo de vuelo</h1>
         <div class="form-container">
             <form method="post">
                 {% csrf_token %}
@@ -77,7 +77,7 @@
             </form>
         </div>
     </div>
-    <script src="{% static 'js/create_training_period_dynamics.js' %}"></script>
+    <script src="{% static 'js/create_flight_period_dynamics.js' %}"></script>
 </body>
 </html>
 

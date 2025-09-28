@@ -1,11 +1,12 @@
 from django.db import models, transaction
 from django.utils import timezone
 from datetime import timedelta
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from accounts.models import StudentProfile
+from fleet.models import Aircraft
 
-class TrainingPeriod(models.Model):
-    """Periodo de entrenamiento"""
+class FlightPeriod(models.Model):
+    """Periodo de vuelo"""
     start_date = models.DateField(
         verbose_name="Inicio",
         help_text="Inicio",
@@ -21,7 +22,7 @@ class TrainingPeriod(models.Model):
     aircraft = models.ForeignKey(
         'fleet.Aircraft',
         on_delete=models.CASCADE,
-        related_name="training_periods",
+        related_name="flight_periods",
         verbose_name="Aeronave",
         help_text="Aeronave",
     )
@@ -35,11 +36,6 @@ class TrainingPeriod(models.Model):
         verbose_name="Fecha de actualización",
         help_text="Fecha de actualización",
     )
-
-    class Meta:
-        verbose_name = "Periodo de entrenamiento"
-        verbose_name_plural = "Periodos de entrenamiento"
-        ordering = ['-start_date']
 
     def generate_slots(self):
         """
@@ -56,7 +52,7 @@ class TrainingPeriod(models.Model):
         while current_date <= self.end_date:
             for block in blocks:
                 FlightSlot.objects.create(
-                    training_period=self,
+                    flight_period=self,
                     date=current_date,
                     block=block,
                     aircraft=aircraft,
@@ -66,12 +62,79 @@ class TrainingPeriod(models.Model):
             current_date += timedelta(days=1)
 
         return created
+    
+    def _check_flight_period_length(self, start_date, end_date):
+        """Check if the flight period length is a multiple of 7 days."""
+        from scheduler.exceptions import InvalidPeriodDurationError
+        period_days = (end_date - start_date).days + 1
+        if period_days % 7 != 0:
+            raise InvalidPeriodDurationError("El periodo debe ser un múltiplo de 7 días (1 semana, 2 semanas, etc.).")
+        
+    def _check_flight_period_length_limits(self, start_date, end_date):
+        """Check if the flight period length is no less than 7 days and no more than 21 days."""
+        from scheduler.exceptions import InvalidPeriodDurationError
+        period_days = (end_date - start_date).days + 1
+        if period_days < 7 or period_days > 21:
+            raise InvalidPeriodDurationError("El período no puede ser menor a 7 días ni mayor a 3 semanas (21 días).")
+    
+    def _check_flight_period_overlap(self, start_date, end_date, aircraft):
+        """Check if the flight period overlaps with another flight period."""
+        from scheduler.exceptions import PeriodOverlapError
+        existing_periods = FlightPeriod.objects.filter(aircraft=aircraft, start_date__lte=end_date, end_date__gte=start_date)
+        
+        # Exclude the current instance if it's being updated
+        if self.pk:
+            existing_periods = existing_periods.exclude(pk=self.pk)
+            
+        if existing_periods.exists():
+            for existing_period in existing_periods:
+                if start_date <= existing_period.end_date and end_date >= existing_period.start_date:
+                    raise PeriodOverlapError("El período se superpone con otro período de vuelo.")
+    
+    def _check_aircraft_availability(self, aircraft):
+        """Check if the aircraft is available."""
+        from scheduler.exceptions import AircraftNotAvailableError
+        if aircraft not in Aircraft.objects.filter(is_active=True, is_available=True):
+            raise AircraftNotAvailableError("La aeronave no está activa o disponible.")
+    
+    def _check_reasonable_date_range(self, start_date):
+        """Check if the date range is reasonable."""
+        from datetime import date, timedelta
+        max_future_date = date.today() + timedelta(days=30)
+        if start_date > max_future_date:
+            raise ValidationError("La fecha de inicio no puede ser más de 30 días en el futuro.")
+        
+        min_start_date = date.today()
+        if start_date < min_start_date:
+            raise ValidationError("La fecha de inicio no puede ser anterior a hoy.")
 
+    def clean(self):
+        super().clean()
+        
+        start_date = self.start_date
+        end_date = self.end_date
+        aircraft = self.aircraft
+
+        self._check_flight_period_length(start_date, end_date)
+        self._check_flight_period_length_limits(start_date, end_date)
+        self._check_flight_period_overlap(start_date, end_date, aircraft)
+        self._check_aircraft_availability(aircraft)
+        self._check_reasonable_date_range(start_date)
+    
     def __str__(self):
-        return f"Ciclo: {self.start_date} → {self.end_date}"
+        return f"Periodo: {self.start_date} → {self.end_date}"
+    
+    class Meta:
+        verbose_name = "Periodo de vuelo"
+        verbose_name_plural = "Periodos de vuelo"
+        ordering = ['-start_date']
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 class FlightSlot(models.Model):
-    """Sesión de vuelo"""
+    """Slot de vuelo"""
 
     #region choices definitions
     BLOCK_CHOICES = [
@@ -92,21 +155,21 @@ class FlightSlot(models.Model):
     #endregion
 
     #region model fields
-    training_period = models.ForeignKey(
-        'scheduler.TrainingPeriod',
+    flight_period = models.ForeignKey(
+        'scheduler.FlightPeriod',
         on_delete=models.CASCADE,
         related_name="slots",
-        verbose_name="Periodo de entrenamiento",
-        help_text="Periodo de entrenamiento de la sesión",
+        verbose_name="Periodo de vuelo",
+        help_text="Periodo de vuelo del slot",
     )
     date = models.DateField(
         verbose_name="Fecha",
-        help_text="Fecha de la sesión",
+        help_text="Fecha del slot",
         default=timezone.now
     )
     block = models.CharField(
         verbose_name="Bloque",
-        help_text="Bloque de la sesión",
+        help_text="Bloque del slot",
         choices=BLOCK_CHOICES,
         max_length=2
     )
@@ -118,7 +181,7 @@ class FlightSlot(models.Model):
         null=True,
         blank=True,
         verbose_name="Instructor",
-        help_text="Instructor de la sesión",
+        help_text="Instructor del slot",
     )
     student = models.ForeignKey(
         'accounts.User',
@@ -128,7 +191,7 @@ class FlightSlot(models.Model):
         null=True,
         blank=True,
         verbose_name="Estudiante",
-        help_text="Estudiante de la sesión",
+        help_text="Estudiante del slot",
     )
     aircraft = models.ForeignKey(
         'fleet.Aircraft',
@@ -138,7 +201,7 @@ class FlightSlot(models.Model):
         null=True,
         blank=True,
         verbose_name="Aeronave",
-        help_text="Aeronave de la sesión",
+        help_text="Aeronave del slot",
     )
     status = models.CharField(
         max_length=15,
@@ -146,15 +209,15 @@ class FlightSlot(models.Model):
         null=False,
         blank=False,
         default='available',
-        verbose_name="Estado",
-        help_text="Estado de la sesión",
+        verbose_name="Estatus",
+        help_text="Estatus del slot",
     )
     #endregion
 
     class Meta:
         unique_together = ('date', 'block', 'aircraft')  # only one slot per date, block and aircraft
-        verbose_name = "Sesión de vuelo"
-        verbose_name_plural = "Sesiones de vuelo"
+        verbose_name = "Slot de vuelo"
+        verbose_name_plural = "Slots de vuelo"
         ordering = ['date', 'block', 'aircraft']
 
     def __str__(self):
@@ -185,20 +248,15 @@ class FlightRequest(models.Model):
         'scheduler.FlightSlot', 
         on_delete=models.CASCADE,
         related_name="flight_requests",
-        verbose_name="Sesión de vuelo",
-        help_text="Sesión de vuelo de la solicitud",
-    )
-    flexible = models.BooleanField(
-        default=False,
-        verbose_name="Flexible",
-        help_text="Si es selecciona, el estudiante acepta cualquier bloque en esta fecha",
+        verbose_name="Slot de vuelo",
+        help_text="Slot de vuelo de la solicitud",
     )
     status = models.CharField(
         max_length=15, 
         choices=STATUS_CHOICES, 
         default='pending',
-        verbose_name="Estado",
-        help_text="Estado de la solicitud",
+        verbose_name="Estatus",
+        help_text="Estatus de la solicitud",
     )
     requested_at = models.DateTimeField(
         auto_now_add=True,
@@ -218,24 +276,50 @@ class FlightRequest(models.Model):
     )
     #endregion
 
+    def create_request(self, student, slot):
+        """Create a flight request and update the slot status to unavailable."""
+        from scheduler.exceptions import PeriodNotActiveError, SlotNotAvailableError
+        with transaction.atomic():
+            if slot.status != 'available':
+                raise SlotNotAvailableError("El slot no está disponible")
+            if slot.flight_period.is_active != True:
+                raise PeriodNotActiveError("El período de vuelo no está activo")
+            # Create the flight request
+            flight_request = FlightRequest(
+                student=student,
+                slot=slot,
+                status='pending'
+            )
+            # Update slot status to unavailable
+            slot.status = 'unavailable'
+            slot.student = student
+            slot.save()
+            # Update the instance for consistency
+            self.student = student
+            self.slot = slot
+            self.status = 'pending'
+            self.pk = flight_request.pk
+            self.save()
+
     def approve(self, original_status=None):
         """Approve the flight request and update the slot status to reserved."""
         # Check if we can approve (use original_status if provided, otherwise current status)
+        from scheduler.exceptions import SlotNotAvailableError, InsufficientBalanceError
         status_to_check = original_status if original_status is not None else self.status
         if status_to_check != 'pending':
-            raise ValueError("Solo solicitudes pendientes pueden ser aprobadas")
+            raise ValidationError("Solo solicitudes pendientes pueden ser aprobadas")
         
         # Check if the slot is reserved
         if self.slot.status == 'reserved':
-            raise ValueError("La sesión de vuelo ya está reservada")
+            raise SlotNotAvailableError("El slot ya está reservado")
         
         # Secondary balance check (safety net)
         try:
             balance = self.student.student_profile.balance
             if balance < 500.00:
-                raise ValueError(f"Balance insuficiente para aprobar. Balance actual: ${balance:.2f}")
+                raise InsufficientBalanceError(f"Balance insuficiente para aprobar. Balance actual: ${balance:.2f}")
         except StudentProfile.DoesNotExist:
-            raise ValueError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
+            raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
 
         with transaction.atomic():
             # Update flight request status
@@ -250,22 +334,50 @@ class FlightRequest(models.Model):
     def cancel(self):
         """Cancel the flight request and free up the slot."""
         if self.status not in ['pending', 'approved']:
-            raise ValueError("Solo solicitudes pendientes o aprobadas pueden ser canceladas")
+            raise ValidationError("Solo solicitudes pendientes o aprobadas pueden ser canceladas")
         
         with transaction.atomic():
-            # Update flight request status
-            self.status = 'cancelled'
-            self.save()
+            # Update flight request status and timestamp using update() to bypass clean validation
+            # since we're in a controlled transaction and will free up the slot immediately
+            from django.utils import timezone
+            FlightRequest.objects.filter(pk=self.pk).update(
+                status='cancelled',
+                updated_at=timezone.now()
+            )
+            self.status = 'cancelled'  # Update the instance for consistency
+            self.updated_at = timezone.now()  # Update the instance timestamp for consistency
             
             # Free up the slot
             self.slot.status = 'available'
             self.slot.student = None
             self.slot.save()
 
+    def clean(self):
+        from scheduler.exceptions import InsufficientBalanceError, MaxRequestsExceededError
+        # Student balance must be at least $500
+        try:
+            balance = self.student.student_profile.balance
+        except StudentProfile.DoesNotExist:
+            raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
+        if balance < 500.00:
+            raise InsufficientBalanceError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
+        
+        # Limit requests by balance
+        max_requests = balance // 500
+        existing_requests = FlightRequest.objects.filter(
+            student=self.student, status__in=["pending", "approved"]
+        ).exclude(pk=self.pk)
+        if existing_requests.count() >= max_requests:
+            raise MaxRequestsExceededError(f"Ya tiene el máximo de {max_requests} solicitudes de vuelo aprobadas o pendientes")
+
     def __str__(self):
-        return f"Solicitud de vuelo. Estudiante: {self.student} - Estado: {self.get_status_display()}"
+        return f"Solicitud de vuelo. Estudiante: {self.student} - Estatus: {self.get_status_display()}"
     
     class Meta:
         verbose_name = "Solicitud de vuelo"
         verbose_name_plural = "Solicitudes de vuelo"
         ordering = ['-requested_at']
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)

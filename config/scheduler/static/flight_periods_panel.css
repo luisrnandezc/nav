@@ -1,4 +1,4 @@
-/* Training Periods Styles */
+/* Flight Periods Styles */
 /* Following the same design pattern as Transactions Dashboard */
 
 * {
@@ -45,7 +45,7 @@ body {
   cursor: pointer;
 }
 
-.training-periods-container {
+.flight-periods-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,18 +55,18 @@ body {
   overflow-x: auto;
 }
 
-.training-periods-header {
+.flight-periods-header {
   text-align: center;
   margin-bottom: 30px;
 }
 
-.training-periods-header h1 {
+.flight-periods-header h1 {
   font-size: 3.0rem;
   letter-spacing: 5px;
   margin: 0 0 10px 0;
 }
 
-.training-periods-header p {
+.flight-periods-header p {
   font-size: 1.25rem;
   margin: 0;
   opacity: 0.8;
@@ -98,7 +98,7 @@ body {
   border-color: #d63e20;
 }
 
-.training-periods-list-container {
+.flight-periods-list-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -106,7 +106,7 @@ body {
   max-width: 1400px;
 }
 
-.training-periods-section {
+.flight-periods-section {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid #dae1ff;
   border-radius: 15px;
@@ -445,7 +445,7 @@ td:hover {
 
 /* Responsive Design */
 @media screen and (max-width: 1400px) {
-  .training-periods-container {
+  .flight-periods-container {
     flex-direction: column;
     height: auto;
     min-height: 100vh;
@@ -453,25 +453,25 @@ td:hover {
 }
 
 @media screen and (max-width: 1200px) {
-  .training-periods-container {
+  .flight-periods-container {
     padding: 15px;
   }
   
-  .training-periods-header h1 {
+  .flight-periods-header h1 {
     font-size: 1.5rem;
   }
 }
 
 @media screen and (max-width: 800px) {
-  .training-periods-container {
+  .flight-periods-container {
     padding: 10px;
   }
 
-  .training-periods-header h1 {
+  .flight-periods-header h1 {
     font-size: 1.25rem;
   }
 
-  .training-periods-header p {
+  .flight-periods-header p {
     font-size: 1.0rem;
   }
 
@@ -491,15 +491,15 @@ td:hover {
 }
 
 @media screen and (max-width: 650px) {
-  .training-periods-header h1 {
+  .flight-periods-header h1 {
     font-size: 1.25rem;
   }
 
-  .training-periods-header p {
+  .flight-periods-header p {
     font-size: 1.0rem;
   }
 
-  .training-periods-container {
+  .flight-periods-container {
     padding: 10px;
   }
 
@@ -553,7 +553,7 @@ td:hover {
 }
 
 @media screen and (max-width: 480px) {
-  .training-periods-header h1 {
+  .flight-periods-header h1 {
     font-size: 1.5rem;
   }
 

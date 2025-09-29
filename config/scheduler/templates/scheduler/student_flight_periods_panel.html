@@ -15,12 +15,12 @@
     <script src="{% static 'js/student_periods_panel_dynamics.js' %}"></script>
 </head>
 <body>
-    <div class="training-periods-container">
+    <div class="flight-periods-container">
         <div class="back-button">
             <a href="{% url 'scheduler:student_scheduler_dashboard' %}" class="button">&larr; Volver</a>
         </div>
 
-        <div class="training-periods-header">
+        <div class="flight-periods-header">
             <h1>Períodos de Vuelo</h1>
             <p>Sistema de Gestión de Solicitudes de Vuelo</p>
         </div>
@@ -29,10 +29,10 @@
             <a href="{% url 'scheduler:create_student_flight_period_grids' %}" class="button">🔄 Actualizar</a>
         </div>
 
-        <div class="training-periods-list-container">
+        <div class="flight-periods-list-container">
             {% if grids %}
                 {% for period_data in grids %}
-                    <div class="training-periods-section">
+                    <div class="flight-periods-section">
                         <div class="section-header">
                             <h2>{{ period_data.period }}</h2>
                             <p>

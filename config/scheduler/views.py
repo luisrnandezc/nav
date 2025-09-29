@@ -191,7 +191,19 @@ def create_flight_request(request, slot_id):
             'request_id': flight_request.id
         }) 
     except (ValidationError, ValueError) as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        # Handle Django ValidationError properly
+        if hasattr(e, 'message_dict') and e.message_dict:
+            # Extract the first error message from the validation error
+            error_messages = []
+            for field, messages in e.message_dict.items():
+                if isinstance(messages, list):
+                    error_messages.extend(messages)
+                else:
+                    error_messages.append(str(messages))
+            error_message = error_messages[0] if error_messages else str(e)
+        else:
+            error_message = str(e)
+        return JsonResponse({"error": error_message}, status=400)
     except Exception as e:
         return JsonResponse({"error": f"Error al crear la solicitud de vuelo: {str(e)}"}, status=500)
 

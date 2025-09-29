@@ -353,10 +353,16 @@ class FlightRequest(models.Model):
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
         if balance < 500.00:
-            raise ValidationError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
+            if self.student.student_profile.has_credit:
+                pass
+            else:
+                raise ValidationError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
         
         # Limit requests by balance
-        max_requests = balance // 500
+        if self.student.student_profile.has_credit and balance < 500.00:
+            max_requests = 1
+        else:
+            max_requests = balance // 500
         existing_requests = FlightRequest.objects.filter(
             student=self.student, status__in=["pending", "approved"]
         ).exclude(pk=self.pk)

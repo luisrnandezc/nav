@@ -409,17 +409,32 @@
           {{ form.comments }}
         </div>
 
-        {% if form.errors %}
-          <ul>
-            {% for field, errors in form.errors.items %}
-              <li>{{ field }}: {{ errors }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-
         <div class="submit-button-container">
           <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>
         </div>
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message message-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if form.errors %}
+        <div class="form-errors">
+            <h3>Errores encontrados:</h3>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
       </form>
     </div>
   </body>

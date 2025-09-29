@@ -208,7 +208,7 @@ class SimEvaluation(models.Model):
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
+        default=STANDARD,
         verbose_name='Nota'
     )
     #endregion
@@ -1005,7 +1005,7 @@ class FlightEvaluation0_100(models.Model):
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
+        default=STANDARD,
         verbose_name='Nota'
     )
     #endregion
@@ -1647,7 +1647,7 @@ class FlightEvaluation100_120(models.Model):
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
+        default=STANDARD,
         verbose_name='Nota'
     )
     #endregion
@@ -2253,7 +2253,7 @@ class FlightEvaluation120_170(models.Model):
     session_grade = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
-        default=NOT_EVALUATED,
+        default=STANDARD,
         verbose_name='Nota'
     )
     #endregion

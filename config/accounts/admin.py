@@ -42,7 +42,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
         }),
         ('Información del estudiante', {
             'fields': ('student_age', 'student_gender', 'student_phase', 
-                       'student_license_type', 'sim_hours', 'flight_hours')
+                       'student_license_type', 'sim_hours', 'flight_hours', 'advanced_student')
         }),
         ('Información del curso', {
             'fields': ('get_course_type', 'get_course_edition'),

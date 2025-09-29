@@ -163,6 +163,10 @@ class StudentProfile(models.Model):
         verbose_name='Estudiante avanzado',
         default=False,
     )
+    has_credit = models.BooleanField(
+        verbose_name='Tiene crédito',
+        default=False,
+    )
     #endregion
 
     class Meta:

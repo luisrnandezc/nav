@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import DateInput
 from .models import FlightPeriod
-from fleet.models import Aircraft
+from django.core.exceptions import ValidationError
 
 
 class CreateFlightPeriodForm(forms.ModelForm):

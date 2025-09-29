@@ -141,11 +141,24 @@ def create_student_flight_period_grids(request):
         messages.info(request, 'No hay períodos de vuelo activos en este momento.')
         return redirect('scheduler:flight_requests_dashboard')
 
+    # Filter out advanced aircraft for non-advanced students
+    # Advanced aircraft (is_advanced=True) are only visible to advanced students (advanced_student=True)
+    try:
+        student_profile = request.user.student_profile
+        is_advanced_student = student_profile.advanced_student
+    except:
+        is_advanced_student = False
+    
+    if not is_advanced_student:
+        # Filter out periods for advanced aircraft - non-advanced students can't see them
+        active_periods = active_periods.filter(aircraft__is_advanced=False)
+
     aircraft_grids = create_period_grids(active_periods)
 
     context = {
         'aircraft_grids': aircraft_grids,
         'user': request.user,
+        'is_advanced_student': is_advanced_student,
     }
     return render(request, 'scheduler/student_flight_periods_panel.html', context)
 

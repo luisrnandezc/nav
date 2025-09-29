@@ -1,9 +1,19 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
+from django.core.exceptions import ValidationError
 from accounts.models import StudentProfile
 from django.utils import timezone
 from fleet.models import Simulator, Aircraft
 from constants import COURSE_TYPES
+
+
+# Custom validators with Spanish messages
+class SpanishMaxValueValidator(MaxValueValidator):
+    """Custom validator with Spanish message"""
+    def __init__(self, max_value, message=None):
+        self.message = message or f'El valor no puede ser mayor a {max_value}.'
+        super().__init__(max_value, message=self.message)
+        
 
 class SimEvaluation(models.Model):
     """
@@ -195,9 +205,10 @@ class SimEvaluation(models.Model):
         verbose_name='Horas de simulador acumuladas'
     )
     session_sim_hours = models.DecimalField(
-        max_digits=5, 
+        max_digits=2,
         decimal_places=1,
         default=0.0,
+        validators=[MinValueValidator(0.0), SpanishMaxValueValidator(4.0, 'Las horas de la sesión no pueden exceder 4 horas.')],
         verbose_name='Horas sesión'
     )
     simulator = models.ForeignKey(
@@ -992,9 +1003,10 @@ class FlightEvaluation0_100(models.Model):
         verbose_name='Combustible consumido (litros)'
     )
     session_flight_hours = models.DecimalField(
-        max_digits=2, 
+        max_digits=3, 
         decimal_places=1,
         default=0.0,
+        validators=[MinValueValidator(0.0), SpanishMaxValueValidator(10.0, 'Las horas de la sesión no pueden exceder 10 horas.')],
         verbose_name='Horas sesión'
     )
     aircraft = models.ForeignKey(
@@ -1634,9 +1646,10 @@ class FlightEvaluation100_120(models.Model):
         verbose_name='Combustible consumido (litros)'
     )
     session_flight_hours = models.DecimalField(
-        max_digits=5, 
+        max_digits=3,
         decimal_places=1,
         default=0.0,
+        validators=[MinValueValidator(0.0), SpanishMaxValueValidator(10.0, 'Las horas de la sesión no pueden exceder 10 horas.')],
         verbose_name='Horas sesión'
     )
     aircraft = models.ForeignKey(
@@ -2240,9 +2253,10 @@ class FlightEvaluation120_170(models.Model):
         verbose_name='Combustible consumido (litros)'
     )
     session_flight_hours = models.DecimalField(
-        max_digits=5, 
+        max_digits=3, 
         decimal_places=1,
         default=0.0,
+        validators=[MinValueValidator(0.0), SpanishMaxValueValidator(10.0, 'Las horas de la sesión no pueden exceder 10 horas.')],
         verbose_name='Horas sesión'
     )
     aircraft = models.ForeignKey(
@@ -2653,9 +2667,10 @@ class FlightReport(models.Model):
         verbose_name='Combustible consumido (litros)'
     )
     flight_hours = models.DecimalField(
-        max_digits=2, 
+        max_digits=2,
         decimal_places=1,
         default=0.0,
+        validators=[MinValueValidator(0.0), SpanishMaxValueValidator(10.0, 'Las horas de la sesión no pueden exceder 10 horas.')],
         verbose_name='Horas sesión'
     )
     aircraft = models.ForeignKey(

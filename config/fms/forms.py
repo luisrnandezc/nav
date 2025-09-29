@@ -13,6 +13,20 @@ class SimEvaluationForm(forms.ModelForm):
         label='Simulador'
     )
     
+    # Custom session_sim_hours field with input constraints
+    session_sim_hours = forms.DecimalField(
+        max_digits=3,
+        decimal_places=1,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-field',
+            'step': '0.1',
+            'min': '0',
+            'max': '4.0',
+            'maxlength': '3'
+        }),
+        label='Horas sesión'
+    )
+    
     class Meta:
         model = SimEvaluation
         fields = [
@@ -329,6 +343,10 @@ class SimEvaluationForm(forms.ModelForm):
         student_id = cleaned_data.get('student_id')
         session_sim_hours = cleaned_data.get('session_sim_hours')
         
+        # Validate session hours limit
+        if session_sim_hours and session_sim_hours > 4.0:
+            raise forms.ValidationError('Las horas de la sesión no pueden exceder 4 horas.')
+        
         if student_id and session_sim_hours:
             try:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
@@ -611,6 +629,11 @@ class FlightEvaluation0_100Form(forms.ModelForm):
                     f"Horómetro inicial: {initial_hourmeter}, "
                     f"Horómetro final: {final_hourmeter}"
                 )
+            if calculated_session_flight_hours > 10.0:
+                raise forms.ValidationError(
+                    f"Las horas de la sesión no pueden exceder 10 horas. "
+                    f"Horas de sesión: {calculated_session_flight_hours}"
+                )
         else:
             raise forms.ValidationError(
                 f"El horómetro inicial y el horómetro final son requeridos. "
@@ -885,6 +908,11 @@ class FlightEvaluation100_120Form(forms.ModelForm):
                     f"Horómetro inicial: {initial_hourmeter}, "
                     f"Horómetro final: {final_hourmeter}"
                 )
+            if calculated_session_flight_hours > 10.0:
+                raise forms.ValidationError(
+                    f"Las horas de la sesión no pueden exceder 10 horas. "
+                    f"Horas de sesión: {calculated_session_flight_hours}"
+                )
         else:
             raise forms.ValidationError(
                 f"El horómetro inicial y el horómetro final son requeridos. "
@@ -1134,6 +1162,11 @@ class FlightEvaluation120_170Form(forms.ModelForm):
                     f"Horómetro inicial: {initial_hourmeter}, "
                     f"Horómetro final: {final_hourmeter}"
                 )
+            if calculated_session_flight_hours > 10.0:
+                raise forms.ValidationError(
+                    f"Las horas de la sesión no pueden exceder 10 horas. "
+                    f"Horas de sesión: {calculated_session_flight_hours}"
+                )
         else:
             raise forms.ValidationError(
                 f"El horómetro inicial y el horómetro final son requeridos. "
@@ -1253,6 +1286,11 @@ class FlightReportForm(forms.ModelForm):
                     f"El horómetro final no puede ser menor que el horómetro inicial. "
                     f"Horómetro inicial: {initial_hourmeter}, "
                     f"Horómetro final: {final_hourmeter}"
+                )
+            if calculated_flight_hours > 10.0:
+                raise forms.ValidationError(
+                    f"Las horas de la sesión no pueden exceder 10 horas. "
+                    f"Horas de sesión: {calculated_flight_hours}"
                 )
         else:
             raise forms.ValidationError(

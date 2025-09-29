@@ -1,13 +1,9 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.core.exceptions import ValidationError
-from unittest.mock import patch
-from scheduler.models import FlightPeriod, FlightSlot, FlightRequest
-from scheduler.exceptions import (
-    PeriodNotActiveError, SlotNotAvailableError, InsufficientBalanceError, MaxRequestsExceededError
-)
+from scheduler.models import FlightPeriod, FlightRequest
 from .factories import *
+from datetime import date, timedelta
 
 User = get_user_model()
 
@@ -148,45 +144,81 @@ class FlightRequestViewTest(TestCase):
         """Test handling of validation errors in flight request approval."""
         self.client.force_login(self.staff)
         
-        # Create a flight request with insufficient balance
-        self.student_profile.balance = 400.00
+        # Ensure student has sufficient balance to create the request
+        self.student_profile.balance = 1000.00
         self.student_profile.save()
-        
+
+        # Create a valid pending request
         flight_request = FlightRequestFactory(
             student=self.student,
             slot=self.slot,
             status='pending'
         )
-        
+
+        # Now reduce balance so approval should fail the secondary check
+        self.student_profile.balance = 400.00
+        self.student_profile.save()
+
         response = self.client.post(
             reverse('scheduler:approve_flight_request', args=[flight_request.id]),
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        
+
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
 
-    def test_cancel_flight_request_success(self):
-        """Test successful flight request cancellation."""
+    def test_cancel_flight_request_success_as_staff(self):
+        """Staff should be able to cancel a pending flight request."""
         self.client.force_login(self.staff)
-        
-        # Create a flight request
+
         flight_request = FlightRequestFactory(
             student=self.student,
             slot=self.slot,
             status='pending'
         )
-        
+
         response = self.client.post(
             reverse('scheduler:cancel_flight_request', args=[flight_request.id]),
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        
+
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertTrue(data['success'])
         self.assertIn('Solicitud de vuelo cancelada exitosamente', data['message'])
+
+        # Verify state changes
+        flight_request.refresh_from_db()
+        self.assertEqual(flight_request.status, 'cancelled')
+        self.slot.refresh_from_db()
+        self.assertEqual(self.slot.status, 'available')
+
+    def test_cancel_flight_request_success_as_student(self):
+        """Student should be able to cancel their own pending flight request."""
+        self.client.force_login(self.student)
+
+        flight_request = FlightRequestFactory(
+            student=self.student,
+            slot=self.slot,
+            status='pending'
+        )
+
+        response = self.client.post(
+            reverse('scheduler:cancel_flight_request', args=[flight_request.id]),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data['success'])
+        self.assertIn('Solicitud de vuelo cancelada exitosamente', data['message'])
+
+        # Verify state changes
+        flight_request.refresh_from_db()
+        self.assertEqual(flight_request.status, 'cancelled')
+        self.slot.refresh_from_db()
+        self.assertEqual(self.slot.status, 'available')
 
     def test_cancel_flight_request_validation_error(self):
         """Test handling of validation errors in flight request cancellation."""
@@ -223,9 +255,15 @@ class FlightPeriodViewTest(TestCase):
         """Test successful flight period creation."""
         self.client.force_login(self.staff)
         
+        # Use next Monday to next Sunday (valid 7-day period in the near future)
+        today = date.today()
+        days_to_next_monday = (7 - today.weekday()) % 7 or 7  # Monday=0
+        start_date = today + timedelta(days=days_to_next_monday)
+        end_date = start_date + timedelta(days=6)
+
         data = {
-            'start_date': '2024-01-01',  # Monday
-            'end_date': '2024-01-07',    # Sunday
+            'start_date': start_date.strftime('%Y-%m-%d'),
+            'end_date': end_date.strftime('%Y-%m-%d'),
             'aircraft': self.aircraft.id,
             'is_active': False
         }
@@ -233,7 +271,7 @@ class FlightPeriodViewTest(TestCase):
         response = self.client.post(reverse('scheduler:create_flight_period'), data)
         
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(FlightPeriod.objects.filter(aircraft=self.aircraft).exists())
+        self.assertTrue(FlightPeriod.objects.filter(aircraft=self.aircraft, start_date=start_date, end_date=end_date).exists())
 
     def test_create_flight_period_unauthorized(self):
         """Test that non-staff cannot create flight periods."""
@@ -251,21 +289,27 @@ class FlightPeriodViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_create_flight_period_validation_error(self):
-        """Test handling of validation errors in flight period creation."""
+        """View should not create a period when length is not multiple of 7."""
         self.client.force_login(self.staff)
-        
-        # Invalid data - end date before start date
-        data = {
-            'start_date': '2024-01-07',
-            'end_date': '2024-01-01',
+
+        # Build a period starting next Monday and ending on Saturday (6-day span -> invalid)
+        today = date.today()
+        days_to_next_monday = (7 - today.weekday()) % 7 or 7  # Monday=0
+        start_date = today + timedelta(days=days_to_next_monday)
+        end_date = start_date + timedelta(days=5)  # 6 days total, not multiple of 7
+
+        before = FlightPeriod.objects.count()
+
+        response = self.client.post(reverse('scheduler:create_flight_period'), {
+            'start_date': start_date.strftime('%Y-%m-%d'),
+            'end_date': end_date.strftime('%Y-%m-%d'),
             'aircraft': self.aircraft.id,
-            'is_active': False
-        }
-        
-        response = self.client.post(reverse('scheduler:create_flight_period'), data)
-        
-        self.assertEqual(response.status_code, 200)  # Form is re-rendered with errors
-        self.assertFalse(FlightPeriod.objects.filter(aircraft=self.aircraft).exists())
+            'is_active': False,
+        })
+
+        # Form should re-render with errors and no new record should be created
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(FlightPeriod.objects.count(), before)
 
     def test_activate_flight_period_success(self):
         """Test successful flight period activation."""
@@ -300,25 +344,6 @@ class FlightPeriodViewTest(TestCase):
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('Este período ya está activo', data['error'])
-
-    def test_activate_flight_period_conflict(self):
-        """Test activation when another period is already active for the same aircraft."""
-        self.client.force_login(self.staff)
-        
-        # Create an active period
-        active_period = FlightPeriodFactory(aircraft=self.aircraft, is_active=True)
-        
-        # Try to activate another period for the same aircraft
-        new_period = FlightPeriodFactory(aircraft=self.aircraft, is_active=False)
-        
-        response = self.client.post(
-            reverse('scheduler:activate_flight_period', args=[new_period.id]),
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-        )
-        
-        self.assertEqual(response.status_code, 400)
-        data = response.json()
-        self.assertIn('Ya existe un período activo', data['error'])
 
 
 class ChangeSlotStatusViewTest(TestCase):

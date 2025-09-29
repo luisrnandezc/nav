@@ -17,6 +17,15 @@ def staff_required(view_func):
         return view_func(request, *args, **kwargs)
     return wrapper
 
+def role_required(*allowed_roles):
+    def decorator(view_func):
+        def wrapper(request, *args, **kwargs):
+            if getattr(request.user, "role", None) not in allowed_roles:
+                return JsonResponse({'error': 'Acceso denegado'}, status=403)
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorator
+
 def student_required(view_func):
     """Decorator to check if the user is a student."""
     def wrapper(request, *args, **kwargs):
@@ -62,12 +71,11 @@ def create_flight_period(request):
                 return render(request, 'scheduler/create_flight_period.html', {'form': form})
         else:
             messages.error(request, 'Por favor corrija los errores en el formulario.')
+            return render(request, 'scheduler/create_flight_period.html', {'form': form})
     else:
         form = CreateFlightPeriodForm()
     return render(request, 'scheduler/create_flight_period.html', {'form': form})
 
-@login_required
-@staff_required
 def create_period_grids(periods):
     """Generate a grid of slots for specified flight periods."""
     # Build grids for each period
@@ -183,8 +191,7 @@ def approve_flight_request(request, request_id):
         return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
-@staff_required
-@student_required
+@role_required('STAFF', 'STUDENT')
 @require_POST
 def cancel_flight_request(request, request_id):
     """Cancel a flight request and free up the slot."""
@@ -266,18 +273,6 @@ def activate_flight_period(request, period_id):
         # Check if period is already active
         if period.is_active:
             return JsonResponse({'error': 'Este período ya está activo'}, status=400)
-        # Check if there's already an active period for this aircraft
-        existing_active_period = FlightPeriod.objects.filter(
-            aircraft=period.aircraft,
-            is_active=True
-        ).exclude(id=period.id).first()
-        
-        if existing_active_period:
-            return JsonResponse({
-                'error': f'Ya existe un período activo para la aeronave {period.aircraft.registration}. ' +
-                        f'Debe desactivar el período actual ({existing_active_period.start_date} - {existing_active_period.end_date}) ' +
-                        'antes de activar este período.'
-            }, status=400)
         # Activate the period
         with transaction.atomic():
             period.is_active = True

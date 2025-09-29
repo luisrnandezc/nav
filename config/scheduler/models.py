@@ -65,21 +65,18 @@ class FlightPeriod(models.Model):
     
     def _check_flight_period_length(self, start_date, end_date):
         """Check if the flight period length is a multiple of 7 days."""
-        from scheduler.exceptions import InvalidPeriodDurationError
         period_days = (end_date - start_date).days + 1
         if period_days % 7 != 0:
-            raise InvalidPeriodDurationError("El periodo debe ser un múltiplo de 7 días (1 semana, 2 semanas, etc.).")
+            raise ValidationError("El periodo debe ser un múltiplo de 7 días (1 semana, 2 semanas, etc.).")
         
     def _check_flight_period_length_limits(self, start_date, end_date):
         """Check if the flight period length is no less than 7 days and no more than 21 days."""
-        from scheduler.exceptions import InvalidPeriodDurationError
         period_days = (end_date - start_date).days + 1
         if period_days < 7 or period_days > 21:
-            raise InvalidPeriodDurationError("El período no puede ser menor a 7 días ni mayor a 3 semanas (21 días).")
+            raise ValidationError("El período no puede ser menor a 7 días ni mayor a 3 semanas (21 días).")
     
     def _check_flight_period_overlap(self, start_date, end_date, aircraft):
         """Check if the flight period overlaps with another flight period."""
-        from scheduler.exceptions import PeriodOverlapError
         existing_periods = FlightPeriod.objects.filter(aircraft=aircraft, start_date__lte=end_date, end_date__gte=start_date)
         
         # Exclude the current instance if it's being updated
@@ -89,13 +86,12 @@ class FlightPeriod(models.Model):
         if existing_periods.exists():
             for existing_period in existing_periods:
                 if start_date <= existing_period.end_date and end_date >= existing_period.start_date:
-                    raise PeriodOverlapError("El período se superpone con otro período de vuelo.")
+                    raise ValidationError("El período se superpone con otro período de vuelo.")
     
     def _check_aircraft_availability(self, aircraft):
         """Check if the aircraft is available."""
-        from scheduler.exceptions import AircraftNotAvailableError
         if aircraft not in Aircraft.objects.filter(is_active=True, is_available=True):
-            raise AircraftNotAvailableError("La aeronave no está activa o disponible.")
+            raise ValidationError("La aeronave no está activa o disponible.")
     
     def _check_reasonable_date_range(self, start_date):
         """Check if the date range is reasonable."""
@@ -278,12 +274,11 @@ class FlightRequest(models.Model):
 
     def create_request(self, student, slot):
         """Create a flight request and update the slot status to unavailable."""
-        from scheduler.exceptions import PeriodNotActiveError, SlotNotAvailableError
         with transaction.atomic():
             if slot.status != 'available':
-                raise SlotNotAvailableError("El slot no está disponible")
+                raise ValidationError("El slot no está disponible")
             if slot.flight_period.is_active != True:
-                raise PeriodNotActiveError("El período de vuelo no está activo")
+                raise ValidationError("El período de vuelo no está activo")
             # Create the flight request
             flight_request = FlightRequest(
                 student=student,
@@ -304,20 +299,19 @@ class FlightRequest(models.Model):
     def approve(self, original_status=None):
         """Approve the flight request and update the slot status to reserved."""
         # Check if we can approve (use original_status if provided, otherwise current status)
-        from scheduler.exceptions import SlotNotAvailableError, InsufficientBalanceError
         status_to_check = original_status if original_status is not None else self.status
         if status_to_check != 'pending':
             raise ValidationError("Solo solicitudes pendientes pueden ser aprobadas")
         
         # Check if the slot is reserved
         if self.slot.status == 'reserved':
-            raise SlotNotAvailableError("El slot ya está reservado")
+            raise ValidationError("El slot ya está reservado")
         
         # Secondary balance check (safety net)
         try:
             balance = self.student.student_profile.balance
             if balance < 500.00:
-                raise InsufficientBalanceError(f"Balance insuficiente para aprobar. Balance actual: ${balance:.2f}")
+                raise ValidationError(f"Balance insuficiente para aprobar. Balance actual: ${balance:.2f}")
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
 
@@ -353,14 +347,13 @@ class FlightRequest(models.Model):
             self.slot.save()
 
     def clean(self):
-        from scheduler.exceptions import InsufficientBalanceError, MaxRequestsExceededError
         # Student balance must be at least $500
         try:
             balance = self.student.student_profile.balance
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
         if balance < 500.00:
-            raise InsufficientBalanceError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
+            raise ValidationError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
         
         # Limit requests by balance
         max_requests = balance // 500
@@ -368,7 +361,7 @@ class FlightRequest(models.Model):
             student=self.student, status__in=["pending", "approved"]
         ).exclude(pk=self.pk)
         if existing_requests.count() >= max_requests:
-            raise MaxRequestsExceededError(f"Ya tiene el máximo de {max_requests} solicitudes de vuelo aprobadas o pendientes")
+            raise ValidationError(f"Ya tiene el máximo de {max_requests} solicitudes de vuelo aprobadas o pendientes")
 
     def __str__(self):
         return f"Solicitud de vuelo. Estudiante: {self.student} - Estatus: {self.get_status_display()}"

@@ -30,38 +30,37 @@
         </div>
 
         <div class="flight-periods-list-container">
-            {% if grids %}
-                {% for period_data in grids %}
-                    <div class="flight-periods-section">
-                        <div class="section-header">
-                            <h2>{{ period_data.period }}</h2>
-                            <p>
-                                <strong>Aeronave:</strong> {{ period_data.period.aircraft.registration }} | 
-                                <strong>Estado:</strong> 
-                                {% if period_data.period.is_active %}
-                                    <span class="status-active">Activo</span>
-                                {% else %}
-                                    <span class="status-inactive">Inactivo</span>
-                                {% endif %}
-                            </p>
-                            {% if not period_data.period.is_active %}
-                                <div class="period-actions">
-                                    <button class="activate-period-button" 
-                                            data-period-id="{{ period_data.period.id }}"
-                                            data-aircraft="{{ period_data.period.aircraft.registration }}"
-                                            title="Activar este período de vuelo">
-                                        ✅ Activar Período
-                                    </button>
-                                </div>
-                            {% endif %}
+            {% if aircraft_grids %}
+                {% for aircraft_data in aircraft_grids %}
+                    <div class="aircraft-section" data-aircraft="{{ aircraft_data.aircraft.registration }}">
+                        <div class="aircraft-header">
+                            <h2>{{ aircraft_data.aircraft.registration }}</h2>
+                            <span class="aircraft-type">{{ aircraft_data.aircraft.model }}</span>
                         </div>
                         
-                        <div class="aircraft-grids">
-                            {% for aircraft_data in period_data.aircraft_grids %}
-                                <div class="aircraft-item">
-                                    <div class="aircraft-header">
-                                        <h3>{{ aircraft_data.aircraft.registration }}</h3>
-                                        <span class="aircraft-type">{{ aircraft_data.aircraft.model }}</span>
+                        <div class="periods-container">
+                            {% for period_data in aircraft_data.periods %}
+                                <div class="flight-periods-section">
+                                    <div class="section-header">
+                                        <h3>{{ period_data.period }}</h3>
+                                        <p>
+                                            <strong>Estado:</strong> 
+                                            {% if period_data.period.is_active %}
+                                                <span class="status-active">Activo</span>
+                                            {% else %}
+                                                <span class="status-inactive">Inactivo</span>
+                                            {% endif %}
+                                        </p>
+                                        {% if not period_data.period.is_active %}
+                                            <div class="period-actions">
+                                                <button class="activate-period-button" 
+                                                        data-period-id="{{ period_data.period.id }}"
+                                                        data-aircraft="{{ period_data.period.aircraft.registration }}"
+                                                        title="Activar este período de vuelo">
+                                                    ✅ Activar Período
+                                                </button>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     
                                     <div class="grid-container">
@@ -87,7 +86,7 @@
                                                 <div class="grid-row">
                                                     <div class="block-label">{{ block }}</div>
                                                     {% for date in date_chunk %}
-                                                        {% with slot=aircraft_data.grid|getitem:date|getitem:block %}
+                                                        {% with slot=period_data.grid|getitem:date|getitem:block %}
                                                             <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and user.role == 'STAFF' %}staff-clickable-slot{% endif %}" 
                                                                  {% if slot and user.role == 'STAFF' %}
                                                                  data-slot-id="{{ slot.id }}"
@@ -112,7 +111,7 @@
                                     </div>
                                 </div>
                             {% empty %}
-                                <div class="no-aircraft">No hay aeronaves disponibles para este período.</div>
+                                <div class="no-periods">No hay períodos disponibles para esta aeronave.</div>
                             {% endfor %}
                         </div>
                     </div>

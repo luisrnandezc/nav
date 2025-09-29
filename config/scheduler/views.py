@@ -77,47 +77,60 @@ def create_flight_period(request):
     return render(request, 'scheduler/create_flight_period.html', {'form': form})
 
 def create_period_grids(periods):
-    """Generate a grid of slots for specified flight periods."""
-    # Build grids for each period
-    grids = []
+    """Generate a grid of slots for specified flight periods, grouped by aircraft."""
+    # Group periods by aircraft
+    aircraft_periods = {}
     for period in periods:
-        # Generate dates for this period
-        dates = []
-        day = period.start_date
-        while day <= period.end_date:
-            dates.append(day)
-            day = day + timedelta(days=1)
-
-        blocks = ['AM', 'M', 'PM']
-
-        # Get all slots for this period (only for the period's aircraft)
-        slots = FlightSlot.objects.filter(flight_period=period)
-        # Create index by (date, block) since all slots belong to the same aircraft
-        slot_index = {(s.date, s.block): s for s in slots}
+        aircraft = period.aircraft
+        if aircraft not in aircraft_periods:
+            aircraft_periods[aircraft] = []
+        aircraft_periods[aircraft].append(period)
+    
+    # Build grids for each aircraft
+    aircraft_grids = []
+    for aircraft, aircraft_period_list in aircraft_periods.items():
+        # Sort periods by start_date for this aircraft
+        aircraft_period_list.sort(key=lambda p: p.start_date)
         
-        # Build grid data for this period
-        period_data = {
-            'period': period,
-            'dates': dates,
-            'blocks': blocks,
-            'aircraft_grids': []
-        }
-        
-        # Create grid only for the period's aircraft
         aircraft_data = {
-            'aircraft': period.aircraft,
-            'grid': {}
+            'aircraft': aircraft,
+            'periods': []
         }
         
-        for date in dates:
-            aircraft_data['grid'][date] = {}
-            for block in blocks:
-                slot = slot_index.get((date, block))
-                aircraft_data['grid'][date][block] = slot
+        for period in aircraft_period_list:
+            # Generate dates for this period
+            dates = []
+            day = period.start_date
+            while day <= period.end_date:
+                dates.append(day)
+                day = day + timedelta(days=1)
+
+            blocks = ['AM', 'M', 'PM']
+
+            # Get all slots for this period
+            slots = FlightSlot.objects.filter(flight_period=period)
+            # Create index by (date, block) since all slots belong to the same aircraft
+            slot_index = {(s.date, s.block): s for s in slots}
+            
+            # Build grid data for this period
+            period_data = {
+                'period': period,
+                'dates': dates,
+                'blocks': blocks,
+                'grid': {}
+            }
+            
+            for date in dates:
+                period_data['grid'][date] = {}
+                for block in blocks:
+                    slot = slot_index.get((date, block))
+                    period_data['grid'][date][block] = slot
+            
+            aircraft_data['periods'].append(period_data)
         
-        period_data['aircraft_grids'].append(aircraft_data)
-        grids.append(period_data)
-    return grids
+        aircraft_grids.append(aircraft_data)
+    
+    return aircraft_grids
 
 @login_required
 @student_required
@@ -128,10 +141,10 @@ def create_student_flight_period_grids(request):
         messages.info(request, 'No hay períodos de vuelo activos en este momento.')
         return redirect('scheduler:flight_requests_dashboard')
 
-    grids = create_period_grids(active_periods)
+    aircraft_grids = create_period_grids(active_periods)
 
     context = {
-        'grids': grids,
+        'aircraft_grids': aircraft_grids,
         'user': request.user,
     }
     return render(request, 'scheduler/student_flight_periods_panel.html', context)
@@ -142,10 +155,10 @@ def create_staff_flight_period_grids(request):
     """Generate a grid of slots for active and inactive flight periods."""
     periods = FlightPeriod.objects.all()
 
-    grids = create_period_grids(periods)
+    aircraft_grids = create_period_grids(periods)
 
     context = {
-        'grids': grids,
+        'aircraft_grids': aircraft_grids,
         'user': request.user,
     }
     return render(request, 'scheduler/staff_flight_periods_panel.html', context)

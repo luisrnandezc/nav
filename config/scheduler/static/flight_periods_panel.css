@@ -112,6 +112,7 @@ body {
   border-radius: 15px;
   padding: 20px;
   backdrop-filter: blur(10px);
+  margin-bottom: 30px;
 }
 
 .section-header {
@@ -172,11 +173,12 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.aircraft-header h3 {
+.aircraft-header h2 {
   font-weight: bold;
-  font-size: 1.1rem;
-  color: #dae1ff;
+  font-size: 1.3rem;
+  color: #ffff00;
   margin: 0;
+  text-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
 }
 
 .aircraft-type {

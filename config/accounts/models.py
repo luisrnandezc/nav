@@ -159,6 +159,10 @@ class StudentProfile(models.Model):
         verbose_name='Balance',
         default=0.00,
     )
+    advanced_student = models.BooleanField(
+        verbose_name='Estudiante avanzado',
+        default=False,
+    )
     #endregion
 
     class Meta:

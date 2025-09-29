@@ -129,6 +129,10 @@ class Aircraft(models.Model):
         default=130.0,
         verbose_name="Precio por hora"
     )
+    is_advanced = models.BooleanField(
+        default=False,
+        verbose_name="Aeronave avanzada"
+    )
 
     # Additional info
     fuel_cost = models.DecimalField(

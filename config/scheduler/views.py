@@ -42,7 +42,7 @@ def flight_requests_dashboard(request):
     
     # Get flight requests data for all students
     pending_requests = FlightRequest.objects.filter(status='pending').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('requested_at')[:20]
-    approved_requests = FlightRequest.objects.filter(status='approved').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('-requested_at')[:20]
+    approved_requests = FlightRequest.objects.filter(status='approved').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('slot__date', 'slot__block')[:20]
     cancelled_requests = FlightRequest.objects.filter(status='cancelled').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('-requested_at')[:20]
     
     return render(request, 'scheduler/flight_requests_dashboard.html', {

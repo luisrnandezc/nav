@@ -295,6 +295,10 @@ class FlightRequest(models.Model):
             self.status = 'pending'
             self.pk = flight_request.pk
             self.save()
+            # Update student profile has_temp_permission to False
+            if student.student_profile.has_temp_permission:
+                student.student_profile.has_temp_permission = False
+                student.student_profile.save()
 
     def approve(self, original_status=None):
         """Approve the flight request and update the slot status to reserved."""
@@ -310,7 +314,7 @@ class FlightRequest(models.Model):
         # Secondary balance check (safety net)
         try:
             balance = self.student.student_profile.balance
-            if balance < 500.00 and not self.student.student_profile.has_credit:
+            if balance < 500.00 and not (self.student.student_profile.has_credit or self.student.student_profile.has_temp_permission):
                 raise ValidationError(f"Balance insuficiente para aprobar. Balance actual: ${balance:.2f}")
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
@@ -353,13 +357,13 @@ class FlightRequest(models.Model):
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
         if balance < 500.00:
-            if self.student.student_profile.has_credit:
+            if self.student.student_profile.has_credit or self.student.student_profile.has_temp_permission:
                 pass
             else:
                 raise ValidationError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
         
         # Limit requests by balance
-        if self.student.student_profile.has_credit and balance < 500.00:
+        if  balance < 500.00 and (self.student.student_profile.has_credit or self.student.student_profile.has_temp_permission):
             max_requests = 1
         else:
             max_requests = balance // 500

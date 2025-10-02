@@ -166,6 +166,12 @@ class StudentProfile(models.Model):
     has_credit = models.BooleanField(
         verbose_name='Tiene crédito',
         default=False,
+        help_text='Permiso permanente para solicitar vuelos sin restricciones de balance.',
+    )
+    has_temp_permission = models.BooleanField(
+        verbose_name='Tiene permiso temporal',
+        default=False,
+        help_text='Permiso temporal para solicitar vuelos sin restricciones de balance. Debe ser reactivado antes de cada vuelo.',
     )
     #endregion
 

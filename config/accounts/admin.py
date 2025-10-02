@@ -49,7 +49,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
             'description': 'Esta información se actualiza automáticamente según la inscripción del estudiante en los cursos.'
         }),
         ('Balance financiero', {
-            'fields': ('balance', 'has_credit', 'has_temp_permission')
+            'fields': ('balance', 'flight_rate', 'has_credit', 'has_temp_permission')
         }),
     )
 

@@ -295,10 +295,6 @@ class FlightRequest(models.Model):
             self.status = 'pending'
             self.pk = flight_request.pk
             self.save()
-            # Update student profile has_temp_permission to False
-            if student.student_profile.has_temp_permission:
-                student.student_profile.has_temp_permission = False
-                student.student_profile.save()
 
     def approve(self, original_status=None):
         """Approve the flight request and update the slot status to reserved."""
@@ -328,6 +324,11 @@ class FlightRequest(models.Model):
             self.slot.status = 'reserved'
             self.slot.student = self.student
             self.slot.save()
+
+             # Update student profile has_temp_permission to False
+            if self.student.student_profile.has_temp_permission:
+                self.student.student_profile.has_temp_permission = False
+                self.student.student_profile.save()
     
     def cancel(self):
         """Cancel the flight request and free up the slot."""

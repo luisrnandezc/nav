@@ -159,6 +159,12 @@ class StudentProfile(models.Model):
         verbose_name='Balance',
         default=0.00,
     )
+    flight_rate = models.DecimalField(
+        max_digits=4, 
+        decimal_places=1, 
+        default=130.0,
+        verbose_name="Tasa de vuelo ($/h)"
+    )
     advanced_student = models.BooleanField(
         verbose_name='Estudiante avanzado',
         default=False,

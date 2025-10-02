@@ -97,7 +97,11 @@
                                                                  title="Click para cambiar el estado de esta sesión"
                                                                  {% endif %}>
                                                                 {% if slot %}
-                                                                    {{ slot.get_status_display }}
+                                                                    {% if slot.status == 'reserved' and slot.student %}
+                                                                        {{ slot.student.username }}
+                                                                    {% else %}
+                                                                        {{ slot.get_status_display }}
+                                                                    {% endif %}
                                                                 {% else %}
                                                                     —
                                                                 {% endif %}

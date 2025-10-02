@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     `Fecha: ${date}\n` +
                     `Bloque: ${block}\n` +
                     `Aeronave: ${aircraft}`;
-            } else if (currentStatus === 'reserved') {
+            } else if (currentStatus === 'reserved' || currentStatus === 'pending') {
                 action = 'cancel_and_unavailable';
                 newStatus = 'unavailable';
                 confirmationMessage = `¿Desea cancelar la solicitud de vuelo y marcar esta sesión como NO DISPONIBLE?\n\n` +

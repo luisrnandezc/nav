@@ -140,13 +140,15 @@ class FlightSlot(models.Model):
     ]
 
     # available: the slot is available for scheduling.
+    # pending: there is a flight request for this slot.
     # reserved: there is an approved flight request for this slot.
     # unavailable: the slot is unavailable for scheduling because of maintenance, weather, etc.
 
     STATUS_CHOICES = [
-        ('available', 'Disponible'),
-        ('reserved', 'Reservado'),
-        ('unavailable', 'No disponible'),
+        ('available', 'L'),
+        ('pending', 'P'),
+        ('reserved', 'R'),
+        ('unavailable', 'NA'),
     ]
     #endregion
 
@@ -285,8 +287,8 @@ class FlightRequest(models.Model):
                 slot=slot,
                 status='pending'
             )
-            # Update slot status to unavailable
-            slot.status = 'unavailable'
+            # Update slot status to pending
+            slot.status = 'pending'
             slot.student = student
             slot.save()
             # Update the instance for consistency
@@ -303,9 +305,13 @@ class FlightRequest(models.Model):
         if status_to_check != 'pending':
             raise ValidationError("Solo solicitudes pendientes pueden ser aprobadas")
         
+        # Check if the slot is pending
+        if self.slot.status == 'pending' and self.slot.student != self.student:
+            raise ValidationError("Ya hay una solicitud de vuelo pendiente para este slot")
+        
         # Check if the slot is reserved
         if self.slot.status == 'reserved':
-            raise ValidationError("El slot ya está reservado")
+            raise ValidationError("Ya hay una solicitud de vuelo aprobada para este slot")
         
         # Secondary balance check (safety net)
         try:
@@ -378,7 +384,7 @@ class FlightRequest(models.Model):
         """Delete the flight request and free up the slot."""
         with transaction.atomic():
             slot = self.slot
-            if slot.status in ['reserved', 'unavailable'] or slot.student:
+            if slot.status in ['pending', 'reserved', 'unavailable'] or slot.student:
                 slot.status = 'available'
                 slot.student = None
                 slot.save()

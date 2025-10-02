@@ -372,6 +372,16 @@ class FlightRequest(models.Model):
         ).exclude(pk=self.pk)
         if existing_requests.count() >= max_requests:
             raise ValidationError(f"Ya tiene el máximo de {max_requests} solicitudes de vuelo aprobadas o pendientes")
+        
+    def delete(self, *args, **kwargs):
+        """Delete the flight request and free up the slot."""
+        with transaction.atomic():
+            slot = self.slot
+            if slot.status in ['reserved', 'unavailable'] or slot.student:
+                slot.status = 'available'
+                slot.student = None
+                slot.save()
+            super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"Solicitud de vuelo. Estudiante: {self.student} - Estatus: {self.get_status_display()}"

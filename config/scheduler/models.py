@@ -48,15 +48,19 @@ class FlightPeriod(models.Model):
         created = 0
         
         # Generate slots for the entire period (from start_date to end_date)
+        today = localdate()
         current_date = self.start_date
         while current_date <= self.end_date:
+            status = 'available'
+            if current_date < today:
+                status = 'unavailable'
             for block in blocks:
                 FlightSlot.objects.create(
                     flight_period=self,
                     date=current_date,
                     block=block,
                     aircraft=aircraft,
-                    status='available'
+                    status=status
                 )
                 created += 1
             current_date += timedelta(days=1)
@@ -99,10 +103,6 @@ class FlightPeriod(models.Model):
         max_future_date = date.today() + timedelta(days=30)
         if start_date > max_future_date:
             raise ValidationError("La fecha de inicio no puede ser más de 30 días en el futuro.")
-        
-        min_start_date = date.today()
-        if start_date < min_start_date:
-            raise ValidationError("La fecha de inicio no puede ser anterior a hoy.")
 
     def clean(self):
         super().clean()

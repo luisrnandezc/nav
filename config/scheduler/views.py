@@ -36,7 +36,7 @@ def student_required(view_func):
 
 @login_required
 @staff_required
-def flight_requests_dashboard(request): 
+def staff_flight_requests_dashboard(request): 
     """Display the flight requests dashboard."""
     has_active_periods = FlightPeriod.objects.filter(is_active=True).exists()
     
@@ -45,7 +45,7 @@ def flight_requests_dashboard(request):
     approved_requests = FlightRequest.objects.filter(status='approved').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('slot__date', 'slot__block')[:20]
     cancelled_requests = FlightRequest.objects.filter(status='cancelled').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('-requested_at')[:20]
     
-    return render(request, 'scheduler/flight_requests_dashboard.html', {
+    return render(request, 'scheduler/staff_flight_requests_dashboard.html', {
         'has_active_periods': has_active_periods,
         'pending_requests': pending_requests,
         'approved_requests': approved_requests,
@@ -139,7 +139,7 @@ def create_student_flight_period_grids(request):
     active_periods = FlightPeriod.objects.filter(is_active=True)
     if not active_periods.exists():
         messages.info(request, 'No hay períodos de vuelo activos en este momento.')
-        return redirect('scheduler:flight_requests_dashboard')
+        return redirect('scheduler:student_flight_requests_dashboard')
 
     # Filter out advanced aircraft for non-advanced students
     # Advanced aircraft (is_advanced=True) are only visible to advanced students (advanced_student=True)
@@ -329,7 +329,7 @@ def activate_flight_period(request, period_id):
 
 @login_required
 @student_required
-def student_scheduler_dashboard(request):
+def student_flight_requests_dashboard(request):
     """Display the student scheduler dashboard."""
     has_active_periods = FlightPeriod.objects.filter(is_active=True).exists()
     user = request.user
@@ -340,7 +340,7 @@ def student_scheduler_dashboard(request):
     approved_flight_requests = base_qs.filter(status='approved')[:5]
     pending_flight_requests = base_qs.filter(status='pending')[:5]
     cancelled_flight_requests = base_qs.filter(status='cancelled')[:5]
-    return render(request, 'scheduler/student_scheduler_dashboard.html', {
+    return render(request, 'scheduler/student_flight_requests_dashboard.html', {
         'has_active_periods': has_active_periods,
         'approved_flight_requests': approved_flight_requests,
         'pending_flight_requests': pending_flight_requests,

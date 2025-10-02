@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import DateInput
 from .models import FlightPeriod
-from django.core.exceptions import ValidationError
+from datetime import date, timedelta
 
 
 class CreateFlightPeriodForm(forms.ModelForm):
@@ -49,8 +49,8 @@ class CreateFlightPeriodForm(forms.ModelForm):
                 })
         
         # Set minimum date to today for start_date
-        from datetime import date
-        self.fields['start_date'].widget.attrs['min'] = date.today().strftime('%Y-%m-%d')
+        min_date = date.today() - timedelta(days=7)
+        self.fields['start_date'].widget.attrs['min'] = min_date.strftime('%Y-%m-%d')
         
         # Set minimum date to start_date for end_date (will be updated via JavaScript)
         self.fields['end_date'].widget.attrs['min'] = date.today().strftime('%Y-%m-%d')

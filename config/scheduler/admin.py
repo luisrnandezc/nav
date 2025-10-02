@@ -97,6 +97,15 @@ class FlightRequestAdmin(admin.ModelAdmin):
     
     cancel_requests.short_description = "Cancelar solicitudes de vuelo seleccionadas"
     
+    def delete_model(self, request, obj):
+        """Override delete to use custom delete method."""
+        obj.delete()
+    
+    def delete_queryset(self, request, queryset):
+        """Override bulk delete to use custom delete method for each object."""
+        for obj in queryset:
+            obj.delete()
+    
     def save_model(self, request, obj, form, change):
         """Override save to use custom approve/cancel methods when status changes."""
         if change:  # Only for existing objects

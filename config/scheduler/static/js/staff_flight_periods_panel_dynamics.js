@@ -19,21 +19,21 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentStatus === 'available') {
                 action = 'unavailable';
                 newStatus = 'unavailable';
-                confirmationMessage = `¿Deseas marcar esta sesión como NO DISPONIBLE?\n\n` +
+                confirmationMessage = `¿Desea marcar esta sesión como NO DISPONIBLE?\n\n` +
                     `Fecha: ${date}\n` +
                     `Bloque: ${block}\n` +
                     `Aeronave: ${aircraft}`;
             } else if (currentStatus === 'unavailable') {
                 action = 'available';
                 newStatus = 'available';
-                confirmationMessage = `¿Deseas marcar esta sesión como DISPONIBLE?\n\n` +
+                confirmationMessage = `¿Desea marcar esta sesión como DISPONIBLE?\n\n` +
                     `Fecha: ${date}\n` +
                     `Bloque: ${block}\n` +
                     `Aeronave: ${aircraft}`;
-            } else if (currentStatus === 'reserved') {
+            } else if (currentStatus === 'reserved' || currentStatus === 'pending') {
                 action = 'cancel_and_unavailable';
                 newStatus = 'unavailable';
-                confirmationMessage = `¿Deseas cancelar la solicitud de vuelo y marcar esta sesión como NO DISPONIBLE?\n\n` +
+                confirmationMessage = `¿Desea cancelar la solicitud de vuelo y marcar esta sesión como NO DISPONIBLE?\n\n` +
                     `Fecha: ${date}\n` +
                     `Bloque: ${block}\n` +
                     `Aeronave: ${aircraft}\n\n` +
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // For any other status, make it available
                 action = 'available';
                 newStatus = 'available';
-                confirmationMessage = `¿Deseas marcar esta sesión como DISPONIBLE?\n\n` +
+                confirmationMessage = `¿Desea marcar esta sesión como DISPONIBLE?\n\n` +
                     `Fecha: ${date}\n` +
                     `Bloque: ${block}\n` +
                     `Aeronave: ${aircraft}`;

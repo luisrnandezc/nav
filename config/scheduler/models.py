@@ -48,15 +48,19 @@ class FlightPeriod(models.Model):
         created = 0
         
         # Generate slots for the entire period (from start_date to end_date)
+        today = localdate()
         current_date = self.start_date
         while current_date <= self.end_date:
+            status = 'available'
+            if current_date < today:
+                status = 'unavailable'
             for block in blocks:
                 FlightSlot.objects.create(
                     flight_period=self,
                     date=current_date,
                     block=block,
                     aircraft=aircraft,
-                    status='available'
+                    status=status
                 )
                 created += 1
             current_date += timedelta(days=1)
@@ -99,10 +103,6 @@ class FlightPeriod(models.Model):
         max_future_date = date.today() + timedelta(days=30)
         if start_date > max_future_date:
             raise ValidationError("La fecha de inicio no puede ser más de 30 días en el futuro.")
-        
-        min_start_date = date.today()
-        if start_date < min_start_date:
-            raise ValidationError("La fecha de inicio no puede ser anterior a hoy.")
 
     def clean(self):
         super().clean()
@@ -140,13 +140,15 @@ class FlightSlot(models.Model):
     ]
 
     # available: the slot is available for scheduling.
+    # pending: there is a flight request for this slot.
     # reserved: there is an approved flight request for this slot.
     # unavailable: the slot is unavailable for scheduling because of maintenance, weather, etc.
 
     STATUS_CHOICES = [
-        ('available', 'Disponible'),
-        ('reserved', 'Reservado'),
-        ('unavailable', 'No disponible'),
+        ('available', 'L'),
+        ('pending', 'P'),
+        ('reserved', 'R'),
+        ('unavailable', 'NA'),
     ]
     #endregion
 
@@ -285,8 +287,8 @@ class FlightRequest(models.Model):
                 slot=slot,
                 status='pending'
             )
-            # Update slot status to unavailable
-            slot.status = 'unavailable'
+            # Update slot status to pending
+            slot.status = 'pending'
             slot.student = student
             slot.save()
             # Update the instance for consistency
@@ -303,14 +305,18 @@ class FlightRequest(models.Model):
         if status_to_check != 'pending':
             raise ValidationError("Solo solicitudes pendientes pueden ser aprobadas")
         
+        # Check if the slot is pending
+        if self.slot.status == 'pending' and self.slot.student != self.student:
+            raise ValidationError("Ya hay una solicitud de vuelo pendiente para este slot")
+        
         # Check if the slot is reserved
         if self.slot.status == 'reserved':
-            raise ValidationError("El slot ya está reservado")
+            raise ValidationError("Ya hay una solicitud de vuelo aprobada para este slot")
         
         # Secondary balance check (safety net)
         try:
             balance = self.student.student_profile.balance
-            if balance < 500.00:
+            if balance < 500.00 and not (self.student.student_profile.has_credit or self.student.student_profile.has_temp_permission):
                 raise ValidationError(f"Balance insuficiente para aprobar. Balance actual: ${balance:.2f}")
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
@@ -324,8 +330,13 @@ class FlightRequest(models.Model):
             self.slot.status = 'reserved'
             self.slot.student = self.student
             self.slot.save()
+
+             # Update student profile has_temp_permission to False
+            if self.student.student_profile.has_temp_permission:
+                self.student.student_profile.has_temp_permission = False
+                self.student.student_profile.save()
     
-    def cancel(self):
+    def cancel(self, apply_fee=False):
         """Cancel the flight request and free up the slot."""
         if self.status not in ['pending', 'approved']:
             raise ValidationError("Solo solicitudes pendientes o aprobadas pueden ser canceladas")
@@ -346,6 +357,11 @@ class FlightRequest(models.Model):
             self.slot.student = None
             self.slot.save()
 
+            # Apply fee if apply_fee is True
+            if apply_fee:
+                self.student.student_profile.balance -= self.slot.flight_period.aircraft.hourly_rate
+                self.student.student_profile.save()
+
     def clean(self):
         # Student balance must be at least $500
         try:
@@ -353,13 +369,13 @@ class FlightRequest(models.Model):
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
         if balance < 500.00:
-            if self.student.student_profile.has_credit:
+            if self.student.student_profile.has_credit or self.student.student_profile.has_temp_permission:
                 pass
             else:
                 raise ValidationError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
         
         # Limit requests by balance
-        if self.student.student_profile.has_credit and balance < 500.00:
+        if  balance < 500.00 and (self.student.student_profile.has_credit or self.student.student_profile.has_temp_permission):
             max_requests = 1
         else:
             max_requests = balance // 500
@@ -368,6 +384,16 @@ class FlightRequest(models.Model):
         ).exclude(pk=self.pk)
         if existing_requests.count() >= max_requests:
             raise ValidationError(f"Ya tiene el máximo de {max_requests} solicitudes de vuelo aprobadas o pendientes")
+        
+    def delete(self, *args, **kwargs):
+        """Delete the flight request and free up the slot."""
+        with transaction.atomic():
+            slot = self.slot
+            if slot.status in ['pending', 'reserved', 'unavailable'] or slot.student:
+                slot.status = 'available'
+                slot.student = None
+                slot.save()
+            super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"Solicitud de vuelo. Estudiante: {self.student} - Estatus: {self.get_status_display()}"
@@ -380,3 +406,54 @@ class FlightRequest(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+class CancellationsFee(models.Model):
+    """Model for tracking cancellation fees."""
+
+    #region model fields
+    flight_request = models.ForeignKey(
+        'scheduler.FlightRequest',
+        on_delete=models.SET_NULL,
+        related_name="cancellations_fees",
+        verbose_name="Solicitud de vuelo",
+        help_text="Solicitud de vuelo de la multa",
+        null=True,
+        blank=True,
+    )
+    amount = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        verbose_name="Monto",
+        help_text="Monto de la multa",
+    )
+    date_added = models.DateField(
+        default=localdate,
+        verbose_name="Fecha de adición",
+    )
+    #endregion
+
+    def delete(self, *args, **kwargs):
+        """Delete the cancellation fee and reimburse the student."""
+        if self.flight_request and self.flight_request.student:
+            student = self.flight_request.student
+            reimbursement_amount = self.amount
+            
+            # Refund the fee back to the student's balance
+            try:
+                student.student_profile.balance += reimbursement_amount
+                student.student_profile.save()
+                
+            except Exception as e:
+                raise ValidationError(f"Error al reembolsar la multa: {str(e)}")
+        
+        # Delete the fee record
+        super().delete(*args, **kwargs)
+    
+    def __str__(self):
+        return f"Multa por cancelación extemporánea. Solicitud de vuelo: {self.flight_request} - Monto: {self.amount}"
+    
+    class Meta:
+        verbose_name = "Multa por cancelación"
+        verbose_name_plural = "Multas por cancelación"
+        ordering = ['-date_added']
+        

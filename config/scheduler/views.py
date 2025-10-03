@@ -7,7 +7,9 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from datetime import timedelta
 from .forms import CreateFlightPeriodForm
-from .models import FlightPeriod, FlightSlot, FlightRequest
+from .models import FlightPeriod, FlightSlot, FlightRequest, CancellationsFee
+from accounts.models import User
+import json
 
 def staff_required(view_func):
     """Decorator to check if the user is a staff member."""
@@ -36,16 +38,16 @@ def student_required(view_func):
 
 @login_required
 @staff_required
-def flight_requests_dashboard(request): 
+def staff_flight_requests_dashboard(request): 
     """Display the flight requests dashboard."""
     has_active_periods = FlightPeriod.objects.filter(is_active=True).exists()
     
     # Get flight requests data for all students
     pending_requests = FlightRequest.objects.filter(status='pending').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('requested_at')[:20]
-    approved_requests = FlightRequest.objects.filter(status='approved').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('-requested_at')[:20]
+    approved_requests = FlightRequest.objects.filter(status='approved').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('slot__date', 'slot__block')[:20]
     cancelled_requests = FlightRequest.objects.filter(status='cancelled').select_related('student', 'slot', 'slot__aircraft', 'slot__instructor').order_by('-requested_at')[:20]
     
-    return render(request, 'scheduler/flight_requests_dashboard.html', {
+    return render(request, 'scheduler/staff_flight_requests_dashboard.html', {
         'has_active_periods': has_active_periods,
         'pending_requests': pending_requests,
         'approved_requests': approved_requests,
@@ -139,7 +141,7 @@ def create_student_flight_period_grids(request):
     active_periods = FlightPeriod.objects.filter(is_active=True)
     if not active_periods.exists():
         messages.info(request, 'No hay períodos de vuelo activos en este momento.')
-        return redirect('scheduler:flight_requests_dashboard')
+        return redirect('scheduler:student_flight_requests_dashboard')
 
     # Filter out advanced aircraft for non-advanced students
     # Advanced aircraft (is_advanced=True) are only visible to advanced students (advanced_student=True)
@@ -236,15 +238,28 @@ def cancel_flight_request(request, request_id):
     flight_request = get_object_or_404(FlightRequest, id=request_id)
     
     try:
-        flight_request.cancel()
+        data = json.loads(request.body) if request.body else {}
+        apply_fee = data.get('apply_fee', False)
+        
+        flight_request.cancel(apply_fee=apply_fee)
+        
+        # Create cancellation fee record if fee should be applied
+        if apply_fee:
+            CancellationsFee.objects.create(
+                flight_request=flight_request,
+                amount=flight_request.slot.flight_period.aircraft.hourly_rate
+            )
         
         return JsonResponse({
             'success': True,
             'message': 'Solicitud de vuelo cancelada exitosamente',
             'request_id': flight_request.id,
-            'slot_id': flight_request.slot.id
+            'slot_id': flight_request.slot.id,
+            'fee_applied': apply_fee
         })
         
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Datos JSON inválidos'}, status=400)
     except (ValidationError, ValueError) as e:
         return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
@@ -257,7 +272,6 @@ def change_slot_status(request, slot_id):
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     try:
-        import json
         data = json.loads(request.body)
         action = data.get('action')
         new_status = data.get('new_status')
@@ -329,7 +343,7 @@ def activate_flight_period(request, period_id):
 
 @login_required
 @student_required
-def student_scheduler_dashboard(request):
+def student_flight_requests_dashboard(request):
     """Display the student scheduler dashboard."""
     has_active_periods = FlightPeriod.objects.filter(is_active=True).exists()
     user = request.user
@@ -340,7 +354,7 @@ def student_scheduler_dashboard(request):
     approved_flight_requests = base_qs.filter(status='approved')[:5]
     pending_flight_requests = base_qs.filter(status='pending')[:5]
     cancelled_flight_requests = base_qs.filter(status='cancelled')[:5]
-    return render(request, 'scheduler/student_scheduler_dashboard.html', {
+    return render(request, 'scheduler/student_flight_requests_dashboard.html', {
         'has_active_periods': has_active_periods,
         'approved_flight_requests': approved_flight_requests,
         'pending_flight_requests': pending_flight_requests,

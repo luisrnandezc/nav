@@ -4,9 +4,9 @@ from . import views
 app_name = "scheduler"
 
 urlpatterns = [
-    path('', views.flight_requests_dashboard, name='flight_requests_dashboard'),
+    path('', views.staff_flight_requests_dashboard, name='staff_flight_requests_dashboard'),
     path('period/new_period/', views.create_flight_period, name='create_flight_period'),
-    path('student_scheduler_dashboard/', views.student_scheduler_dashboard, name='student_scheduler_dashboard'),
+    path('student_flight_requests_dashboard/', views.student_flight_requests_dashboard, name='student_flight_requests_dashboard'),
     path('student_periods_panel/', views.create_student_flight_period_grids, name='create_student_flight_period_grids'),
     path('staff_periods_panel/', views.create_staff_flight_period_grids, name='create_staff_flight_period_grids'),
     path('flight-request/create/<int:slot_id>/', views.create_flight_request, name='create_flight_request'),

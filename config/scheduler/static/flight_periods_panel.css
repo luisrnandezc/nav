@@ -298,7 +298,7 @@ body {
 
 /* Slot status styling */
 .slot-available {
-  background: rgba(40, 167, 69, 0.2);
+  background: rgba(40, 167, 69, 0.4);
   color: #28a745;
   font-weight: bold;
 }
@@ -376,13 +376,13 @@ body {
 }
 
 .slot-pending {
-  background: rgba(255, 193, 7, 0.2);
+  background: rgba(255, 193, 7, 0.4);
   color: #ffc107;
   font-weight: bold;
 }
 
 .slot-reserved {
-  background: rgba(23, 162, 184, 0.2);
+  background: rgba(23, 162, 184, 0.4);
   color: #17a2b8;
   font-weight: bold;
 }
@@ -417,15 +417,15 @@ td:hover {
 
 /* Override hover for specific slot statuses */
 .slot-available:hover {
-  background: rgba(40, 167, 69, 0.3) !important;
+  background: rgba(40, 167, 69, 0.5) !important;
 }
 
 .slot-pending:hover {
-  background: rgba(255, 193, 7, 0.3) !important;
+  background: rgba(255, 193, 7, 0.5) !important;
 }
 
 .slot-reserved:hover {
-  background: rgba(23, 162, 184, 0.3) !important;
+  background: rgba(23, 162, 184, 0.5) !important;
 }
 
 .slot-unavailable:hover {

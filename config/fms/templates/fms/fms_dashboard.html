@@ -22,8 +22,13 @@
         <p>Sistema de Gestión de Vuelos</p>
       </div>
 
-      <div class="add-flight-button">
-        <a href="{% url 'fms:flight_report' %}" class="button">+ Agregar Reporte de Vuelo</a>
+      <div class="buttons-container">
+        <div class="add-flight-button">
+          <a href="{% url 'fms:flight_report' %}" class="button">+ Agregar Reporte de Vuelo</a>
+        </div>
+        <div class="student-list-button">
+          <a href="{% url 'fms:student_list' %}" class="button">Balance de Estudiantes</a>
+        </div>
       </div>
 
       <div class="sections-container">

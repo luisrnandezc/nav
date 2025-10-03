@@ -1,0 +1,88 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Lista de Estudiantes</title>
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'student_list.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="fms-container">
+      <div class="back-button">
+        <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
+      </div>
+
+      <div class="fms-header">
+        <h1>Lista de Estudiantes</h1>
+        <p>Total de estudiantes: {{ total_students }}</p>
+      </div>
+
+      <div class="sections-container">
+        <!-- Students List Section -->
+        <div class="section">
+          <div class="section-header">
+            <h2>Balance de Estudiantes</h2>
+            <p>Estudiantes activos en el sistema</p>
+          </div>
+          <div class="flight-list">
+            {% if students %}
+              {% for student in students %}
+                <div class="student-item">
+                  <div class="student-info">
+                    <span class="student-name">{{ student.first_name }} {{ student.last_name }}</span>
+                    <span class="student-username">@{{ student.username }}</span>
+                  </div>
+                  <div class="student-details">
+                    <div class="detail-item">
+                      <span class="detail-label">ID:</span>
+                      <span class="detail-value">{{ student.student_id }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Fase:</span>
+                      <span class="detail-value">{{ student.student_phase }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Tipo de Licencia:</span>
+                      <span class="detail-value">{{ student.student_license_type }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Curso:</span>
+                      <span class="detail-value">{{ student.course_type }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Edición:</span>
+                      <span class="detail-value">{{ student.course_edition }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Horas de Vuelo:</span>
+                      <span class="detail-value">{{ student.flight_hours }}h</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Balance:</span>
+                      <span class="detail-value {% if student.balance < 500 %}low-balance{% elif student.balance > 500 %}high-balance{% endif %}">${{ student.balance }}</span>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="no-flights">No hay estudiantes registrados</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // You can add any client-side functionality here if needed in the future
+        console.log('Student list page loaded');
+      });
+    </script>
+  </body>
+</html>

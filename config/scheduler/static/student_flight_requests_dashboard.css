@@ -268,12 +268,13 @@
     }
   }
   
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 850px) {
     .flight-requests-container {
       padding: 10px;
     }
   
     .flight-requests-header h1 {
+      margin: 20px 0 20px 0;
       font-size: 2.0rem;
     }
   

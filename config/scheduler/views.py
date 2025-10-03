@@ -7,7 +7,9 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from datetime import timedelta
 from .forms import CreateFlightPeriodForm
-from .models import FlightPeriod, FlightSlot, FlightRequest
+from .models import FlightPeriod, FlightSlot, FlightRequest, CancellationsFee
+from accounts.models import User
+import json
 
 def staff_required(view_func):
     """Decorator to check if the user is a staff member."""
@@ -236,15 +238,28 @@ def cancel_flight_request(request, request_id):
     flight_request = get_object_or_404(FlightRequest, id=request_id)
     
     try:
-        flight_request.cancel()
+        data = json.loads(request.body) if request.body else {}
+        apply_fee = data.get('apply_fee', False)
+        
+        flight_request.cancel(apply_fee=apply_fee)
+        
+        # Create cancellation fee record if fee should be applied
+        if apply_fee:
+            CancellationsFee.objects.create(
+                flight_request=flight_request,
+                amount=flight_request.slot.flight_period.aircraft.hourly_rate
+            )
         
         return JsonResponse({
             'success': True,
             'message': 'Solicitud de vuelo cancelada exitosamente',
             'request_id': flight_request.id,
-            'slot_id': flight_request.slot.id
+            'slot_id': flight_request.slot.id,
+            'fee_applied': apply_fee
         })
         
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Datos JSON inválidos'}, status=400)
     except (ValidationError, ValueError) as e:
         return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
@@ -257,7 +272,6 @@ def change_slot_status(request, slot_id):
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     try:
-        import json
         data = json.loads(request.body)
         action = data.get('action')
         new_status = data.get('new_status')

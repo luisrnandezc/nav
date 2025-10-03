@@ -336,7 +336,7 @@ class FlightRequest(models.Model):
                 self.student.student_profile.has_temp_permission = False
                 self.student.student_profile.save()
     
-    def cancel(self):
+    def cancel(self, apply_fee=False):
         """Cancel the flight request and free up the slot."""
         if self.status not in ['pending', 'approved']:
             raise ValidationError("Solo solicitudes pendientes o aprobadas pueden ser canceladas")
@@ -356,6 +356,11 @@ class FlightRequest(models.Model):
             self.slot.status = 'available'
             self.slot.student = None
             self.slot.save()
+
+            # Apply fee if apply_fee is True
+            if apply_fee:
+                self.student.student_profile.balance -= self.slot.flight_period.aircraft.hourly_rate
+                self.student.student_profile.save()
 
     def clean(self):
         # Student balance must be at least $500
@@ -401,3 +406,54 @@ class FlightRequest(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+class CancellationsFee(models.Model):
+    """Model for tracking cancellation fees."""
+
+    #region model fields
+    flight_request = models.ForeignKey(
+        'scheduler.FlightRequest',
+        on_delete=models.SET_NULL,
+        related_name="cancellations_fees",
+        verbose_name="Solicitud de vuelo",
+        help_text="Solicitud de vuelo de la multa",
+        null=True,
+        blank=True,
+    )
+    amount = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        verbose_name="Monto",
+        help_text="Monto de la multa",
+    )
+    date_added = models.DateField(
+        default=localdate,
+        verbose_name="Fecha de adición",
+    )
+    #endregion
+
+    def delete(self, *args, **kwargs):
+        """Delete the cancellation fee and reimburse the student."""
+        if self.flight_request and self.flight_request.student:
+            student = self.flight_request.student
+            reimbursement_amount = self.amount
+            
+            # Refund the fee back to the student's balance
+            try:
+                student.student_profile.balance += reimbursement_amount
+                student.student_profile.save()
+                
+            except Exception as e:
+                raise ValidationError(f"Error al reembolsar la multa: {str(e)}")
+        
+        # Delete the fee record
+        super().delete(*args, **kwargs)
+    
+    def __str__(self):
+        return f"Multa por cancelación extemporánea. Solicitud de vuelo: {self.flight_request} - Monto: {self.amount}"
+    
+    class Meta:
+        verbose_name = "Multa por cancelación"
+        verbose_name_plural = "Multas por cancelación"
+        ordering = ['-date_added']
+        

@@ -299,6 +299,42 @@ def pdf_download_waiting_page(request, form_type, evaluation_id):
         return redirect('dashboard:dashboard')
 
 @login_required
+def student_list(request):
+    """Display a list of all students with their information."""
+    # Get all students with their profiles
+    students = User.objects.filter(role='STUDENT').select_related('student_profile').order_by('first_name', 'last_name')
+    
+    # Create a list of student data similar to admin list_display
+    student_data = []
+    for student in students:
+        try:
+            profile = student.student_profile
+            student_info = {
+                'username': student.username,
+                'student_id': student.national_id,
+                'first_name': student.first_name,
+                'last_name': student.last_name,
+                'student_phase': profile.student_phase,
+                'course_type': profile.current_course_type,
+                'course_edition': profile.current_course_edition,
+                'balance': profile.balance,
+                'flight_hours': profile.flight_hours,
+                'sim_hours': profile.sim_hours,
+                'student_license_type': profile.student_license_type,
+            }
+            student_data.append(student_info)
+        except Exception as e:
+            # Handle students without profiles
+            continue
+    
+    context = {
+        'students': student_data,
+        'total_students': len(student_data),
+    }
+    
+    return render(request, 'fms/student_list.html', context)
+
+@login_required
 def download_pdf(request, form_type, evaluation_id):
     """Download PDF for a specific evaluation."""
     try:

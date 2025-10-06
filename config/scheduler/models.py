@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from accounts.models import StudentProfile
 from fleet.models import Aircraft
+from . import domain_signals
 
 class FlightPeriod(models.Model):
     """Periodo de vuelo"""
@@ -361,6 +362,9 @@ class FlightRequest(models.Model):
             if apply_fee:
                 self.student.student_profile.balance -= self.slot.flight_period.aircraft.hourly_rate
                 self.student.student_profile.save()
+
+        # Emit domain signal after cancellation to notify listeners
+        transaction.on_commit(lambda: domain_signals.flight_request_cancelled.send(sender=FlightRequest, instance=self))
 
     def clean(self):
         # Student balance must be at least $500

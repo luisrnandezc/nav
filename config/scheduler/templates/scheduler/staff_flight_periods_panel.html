@@ -94,14 +94,35 @@
                                                                  data-block="{{ slot.block }}"
                                                                  data-aircraft="{{ slot.aircraft.registration }}"
                                                                  data-current-status="{{ slot.status }}"
-                                                                 title="Click para cambiar el estado de esta sesión"
+                                                                 data-has-instructor="{% if slot.instructor %}true{% else %}false{% endif %}"
+                                                                 data-instructor-id="{% if slot.instructor %}{{ slot.instructor.id }}{% endif %}"
+                                                                 data-instructor-name="{% if slot.instructor %}{{ slot.instructor.username }}{% endif %}"
+                                                                 title="Click derecho para opciones de gestión de sesión"
                                                                  {% endif %}>
                                                                 {% if slot %}
-                                                                    {% if slot.status == 'reserved' and slot.student %}
-                                                                        {{ slot.student.username }}
-                                                                    {% else %}
-                                                                        {{ slot.get_status_display }}
-                                                                    {% endif %}
+                                                                    <div class="slot-content">
+                                                                        {% if slot.status == 'available' and slot.instructor %}
+                                                                            <div class="instructor-info">{{ slot.instructor.username }}</div>
+                                                                        {% elif slot.status == 'reserved' and slot.student %}
+                                                                            <div class="status-info">{{ slot.get_status_display }}</div>
+                                                                            <div class="student-info">{{ slot.student.username }}</div>
+                                                                            {% if slot.instructor %}
+                                                                                <div class="instructor-info">{{ slot.instructor.username }}</div>
+                                                                            {% else %}
+                                                                                <div class="no-instructor">Sin instructor</div>
+                                                                            {% endif %}
+                                                                        {% elif slot.status == 'pending' and slot.student %}
+                                                                            <div class="status-info">{{ slot.get_status_display }}</div>
+                                                                            <div class="student-info">{{ slot.student.username }}</div>
+                                                                            {% if slot.instructor %}
+                                                                                <div class="instructor-info">{{ slot.instructor.username }}</div>
+                                                                            {% else %}
+                                                                                <div class="no-instructor">Sin instructor</div>
+                                                                            {% endif %}
+                                                                        {% else %}
+                                                                            <div class="status-info">{{ slot.get_status_display }}</div>
+                                                                        {% endif %}
+                                                                    </div>
                                                                 {% else %}
                                                                     —
                                                                 {% endif %}

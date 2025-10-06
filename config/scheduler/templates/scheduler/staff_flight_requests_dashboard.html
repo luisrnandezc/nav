@@ -65,7 +65,7 @@
                                         <div class="slot-line"><span class="slot-label">Solicitado:</span> {{ request.requested_at|date:"d/m/Y H:i" }}</div>
                                     </div>
                                     <div class="slot-right">
-                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.username }}{% else %}Por asignar{% endif %}</div>
                                         <div class="slot-line"><span class="slot-label">Status:</span> <span class="badge badge-pending">{{ request.get_status_display }}</span></div>
                                     </div>
                                 </div>
@@ -98,7 +98,7 @@
                                         <div class="slot-line"><span class="slot-label">Aprobado:</span> {{ request.updated_at|date:"d/m/Y H:i" }}</div>
                                     </div>
                                     <div class="slot-right">
-                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.username }}{% else %}Por asignar{% endif %}</div>
                                         <div class="slot-line"><span class="slot-label">Status:</span> <span class="badge badge-confirmed">{{ request.get_status_display }}</span></div>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@
                                         <div class="slot-line"><span class="slot-label">Cancelado:</span> {{ request.updated_at|date:"d/m/Y H:i" }}</div>
                                     </div>
                                     <div class="slot-right">
-                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.first_name }} {{ request.slot.instructor.last_name }}{% else %}N/A{% endif %}</div>
+                                        <div class="slot-line"><span class="slot-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.username }}{% else %}N/A{% endif %}</div>
                                         <div class="slot-line"><span class="slot-label">Status:</span> <span class="badge badge-cancelled">{{ request.get_status_display }}</span></div>
                                     </div>
                                 </div>

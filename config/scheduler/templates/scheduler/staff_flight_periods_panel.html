@@ -101,8 +101,10 @@
                                                                  {% endif %}>
                                                                 {% if slot %}
                                                                     <div class="slot-content">
-                                                                        <div class="status-info">{{ slot.get_status_display }}</div>
-                                                                        {% if slot.status == 'reserved' and slot.student %}
+                                                                        {% if slot.status == 'available' and slot.instructor %}
+                                                                            <div class="instructor-info">{{ slot.instructor.username }}</div>
+                                                                        {% elif slot.status == 'reserved' and slot.student %}
+                                                                            <div class="status-info">{{ slot.get_status_display }}</div>
                                                                             <div class="student-info">{{ slot.student.username }}</div>
                                                                             {% if slot.instructor %}
                                                                                 <div class="instructor-info">{{ slot.instructor.username }}</div>
@@ -110,12 +112,15 @@
                                                                                 <div class="no-instructor">Sin instructor</div>
                                                                             {% endif %}
                                                                         {% elif slot.status == 'pending' and slot.student %}
+                                                                            <div class="status-info">{{ slot.get_status_display }}</div>
                                                                             <div class="student-info">{{ slot.student.username }}</div>
                                                                             {% if slot.instructor %}
                                                                                 <div class="instructor-info">{{ slot.instructor.username }}</div>
                                                                             {% else %}
                                                                                 <div class="no-instructor">Sin instructor</div>
                                                                             {% endif %}
+                                                                        {% else %}
+                                                                            <div class="status-info">{{ slot.get_status_display }}</div>
                                                                         {% endif %}
                                                                     </div>
                                                                 {% else %}

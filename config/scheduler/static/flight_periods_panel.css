@@ -321,10 +321,6 @@ body {
   z-index: 10;
 }
 
-.staff-clickable-slot:hover {
-  /* Only brightness change, no border or shadow */
-}
-
 .staff-clickable-slot::after {
   position: absolute;
   top: 2px;
@@ -596,14 +592,24 @@ body {
     font-size: 13px;
   }
   
-  /* Hide usernames and instructor text on small screens */
+  /* Hide student usernames and "Sin instructor" text on small screens */
   .student-info,
-  .instructor-info,
   .no-instructor {
     display: none;
   }
   
-  /* Show status text for ALL slots on mobile */
+  /* For available slots with instructors, show instructor name on mobile */
+  .slot-available .instructor-info {
+    display: block !important;
+  }
+  
+  /* For other slots, hide instructor info and show status text */
+  .slot-pending .instructor-info,
+  .slot-reserved .instructor-info {
+    display: none;
+  }
+  
+  /* Show status text for slots that don't have instructor info visible */
   .status-info {
     display: block !important;
   }

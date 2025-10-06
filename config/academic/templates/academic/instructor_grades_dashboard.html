@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>NAV | Dashboard de Calificaciones</title>
+        <title>NAV | Panel de notas</title>
         <link href="{% static 'instructor_grades_dashboard.css' %}" rel="stylesheet" />
         <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     </head>
@@ -16,18 +16,18 @@
                 <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
             </div>
             <div class="grades-dashboard-header">
-                <h1>Dashboard de Calificaciones</h1>
+                <h1>Panel de notas</h1>
             </div>
 
             <div class="buttons-container">
                 <div class="add-grade-button">
-                    <a href="{% url 'academic:submit_grade' %}" class="button">+ Agregar Calificación</a>
+                    <a href="{% url 'academic:submit_grade' %}" class="button">+ Agregar Nota</a>
                 </div>
             </div>
 
             <div class="grades-list-container">
                 <div class="grades-section">
-                    <h2>Últimas 30 calificaciones enviadas</h2>
+                    <h2>Últimas 30 notas enviadas</h2>
                     <div class="grades-list">
                         {% for grade in recent_grades %}
                             <div class="grade-card {% if grade.passed %}status-passed{% else %}status-failed{% endif %}">
@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                         {% empty %}
-                            <div class="no-grades">No hay calificaciones registradas</div>
+                            <div class="no-grades">No hay notas registradas</div>
                         {% endfor %}
                     </div>
                 </div>

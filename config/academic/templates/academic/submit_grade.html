@@ -54,30 +54,34 @@
       {% if temp_grades %}
       <div class="temp-grades-container">
         <h2 class="temp-grades-header">Notas Pendientes ({{ temp_grades|length }} nota{{ temp_grades|length|pluralize }})</h2>
-        <table class="temp-grades-table">
-          <thead>
-            <tr>
-              <th>Materia</th>
-              <th>Estudiante</th>
-              <th>Nota</th>
-              <th>Tipo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for grade in temp_grades %}
-            <tr>
-              <td>{{ grade.subject_name }}</td>
-              <td>{{ grade.student_name }}</td>
-              <td>{{ grade.grade }}</td>
-              <td>{{ grade.test_type_display }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="4" class="no-grades">No hay notas pendientes</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="temp-grades-list">
+          {% for grade in temp_grades %}
+          <div class="grade-card">
+            <div class="grade-top">
+              <div class="grade-left">
+                <div class="grade-line"><span class="grade-label">Materia:</span> {{ grade.subject_name }}</div>
+                <div class="grade-line"><span class="grade-label">Estudiante:</span> {{ grade.student_name }}</div>
+              </div>
+              <div class="grade-center">
+                <div class="grade-line"><span class="grade-label">Nota:</span> <span class="grade-score">{{ grade.grade }}</span></div>
+                <div class="grade-line"><span class="grade-label">Tipo:</span> {{ grade.test_type_display }}</div>
+              </div>
+              <div class="grade-right">
+                <form method="post" action="{% url 'academic:submit_grade' %}" class="delete-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="delete_temp">
+                  <input type="hidden" name="grade_index" value="{{ forloop.counter0 }}">
+                  <button type="submit" class="delete-btn" onclick="return confirmDelete('{{ grade.student_name }}')" title="Eliminar esta calificación">
+                    ✕ Eliminar
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="no-grades">No hay notas pendientes</div>
+          {% endfor %}
+        </div>
 
         <div class="submit-button-container">
           <form method="post" action="{% url 'academic:submit_grade' %}" id="submit-all-form" class="inline-form">
@@ -97,5 +101,10 @@
     </div>
 
     <script src="{% static 'js/submit_grade_dynamics.js' %}"></script>
+    <script>
+      function confirmDelete(studentName) {
+        return confirm(`¿Estás seguro de que quieres eliminar la calificación de ${studentName}?`);
+      }
+    </script>
   </body>
 </html>

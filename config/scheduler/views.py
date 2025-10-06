@@ -10,6 +10,7 @@ from .forms import CreateFlightPeriodForm
 from .models import FlightPeriod, FlightSlot, FlightRequest, CancellationsFee
 from accounts.models import User
 import json
+from . import domain_signals
 
 def staff_required(view_func):
     """Decorator to check if the user is a staff member."""
@@ -363,6 +364,9 @@ def assign_instructor_to_slot(request, slot_id):
                 # Assign instructor to slot
                 slot.instructor = instructor
                 slot.save()
+
+                # Notify via domain signal after commit
+                transaction.on_commit(lambda: domain_signals.instructor_assigned_to_slot.send(sender=FlightSlot, slot=slot, instructor=instructor))
                 
                 return JsonResponse({
                     'success': True,
@@ -377,6 +381,10 @@ def assign_instructor_to_slot(request, slot_id):
                 old_instructor = slot.instructor
                 slot.instructor = None
                 slot.save()
+
+                if old_instructor:
+                    # Notify via domain signal after commit
+                    transaction.on_commit(lambda: domain_signals.instructor_removed_from_slot.send(sender=FlightSlot, slot=slot, instructor=old_instructor))
                 
                 return JsonResponse({
                     'success': True,

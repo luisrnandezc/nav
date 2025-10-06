@@ -183,7 +183,7 @@
     font-weight: 700; 
     color: #dae1ff; 
     margin-right: 6px; 
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .grade-score {
@@ -232,6 +232,10 @@
     
     .grade-line { 
       font-size: 0.9rem; 
+    }
+    
+    .grade-label {
+      font-size: 0.85rem;
     }
   }
   
@@ -285,6 +289,10 @@
 
     .grade-line {
       font-size: 0.8rem;
+    }
+    
+    .grade-label {
+      font-size: 0.75rem;
     }
   }
   

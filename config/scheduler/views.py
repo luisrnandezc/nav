@@ -316,6 +316,99 @@ def change_slot_status(request, slot_id):
 
 @login_required
 @staff_required
+def assign_instructor_to_slot(request, slot_id):
+    """Assign or remove instructor from a flight slot (staff only)."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    try:
+        data = json.loads(request.body)
+        action = data.get('action')
+        instructor_id = data.get('instructor_id')
+        
+        if not action:
+            return JsonResponse({'error': 'Acción requerida'}, status=400)
+        
+        slot = get_object_or_404(FlightSlot, id=slot_id)
+        
+        with transaction.atomic():
+            if action == 'assign':
+                if not instructor_id:
+                    return JsonResponse({'error': 'ID de instructor requerido'}, status=400)
+                
+                # Verify instructor exists and has correct role and type
+                instructor = get_object_or_404(
+                    User, 
+                    id=instructor_id, 
+                    role='INSTRUCTOR',
+                    instructor_profile__instructor_type__in=['VUELO', 'DUAL'],
+                    is_active=True
+                )
+                
+                # Check if instructor is already assigned to another slot at the same time
+                conflicting_slot = FlightSlot.objects.filter(
+                    instructor=instructor,
+                    date=slot.date,
+                    block=slot.block
+                ).exclude(id=slot.id).first()
+                
+                if conflicting_slot:
+                    return JsonResponse({
+                        'error': f'El instructor {instructor.username} ya está asignado a otra sesión en {slot.date} - {slot.block}'
+                    }, status=400)
+                
+                # Assign instructor to slot
+                slot.instructor = instructor
+                slot.save()
+                
+                return JsonResponse({
+                    'success': True,
+                    'message': f'Instructor {instructor.username} asignado exitosamente',
+                    'slot_id': slot.id,
+                    'instructor_id': instructor.id,
+                    'instructor_name': instructor.username
+                })
+                
+            elif action == 'remove':
+                # Remove instructor from slot
+                old_instructor = slot.instructor
+                slot.instructor = None
+                slot.save()
+                
+                return JsonResponse({
+                    'success': True,
+                    'message': f'Instructor {old_instructor.username if old_instructor else "N/A"} removido exitosamente',
+                    'slot_id': slot.id
+                })
+            else:
+                return JsonResponse({'error': 'Acción no válida'}, status=400)
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Datos JSON inválidos'}, status=400)
+    except (ValidationError, ValueError) as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': f'Error al asignar instructor: {str(e)}'}, status=500)
+
+@login_required
+@staff_required
+def get_available_instructors(request):
+    """Get list of available instructors (staff only)."""
+    try:
+        instructors = User.objects.filter(
+            role='INSTRUCTOR',
+            instructor_profile__instructor_type__in=['VUELO', 'DUAL'],
+            is_active=True
+        ).values('id', 'username', 'first_name', 'last_name')
+        
+        return JsonResponse({
+            'success': True,
+            'instructors': list(instructors)
+        })
+    except Exception as e:
+        return JsonResponse({'error': f'Error al obtener instructores: {str(e)}'}, status=500)
+
+@login_required
+@staff_required
 def activate_flight_period(request, period_id):
     """Activate a flight period (staff only)."""
     if request.method != 'POST':

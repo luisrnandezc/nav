@@ -13,5 +13,7 @@ urlpatterns = [
     path('flight-request/approve/<int:request_id>/', views.approve_flight_request, name='approve_flight_request'),
     path('flight-request/cancel/<int:request_id>/', views.cancel_flight_request, name='cancel_flight_request'),
     path('slot/change-status/<int:slot_id>/', views.change_slot_status, name='change_slot_status'),
+    path('slot/assign-instructor/<int:slot_id>/', views.assign_instructor_to_slot, name='assign_instructor_to_slot'),
+    path('instructors/available/', views.get_available_instructors, name='get_available_instructors'),
     path('period/activate/<int:period_id>/', views.activate_flight_period, name='activate_flight_period'),
 ]

@@ -11,44 +11,41 @@
     </head>
 
     <body>
-        <div class="back-button">
-            <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-        </div>
-
-        <div class="main-container">
-            <div class="logs-container">
+        <div class="grade-logs-container">
+            <div class="back-button">
+                <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+            </div>
+            <div class="grade-logs-header">
                 <h1>Registro de calificaciones</h1>
-                <div class="logs-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Instructor</th>
-                                <th>Materia</th>
-                                <th>Tipo de examen</th>
-                                <th>Nota</th>
-                                <th>Estatus</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            </div>
+
+            <div class="grade-logs-list-container">
+                <div class="grade-logs-section">
+                    <h2>Historial de calificaciones</h2>
+                    <div class="grade-logs-list">
                         {% for log in grade_logs %}
-                             <tr>
-                                <td>{{ log.date|date:"d/m/Y" }}</td>
-                                <td>{{ log.instructor.first_name }} {{ log.instructor.last_name }}</td>
-                                <td>{{ log.subject_edition.subject_type.name }}</td>
-                                <td>{{ log.get_test_type_display }}</td>
-                                <td>{{ log.grade }}</td>
-                                <td class="{% if log.passed %}status-passed{% else %}status-failed{% endif %}">
-                                    {% if log.passed %}Aprobado{% else %}Reprobado{% endif %}
-                                </td>
-                            </tr>
+                            <div class="grade-card {% if log.passed %}status-passed{% else %}status-failed{% endif %}">
+                                <div class="grade-top">
+                                    <div class="grade-left">
+                                        <div class="grade-line"><span class="grade-label">Fecha:</span> {{ log.date|date:"d/m/Y" }}</div>
+                                        <div class="grade-line"><span class="grade-label">Instructor:</span> {{ log.instructor.first_name }} {{ log.instructor.last_name }}</div>
+                                    </div>
+                                    <div class="grade-center">
+                                        <div class="grade-line"><span class="grade-label">Materia:</span> {{ log.subject_edition.subject_type.name }}</div>
+                                        <div class="grade-line"><span class="grade-label">Tipo de examen:</span> {{ log.get_test_type_display }}</div>
+                                    </div>
+                                    <div class="grade-right">
+                                        <div class="grade-line"><span class="grade-label">Nota:</span> <span class="grade-score">{{ log.grade }}</span></div>
+                                        <div class="grade-badge">Status: <span class="badge {% if log.passed %}badge-passed{% else %}badge-failed{% endif %}">
+                                            {% if log.passed %}Aprobado{% else %}Reprobado{% endif %}
+                                        </span></div>
+                                    </div>
+                                </div>
+                            </div>
                         {% empty %}
-                            <tr>
-                                <td colspan="6" style="text-align: center;">No hay registros de calificaciones disponibles</td>
-                            </tr>
+                            <div class="no-grades">No hay registros de calificaciones disponibles</div>
                         {% endfor %}
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
             </div>
         </div>

@@ -82,6 +82,25 @@ def submit_student_grade(request):
             request.session.pop('temp_grades', None)
             messages.success(request, 'Calificaciones temporales eliminadas')
             return redirect('academic:submit_grade')
+        
+        elif action == 'delete_temp':
+            # Delete a specific temporary grade
+            grade_index = request.POST.get('grade_index')
+            if grade_index is not None:
+                try:
+                    grade_index = int(grade_index)
+                    temp_grades = request.session.get('temp_grades', [])
+                    if 0 <= grade_index < len(temp_grades):
+                        deleted_grade = temp_grades.pop(grade_index)
+                        request.session['temp_grades'] = temp_grades
+                        messages.success(request, f'Calificación de {deleted_grade.get("student_name", "estudiante")} eliminada')
+                    else:
+                        messages.error(request, 'Índice de calificación inválido')
+                except (ValueError, TypeError):
+                    messages.error(request, 'Índice de calificación inválido')
+            else:
+                messages.error(request, 'No se proporcionó el índice de la calificación')
+            return redirect('academic:submit_grade')
     
     # GET request - display form and temporary grades
     form = StudentGradeForm(instructor=request.user)

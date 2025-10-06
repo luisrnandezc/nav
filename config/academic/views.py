@@ -164,3 +164,22 @@ def grade_logs(request):
     }
     
     return render(request, 'academic/grade_log.html', context)
+
+@login_required
+def instructor_grades_dashboard(request):
+    """
+    Display the instructor grades dashboard showing recent grades submitted by the instructor.
+    """
+    user = request.user
+    
+    # Fetch recent grades submitted by this instructor (last 30)
+    recent_grades = StudentGrade.objects.filter(
+        instructor=user
+    ).select_related('student', 'subject_edition__subject_type').order_by('-date')[:30]
+    
+    context = {
+        'recent_grades': recent_grades,
+        'user': user,
+    }
+    
+    return render(request, 'academic/instructor_grades_dashboard.html', context)

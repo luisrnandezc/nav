@@ -39,17 +39,17 @@
       <div class="dashboard-container">
           <div class="left-column">
             <div class="dashboard-square">
-              <h1 class="square-header">Cargar notas</h1>
+              <h1 class="square-header">Académico</h1>
               {% if request.user.is_authenticated and request.user.instructor_profile.instructor_type in 'TIERRA,DUAL' %}
-                <a class="image-link" href="{% url 'academic:submit_grade' %}">
-                  <img class="logo-img" src="{% static 'img/addGrade.png' %}" alt="Cargar notas">
+                <a class="image-link" href="{% url 'academic:instructor_grades_dashboard' %}">
+                  <img class="logo-img" src="{% static 'img/addGrade.png' %}" alt="Académico">
                 </a>
               {% else %}
                 <div class="image-link disabled">
                   <img 
                   class="logo-img" 
                   src="{% static 'img/addGrade.png' %}"
-                  alt="Cargar notas" 
+                  alt="Académico" 
                   title="Solo disponible para instructores de tierra."
                   >
                 </div>

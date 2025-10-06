@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Dashboard de Calificaciones</title>
+        <link href="{% static 'instructor_grades_dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="grades-dashboard-container">
+            <div class="back-button">
+                <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+            </div>
+            <div class="grades-dashboard-header">
+                <h1>Dashboard de Calificaciones</h1>
+            </div>
+
+            <div class="buttons-container">
+                <div class="add-grade-button">
+                    <a href="{% url 'academic:submit_grade' %}" class="button">+ Agregar Calificación</a>
+                </div>
+            </div>
+
+            <div class="grades-list-container">
+                <div class="grades-section">
+                    <h2>Últimas 30 calificaciones enviadas</h2>
+                    <div class="grades-list">
+                        {% for grade in recent_grades %}
+                            <div class="grade-card {% if grade.passed %}status-passed{% else %}status-failed{% endif %}">
+                                <div class="grade-top">
+                                    <div class="grade-left">
+                                        <div class="grade-line"><span class="grade-label">Fecha:</span> {{ grade.date|date:"d/m/Y" }}</div>
+                                        <div class="grade-line"><span class="grade-label">Estudiante:</span> {{ grade.student.first_name }} {{ grade.student.last_name }}</div>
+                                    </div>
+                                    <div class="grade-center">
+                                        <div class="grade-line"><span class="grade-label">Materia:</span> {{ grade.subject_edition.subject_type.name }}</div>
+                                        <div class="grade-line"><span class="grade-label">Tipo:</span> {{ grade.get_test_type_display }}</div>
+                                    </div>
+                                    <div class="grade-right">
+                                        <div class="grade-line"><span class="grade-label">Nota:</span> <span class="grade-score">{{ grade.grade }}</span></div>
+                                        <div class="grade-badge">Status: <span class="badge {% if grade.passed %}badge-passed{% else %}badge-failed{% endif %}">
+                                            {% if grade.passed %}Aprobado{% else %}Reprobado{% endif %}
+                                        </span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="no-grades">No hay calificaciones registradas</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

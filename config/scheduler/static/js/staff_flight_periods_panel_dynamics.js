@@ -109,8 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function createContextMenuElement(event, slotData) {
         const menu = document.createElement('div');
         menu.className = 'context-menu';
-        menu.style.top = `${event.clientY}px`;
-        menu.style.left = `${event.clientX}px`;
+        // Center the menu on screen to avoid clipping near edges
+        menu.style.top = '50%';
+        menu.style.left = '50%';
+        menu.style.transform = 'translate(-50%, -50%)';
         
         // Add slot info header
         const header = document.createElement('div');
@@ -148,7 +150,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function addInstructorActions(container, slotData) {
-        const { hasInstructor, instructorName, slotId, element } = slotData;
+        const { hasInstructor, instructorName, slotId, element, currentStatus } = slotData;
+        
+        // Allow instructor assignment for available, reserved, and pending slots
+        const canAssign = currentStatus === 'available' || currentStatus === 'reserved' || currentStatus === 'pending';
+        if (!canAssign) {
+            return;
+        }
         
         if (hasInstructor) {
             addActionButton(container, `Remover Instructor (${instructorName})`, () => {
@@ -275,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     showSuccess(data.message);
-                    setTimeout(() => window.location.reload(), 3000);
+                    setTimeout(() => window.location.reload(), 2000);
                 } else {
                     showError('Error: ' + data.error);
                     restoreSlotState(slotElement);
@@ -311,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     showSuccess(data.message);
-                    setTimeout(() => window.location.reload(), 3000);
+                    setTimeout(() => window.location.reload(), 2000);
                 } else {
                     showError('Error: ' + data.error);
                     restoreSlotState(slotElement);

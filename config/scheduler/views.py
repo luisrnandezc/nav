@@ -330,6 +330,10 @@ def assign_instructor_to_slot(request, slot_id):
         
         slot = get_object_or_404(FlightSlot, id=slot_id)
         
+        # Only allow instructor assignment for available, reserved, and pending slots
+        if slot.status not in ['available', 'reserved', 'pending']:
+            return JsonResponse({'error': 'Solo se pueden asignar instructores en sesiones disponibles, reservadas o pendientes'}, status=400)
+        
         with transaction.atomic():
             if action == 'assign':
                 if not instructor_id:
@@ -444,9 +448,9 @@ def student_flight_requests_dashboard(request):
                .filter(student=user)
                .select_related('slot', 'slot__aircraft', 'slot__instructor')
                .order_by('requested_at'))
-    approved_flight_requests = base_qs.filter(status='approved')[:5]
-    pending_flight_requests = base_qs.filter(status='pending')[:5]
-    cancelled_flight_requests = base_qs.filter(status='cancelled')[:5]
+    approved_flight_requests = base_qs.filter(status='approved')[:20]
+    pending_flight_requests = base_qs.filter(status='pending')[:20]
+    cancelled_flight_requests = base_qs.filter(status='cancelled')[:20]
     return render(request, 'scheduler/student_flight_requests_dashboard.html', {
         'has_active_periods': has_active_periods,
         'approved_flight_requests': approved_flight_requests,

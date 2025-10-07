@@ -65,7 +65,7 @@ def create_flight_period(request):
             try:
                 with transaction.atomic():
                     period = form.save()
-                    created = period.generate_slots()
+                    created = period.generate_slots(for_navigation=form.cleaned_data['for_navigation'])
                 messages.success(request, f"Periodo creado. {created} slots generados.")
                 form = CreateFlightPeriodForm()  # Reset form with empty data
                 return render(request, 'scheduler/create_flight_period.html', {'form': form})

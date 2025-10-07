@@ -421,6 +421,112 @@ body {
   background: rgba(218, 225, 255, 0.1);
 }
 
+/* Flight Request Confirmation Modal Styles */
+.flight-request-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.flight-request-modal-content {
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid #dae1ff;
+  border-radius: 8px;
+  padding: 25px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+}
+
+.flight-request-modal-title {
+  color: #dae1ff;
+  font-size: 1.5rem;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.flight-request-info {
+  background: rgba(218, 225, 255, 0.1);
+  border: 1px solid rgba(218, 225, 255, 0.3);
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.info-item {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-item strong {
+  color: #dae1ff;
+  margin-right: 8px;
+}
+
+.flight-request-question {
+  color: #ffffff;
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  font-weight: 500;
+}
+
+.flight-request-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.flight-request-confirm {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid #4CAF50;
+  color: #4CAF50;
+  padding: 12px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.flight-request-confirm:hover {
+  background: rgba(76, 175, 80, 0.3);
+  transform: translateY(-1px);
+}
+
+.flight-request-cancel {
+  background: transparent;
+  border: 1px solid #f44336;
+  color: #f44336;
+  padding: 12px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.flight-request-cancel:hover {
+  background: rgba(244, 67, 54, 0.1);
+  transform: translateY(-1px);
+}
+
 /* Instructor Selection Modal Styles */
 .instructor-modal {
   position: fixed;
@@ -589,7 +695,40 @@ body {
   
   .instructor-button {
     padding: 10px;
+  }
+  
+  /* Flight request modal mobile styles */
+  .flight-request-modal-content {
+    padding: 20px;
+    max-width: 95%;
+  }
+  
+  .flight-request-modal-title {
+    font-size: 1.25rem;
+  }
+  
+  .flight-request-info {
+    padding: 12px;
+  }
+  
+  .info-item {
     font-size: 13px;
+  }
+  
+  .flight-request-question {
+    font-size: 1rem;
+  }
+  
+  .flight-request-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .flight-request-confirm,
+  .flight-request-cancel {
+    padding: 14px 20px;
+    font-size: 13px;
+    min-height: 44px; /* Touch-friendly minimum size */
   }
   
   /* Hide student usernames and "Sin instructor" text on small screens */

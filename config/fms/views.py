@@ -5,6 +5,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
+from django.contrib.auth.models import Group
 from accounts.models import User
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm, FlightReportForm
 from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport
@@ -304,6 +305,9 @@ def student_list(request):
     # Get all students with their profiles
     students = User.objects.filter(role='STUDENT').select_related('student_profile').order_by('first_name', 'last_name')
     
+    # Check if user is in director group
+    is_director = request.user.groups.filter(name='director').exists()
+    
     # Create a list of student data similar to admin list_display
     student_data = []
     for student in students:
@@ -321,6 +325,7 @@ def student_list(request):
                 'flight_hours': profile.flight_hours,
                 'sim_hours': profile.sim_hours,
                 'student_license_type': profile.student_license_type,
+                'has_temp_permission': profile.has_temp_permission,
             }
             student_data.append(student_info)
         except Exception as e:
@@ -330,9 +335,54 @@ def student_list(request):
     context = {
         'students': student_data,
         'total_students': len(student_data),
+        'is_director': is_director,
     }
     
     return render(request, 'fms/student_list.html', context)
+
+@login_required
+@require_http_methods(["POST"])
+def toggle_temp_permission(request):
+    """Toggle has_temp_permission for a student. Only accessible by directors."""
+    # Check if user is in director group
+    if not request.user.groups.filter(name='director').exists():
+        return JsonResponse({
+            'success': False,
+            'error': 'No tienes permisos para realizar esta acción'
+        }, status=403)
+    
+    student_id = request.POST.get('student_id')
+    if not student_id:
+        return JsonResponse({
+            'success': False,
+            'error': 'Se requiere el ID del estudiante'
+        }, status=400)
+    
+    try:
+        # Find the student by national_id
+        student = User.objects.get(national_id=student_id, role='STUDENT')
+        profile = student.student_profile
+        
+        # Toggle the has_temp_permission field
+        profile.has_temp_permission = not profile.has_temp_permission
+        profile.save()
+        
+        return JsonResponse({
+            'success': True,
+            'has_temp_permission': profile.has_temp_permission,
+            'message': f'Permiso temporal {"activado" if profile.has_temp_permission else "desactivado"} para {student.first_name} {student.last_name}'
+        })
+        
+    except User.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Estudiante no encontrado'
+        }, status=404)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al actualizar el permiso: {str(e)}'
+        }, status=500)
 
 @login_required
 def download_pdf(request, form_type, evaluation_id):

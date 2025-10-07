@@ -10,6 +10,10 @@
     <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
     <link href="{% static 'student_list.css' %}" rel="stylesheet" />
+    <script>
+      window.csrfToken = '{{ csrf_token }}';
+    </script>
+    <script src="{% static 'js/student_list.js' %}"></script>
   </head>
 
   <body>
@@ -67,7 +71,27 @@
                       <span class="detail-label">Balance:</span>
                       <span class="detail-value {% if student.balance < 500 %}low-balance{% elif student.balance > 500 %}high-balance{% endif %}">${{ student.balance }}</span>
                     </div>
+                    {% if student.has_temp_permission %}
+                    <div class="detail-item">
+                      <span class="detail-label">Permiso Temporal:</span>
+                      <span class="detail-value temp-permission-active">Activo</span>
+                    </div>
+                    {% endif %}
                   </div>
+                  
+                  {% if is_director %}
+                  <div class="student-actions">
+                    <button class="toggle-permission-btn {% if student.has_temp_permission %}permission-active{% else %}permission-inactive{% endif %}" 
+                            data-student-id="{{ student.student_id }}"
+                            data-student-name="{{ student.first_name }} {{ student.last_name }}">
+                      {% if student.has_temp_permission %}
+                        🔒 Desactivar Permiso Temporal
+                      {% else %}
+                        🔓 Activar Permiso Temporal
+                      {% endif %}
+                    </button>
+                  </div>
+                  {% endif %}
                 </div>
               {% endfor %}
             {% else %}
@@ -78,11 +102,5 @@
       </div>
     </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // You can add any client-side functionality here if needed in the future
-        console.log('Student list page loaded');
-      });
-    </script>
   </body>
 </html>

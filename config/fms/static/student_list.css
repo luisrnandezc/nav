@@ -80,9 +80,9 @@
 }
 
 .toggle-permission-btn {
-  background: transparent;
-  border: 1px solid #dae1ff;
-  color: #dae1ff;
+  background: transparent !important;
+  border: 1px solid #dae1ff !important;
+  color: #dae1ff !important;
   padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
@@ -95,6 +95,13 @@
   min-width: 200px;
   max-width: 300px;
   display: inline-block;
+  text-align: center;
+  margin: 0 auto;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .toggle-permission-btn:hover {
@@ -103,23 +110,23 @@
 }
 
 .toggle-permission-btn.permission-active {
-  background: rgba(255, 193, 7, 0.2);
-  border-color: #ffc107;
-  color: #ffc107;
+  background: rgba(255, 193, 7, 0.2) !important;
+  border-color: #ffc107 !important;
+  color: #ffc107 !important;
 }
 
 .toggle-permission-btn.permission-active:hover {
-  background: rgba(255, 193, 7, 0.3);
+  background: rgba(255, 193, 7, 0.3) !important;
 }
 
 .toggle-permission-btn.permission-inactive {
-  background: rgba(40, 167, 69, 0.2);
-  border-color: #28a745;
-  color: #28a745;
+  background: rgba(40, 167, 69, 0.2) !important;
+  border-color: #28a745 !important;
+  color: #28a745 !important;
 }
 
 .toggle-permission-btn.permission-inactive:hover {
-  background: rgba(40, 167, 69, 0.3);
+  background: rgba(40, 167, 69, 0.3) !important;
 }
 
 .toggle-permission-btn:disabled {
@@ -164,6 +171,17 @@
   }
 }
 
+/* Samsung Chrome specific fixes */
+@supports (-webkit-appearance: none) {
+  .toggle-permission-btn {
+    background: transparent !important;
+    border: 1px solid #dae1ff !important;
+    color: #dae1ff !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+}
+
 /* Responsive Design for Student List */
 @media screen and (max-width: 768px) {
   .student-details {
@@ -176,6 +194,14 @@
     min-height: 44px; /* Touch-friendly minimum size */
     min-width: 180px;
     max-width: 250px;
+    background: transparent !important;
+    border: 1px solid #dae1ff !important;
+    color: #dae1ff !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
   }
   
   .notification {

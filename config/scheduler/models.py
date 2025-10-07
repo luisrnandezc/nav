@@ -19,6 +19,12 @@ class FlightPeriod(models.Model):
     is_active = models.BooleanField(
         default=False,
         verbose_name="Activo",
+        help_text="Activo",
+    )
+    for_navigation = models.BooleanField(
+        default=False,
+        verbose_name="Para navegación",
+        help_text="Para navegación",
     )
     aircraft = models.ForeignKey(
         'fleet.Aircraft',
@@ -38,7 +44,7 @@ class FlightPeriod(models.Model):
         help_text="Fecha de actualización",
     )
 
-    def generate_slots(self):
+    def generate_slots(self, for_navigation=False):
         """
         Create FlightSlot objects for each day, each block, and each aircraft.
         """
@@ -52,16 +58,26 @@ class FlightPeriod(models.Model):
         today = localdate()
         current_date = self.start_date
         while current_date <= self.end_date:
-            status = 'available'
+            # Determine base status for this date
+            base_status = 'available'
             if current_date < today:
-                status = 'unavailable'
+                base_status = 'unavailable'
+            
             for block in blocks:
+                # Reset status for each block
+                status = base_status
+                
+                # For navigation periods, mark M blocks as unavailable
+                if for_navigation and block == 'M':
+                    status = 'unavailable'
+                
                 FlightSlot.objects.create(
                     flight_period=self,
                     date=current_date,
                     block=block,
                     aircraft=aircraft,
-                    status=status
+                    status=status,
+                    for_navigation=for_navigation
                 )
                 created += 1
             current_date += timedelta(days=1)
@@ -210,6 +226,11 @@ class FlightSlot(models.Model):
         default='available',
         verbose_name="Estatus",
         help_text="Estatus del slot",
+    )
+    for_navigation = models.BooleanField(
+        default=False,
+        verbose_name="Para navegación",
+        help_text="Slot para navegación",
     )
     #endregion
 

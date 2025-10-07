@@ -50,10 +50,7 @@ class FlightPeriod(models.Model):
         """
         from scheduler.models import FlightSlot
 
-        if for_navigation:
-            blocks = ['AM', 'PM']
-        else:
-            blocks = ['AM', 'M', 'PM']
+        blocks = ['AM', 'M', 'PM']
         aircraft = self.aircraft
         created = 0
         
@@ -61,10 +58,19 @@ class FlightPeriod(models.Model):
         today = localdate()
         current_date = self.start_date
         while current_date <= self.end_date:
-            status = 'available'
+            # Determine base status for this date
+            base_status = 'available'
             if current_date < today:
-                status = 'unavailable'
+                base_status = 'unavailable'
+            
             for block in blocks:
+                # Reset status for each block
+                status = base_status
+                
+                # For navigation periods, mark M blocks as unavailable
+                if for_navigation and block == 'M':
+                    status = 'unavailable'
+                
                 FlightSlot.objects.create(
                     flight_period=self,
                     date=current_date,

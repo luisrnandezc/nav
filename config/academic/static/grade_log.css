@@ -3,7 +3,7 @@
     color: #ffffff;
     font-size: 16px;
     box-sizing: border-box;
-}
+  }
   
 html,
 body {
@@ -19,153 +19,227 @@ body {
   background-attachment: fixed;
 }
 
-.main-container {
+.button {
+  text-transform: uppercase;
+  font-size: 1.0rem;
+  width: 200px;
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgb(0, 0, 0, 0.25);
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.grade-logs-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100vh;
   padding: 20px;
   overflow-x: auto;
 }
 
-.logs-container {
-    display: flex;
+.grade-logs-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.grade-logs-header h1 {
+  font-size: 3.0rem;
+  letter-spacing: 5px;
+  margin: 0 0 10px 0;
+  color: #dae1ff;
+}
+
+/* Grade logs list container */
+.grade-logs-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.grade-logs-section {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #dae1ff;
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.grade-logs-section h2 {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  margin: 0 0 10px 0;
+  color: #dae1ff;
+  text-align: center;
+}
+
+.grade-logs-list {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-right: -10px;
+}
+
+/* Grade card layout */
+.grade-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.grade-card:hover {
+  background: rgba(218, 225, 255, 0.1);
+  border-color: #dae1ff;
+}
+
+.grade-card.status-passed {
+  border-left: 4px solid #4CAF50;
+}
+
+.grade-card.status-failed {
+  border-left: 4px solid #f44336;
+}
+
+.grade-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: start;
+  gap: 20px;
+}
+
+.grade-left,
+.grade-center,
+.grade-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grade-line { 
+  font-size: 0.95rem; 
+  margin-bottom: 10px; 
+}
+
+.grade-label { 
+  font-weight: 700; 
+  color: #dae1ff; 
+  margin-right: 6px; 
+  font-size: 0.95rem;
+}
+
+.grade-score {
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.grade-card.status-passed .grade-score {
+  color: #4CAF50;
+}
+
+.grade-card.status-failed .grade-score {
+  color: #f44336;
+}
+
+.badge { 
+  padding: 6px 10px; 
+  border-radius: 6px; 
+  font-weight: 700; 
+}
+
+.badge-passed { 
+  background: rgba(76, 175, 80, 0.2); 
+  color: #4CAF50; 
+}
+
+.badge-failed { 
+  background: rgba(244, 67, 54, 0.2); 
+  color: #f44336; 
+}
+
+.no-grades {
+  text-align: center;
+  padding: 40px 20px;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+  .grade-logs-container {
     flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 1200px;
-    margin-bottom: 30px;
+    height: auto;
+    min-height: 100vh;
+  }
 }
 
-h1 {
-    font-size: 1.5rem;
-    color: #dae1ff;
+@media screen and (max-width: 850px) {
+  .grade-logs-container {
+    padding: 10px;
+  }
+
+  .grade-logs-header h1 {
+    margin: 20px 0 20px 0;
+    font-size: 2.0rem;
+  }
 }
 
-/* Table styles with centered text */
-.logs-table table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
+@media screen and (max-width: 650px) {
+  .grade-logs-header h1 {
+    font-size: 2.0rem;
+  }
 
-.logs-table th,
-.logs-table td {
-    text-align: center;
-    vertical-align: middle;
-    padding: 12px 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
+  .grade-logs-container {
+    padding: 10px;
+  }
 
-.logs-table th {
-    background-color: rgba(255, 255, 255, 0.1);
-    font-weight: bold;
-}
+  .button {
+    font-size: 1.0rem;
+    width: 150px;
+  }
 
-.logs-table tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.logs-table tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Comment tooltip styles */
-.comment-cell {
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    position: relative;
-    cursor: help;
-}
-
-.comment-tooltip {
-    visibility: hidden;
-    position: absolute;
-    z-index: 1000;
-    background-color: #333;
-    color: white;
-    text-align: left;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    white-space: pre-wrap;
-    max-width: 300px;
-    word-wrap: break-word;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.comment-tooltip::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #333 transparent transparent transparent;
-}
-
-.comment-cell:hover .comment-tooltip {
-    visibility: visible;
-    opacity: 1;
-}
-
-/* Status indicators */
-.status-passed {
-    color: #4CAF50;
-    font-weight: bold;
-}
-
-.status-failed {
-    color: #f44336;
-    font-weight: bold;
-}
-
-.status-passed::before {
-    content: "✓ ";
-    color: #4CAF50;
-}
-
-.status-failed::before {
-    content: "✗ ";
-    color: #f44336;
-}
-
-@media screen and (max-width: 800px) {
-    .logs-table th,
-    .logs-table td {
-        font-size: 0.75rem;
-    }
-    
-    .comment-cell {
-        max-width: 100px;
-    }
-    
-    .comment-tooltip {
-        max-width: 250px;
-        font-size: 12px;
-    }
+  .grade-top { 
+    grid-template-columns: 1fr; 
+    gap: 10px; 
+  }
+  
+  .grade-left, .grade-right { 
+    gap: 4px; 
+  }
+  
+  .grade-center { 
+    gap: 4px; 
+  }
+  
+  .grade-line { 
+    font-size: 0.9rem; 
+  }
 }
 
 @media screen and (max-width: 500px) {
-    .logs-table th,
-    .logs-table td {
-        font-size: 0.5rem;
-    }
-    
-    .comment-cell {
-        max-width: 80px;
-    }
-    
-    .comment-tooltip {
-        max-width: 200px;
-        font-size: 11px;
-    }
+  .button {
+    font-size: 0.75rem;
+  }
+
+  .grade-line {
+    font-size: 0.8rem;
+  }
 }

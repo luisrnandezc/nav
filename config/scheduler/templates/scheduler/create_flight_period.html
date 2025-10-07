@@ -19,6 +19,12 @@
             <form method="post">
                 {% csrf_token %}
                 <div class="form-row">
+                    <label for="id_aircraft">{{ form.aircraft.label }}</label>
+                    <div class="form-field">
+                        {{ form.aircraft }}
+                    </div>
+                </div>
+                <div class="form-row">
                     <label for="id_start_date">{{ form.start_date.label }}</label>
                     <div class="form-field">
                         {{ form.start_date }}
@@ -36,10 +42,10 @@
                         <div id="period-duration" class="duration-display">0 días</div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <label for="id_aircraft">{{ form.aircraft.label }}</label>
-                    <div class="form-field">
-                        {{ form.aircraft }}
+                <div class="form-row checkbox-row">
+                    <label for="id_for_navigation">{{ form.for_navigation.label }}</label>
+                    <div class="form-field checkbox-field">
+                        {{ form.for_navigation }}
                     </div>
                 </div>
                 <div class="form-row checkbox-row">

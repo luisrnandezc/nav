@@ -8,10 +8,11 @@ class CreateFlightPeriodForm(forms.ModelForm):
     class Meta:
         model = FlightPeriod
         fields = [
+            'aircraft',
             'start_date',
             'end_date',
-            'aircraft',
             'is_active',
+            'for_navigation',
         ]
         widgets = {
             'start_date': DateInput(attrs={
@@ -30,20 +31,24 @@ class CreateFlightPeriodForm(forms.ModelForm):
             }),
             'is_active': forms.CheckboxInput(attrs={
                 'class': 'form-checkbox'
+            }),
+            'for_navigation': forms.CheckboxInput(attrs={
+                'class': 'form-checkbox'
             })
         }
         labels = {
             'start_date': 'Inicio (debe ser lunes):',
             'end_date': 'Cierre (debe ser domingo):',
             'aircraft': 'Aeronave:',
-            'is_active': 'Publicar:'
+            'is_active': 'Activar:',
+            'for_navigation': 'Para navegación:'
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Add CSS classes to all fields
         for field_name, field in self.fields.items():
-            if field_name != 'is_active' and field_name != 'aircraft':
+            if field_name != 'is_active' and field_name != 'aircraft' and field_name != 'for_navigation':
                 field.widget.attrs.update({
                     'class': 'form-input'
                 })

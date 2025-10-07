@@ -19,6 +19,12 @@ class FlightPeriod(models.Model):
     is_active = models.BooleanField(
         default=False,
         verbose_name="Activo",
+        help_text="Activo",
+    )
+    for_navigation = models.BooleanField(
+        default=False,
+        verbose_name="Para navegación",
+        help_text="Para navegación",
     )
     aircraft = models.ForeignKey(
         'fleet.Aircraft',
@@ -38,13 +44,16 @@ class FlightPeriod(models.Model):
         help_text="Fecha de actualización",
     )
 
-    def generate_slots(self):
+    def generate_slots(self, for_navigation=False):
         """
         Create FlightSlot objects for each day, each block, and each aircraft.
         """
         from scheduler.models import FlightSlot
 
-        blocks = ['AM', 'M', 'PM']
+        if for_navigation:
+            blocks = ['AM', 'PM']
+        else:
+            blocks = ['AM', 'M', 'PM']
         aircraft = self.aircraft
         created = 0
         
@@ -61,7 +70,8 @@ class FlightPeriod(models.Model):
                     date=current_date,
                     block=block,
                     aircraft=aircraft,
-                    status=status
+                    status=status,
+                    for_navigation=for_navigation
                 )
                 created += 1
             current_date += timedelta(days=1)
@@ -210,6 +220,11 @@ class FlightSlot(models.Model):
         default='available',
         verbose_name="Estatus",
         help_text="Estatus del slot",
+    )
+    for_navigation = models.BooleanField(
+        default=False,
+        verbose_name="Para navegación",
+        help_text="Slot para navegación",
     )
     #endregion
 

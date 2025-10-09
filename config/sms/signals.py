@@ -4,6 +4,7 @@ from .models import ReportAnalysis
 from django.core.mail import EmailMessage
 from django.conf import settings
 import logging
+import json
 
 logger = logging.getLogger('sms.signals')
 
@@ -19,9 +20,7 @@ Probabilidad: {probability}
 
 Valor alfanumérico: {value}
 
-Análisis de riesgo: {risk_analysis}
-
-Recomendaciones: {recommendations}
+Para ver el análisis completo de riesgos y recomendaciones, por favor acceda al sistema SMS.
 
 Atentamente,
 SARA
@@ -45,9 +44,7 @@ def send_sms_analysis_email(sender, instance, created, **kwargs):
         message_body = SMS_NOTIFICATION_MESSAGE.format(
             severity=instance.severity,
             probability=instance.probability,
-            value=instance.value,
-            risk_analysis=instance.risk_analysis,
-            recommendations=instance.recommendations
+            value=instance.value
         )
 
         email = EmailMessage(

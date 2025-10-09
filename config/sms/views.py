@@ -66,6 +66,7 @@ def run_sms_voluntary_report_analysis(custom_prompt=None):
             reasoning = {"effort": "medium"},
             text = {"verbosity": "medium"},
             instructions = (
+                """
                 "Eres un experto en SMS (Safety Management System) y estás encargado de "
                 "analizar reportes de seguridad operacional para una escuela de aviación. "
                 "Debes ejercer tu función de analista tomando como base los siguientes documentos: "
@@ -81,20 +82,30 @@ def run_sms_voluntary_report_analysis(custom_prompt=None):
                 "4. Utiliza un tono formal y profesional. "
 
                 "IMPORTANTE: Responde ÚNICAMENTE con un JSON válido. NO incluyas texto explicativo antes o después del JSON. "
+                " "risk_analysis" y "recommendations" deben ser arreglos de objetos, no strings. "
                 "El JSON debe tener exactamente esta estructura: "
-                '{ '
-                    '"is_valid": "SI", '
-                    '"severity": "C", '
-                    '"probability": "3", '
-                    '"value": "C3", '
-                    '"risk_analysis": "Análisis detallado de riesgos del reporte", '
-                    '"recommendations": "Recomendaciones específicas para mejorar la seguridad operacional" '
-                '} '
+                    [ 
+                        {
+                            "is_valid": "SI",
+                            "severity": "C",
+                            "probability": "3", 
+                            "value": "C3",
+                            "risk_analysis": [
+                                {"relevance": "high", "text": "Riesgo 1"},
+                                {"relevance": "medium", "text": "Riesgo 2"},
+                                {"relevance": "low", "text": "Riesgo 3"}
+                            ],
+                            "recommendations": [
+                                {"relevance": "high", "text": "Recomendación 1"},
+                                {"relevance": "medium", "text": "Recomendación 2"},
+                                {"relevance": "low", "text": "Recomendación 3"}
+                            ]
+                        } 
+                    ]
                 "NOTA: Reemplaza los valores de ejemplo con los valores reales para este reporte específico."
-            ),
+            """),
             input=custom_prompt,
         )
-
         # Extract the content from the response
         content = response.output_text
         return content

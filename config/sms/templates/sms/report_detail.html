@@ -132,17 +132,23 @@
             <div class="info-section">
               <h2 class="section-title">Análisis de Riesgos</h2>
               <div class="info-item">
-                <label class="info-label">Análisis de Riesgos</label>
+                <div class="section-header">
+                  <label class="info-label">Análisis de Riesgos</label>
+                  <button type="button" class="add-btn" onclick="addNewRisk()">+ Agregar Riesgo</button>
+                </div>
                 {% if report.risk_analysis %}
                     <div class="risk-analysis-list">
                         {% for risk in report.risk_analysis %}
-                            <div class="risk-item relevance-{{ risk.relevance }}">
+                            <div class="risk-item relevance-{{ risk.relevance }}" data-index="{{ forloop.counter0 }}">
                                 <div class="risk-relevance">
                                     <span class="relevance-badge {{ risk.relevance }}">
-                                        {% if risk.relevance == 'high' %}Alta{% elif risk.relevance == 'medium' %}Media{% else %}Baja{%endif%}
+                                        {% if risk.relevance == 'high' %}Alta{% elif risk.relevance == 'medium' %}Media{% else %}Baja{% endif %}
                                     </span>
                                 </div>
-                                <div class="risk-text">{{ risk.text }}</div>
+                                <div class="risk-text">
+                                    {{ risk.text }}
+                                </div>
+                                <button type="button" class="delete-btn" title="Eliminar riesgo">×</button>
                             </div>
                         {% endfor %}
                     </div>
@@ -156,11 +162,14 @@
             <div class="info-section">
               <h2 class="section-title">Recomendaciones</h2>
               <div class="info-item">
-                <label class="info-label">Recomendaciones</label>
+                <div class="section-header">
+                  <label class="info-label">Recomendaciones</label>
+                  <button type="button" class="add-btn" onclick="addNewRecommendation()">+ Agregar Recomendación</button>
+                </div>
                 {% if report.recommendations %}
                     <div class="recommendations-list">
                         {% for recommendation in report.recommendations %}
-                            <div class="recommendation-item relevance-{{ recommendation.relevance }}">
+                            <div class="recommendation-item relevance-{{ recommendation.relevance }}" data-index="{{ forloop.counter0 }}">
                                 <div class="recommendation-relevance">
                                     <span class="relevance-badge {{ recommendation.relevance }}">
                                         {% if recommendation.relevance == 'high' %}Alta{% elif recommendation.relevance == 'medium' %}Media{% else %}Baja{% endif %}
@@ -169,6 +178,7 @@
                                 <div class="recommendation-text">
                                     {{ recommendation.text }}
                                 </div>
+                                <button type="button" class="delete-btn" title="Eliminar recomendación">×</button>
                             </div>
                         {% endfor %}
                     </div>

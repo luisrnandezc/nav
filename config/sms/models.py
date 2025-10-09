@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+import json
 
 class VoluntaryReport(models.Model):
     """
@@ -159,13 +160,15 @@ class ReportAnalysis(models.Model):
         verbose_name="Valor alfanumérico",
         help_text="Combinación de severidad y probabilidad (ej: C4, D3)"
     )
-    risk_analysis = models.TextField(
+    risk_analysis = models.JSONField(
         verbose_name="Análisis de riesgos",
-        max_length=5000,
+        default=list,
+        help_text="Lista de análisis de riesgos con relevance y text"
     )
-    recommendations = models.TextField(
+    recommendations = models.JSONField(
         verbose_name="Recomendaciones",
-        max_length=5000,
+        default=list,
+        help_text="Lista de recomendaciones con relevance y text"
     )
 
     # Timestamps
@@ -182,3 +185,23 @@ class ReportAnalysis(models.Model):
         
     def __str__(self):
         return "{} {}".format(self.report.date, self.report.area)
+    
+    def get_risk_analysis_by_relevance(self, relevance):
+        """Get risk analysis items filtered by relevance level"""
+        if not self.risk_analysis:
+            return []
+        return [item for item in self.risk_analysis if item.get('relevance') == relevance]
+    
+    def get_recommendations_by_relevance(self, relevance):
+        """Get recommendations filtered by relevance level"""
+        if not self.recommendations:
+            return []
+        return [item for item in self.recommendations if item.get('relevance') == relevance]
+    
+    def get_high_priority_risks(self):
+        """Get high priority risk analysis items"""
+        return self.get_risk_analysis_by_relevance('high')
+    
+    def get_high_priority_recommendations(self):
+        """Get high priority recommendations"""
+        return self.get_recommendations_by_relevance('high')

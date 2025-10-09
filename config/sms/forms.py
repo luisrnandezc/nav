@@ -40,11 +40,6 @@ class SMSVoluntaryReportForm(forms.ModelForm):
             self.fields['first_name'].initial = user.first_name
             self.fields['last_name'].initial = user.last_name
 
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        instance.save()
-        return instance
-
     def clean(self):
         cleaned_data = super().clean()
         is_anonymous = cleaned_data.get('is_anonymous') == 'YES'
@@ -62,22 +57,17 @@ class SMSAnalysisEditForm(forms.ModelForm):
     class Meta:
         model = ReportAnalysis
         fields = [
-            'is_valid', 'severity', 'probability', 
-            'risk_analysis', 'recommendations'
+            'is_valid', 'severity', 'probability'
         ]
         
         labels = {
             'is_valid': 'Validez del Reporte',
             'severity': 'Nivel de Severidad',
             'probability': 'Nivel de Probabilidad', 
-            'risk_analysis': 'Análisis de Riesgos',
-            'recommendations': 'Recomendaciones',
         }
         
         widgets = {
             'is_valid': forms.Select(attrs={'class': 'form-field'}),
-            'risk_analysis': forms.Textarea(attrs={'class': 'form-field', 'rows': 8}),
-            'recommendations': forms.Textarea(attrs={'class': 'form-field', 'rows': 8}),
         }
     
     def __init__(self, *args, **kwargs):

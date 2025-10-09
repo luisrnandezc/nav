@@ -1,9 +1,13 @@
 import os
-from django.shortcuts import render, redirect
+import json
+from django.shortcuts import render, redirect, get_object_or_404
 from openai import OpenAI
 from .forms import SMSVoluntaryReportForm, SMSAnalysisEditForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from .models import ReportAnalysis
 
 @login_required
@@ -154,3 +158,97 @@ def report_detail(request, report_id):
     }
     
     return render(request, 'sms/report_detail.html', context)
+
+
+# Risk Management Views
+@login_required
+@require_http_methods(["POST"])
+def delete_risk_item(request, report_id, item_index):
+    """Delete a specific risk item"""
+    try:
+        report = get_object_or_404(ReportAnalysis, id=report_id)
+        risk_analysis = list(report.risk_analysis)
+        
+        if 0 <= item_index < len(risk_analysis):
+            risk_analysis.pop(item_index)
+            report.risk_analysis = risk_analysis
+            report.save()
+            return JsonResponse({'success': True, 'message': 'Risk deleted successfully'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid item index'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_risk_item(request, report_id):
+    """Add a new risk item"""
+    try:
+        report = get_object_or_404(ReportAnalysis, id=report_id)
+        data = json.loads(request.body)
+        
+        new_risk = {
+            'relevance': data.get('relevance', 'medium'),
+            'text': data.get('text', '')
+        }
+        
+        risk_analysis = list(report.risk_analysis)
+        risk_analysis.append(new_risk)
+        report.risk_analysis = risk_analysis
+        report.save()
+        
+        return JsonResponse({
+            'success': True, 
+            'message': 'Risk added successfully',
+            'new_index': len(risk_analysis) - 1
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+# Recommendation Management Views
+@login_required
+@require_http_methods(["POST"])
+def delete_recommendation_item(request, report_id, item_index):
+    """Delete a specific recommendation item"""
+    try:
+        report = get_object_or_404(ReportAnalysis, id=report_id)
+        recommendations = list(report.recommendations)
+        
+        if 0 <= item_index < len(recommendations):
+            recommendations.pop(item_index)
+            report.recommendations = recommendations
+            report.save()
+            return JsonResponse({'success': True, 'message': 'Recommendation deleted successfully'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid item index'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_recommendation_item(request, report_id):
+    """Add a new recommendation item"""
+    try:
+        report = get_object_or_404(ReportAnalysis, id=report_id)
+        data = json.loads(request.body)
+        
+        new_recommendation = {
+            'relevance': data.get('relevance', 'medium'),
+            'text': data.get('text', '')
+        }
+        
+        recommendations = list(report.recommendations)
+        recommendations.append(new_recommendation)
+        report.recommendations = recommendations
+        report.save()
+        
+        return JsonResponse({
+            'success': True, 
+            'message': 'Recommendation added successfully',
+            'new_index': len(recommendations) - 1
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)

@@ -20,9 +20,13 @@ function initializeAddDelete() {
             e.preventDefault();
             e.stopPropagation();
             
-            if (target.onclick && target.onclick.toString().includes('addNewRisk')) {
+            // Determine item type based on which section the button is in
+            const riskSection = target.closest('.info-section').querySelector('.risk-analysis-list');
+            const recommendationSection = target.closest('.info-section').querySelector('.recommendations-list');
+            
+            if (riskSection) {
                 addNewItem('risk');
-            } else if (target.onclick && target.onclick.toString().includes('addNewRecommendation')) {
+            } else if (recommendationSection) {
                 addNewItem('recommendation');
             }
         }
@@ -213,62 +217,4 @@ function updateItemIndices(itemType) {
     items.forEach((item, newIndex) => {
         item.setAttribute('data-index', newIndex);
     });
-}
-
-// Django Form Handling
-function initializeDjangoForm() {
-    const form = document.querySelector('.analysis-edit-form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            submitDjangoForm(form);
-            return false;
-        });
-    }
-}
-
-function submitDjangoForm(form) {
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
-    
-    // Show loading state
-    submitButton.textContent = 'Guardando...';
-    submitButton.disabled = true;
-    
-    const formData = new FormData(form);
-    
-    fetch(form.action || window.location.href, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        }
-    })
-    .then(response => {
-        if (response.ok) {
-            // Redirect to SMS dashboard
-            window.location.href = '/sms/';
-        } else {
-            alert('Error al guardar el análisis');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al guardar el análisis');
-    })
-    .finally(() => {
-        // Restore button state
-        submitButton.textContent = originalText;
-        submitButton.disabled = false;
-    });
-}
-
-// Legacy functions for backward compatibility (can be removed later)
-function addNewRisk() {
-    addNewItem('risk');
-}
-
-function addNewRecommendation() {
-    addNewItem('recommendation');
 }

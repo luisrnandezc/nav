@@ -81,11 +81,11 @@ class SMSAnalysisEditForm(forms.ModelForm):
         self.fields['severity'] = forms.ChoiceField(
             choices=[
                 ('', 'Seleccione severidad'),
-                ('A', 'A - Insignificante'),
-                ('B', 'B - Marginal'),
-                ('C', 'C - Significativo'),
-                ('D', 'D - Crítico'),
-                ('E', 'E - Catastrófico'),
+                ('A', 'A - Catastrófico'),
+                ('B', 'B - Peligroso'),
+                ('C', 'C - Grave'),
+                ('D', 'D - Leve'),
+                ('E', 'E - Insignificante'),
             ],
             widget=forms.Select(attrs={'class': 'form-field'}),
             label='Nivel de Severidad',
@@ -96,9 +96,9 @@ class SMSAnalysisEditForm(forms.ModelForm):
         self.fields['probability'] = forms.ChoiceField(
             choices=[
                 ('', 'Seleccione probabilidad'),
-                ('1', '1 - Improbable'),
-                ('2', '2 - Remoto'),
-                ('3', '3 - Probable'),
+                ('1', '1 - Sumamente improbable'),
+                ('2', '2 - Improbable'),
+                ('3', '3 - Remoto'),
                 ('4', '4 - Ocasional'),
                 ('5', '5 - Frecuente'),
             ],

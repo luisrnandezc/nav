@@ -125,8 +125,7 @@ def report_detail(request, report_id):
         form = SMSAnalysisEditForm(request.POST, instance=report)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Análisis actualizado exitosamente.')
-            return redirect('sms:report_detail', report_id=report_id)
+            return redirect('sms:report_list')
         else:
             messages.error(request, 'Por favor corrija los errores en el formulario.')
     else:

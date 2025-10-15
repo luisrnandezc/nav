@@ -16,55 +16,51 @@
         </div>
 
         <div class="main-container">
-            <div class="logs-container">
-                <h1>Registro de reportes SMS</h1>
-                <div class="logs-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Reporte</th>
-                                <th>Área</th>
-                                <th>Valor</th>
-                                <th>Estatus</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for report in reports %}
-                            <tr class="clickable-row" data-href="{% url 'sms:report_detail' report.id %}">
-                                <td>{{ report.report.date|date:"d/m/Y" }}</td>
-                                <td>{{ report.report.description|truncatechars:100 }}</td>
-                                <td>{{ report.report.area }}</td>
-                                <td>{{ report.value }}</td>
-                                <td class="{% if report.is_valid == 'YES' %}status-passed{% else %}status-failed{% endif %}">
-                                    {% if report.is_valid == 'YES' %}Válido{% else %}No válido{% endif %}
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="6" style="text-align: center;">No hay registros de reportes disponibles</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+            <div class="reports-container">
+                <div class="reports-header">
+                    <h1>Reportes SMS</h1>
+                </div>
+
+                <div class="reports-list-container">
+                    <div class="reports-section">
+                        <h2>Últimos 10 reportes analizados</h2>
+                        <div class="reports-list">
+                            {% for report in reports %}
+                                <div class="report-card {% if report.is_valid == 'YES' %}status-valid{% else %}status-invalid{% endif %}">
+                                    <div class="report-top">
+                                        <div class="report-left">
+                                            <div class="report-line"><span class="report-label">Fecha:</span> {{ report.report.date|date:"d/m/Y" }}</div>
+                                            <div class="report-line"><span class="report-label">Hora:</span> {{ report.report.time|default:"N/A" }}</div>
+                                            <div class="report-line"><span class="report-label">Área:</span> {{ report.report.area|default:"N/A" }}</div>
+                                        </div>
+                                        <div class="report-center">
+                                            <div class="report-line"><span class="report-label">Severidad:</span> {{ report.severity|default:"N/A" }}</div>
+                                            <div class="report-line"><span class="report-label">Probabilidad:</span> {{ report.probability|default:"N/A" }}</div>
+                                            <div class="report-line"><span class="report-label">Valor:</span> {{ report.value|default:"N/A" }}</div>
+                                        </div>
+                                        <div class="report-right">
+                                            <div class="report-line"><span class="report-label">Estado:</span> 
+                                                <span class="badge {% if report.is_valid == 'YES' %}badge-valid{% else %}badge-invalid{% endif %}">
+                                                    {% if report.is_valid == 'YES' %}Válido{% else %}No válido{% endif %}
+                                                </span>
+                                            </div>
+                                            <div class="report-line"><span class="report-label">Analizado:</span> {{ report.created_at|date:"d/m/Y H:i" }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="report-description">
+                                        <div class="report-line"><span class="report-label">Descripción:</span> {{ report.report.description|truncatechars:150 }}</div>
+                                    </div>
+                                    <div class="report-actions">
+                                        <a href="{% url 'sms:report_detail' report.id %}" class="view-btn">Ver Detalles</a>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="no-reports">No hay reportes disponibles</div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <script>
-            // Make table rows clickable
-            document.addEventListener('DOMContentLoaded', function() {
-                const clickableRows = document.querySelectorAll('.clickable-row');
-                
-                clickableRows.forEach(function(row) {
-                    row.addEventListener('click', function() {
-                        const href = this.getAttribute('data-href');
-                        if (href) {
-                            window.location.href = href;
-                        }
-                    });
-                });
-            });
-        </script>
     </body>
 </html>

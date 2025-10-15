@@ -211,3 +211,14 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.getenv('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# SMS prompt
+SMS_PROMPT_PATH = os.getenv('SMS_PROMPT_PATH')
+
+SMS_PROMPT = ''
+if SMS_PROMPT_PATH:
+    prompt_full_path = os.path.join(BASE_DIR, SMS_PROMPT_PATH)
+    with open(prompt_full_path, 'r', encoding='utf-8') as f:
+        SMS_PROMPT = f.read()
+else:
+    raise RuntimeError("SMS_PROMPT_PATH is not set in the .env file")

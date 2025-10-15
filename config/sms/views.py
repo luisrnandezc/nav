@@ -1,5 +1,6 @@
 import os
 import json
+from types import SimpleNamespace
 from django.shortcuts import render, redirect, get_object_or_404
 from openai import OpenAI
 from .forms import SMSVoluntaryReportForm, SMSAnalysisEditForm
@@ -9,6 +10,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .models import ReportAnalysis
+from django.conf import settings
+
 
 @login_required
 def main_sms(request):
@@ -24,6 +27,7 @@ def voluntary_report(request):
     """
     A view to handle the SMS voluntary report.
     """
+
     if request.method == 'POST':
         is_anonymous = request.POST.get('is_anonymous') == 'YES'
 
@@ -48,13 +52,27 @@ def voluntary_report(request):
 
     return render(request, 'sms/voluntary_report.html', {'form': form})
 
-def run_sms_voluntary_report_analysis(custom_prompt=None):
+def run_sms_voluntary_report_analysis(report):
     """
-    A function to run the SMS voluntary report analysis.
+    A function to run the AI analysis for the SMS voluntary report.
     
     Args:
-        custom_prompt (str, optional): Custom prompt for voluntary report analysis
+        report (VoluntaryReport): The report to analyze
     """
+
+    # Set SMS prompt
+    base_prompt = settings.SMS_PROMPT
+
+    # Create a SimpleNamespace object to support {report.date} syntax in the prompt
+    report_ns = SimpleNamespace(
+        date=getattr(report, "date", "") or "",
+        time=getattr(report, "time", "") or "",
+        area=getattr(report, "area", "") or "",
+        description=getattr(report, "description", "") or ""
+    )
+
+    rendered_prompt = base_prompt.format(report=report_ns)
+
     # Retrieve the API key from environment variables
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
@@ -69,46 +87,8 @@ def run_sms_voluntary_report_analysis(custom_prompt=None):
             model="gpt-5-nano",
             reasoning = {"effort": "medium"},
             text = {"verbosity": "medium"},
-            instructions = (
-                """
-                "Eres un experto en SMS (Safety Management System) y estás encargado de "
-                "analizar reportes de seguridad operacional para una escuela de aviación. "
-                "Debes ejercer tu función de analista tomando como base los siguientes documentos: "
-
-                "1. Anexo 19 de la OACI "
-                "2. Documento 9859 de la OACI "
-
-                "Así mismo, toma en consideración los siguientes factores: "
-
-                "1. La escuela utiliza dos aeronaves marca Piper, un PA-28-161 y un PA-28-235. "
-                "2. Es una escuela pequeña con un equipo de 8 personas y 3 instructores de vuelo."
-                "3. Las recomendaciones deben ser específicas, realistas y ajustadas al tamaño de la escuela. "
-                "4. Utiliza un tono formal y profesional. "
-
-                "IMPORTANTE: Responde ÚNICAMENTE con un JSON válido. NO incluyas texto explicativo antes o después del JSON. "
-                " "risk_analysis" y "recommendations" deben ser arreglos de objetos, no strings. "
-                "El JSON debe tener exactamente esta estructura: "
-                    [ 
-                        {
-                            "is_valid": "SI",
-                            "severity": "C",
-                            "probability": "3", 
-                            "value": "C3",
-                            "risk_analysis": [
-                                {"relevance": "high", "text": "Riesgo 1"},
-                                {"relevance": "medium", "text": "Riesgo 2"},
-                                {"relevance": "low", "text": "Riesgo 3"}
-                            ],
-                            "recommendations": [
-                                {"relevance": "high", "text": "Recomendación 1"},
-                                {"relevance": "medium", "text": "Recomendación 2"},
-                                {"relevance": "low", "text": "Recomendación 3"}
-                            ]
-                        } 
-                    ]
-                "NOTA: Reemplaza los valores de ejemplo con los valores reales para este reporte específico."
-            """),
-            input=custom_prompt,
+            instructions = base_prompt,
+            input=rendered_prompt,
         )
         # Extract the content from the response
         content = response.output_text

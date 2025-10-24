@@ -1,0 +1,92 @@
+.logs-table-container {
+    position: relative;
+}
+
+.logs-table-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.logs-table-scroll table {
+    margin: 0;
+    width: 100%;
+}
+
+.logs-table-scroll table th,
+.logs-table-scroll table td {
+    text-align: left !important;
+}
+
+.logs-table-scroll thead {
+    position: sticky;
+    top: 0;
+    background-color: rgba(20, 31, 53, 1) !important;
+    z-index: 10;
+}
+
+.logs-table-scroll thead th {
+    background-color: rgba(20, 31, 53, 1) !important;
+    color: white !important;
+    border-bottom: 1px solid #ddd;
+    font-weight: 600;
+}
+
+.load-more-container {
+    display: none;
+}
+
+.load-more-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    margin: 10px auto;
+    display: none; /* Hidden by default, shown by JavaScript when needed */
+}
+
+.load-more-btn:hover {
+    background-color: #0056b3;
+}
+
+.loading-indicator {
+    color: #666;
+    font-style: italic;
+}
+
+/* Custom scrollbar styling */
+.logs-table-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.logs-table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.logs-table-scroll::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.logs-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Simulator table styling */
+.logs-table table th {
+    background-color: rgba(20, 31, 53, 1) !important;
+    color: white !important;
+    border-bottom: 1px solid #ddd;
+    font-weight: 600;
+}
+
+.logs-table table th,
+.logs-table table td {
+    text-align: left !important;
+}

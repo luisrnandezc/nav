@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from .models import ReportAnalysis
+from .models import ReportAnalysis, VoluntaryReport, SMSAction
 from django.conf import settings
 
 
@@ -18,8 +18,16 @@ def main_sms(request):
     """
     A view to handle the SMS main page.
     """
+    # Get reports count for the gauge
+    reports_count = VoluntaryReport.objects.count()
+    
+    # Get pending SMS actions
+    pending_actions = SMSAction.objects.filter(status='PENDING').select_related('report__report', 'assigned_to').order_by('-created_at')[:10]
+    
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'reports_count': reports_count,
+        'pending_actions': pending_actions,
     }
     return render(request, 'sms/main_sms.html', context)
 
@@ -231,3 +239,39 @@ def add_recommendation_item(request, report_id):
         })
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+@login_required
+def create_actions_from_recommendations(request, report_id):
+    """
+    Create SMSAction objects from the recommendations of a ReportAnalysis.
+    """
+    try:
+        # Get the report analysis
+        report_analysis = ReportAnalysis.objects.get(id=report_id)
+        
+        # Check if user has permission to manage SMS
+        if not request.user.has_perm('accounts.can_manage_sms'):
+            messages.error(request, 'No tiene permisos para crear acciones.')
+            return redirect('sms:report_detail', report_id=report_id)
+        
+        # Check if actions have already been created
+        if report_analysis.actions_created:
+            messages.warning(request, 'Las acciones ya han sido creadas para este reporte.')
+            return redirect('sms:report_detail', report_id=report_id)
+        
+        # Create actions from recommendations
+        actions_created = SMSAction.create_actions_from_recommendations(report_analysis)
+        
+        if actions_created:
+            messages.success(request, f'Se crearon {len(actions_created)} acciones exitosamente.')
+        else:
+            messages.info(request, 'No hay recomendaciones para crear acciones.')
+        
+        return redirect('sms:report_detail', report_id=report_id)
+        
+    except ReportAnalysis.DoesNotExist:
+        messages.error(request, 'El análisis de reporte no existe.')
+        return redirect('sms:report_list')
+    except Exception as e:
+        messages.error(request, f'Error al crear acciones: {str(e)}')
+        return redirect('sms:report_detail', report_id=report_id)

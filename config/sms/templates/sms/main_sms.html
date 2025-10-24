@@ -8,6 +8,7 @@
     <title>NAV | SARA</title>
     <link href="{% static 'main_sms.css' %}" rel="stylesheet" />
     <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/main_sms_dynamics.js' %}"></script>
   </head>
 
   <body>
@@ -17,15 +18,42 @@
 
     <div class="main-container">
       <div class="data-container">
-        <div class="data-header">
-          <h1>Sistema SARA</h1>
-        </div>
-        <div class="user-data">
-          <p>Reportes generados:</p>
-          <p>Reportes pendientes:</p>
-          <p>Acciones completadas:</p>
-          <p>Acciones pendientes:</p>
-          <p>Estatus SMS:</p>
+        <div class="sms-actions-container">
+          <div class="actions-header">
+            <h2>Acciones Pendientes: <span class="actions-count">{{ pending_actions|length }}</span></h2>
+          </div>
+          
+          <div class="actions-list">
+            {% for action in pending_actions %}
+              <div class="action-card">
+                <div class="action-header">
+                  <div class="action-date">{{ action.created_at|date:"d/m" }}</div>
+                  <div class="action-status status-pending">Pendiente</div>
+                </div>
+                <div class="action-description">
+                  {{ action.description|truncatechars:80 }}
+                </div>
+                <div class="action-footer">
+                  <div class="action-report">
+                    Reporte: {{ action.report.report.date|date:"d/m" }} - {{ action.report.report.get_area_display }}
+                  </div>
+                  {% if action.assigned_to %}
+                    <div class="action-assigned">
+                      Asignado a: {{ action.assigned_to.username }}
+                    </div>
+                  {% else %}
+                    <div class="action-assigned not-assigned">
+                      Sin asignar
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% empty %}
+              <div class="no-actions">
+                <p>No hay acciones pendientes</p>
+              </div>
+            {% endfor %}
+          </div>
         </div>
       </div>
       <div class="dashboard-container">

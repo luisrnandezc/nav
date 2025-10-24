@@ -207,9 +207,16 @@
               </div>
             </div>
 
-            <!-- Single Save Button -->
+            <!-- Action Buttons -->
             <div class="form-actions">
               <button type="submit" class="save-button">Guardar Cambios</button>
+              {% if report.recommendations %}
+                {% if report.actions_created %}
+                  <span class="create-actions-button disabled">Acciones Creadas</span>
+                {% else %}
+                  <a href="{% url 'sms:create_actions' report.id %}" class="create-actions-button">Crear Acciones</a>
+                {% endif %}
+              {% endif %}
             </div>
           </form>
         </div>

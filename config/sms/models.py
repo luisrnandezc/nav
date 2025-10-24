@@ -1,20 +1,22 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.conf import settings
+from datetime import timedelta, date
 import json
+
 
 class VoluntaryReport(models.Model):
     """
     Voluntary Report Model for Safety Management System (SMS)
     """
 
-    # Anonymous Choices
+    #region Choices
     ANONYMOUS_CHOICES = [
         ('YES', 'SI'),
         ('NO', 'NO'),
     ]
 
-    # Role Choices
     ROLE_CHOICES = [
         ('DIRECTOR', 'Dirección'),
         ('OPERATIONS', 'Operaciones'),
@@ -25,7 +27,6 @@ class VoluntaryReport(models.Model):
         ('OTHER', 'Otro'),
     ]
 
-    # Status Choices for AI Analysis
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente de análisis'),
         ('PROCESSING', 'Analizando con IA'),
@@ -33,7 +34,6 @@ class VoluntaryReport(models.Model):
         ('FAILED', 'Error en análisis'),
     ]
 
-    # Area Choices
     AREA_CHOICES = [
         ('ADMIN', 'Sede administrativa'),
         ('PLATFORM', 'Plataforma'),
@@ -41,8 +41,9 @@ class VoluntaryReport(models.Model):
         ('OPERATIONS', 'Operaciones'),
         ('OTHER', 'Otro'),
     ]
+    #endregion
     
-    # Report data.
+    #region Fields
     is_anonymous = models.CharField(
         max_length=3,
         choices=ANONYMOUS_CHOICES,
@@ -77,22 +78,16 @@ class VoluntaryReport(models.Model):
         default=timezone.localtime,
         verbose_name="Hora",
     )
-
-    # Area of danger.
     area = models.CharField(
         max_length=20,
         choices=AREA_CHOICES,
         default='OPERATIONS',
         verbose_name="Área del peligro"
     )
-
-    # Description of danger.
     description = models.TextField(
         max_length=1000,
         verbose_name="Descripción del peligro"
     )
-
-    # AI Analysis Status
     ai_analysis_status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -100,8 +95,6 @@ class VoluntaryReport(models.Model):
         verbose_name="Estado del análisis de IA",
         db_index=True  # Database index for fast queries
     )
-
-    # Timestamps
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación",
@@ -114,6 +107,7 @@ class VoluntaryReport(models.Model):
         blank=True,
         null=True
     )
+    #endregion
 
     class Meta:
         verbose_name = "Reporte voluntario"
@@ -131,12 +125,12 @@ class ReportAnalysis(models.Model):
     Report Analysis Model for Safety Management System (SMS)
     """
 
-    # Area Choices
     VALIDITY_CHOICES = [
         ('YES', 'SI'),
         ('NO', 'NO'),
     ]
 
+    #region Fields
     report = models.ForeignKey(
         VoluntaryReport,
         on_delete=models.CASCADE,
@@ -149,11 +143,11 @@ class ReportAnalysis(models.Model):
     )
     severity = models.CharField(
         max_length=1,
-        verbose_name="Nivel de severidad"
+        verbose_name="Severidad"
     )
     probability = models.CharField(
         max_length=1,
-        verbose_name="Nivel de probabilidad"
+        verbose_name="Probabilidad"
     )
     value = models.CharField(
         max_length=2,
@@ -170,14 +164,17 @@ class ReportAnalysis(models.Model):
         default=list,
         help_text="Lista de recomendaciones con relevance y text"
     )
-
-    # Timestamps
+    actions_created = models.BooleanField(
+        default=False,
+        verbose_name="Acciones creadas"
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de análisis",
         blank=True,
         null=True
     )
+    #endregion
 
     class Meta:
         verbose_name = "Análisis de reporte"
@@ -185,23 +182,90 @@ class ReportAnalysis(models.Model):
         
     def __str__(self):
         return "{} {}".format(self.report.date, self.report.area)
+
+
+class SMSAction(models.Model):
+    """
+    SMS Action Model for Safety Management System (SMS)
+    """
+
+    STATUS_CHOICES = [
+        ('PENDING', 'Pendiente'),
+        ('IN_PROGRESS', 'En progreso'),
+        ('COMPLETED', 'Completada'),
+        ('OVERDUE', 'Vencida'),
+    ]
+
+    #region Fields
+    report = models.ForeignKey(
+        ReportAnalysis,
+        on_delete=models.CASCADE,
+        verbose_name="Reporte"
+    )
+    description = models.CharField(
+        max_length=1000,
+        verbose_name="Descripción"
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='PENDING',
+        verbose_name="Estatus"
+    )
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        limit_choices_to={'role': 'STAFF'},
+        verbose_name="Asignado a"
+    )
+    due_date = models.DateField(
+        verbose_name="Vencimiento",
+        blank=True,
+        null=True
+    )
+    created_at = models.DateField(
+        auto_now_add=True,
+        verbose_name="Creación"
+    )
+    #endregion
+
+    class Meta:
+        verbose_name = "Acción de SMS"
+        verbose_name_plural = "Acciones de SMS"
     
-    def get_risk_analysis_by_relevance(self, relevance):
-        """Get risk analysis items filtered by relevance level"""
-        if not self.risk_analysis:
+    def is_overdue(self):
+        """Check if the action is overdue"""
+        if self.due_date is None:
+            return True
+        return self.due_date < date.today()
+
+    def __str__(self):
+        return "{} {} {}".format(self.report.value, self.status, self.due_date)
+    
+    @classmethod
+    def create_actions_from_recommendations(cls, report_analysis):
+        """
+        Create SMSAction objects from the recommendations of a ReportAnalysis.
+        One action is created for each recommendation.
+        """
+        if not report_analysis.recommendations:
             return []
-        return [item for item in self.risk_analysis if item.get('relevance') == relevance]
-    
-    def get_recommendations_by_relevance(self, relevance):
-        """Get recommendations filtered by relevance level"""
-        if not self.recommendations:
-            return []
-        return [item for item in self.recommendations if item.get('relevance') == relevance]
-    
-    def get_high_priority_risks(self):
-        """Get high priority risk analysis items"""
-        return self.get_risk_analysis_by_relevance('high')
-    
-    def get_high_priority_recommendations(self):
-        """Get high priority recommendations"""
-        return self.get_recommendations_by_relevance('high')
+        
+        actions_created = []
+        for recommendation in report_analysis.recommendations:
+            action = cls.objects.create(
+                report=report_analysis,
+                description=recommendation.get('text', ''),
+                status='PENDING',
+                assigned_to=None,  # Can be assigned later
+                due_date=None      # Can be set later
+            )
+            actions_created.append(action)
+        
+        # Mark that actions have been created for this report analysis
+        report_analysis.actions_created = True
+        report_analysis.save()
+        
+        return actions_created

@@ -14,8 +14,9 @@ urlpatterns = [
      path('submit_flight_evaluation_120_170/', views.submit_flight_evaluation_120_170, name='flight_evaluation_120_170'),
      path('submit_flight_report/', views.submit_flight_report, name='flight_report'),
      path('submit_sim_evaluation/', views.submit_sim_evaluation, name='sim_evaluation'),
-     path('api/get_student_data/', views.get_student_data, name='get_student_data'),
-     path('api/toggle_temp_permission/', views.toggle_temp_permission, name='toggle_temp_permission'),
+    path('api/get_student_data/', views.get_student_data, name='get_student_data'),
+    path('api/toggle_temp_permission/', views.toggle_temp_permission, name='toggle_temp_permission'),
+    path('api/load_more_flights/', views.load_more_flights, name='load_more_flights'),
      path('pdf_download_waiting_page/<str:form_type>/<int:evaluation_id>/', views.pdf_download_waiting_page, name='pdf_download_waiting_page'),
      path('download_pdf/<str:form_type>/<int:evaluation_id>/', views.download_pdf, name='download_pdf'),
 ]

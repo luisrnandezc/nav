@@ -61,26 +61,26 @@ def instructor_flightlog(request):
     # Get instructor's national ID
     instructor_id = user.national_id
     
-    # Query flight evaluations for the instructor
-    flight_logs = []
-    flight_logs.extend(FlightEvaluation0_100.objects.filter(
+    # Query flight evaluations for the instructor (load 90 initially)
+    all_flight_logs = []
+    all_flight_logs.extend(FlightEvaluation0_100.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')[:5])
-    flight_logs.extend(FlightEvaluation100_120.objects.filter(
+    ))
+    all_flight_logs.extend(FlightEvaluation100_120.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')[:5])
-    flight_logs.extend(FlightEvaluation120_170.objects.filter(
+    ))
+    all_flight_logs.extend(FlightEvaluation120_170.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')[:5])
+    ))
 
-    # Sort by date and take last 10
-    flight_logs.sort(key=lambda x: x.session_date, reverse=True)
-    flight_logs = flight_logs[:10]
+    # Sort by date (newest first) and take last 90
+    all_flight_logs.sort(key=lambda x: x.session_date, reverse=True)
+    flight_logs = all_flight_logs[:90]
     
-    # Fetch simulator logs for the instructor (last 10)
+    # Fetch simulator logs for the instructor (last 90)
     simulator_logs = SimEvaluation.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')[:10]
+    ).order_by('-session_date')[:90]
     
     context = {
         'flight_logs': flight_logs,
@@ -89,6 +89,53 @@ def instructor_flightlog(request):
     }
     
     return render(request, 'fms/instructor_flightlog.html', context)
+
+@login_required
+@require_http_methods(["GET"])
+def load_more_flights(request):
+    """
+    AJAX endpoint to load more flight logs for instructor flightlog page.
+    """
+    user = request.user
+    instructor_id = user.national_id
+    
+    # Get offset from request
+    offset = int(request.GET.get('offset', 0))
+    limit = int(request.GET.get('limit', 30))  # Load 30 flights per request
+    
+    # Get all flight evaluations for the instructor and sort by date
+    all_flight_logs = []
+    all_flight_logs.extend(FlightEvaluation0_100.objects.filter(
+        instructor_id=instructor_id
+    ))
+    all_flight_logs.extend(FlightEvaluation100_120.objects.filter(
+        instructor_id=instructor_id
+    ))
+    all_flight_logs.extend(FlightEvaluation120_170.objects.filter(
+        instructor_id=instructor_id
+    ))
+
+    # Sort by date (newest first)
+    all_flight_logs.sort(key=lambda x: x.session_date, reverse=True)
+    
+    # Apply pagination
+    flight_logs = all_flight_logs[offset:offset+limit]
+    
+    # Check if there are more flights available
+    total_flights = len(all_flight_logs)
+    has_more = (offset + len(flight_logs)) < total_flights
+    
+    # Render the flight rows HTML
+    flight_rows_html = render_to_string('fms/partials/flight_log_rows.html', {
+        'flight_logs': flight_logs
+    })
+    
+    return JsonResponse({
+        'html': flight_rows_html,
+        'has_more': has_more,
+        'loaded_count': len(flight_logs),
+        'total_count': total_flights
+    })
 
 @login_required
 def fms_dashboard(request):

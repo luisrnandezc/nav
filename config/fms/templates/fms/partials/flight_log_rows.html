@@ -1,0 +1,18 @@
+{% for log in flight_logs %}
+<tr>
+    <td>{{ log.session_date|date:"d/m/Y" }}</td>
+    <td>{{ log.student_first_name }} {{ log.student_last_name }}</td>
+    <td>{{ log.aircraft.registration }}</td>
+    <td>{{ log.flight_rules }}</td>
+    <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
+    <td>{{ log.session_flight_hours }} hrs</td>
+    <td>{{ log.session_grade }}</td>
+    <td class="comment-cell" {% if log.comments %}title="{{ log.comments }}"{% endif %}>
+        {% if log.comments %}
+            {{ log.comments|truncatechars:15 }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}

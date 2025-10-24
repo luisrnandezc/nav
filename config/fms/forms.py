@@ -3,6 +3,7 @@ from django.db import transaction
 from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation, FlightReport
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
+import decimal
 
 class SimEvaluationForm(forms.ModelForm):
     # Add a custom simulator field that uses ModelChoiceField
@@ -599,8 +600,8 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
-            fuel_consumed = self.cleaned_data.get('fuel_consumed')
             aircraft = self.cleaned_data.get('aircraft')
+            fuel_consumed = self.cleaned_data.get('fuel_consumed')
             fuel_cost = aircraft.fuel_cost
 
             if student_id and session_flight_hours:
@@ -626,18 +627,22 @@ class FlightEvaluation0_100Form(forms.ModelForm):
         student_id = cleaned_data.get('student_id')
         initial_hourmeter = cleaned_data.get('initial_hourmeter')
         final_hourmeter = cleaned_data.get('final_hourmeter')
+        aircraft = cleaned_data.get('aircraft')
         
         if initial_hourmeter and final_hourmeter:
             calculated_session_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
+            # Add 40% to the flight hours for the YV206E only.
+            if aircraft.registration == 'YV206E':
+                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
             if calculated_session_flight_hours < 0:
                 raise forms.ValidationError(
                     f"El horómetro final no puede ser menor que el horómetro inicial. "
                     f"Horómetro inicial: {initial_hourmeter}, "
                     f"Horómetro final: {final_hourmeter}"
                 )
-            if calculated_session_flight_hours > 10.0:
+            if calculated_session_flight_hours > 14.0:
                 raise forms.ValidationError(
-                    f"Las horas de la sesión no pueden exceder 10 horas. "
+                    f"Las horas de la sesión no pueden exceder 14 horas. "
                     f"Horas de sesión: {calculated_session_flight_hours}"
                 )
         else:
@@ -647,7 +652,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
                 f"Horómetro final: {final_hourmeter}"
             )
         cleaned_data['session_flight_hours'] = calculated_session_flight_hours
-        
+
         if student_id and calculated_session_flight_hours:
             try:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
@@ -884,8 +889,8 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
-            fuel_consumed = self.cleaned_data.get('fuel_consumed')
             aircraft = self.cleaned_data.get('aircraft')
+            fuel_consumed = self.cleaned_data.get('fuel_consumed')
             fuel_cost = aircraft.fuel_cost
 
             if student_id and session_flight_hours:
@@ -911,18 +916,22 @@ class FlightEvaluation100_120Form(forms.ModelForm):
         student_id = cleaned_data.get('student_id')
         initial_hourmeter = cleaned_data.get('initial_hourmeter')
         final_hourmeter = cleaned_data.get('final_hourmeter')
+        aircraft = cleaned_data.get('aircraft')
         
         if initial_hourmeter and final_hourmeter:
             calculated_session_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
+            # Add 40% to the flight hours for the YV206E only.
+            if aircraft.registration == 'YV206E':
+                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
             if calculated_session_flight_hours < 0:
                 raise forms.ValidationError(
                     f"El horómetro final no puede ser menor que el horómetro inicial. "
                     f"Horómetro inicial: {initial_hourmeter}, "
                     f"Horómetro final: {final_hourmeter}"
                 )
-            if calculated_session_flight_hours > 10.0:
+            if calculated_session_flight_hours > 14.0:
                 raise forms.ValidationError(
-                    f"Las horas de la sesión no pueden exceder 10 horas. "
+                    f"Las horas de la sesión no pueden exceder 14 horas. "
                     f"Horas de sesión: {calculated_session_flight_hours}"
                 )
         else:
@@ -1144,8 +1153,8 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             # Update student's accumulated hours LAST (after everything else succeeds)
             student_id = self.cleaned_data.get('student_id')
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
-            fuel_consumed = self.cleaned_data.get('fuel_consumed')
             aircraft = self.cleaned_data.get('aircraft')
+            fuel_consumed = self.cleaned_data.get('fuel_consumed')
             fuel_cost = aircraft.fuel_cost
 
             if student_id and session_flight_hours:
@@ -1165,24 +1174,28 @@ class FlightEvaluation120_170Form(forms.ModelForm):
                 aircraft.save()
 
         return instance
-
+    
     def clean(self):
         cleaned_data = super().clean()
         student_id = cleaned_data.get('student_id')
         initial_hourmeter = cleaned_data.get('initial_hourmeter')
         final_hourmeter = cleaned_data.get('final_hourmeter')
+        aircraft = cleaned_data.get('aircraft')
         
         if initial_hourmeter and final_hourmeter:
             calculated_session_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
+            # Add 40% to the flight hours for the YV206E only.
+            if aircraft.registration == 'YV206E':
+                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
             if calculated_session_flight_hours < 0:
                 raise forms.ValidationError(
                     f"El horómetro final no puede ser menor que el horómetro inicial. "
                     f"Horómetro inicial: {initial_hourmeter}, "
                     f"Horómetro final: {final_hourmeter}"
                 )
-            if calculated_session_flight_hours > 10.0:
+            if calculated_session_flight_hours > 14.0:
                 raise forms.ValidationError(
-                    f"Las horas de la sesión no pueden exceder 10 horas. "
+                    f"Las horas de la sesión no pueden exceder 14 horas. "
                     f"Horas de sesión: {calculated_session_flight_hours}"
                 )
         else:

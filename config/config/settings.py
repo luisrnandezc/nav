@@ -143,21 +143,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-# Base directory
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 # Static files settings
 STATIC_URL = '/static/'
 
 # Directory where collectstatic will place all static files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Directories where Django will look for static files
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'accounts', 'static'),
-    os.path.join(BASE_DIR, 'dashboard', 'static'),
-    os.path.join(BASE_DIR, 'fms', 'static'),
-    os.path.join(BASE_DIR, 'website', 'static'),
+    BASE_DIR / 'accounts' / 'static',
+    BASE_DIR / 'dashboard' / 'static',
+    BASE_DIR / 'fms' / 'static',
+    BASE_DIR / 'website' / 'static',
 ]
 
 # Default primary key field type
@@ -211,3 +208,14 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.getenv('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# SMS prompt
+SMS_PROMPT_PATH = os.getenv('SMS_PROMPT_PATH')
+
+SMS_PROMPT = ''
+if SMS_PROMPT_PATH:
+    prompt_full_path = os.path.join(BASE_DIR, SMS_PROMPT_PATH)
+    with open(prompt_full_path, 'r', encoding='utf-8') as f:
+        SMS_PROMPT = f.read()
+else:
+    raise RuntimeError("SMS_PROMPT_PATH is not set in the .env file")

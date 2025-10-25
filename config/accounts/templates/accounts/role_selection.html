@@ -1,0 +1,21 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Selección de Rol</title>
+    <link href="{% static 'role_selection.css' %}" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="roles-container">
+        {% for role_info in available_roles %}
+            <a href="{% url 'accounts:select_role' role_info.role %}" class="role-card">
+                <div class="role-name">{{ role_info.name }}</div>
+            </a>
+        {% endfor %}
+    </div>
+</body>
+</html>

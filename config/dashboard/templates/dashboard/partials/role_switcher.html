@@ -1,0 +1,110 @@
+{% load static %}
+
+<!-- Role Switcher Component -->
+{% if user.student_profile and user.instructor_profile or user.student_profile and user.staff_profile or user.instructor_profile and user.staff_profile %}
+<div class="role-switcher">
+    <div class="role-switcher-header">
+        <h3>Cambiar Rol</h3>
+        <p>Actualmente como: 
+            {% if active_role == 'STUDENT' %}
+                <strong>Estudiante</strong>
+            {% elif active_role == 'INSTRUCTOR' %}
+                <strong>Instructor</strong>
+            {% elif active_role == 'STAFF' %}
+                <strong>Staff</strong>
+            {% endif %}
+        </p>
+    </div>
+    <div class="role-switcher-buttons">
+        {% if user.student_profile and active_role != 'STUDENT' %}
+            <a href="{% url 'accounts:select_role' 'STUDENT' %}" class="role-switch-btn student">
+                🎓 Estudiante
+            </a>
+        {% endif %}
+        {% if user.instructor_profile and active_role != 'INSTRUCTOR' %}
+            <a href="{% url 'accounts:select_role' 'INSTRUCTOR' %}" class="role-switch-btn instructor">
+                ✈️ Instructor
+            </a>
+        {% endif %}
+        {% if user.staff_profile and active_role != 'STAFF' %}
+            <a href="{% url 'accounts:select_role' 'STAFF' %}" class="role-switch-btn staff">
+                👨‍💼 Staff
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.role-switcher {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.role-switcher-header h3 {
+    margin: 0 0 10px 0;
+    color: #495057;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.role-switcher-header p {
+    margin: 0 0 15px 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.role-switcher-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.role-switch-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.role-switch-btn.student {
+    background: #e3f2fd;
+    color: #1976d2;
+    border-color: #bbdefb;
+}
+
+.role-switch-btn.student:hover {
+    background: #bbdefb;
+    color: #0d47a1;
+}
+
+.role-switch-btn.instructor {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    border-color: #ce93d8;
+}
+
+.role-switch-btn.instructor:hover {
+    background: #ce93d8;
+    color: #4a148c;
+}
+
+.role-switch-btn.staff {
+    background: #e8f5e8;
+    color: #388e3c;
+    border-color: #a5d6a7;
+}
+
+.role-switch-btn.staff:hover {
+    background: #a5d6a7;
+    color: #1b5e20;
+}
+</style>
+{% endif %}

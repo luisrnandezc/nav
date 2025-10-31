@@ -1420,7 +1420,7 @@ class FlightEvaluation0_100(models.Model):
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only
             if self.aircraft.registration == 'YV206E':
-                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
+                calculated_session_flight_hours = round(calculated_session_flight_hours * self.aircraft.hour_correction_factor, 1)
             self.session_flight_hours = calculated_session_flight_hours
         super().save(*args, **kwargs)
     
@@ -2031,7 +2031,7 @@ class FlightEvaluation100_120(models.Model):
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only
             if self.aircraft.registration == 'YV206E':
-                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
+                calculated_session_flight_hours = round(calculated_session_flight_hours * self.aircraft.hour_correction_factor, 1)
             self.session_flight_hours = calculated_session_flight_hours
         super().save(*args, **kwargs)
 
@@ -2567,7 +2567,7 @@ class FlightEvaluation120_170(models.Model):
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only
             if self.aircraft.registration == 'YV206E':
-                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
+                calculated_session_flight_hours = round(calculated_session_flight_hours * self.aircraft.hour_correction_factor, 1)
             self.session_flight_hours = calculated_session_flight_hours
         super().save(*args, **kwargs)
 

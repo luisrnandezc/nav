@@ -633,7 +633,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             calculated_session_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only.
             if aircraft.registration == 'YV206E':
-                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
+                calculated_session_flight_hours = round(calculated_session_flight_hours * aircraft.hour_correction_factor, 1)
             if calculated_session_flight_hours < 0:
                 raise forms.ValidationError(
                     f"El horómetro final no puede ser menor que el horómetro inicial. "
@@ -922,7 +922,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             calculated_session_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only.
             if aircraft.registration == 'YV206E':
-                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
+                calculated_session_flight_hours = round(calculated_session_flight_hours * aircraft.hour_correction_factor, 1)
             if calculated_session_flight_hours < 0:
                 raise forms.ValidationError(
                     f"El horómetro final no puede ser menor que el horómetro inicial. "
@@ -1186,7 +1186,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             calculated_session_flight_hours = round(final_hourmeter - initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only.
             if aircraft.registration == 'YV206E':
-                calculated_session_flight_hours = round(calculated_session_flight_hours * decimal.Decimal('1.4'), 1)
+                calculated_session_flight_hours = round(calculated_session_flight_hours * aircraft.hour_correction_factor, 1)
             if calculated_session_flight_hours < 0:
                 raise forms.ValidationError(
                     f"El horómetro final no puede ser menor que el horómetro inicial. "

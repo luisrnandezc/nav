@@ -80,7 +80,7 @@ class AircraftAdmin(admin.ModelAdmin):
             'fields': ('is_active', 'is_available', 'maintenance_status', 'total_hours')
         }),
         ('Scheduling Configuration', {
-            'fields': ('max_daily_slots', 'hourly_rate', 'fuel_cost', 'is_advanced')
+            'fields': ('max_daily_slots', 'hourly_rate', 'fuel_cost', 'hour_correction_factor', 'is_advanced')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),

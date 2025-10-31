@@ -142,6 +142,13 @@ class Aircraft(models.Model):
         verbose_name="$/Litro",
         help_text="Precio del combustible por litro"
     )
+    hour_correction_factor = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
+        default=1.3,
+        verbose_name="Factor de corrección de horas",
+        help_text="Factor de corrección de horas para la aeronave"
+    )
     notes = models.TextField(
         blank=True, 
         verbose_name="Notas"

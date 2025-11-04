@@ -64,12 +64,16 @@
                       <span class="detail-value">{{ student.course_edition }}</span>
                     </div>
                     <div class="detail-item">
-                      <span class="detail-label">Horas de Vuelo:</span>
-                      <span class="detail-value">{{ student.flight_hours }}h</span>
+                      <span class="detail-label">Horas Totales:</span>
+                      <span class="detail-value">{{ student.flight_hours }}</span>
                     </div>
                     <div class="detail-item">
                       <span class="detail-label">Balance:</span>
                       <span class="detail-value {% if student.balance < 500 %}low-balance{% elif student.balance > 500 %}high-balance{% endif %}">${{ student.balance }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Horas NAV:</span>
+                      <span class="detail-value">{{ student.nav_flight_hours }}</span>
                     </div>
                     {% if student.has_temp_permission %}
                     <div class="detail-item">

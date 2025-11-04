@@ -370,6 +370,7 @@ def student_list(request):
                 'course_edition': profile.current_course_edition,
                 'balance': profile.balance,
                 'flight_hours': profile.flight_hours,
+                'nav_flight_hours': profile.nav_flight_hours,
                 'sim_hours': profile.sim_hours,
                 'student_license_type': profile.student_license_type,
                 'has_temp_permission': profile.has_temp_permission,

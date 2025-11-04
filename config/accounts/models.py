@@ -143,7 +143,7 @@ class StudentProfile(models.Model):
         max_digits=4,
         decimal_places=1,
         validators=[MinValueValidator(0)],
-        verbose_name='Horas de simulador',
+        verbose_name='Horas sim',
         default=0,
     )
     flight_hours = models.DecimalField(
@@ -151,6 +151,13 @@ class StudentProfile(models.Model):
         decimal_places=1,
         validators=[MinValueValidator(0)],
         verbose_name='Horas de vuelo',
+        default=0,
+    )
+    nav_flight_hours = models.DecimalField(
+        max_digits=5,
+        decimal_places=1,
+        validators=[MinValueValidator(0)],
+        verbose_name='Horas NAV',
         default=0,
     )
     balance = models.DecimalField(

@@ -608,6 +608,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 # Update student's accumulated flight hours and flight balance
                 student_profile.flight_hours += session_flight_hours
+                student_profile.nav_flight_hours += session_flight_hours
 
                 if student_profile.flight_rate != 130.0:
                     hourly_rate = student_profile.flight_rate
@@ -897,6 +898,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 # Update student's accumulated flight hours and flight balance
                 student_profile.flight_hours += session_flight_hours
+                student_profile.nav_flight_hours += session_flight_hours
 
                 if student_profile.flight_rate != 130.0:
                     hourly_rate = student_profile.flight_rate
@@ -1161,6 +1163,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 # Update student's accumulated flight hours and flight balance
                 student_profile.flight_hours += session_flight_hours
+                student_profile.nav_flight_hours += session_flight_hours
 
                 if student_profile.flight_rate != 130.0:
                     hourly_rate = student_profile.flight_rate

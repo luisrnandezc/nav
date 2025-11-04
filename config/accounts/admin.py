@@ -31,7 +31,7 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'get_student_id', 'student_phase', 'get_course_type',
-                    'get_course_edition', 'balance', 'flight_hours', 'sim_hours')
+                    'get_course_edition', 'balance', 'nav_flight_hours', 'flight_hours', 'sim_hours')
     list_filter = ('student_phase',)
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
     readonly_fields = ('get_course_type', 'get_course_edition')
@@ -42,7 +42,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
         }),
         ('Información del estudiante', {
             'fields': ('student_age', 'student_gender', 'student_phase', 
-                       'student_license_type', 'sim_hours', 'flight_hours', 'advanced_student')
+                       'student_license_type', 'sim_hours', 'nav_flight_hours', 'flight_hours', 'advanced_student')
         }),
         ('Información del curso', {
             'fields': ('get_course_type', 'get_course_edition'),

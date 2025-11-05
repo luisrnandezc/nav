@@ -1,0 +1,31 @@
+{% for session in sessions %}
+    <a href="{% url 'fms:session_detail' 'sim' session.id %}" class="flight-item">
+        <div class="flight-info">
+            {% if user_role == 'student' %}
+                <span class="student-name">{{ session.instructor_first_name }} {{ session.instructor_last_name }}</span>
+            {% else %}
+                <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
+            {% endif %}
+            <span class="session-grade {% if session.session_grade == 'S' or session.session_grade == 'SS' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+        </div>
+        <div class="flight-details">
+            <div class="detail-item">
+                <span class="detail-label">Fecha:</span>
+                <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Sesión:</span>
+                <span class="detail-value">{{ session.session_number }}{% if session.session_letter %}{{ session.session_letter }}{% endif %}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Simulador:</span>
+                <span class="detail-value">{{ session.simulator.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Horas:</span>
+                <span class="detail-value">{{ session.session_sim_hours }}h</span>
+            </div>
+        </div>
+    </a>
+{% endfor %}
+

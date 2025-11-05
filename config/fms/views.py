@@ -25,20 +25,24 @@ def student_flightlog(request):
     # Query flight evaluations for the student, separated by evaluation type
     latest_flight_0_100 = FlightEvaluation0_100.objects.filter(
         student_id=student_id
-    ).order_by('-session_date')
+    ).order_by('-session_date')[:10]
     
     latest_flight_100_120 = FlightEvaluation100_120.objects.filter(
         student_id=student_id
-    ).order_by('-session_date')
+    ).order_by('-session_date')[:10]
     
     latest_flight_120_170 = FlightEvaluation120_170.objects.filter(
         student_id=student_id
-    ).order_by('-session_date')
+    ).order_by('-session_date')[:10]
     
     # Fetch simulator logs for the student
     latest_sim_sessions = SimEvaluation.objects.filter(
         student_id=student_id
-    ).order_by('-session_date')
+    ).order_by('-session_date')[:10]
+    
+    # Determine user role from session or user
+    selected_role = request.session.get('selected_role', None)
+    user_role = 'student' if selected_role == 'STUDENT' else (selected_role or 'student').lower()
     
     context = {
         'latest_flight_0_100': latest_flight_0_100,
@@ -46,6 +50,7 @@ def student_flightlog(request):
         'latest_flight_120_170': latest_flight_120_170,
         'latest_sim_sessions': latest_sim_sessions,
         'user': user,
+        'user_role': user_role,
     }
     
     return render(request, 'fms/student_flightlog.html', context)
@@ -63,20 +68,24 @@ def instructor_flightlog(request):
     # Query flight evaluations for the instructor, separated by evaluation type
     latest_flight_0_100 = FlightEvaluation0_100.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')
+    ).order_by('-session_date')[:10]
     
     latest_flight_100_120 = FlightEvaluation100_120.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')
+    ).order_by('-session_date')[:10]
     
     latest_flight_120_170 = FlightEvaluation120_170.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')
+    ).order_by('-session_date')[:10]
     
     # Fetch simulator logs for the instructor
     latest_sim_sessions = SimEvaluation.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')
+    ).order_by('-session_date')[:10]
+    
+    # Determine user role from session or user
+    selected_role = request.session.get('selected_role', None)
+    user_role = 'instructor' if selected_role == 'INSTRUCTOR' else (selected_role or 'instructor').lower()
     
     context = {
         'latest_flight_0_100': latest_flight_0_100,
@@ -84,6 +93,7 @@ def instructor_flightlog(request):
         'latest_flight_120_170': latest_flight_120_170,
         'latest_sim_sessions': latest_sim_sessions,
         'user': user,
+        'user_role': user_role,
     }
     
     return render(request, 'fms/instructor_flightlog.html', context)
@@ -92,58 +102,89 @@ def instructor_flightlog(request):
 @require_http_methods(["GET"])
 def load_more_flights(request):
     """
-    AJAX endpoint to load more flight logs for instructor flightlog page.
+    AJAX endpoint to load more flight logs for flightlog pages.
+    Supports different evaluation types and user roles.
     """
     user = request.user
-    instructor_id = user.national_id
+    user_id = user.national_id
     
-    # Get offset from request
+    # Get parameters from request
+    evaluation_type = request.GET.get('type')  # '0_100', '100_120', '120_170', 'sim'
+    user_role = request.GET.get('role')  # 'student', 'instructor', 'staff'
     offset = int(request.GET.get('offset', 0))
-    limit = int(request.GET.get('limit', 30))  # Load 30 flights per request
+    limit = int(request.GET.get('limit', 20))
     
-    # Get all flight evaluations for the instructor and sort by date
-    all_flight_logs = []
-    all_flight_logs.extend(FlightEvaluation0_100.objects.filter(
-        instructor_id=instructor_id
-    ))
-    all_flight_logs.extend(FlightEvaluation100_120.objects.filter(
-        instructor_id=instructor_id
-    ))
-    all_flight_logs.extend(FlightEvaluation120_170.objects.filter(
-        instructor_id=instructor_id
-    ))
-
-    # Sort by date (newest first)
-    all_flight_logs.sort(key=lambda x: x.session_date, reverse=True)
+    # Get the queryset based on evaluation type and user role
+    if evaluation_type == '0_100':
+        if user_role == 'student':
+            queryset = FlightEvaluation0_100.objects.filter(student_id=user_id).order_by('-session_date')
+        elif user_role == 'instructor':
+            queryset = FlightEvaluation0_100.objects.filter(instructor_id=user_id).order_by('-session_date')
+        else:  # staff - show all
+            queryset = FlightEvaluation0_100.objects.all().order_by('-session_date')
+        template_name = 'fms/partials/flight_card_0_100.html'
+    elif evaluation_type == '100_120':
+        if user_role == 'student':
+            queryset = FlightEvaluation100_120.objects.filter(student_id=user_id).order_by('-session_date')
+        elif user_role == 'instructor':
+            queryset = FlightEvaluation100_120.objects.filter(instructor_id=user_id).order_by('-session_date')
+        else:  # staff - show all
+            queryset = FlightEvaluation100_120.objects.all().order_by('-session_date')
+        template_name = 'fms/partials/flight_card_100_120.html'
+    elif evaluation_type == '120_170':
+        if user_role == 'student':
+            queryset = FlightEvaluation120_170.objects.filter(student_id=user_id).order_by('-session_date')
+        elif user_role == 'instructor':
+            queryset = FlightEvaluation120_170.objects.filter(instructor_id=user_id).order_by('-session_date')
+        else:  # staff - show all
+            queryset = FlightEvaluation120_170.objects.all().order_by('-session_date')
+        template_name = 'fms/partials/flight_card_120_170.html'
+    elif evaluation_type == 'sim':
+        if user_role == 'student':
+            queryset = SimEvaluation.objects.filter(student_id=user_id).order_by('-session_date')
+        elif user_role == 'instructor':
+            queryset = SimEvaluation.objects.filter(instructor_id=user_id).order_by('-session_date')
+        else:  # staff - show all
+            queryset = SimEvaluation.objects.all().order_by('-session_date')
+        template_name = 'fms/partials/flight_card_sim.html'
+    else:
+        return JsonResponse({'error': 'Invalid evaluation type'}, status=400)
+    
+    # Get total count before pagination
+    total_count = queryset.count()
     
     # Apply pagination
-    flight_logs = all_flight_logs[offset:offset+limit]
+    sessions = list(queryset[offset:offset+limit])
     
     # Check if there are more flights available
-    total_flights = len(all_flight_logs)
-    has_more = (offset + len(flight_logs)) < total_flights
+    has_more = (offset + len(sessions)) < total_count
     
-    # Render the flight rows HTML
-    flight_rows_html = render_to_string('fms/partials/flight_log_rows.html', {
-        'flight_logs': flight_logs
+    # Render the flight cards HTML
+    flight_cards_html = render_to_string(template_name, {
+        'sessions': sessions,
+        'user_role': user_role,
     })
     
     return JsonResponse({
-        'html': flight_rows_html,
+        'html': flight_cards_html,
         'has_more': has_more,
-        'loaded_count': len(flight_logs),
-        'total_count': total_flights
+        'loaded_count': len(sessions),
+        'total_count': total_count
     })
 
 @login_required
 def fms_dashboard(request):
     """FMS Dashboard view showing latest flights and sessions."""
     # Get latest 10 records for each category
-    latest_sim_sessions = SimEvaluation.objects.all().order_by('-session_date')[:50]
-    latest_flight_0_100 = FlightEvaluation0_100.objects.all().order_by('-session_date')[:50]
-    latest_flight_100_120 = FlightEvaluation100_120.objects.all().order_by('-session_date')[:50]
-    latest_flight_120_170 = FlightEvaluation120_170.objects.all().order_by('-session_date')[:50]
-    latest_flight_reports = FlightReport.objects.all().order_by('-flight_date')[:50]
+    latest_sim_sessions = SimEvaluation.objects.all().order_by('-session_date')[:10]
+    latest_flight_0_100 = FlightEvaluation0_100.objects.all().order_by('-session_date')[:10]
+    latest_flight_100_120 = FlightEvaluation100_120.objects.all().order_by('-session_date')[:10]
+    latest_flight_120_170 = FlightEvaluation120_170.objects.all().order_by('-session_date')[:10]
+    latest_flight_reports = FlightReport.objects.all().order_by('-flight_date')[:10]
+    
+    # Determine user role from session or user
+    selected_role = request.session.get('selected_role', None)
+    user_role = 'staff' if selected_role == 'STAFF' else (selected_role or 'staff').lower()
     
     context = {
         'latest_sim_sessions': latest_sim_sessions,
@@ -151,6 +192,7 @@ def fms_dashboard(request):
         'latest_flight_100_120': latest_flight_100_120,
         'latest_flight_120_170': latest_flight_120_170,
         'latest_flight_reports': latest_flight_reports,
+        'user_role': user_role,
     }
     
     return render(request, 'fms/fms_dashboard.html', context)

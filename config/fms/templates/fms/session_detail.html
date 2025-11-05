@@ -116,6 +116,10 @@
                                     <span class="detail-field-label">Aeronave:</span>
                                     <span class="detail-field-value">{{ evaluation.aircraft.registration }}</span>
                                 </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Vuelo solo:</span>
+                                    <span class="detail-field-value">{{ evaluation.get_solo_flight_display }}</span>
+                                </div>
                                 {% else %}
                                 <div class="detail-field">
                                     <span class="detail-field-label">Reglas de vuelo:</span>
@@ -124,6 +128,10 @@
                                 <div class="detail-field">
                                     <span class="detail-field-label">Simulador:</span>
                                     <span class="detail-field-value">{{ evaluation.simulator.name }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Sesión pre-solo:</span>
+                                    <span class="detail-field-value">{{ evaluation.get_pre_solo_flight_display }}</span>
                                 </div>
                                 {% endif %}
                             </div>

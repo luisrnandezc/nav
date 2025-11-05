@@ -6,113 +6,177 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>NAV | Bitácora</title>
-        <link href="{% static 'logs.css' %}" rel="stylesheet" />
+        <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
         <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
-        <link href="{% static 'instructor_flightlog.css' %}" rel="stylesheet" />
-        <script src="{% static 'js/instructor_flightlog_dynamics.js' %}"></script>
+        <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
     </head>
 
-    <body data-load-more-url="{% url 'fms:load_more_flights' %}">
-        <div class="back-button">
-            <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-        </div>
+    <body>
+        <div class="fms-container">
+            <div class="back-button">
+                <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+            </div>
 
-        <div class="main-container">
-            <div class="logs-container">
+            <div class="fms-header">
                 <h1>Bitácora de Vuelo</h1>
-                <div class="logs-table-container">
-                    <div class="logs-table-scroll">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Estudiante</th>
-                                    <th>Aeronave</th>
-                                    <th>RV</th>
-                                    <th>Sesión</th>
-                                    <th>Horas sesión</th>
-                                    <th>Nota</th>
-                                    <th>Comentarios</th>
-                                </tr>
-                            </thead>
-                            <tbody id="flight-logs-tbody">
-                            {% for log in flight_logs %}
-                                 <tr>
-                                    <td>{{ log.session_date|date:"d/m/Y" }}</td>
-                                    <td>{{ log.student_first_name }} {{ log.student_last_name }}</td>
-                                    <td>{{ log.aircraft.registration }}</td>
-                                    <td>{{ log.flight_rules }}</td>
-                                    <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
-                                    <td>{{ log.session_flight_hours }} hrs</td>
-                                    <td>{{ log.session_grade }}</td>
-                                    <td class="comment-cell" {% if log.comments %}title="{{ log.comments }}"{% endif %}>
-                                            {% if log.comments %}
-                                                {{ log.comments|truncatechars:15 }}
-                                            {% else %}
-                                                -
-                                            {% endif %}
-                                    </td>
-                                </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="8" style="text-align: center;">No hay registros de vuelo disponibles</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                <p>Mis registros de vuelo y simulador</p>
+            </div>
+
+            <div class="sections-container">
+                <!-- Evaluations 0-100 -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Evaluaciones 0-100h</h2>
                     </div>
-                    <div class="load-more-container">
-                        <button id="load-more-flights" class="load-more-btn" style="display: none;">
-                            Cargar más vuelos
-                        </button>
-                        <div id="loading-indicator" class="loading-indicator" style="display: none;">
-                            Cargando...
-                        </div>
+                    <div class="flight-list">
+                        {% if latest_flight_0_100 %}
+                            {% for session in latest_flight_0_100 %}
+                                <a href="{% url 'fms:session_detail' '0_100' session.id %}" class="flight-item">
+                                    <div class="flight-info">
+                                        <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
+                                        <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                                    </div>
+                                    <div class="flight-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fecha:</span>
+                                            <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Sesión:</span>
+                                            <span class="detail-value">{{ session.session_number }}{% if session.session_letter %}{{ session.session_letter }}{% endif %}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Aeronave:</span>
+                                            <span class="detail-value">{{ session.aircraft.registration }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Horas:</span>
+                                            <span class="detail-value">{{ session.session_flight_hours }}h</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-flights">No hay evaluaciones 0-100h registradas</div>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
-            
-            <div class="logs-container">
-                <h1>Bitácora de Simulador</h1>
-                <div class="logs-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Estudiante</th>
-                                <th>Simulador</th>
-                                <th>RV</th>
-                                <th>Sesión</th>
-                                <th>Horas sesión</th>
-                                <th>Nota</th>
-                                <th>Comentarios</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for log in simulator_logs %}
-                                <tr>
-                                    <td>{{ log.session_date|date:"d/m/Y" }}</td>
-                                    <td>{{ log.student_first_name }} {{ log.student_last_name }}</td>
-                                    <td>{{ log.simulator.name }}</td>
-                                    <td>{{ log.flight_rules }}</td>
-                                    <td>{{ log.session_number }}{% if log.session_letter %}{{ log.session_letter }}{% endif %}</td>
-                                    <td>{{ log.session_sim_hours }} hrs</td>
-                                    <td>{{ log.session_grade }}</td>
-                                    <td class="comment-cell" {% if log.comments %}title="{{ log.comments }}"{% endif %}>
-                                        {% if log.comments %}
-                                            {{ log.comments|truncatechars:20 }}
-                                        {% else %}
-                                            -
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="8" style="text-align: center;">No hay registros de simulador disponibles</td>
-                                </tr>
+
+                <!-- Evaluations 100-120 -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Evaluaciones 100-120h</h2>
+                    </div>
+                    <div class="flight-list">
+                        {% if latest_flight_100_120 %}
+                            {% for session in latest_flight_100_120 %}
+                                <a href="{% url 'fms:session_detail' '100_120' session.id %}" class="flight-item">
+                                    <div class="flight-info">
+                                        <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
+                                        <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                                    </div>
+                                    <div class="flight-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fecha:</span>
+                                            <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Sesión:</span>
+                                            <span class="detail-value">{{ session.session_number }}{% if session.session_letter %}{{ session.session_letter }}{% endif %}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Aeronave:</span>
+                                            <span class="detail-value">{{ session.aircraft.registration }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Horas:</span>
+                                            <span class="detail-value">{{ session.session_flight_hours }}h</span>
+                                        </div>
+                                    </div>
+                                </a>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                        {% else %}
+                            <div class="no-flights">No hay evaluaciones 100-120h registradas</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Evaluations 120-170 -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Evaluaciones 120-170h</h2>
+                    </div>
+                    <div class="flight-list">
+                        {% if latest_flight_120_170 %}
+                            {% for session in latest_flight_120_170 %}
+                                <a href="{% url 'fms:session_detail' '120_170' session.id %}" class="flight-item">
+                                    <div class="flight-info">
+                                        <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
+                                        <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                                    </div>
+                                    <div class="flight-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fecha:</span>
+                                            <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Sesión:</span>
+                                            <span class="detail-value">{{ session.session_number }}{% if session.session_letter %}{{ session.session_letter }}{% endif %}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Aeronave:</span>
+                                            <span class="detail-value">{{ session.aircraft.registration }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Horas:</span>
+                                            <span class="detail-value">{{ session.session_flight_hours }}h</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-flights">No hay evaluaciones 120-170h registradas</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Simulator Sessions -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Sesiones de Simulador</h2>
+                    </div>
+                    <div class="flight-list">
+                        {% if latest_sim_sessions %}
+                            {% for session in latest_sim_sessions %}
+                                <a href="{% url 'fms:session_detail' 'sim' session.id %}" class="flight-item">
+                                    <div class="flight-info">
+                                        <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
+                                        <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                                    </div>
+                                    <div class="flight-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fecha:</span>
+                                            <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Sesión:</span>
+                                            <span class="detail-value">{{ session.session_number }}{% if session.session_letter %}{{ session.session_letter }}{% endif %}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Simulador:</span>
+                                            <span class="detail-value">{{ session.simulator.name }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Horas:</span>
+                                            <span class="detail-value">{{ session.session_sim_hours }}h</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-flights">No hay sesiones de simulador registradas</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

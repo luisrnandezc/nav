@@ -139,6 +139,19 @@
   margin-bottom: 0;
 }
 
+.load-more-btn {
+  display: none;
+  margin-top: 15px;
+  margin-right: 10px;
+  padding: 10px 20px;
+  background: rgba(218, 225, 255, 0.2);
+  border: 1px solid #dae1ff;
+  border-radius: 8px;
+  color: #dae1ff;
+  cursor: pointer;
+  width: calc(100% - 10px);
+}
+
 .flight-info {
   display: flex;
   justify-content: space-between;

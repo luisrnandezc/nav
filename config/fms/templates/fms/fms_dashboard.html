@@ -9,6 +9,7 @@
     <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
     <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/load_more_flights.js' %}"></script>
   </head>
 
   <body>
@@ -38,13 +39,13 @@
             <h2>Evaluaciones 0-100h</h2>
             <p>Últimas 10 evaluaciones</p>
           </div>
-          <div class="flight-list">
+          <div class="flight-list" data-type="0_100" data-role="{{ user_role }}">
             {% if latest_flight_0_100 %}
               {% for session in latest_flight_0_100 %}
                 <a href="{% url 'fms:session_detail' '0_100' session.id %}" class="flight-item">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' or session.session_grade == 'SS' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -70,6 +71,7 @@
               <div class="no-flights">No hay evaluaciones 0-100h registradas</div>
             {% endif %}
           </div>
+          <button class="load-more-btn" data-type="0_100" data-role="{{ user_role }}" data-url="{% url 'fms:load_more_flights' %}">Cargar más</button>
         </div>
 
         <!-- Evaluations 100-120 -->
@@ -78,13 +80,13 @@
             <h2>Evaluaciones 100-120h</h2>
             <p>Últimas 10 evaluaciones</p>
           </div>
-          <div class="flight-list">
+          <div class="flight-list" data-type="100_120" data-role="{{ user_role }}">
             {% if latest_flight_100_120 %}
               {% for session in latest_flight_100_120 %}
                 <a href="{% url 'fms:session_detail' '100_120' session.id %}" class="flight-item">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' or session.session_grade == 'SS' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -110,6 +112,7 @@
               <div class="no-flights">No hay evaluaciones 100-120h registradas</div>
             {% endif %}
           </div>
+          <button class="load-more-btn" data-type="100_120" data-role="{{ user_role }}" data-url="{% url 'fms:load_more_flights' %}">Cargar más</button>
         </div>
 
         <!-- Evaluations 120-170 -->
@@ -118,13 +121,13 @@
             <h2>Evaluaciones 120-170h</h2>
             <p>Últimas 10 evaluaciones</p>
           </div>
-          <div class="flight-list">
+          <div class="flight-list" data-type="120_170" data-role="{{ user_role }}">
             {% if latest_flight_120_170 %}
               {% for session in latest_flight_120_170 %}
                 <a href="{% url 'fms:session_detail' '120_170' session.id %}" class="flight-item">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' or session.session_grade == 'SS' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -150,6 +153,7 @@
               <div class="no-flights">No hay evaluaciones 120-170h registradas</div>
             {% endif %}
           </div>
+          <button class="load-more-btn" data-type="120_170" data-role="{{ user_role }}" data-url="{% url 'fms:load_more_flights' %}">Cargar más</button>
         </div>
 
         <!-- Flight Reports -->
@@ -198,13 +202,13 @@
             <h2>Sesiones de Simulador</h2>
             <p>Últimas 10 sesiones</p>
           </div>
-          <div class="flight-list">
+          <div class="flight-list" data-type="sim" data-role="{{ user_role }}">
             {% if latest_sim_sessions %}
               {% for session in latest_sim_sessions %}
                 <a href="{% url 'fms:session_detail' 'sim' session.id %}" class="flight-item">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' or session.session_grade == 'SS' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -230,9 +234,9 @@
               <div class="no-flights">No hay sesiones de simulador registradas</div>
             {% endif %}
           </div>
+          <button class="load-more-btn" data-type="sim" data-role="{{ user_role }}" data-url="{% url 'fms:load_more_flights' %}">Cargar más</button>
         </div>
       </div>
     </div>
-
   </body>
 </html>

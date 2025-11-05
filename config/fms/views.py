@@ -157,7 +157,13 @@ def load_more_flights(request):
     sessions = list(queryset[offset:offset+limit])
     
     # Check if there are more flights available
-    has_more = (offset + len(sessions)) < total_count
+    # has_more should be true if there are records beyond what we've fetched
+    if limit == 1:
+        # When checking (limit=1), if offset < total_count, there are records at that offset to show
+        has_more = offset < total_count
+    else:
+        # When loading (limit=20), check if there are more beyond what we fetched
+        has_more = (offset + len(sessions)) < total_count
     
     # Render the flight cards HTML
     flight_cards_html = render_to_string(template_name, {

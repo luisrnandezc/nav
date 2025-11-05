@@ -55,6 +55,10 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             ),
             'classes': ('collapse',)
         }),
+        ('Sección 8: Actitudes anormales', {
+            'fields': ('upset_1', 'upset_2', 'upset_3'),
+            'classes': ('collapse',)
+        }),
         ('Sección 9: Misceláneos', {
             'fields': ('misc_1', 'misc_2', 'misc_3', 'misc_4', 'misc_5', 'misc_6', 'misc_7'),
             'classes': ('collapse',)
@@ -225,11 +229,11 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             'fields': ('pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6'),
             'classes': ('collapse',)
         }),
-        ('Sección 5: Despegue - Salida', {
+        ('Sección 5: Despegue / Salida visual', {
             'fields': ('to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6'),
             'classes': ('collapse',)
         }),
-        ('Sección 6: Maniobras', {
+        ('Sección 6: Maniobras básicas / avanzadas', {
             'fields': (
                 'mvrs_1', 'mvrs_2', 'mvrs_3', 'mvrs_4', 'mvrs_5', 'mvrs_6',
                 'mvrs_7', 'mvrs_8', 'mvrs_9', 'mvrs_10', 'mvrs_11', 'mvrs_12',
@@ -252,7 +256,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             'fields': ('emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5', 'emer_6'),
             'classes': ('collapse',)
         }),
-        ('Sección 10: General', {
+        ('Sección 10: Evaluación general', {
             'fields': ('gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'),
             'classes': ('collapse',)
         }),
@@ -368,11 +372,11 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
             'fields': ('pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6'),
             'classes': ('collapse',)
         }),
-        ('Sección 5: Despegue - Salida instrumental', {
+        ('Sección 5: Despegue / Salida instrumental', {
             'fields': ('to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6'),
             'classes': ('collapse',)
         }),
-        ('Sección 6: Procedimientos IFR básicos', {
+        ('Sección 6: Maniobras IFR básicas', {
             'fields': (
                 'b_ifr_1', 'b_ifr_2', 'b_ifr_3', 'b_ifr_4', 'b_ifr_5', 'b_ifr_6',
                 'b_ifr_7', 'b_ifr_8', 'b_ifr_9', 'b_ifr_10', 'b_ifr_11'
@@ -394,7 +398,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
             'fields': ('emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5'),
             'classes': ('collapse',)
         }),
-        ('Sección 10: General', {
+        ('Sección 10: Evaluación general', {
             'fields': ('gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'),
             'classes': ('collapse',)
         }),
@@ -504,11 +508,11 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
             'fields': ('pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6'),
             'classes': ('collapse',)
         }),
-        ('Sección 5: Despegue - Salida VFR/IFR', {
+        ('Sección 5: Despegue / Salida VFR/IFR', {
             'fields': ('to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6'),
             'classes': ('collapse',)
         }),
-        ('Sección 6: Procedimientos IFR avanzados', {
+        ('Sección 6: Instrumentos avanzados', {
             'fields': (
                 'inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6',
                 'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11'
@@ -519,11 +523,11 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
             'fields': ('land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7'),
             'classes': ('collapse',)
         }),
-        ('Sección 8: Emergencias situacionales', {
+        ('Sección 8: Emergencias situacionales (simuladas)', {
             'fields': ('emer_1', 'emer_2', 'emer_3', 'emer_4'),
             'classes': ('collapse',)
         }),
-        ('Sección 9: General', {
+        ('Sección 9: Evaluación general', {
             'fields': ('gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'),
             'classes': ('collapse',)
         }),

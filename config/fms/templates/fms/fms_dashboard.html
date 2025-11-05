@@ -44,7 +44,7 @@
                 <a href="#" class="flight-item" data-type="0_100" data-id="{{ session.id }}">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -84,7 +84,7 @@
                 <a href="#" class="flight-item" data-type="100_120" data-id="{{ session.id }}">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -124,7 +124,7 @@
                 <a href="#" class="flight-item" data-type="120_170" data-id="{{ session.id }}">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -204,7 +204,7 @@
                 <a href="#" class="flight-item" data-type="sim" data-id="{{ session.id }}">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">

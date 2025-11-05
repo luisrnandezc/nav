@@ -1429,6 +1429,7 @@ class FlightEvaluation0_100(models.Model):
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
+            student_profile.nav_flight_hours -= self.session_flight_hours
             student_profile.balance += round(self.session_flight_hours*self.aircraft.hourly_rate + self.aircraft.fuel_cost*self.fuel_consumed, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
@@ -2040,6 +2041,7 @@ class FlightEvaluation100_120(models.Model):
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
+            student_profile.nav_flight_hours -= self.session_flight_hours
             student_profile.balance += round(self.session_flight_hours*self.aircraft.hourly_rate + self.aircraft.fuel_cost*self.fuel_consumed, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
@@ -2576,6 +2578,7 @@ class FlightEvaluation120_170(models.Model):
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
+            student_profile.nav_flight_hours -= self.session_flight_hours
             student_profile.balance += round(self.session_flight_hours*self.aircraft.hourly_rate + self.aircraft.fuel_cost*self.fuel_consumed, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:

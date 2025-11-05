@@ -41,10 +41,10 @@
           <div class="flight-list">
             {% if latest_flight_0_100 %}
               {% for session in latest_flight_0_100 %}
-                <a href="#" class="flight-item" data-type="0_100" data-id="{{ session.id }}">
+                <a href="{% url 'fms:session_detail' '0_100' session.id %}" class="flight-item">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -81,10 +81,10 @@
           <div class="flight-list">
             {% if latest_flight_100_120 %}
               {% for session in latest_flight_100_120 %}
-                <a href="#" class="flight-item" data-type="100_120" data-id="{{ session.id }}">
+                <a href="{% url 'fms:session_detail' '100_120' session.id %}" class="flight-item">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -121,10 +121,10 @@
           <div class="flight-list">
             {% if latest_flight_120_170 %}
               {% for session in latest_flight_120_170 %}
-                <a href="#" class="flight-item" data-type="120_170" data-id="{{ session.id }}">
+                <a href="{% url 'fms:session_detail' '120_170' session.id %}" class="flight-item">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -201,10 +201,10 @@
           <div class="flight-list">
             {% if latest_sim_sessions %}
               {% for session in latest_sim_sessions %}
-                <a href="#" class="flight-item" data-type="sim" data-id="{{ session.id }}">
+                <a href="{% url 'fms:session_detail' 'sim' session.id %}" class="flight-item">
                   <div class="flight-info">
                     <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
-                    <span class="session-grade">{{ session.session_grade }}</span>
+                    <span class="session-grade {% if session.session_grade == 'S' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                   </div>
                   <div class="flight-details">
                     <div class="detail-item">
@@ -234,21 +234,5 @@
       </div>
     </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.flight-item').forEach(function(item) {
-          item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const type = this.getAttribute('data-type');
-            const id = this.getAttribute('data-id');
-            showSessionDetails(type, id);
-          });
-        });
-      });
-
-      function showSessionDetails(type, id) {
-        alert(`Mostrando detalles de ${type} con ID: ${id}\n\nEsta funcionalidad se implementará en el futuro para mostrar los datos completos de la sesión en modo de solo lectura.`);
-      }
-    </script>
   </body>
 </html>

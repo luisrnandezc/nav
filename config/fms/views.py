@@ -22,30 +22,29 @@ def student_flightlog(request):
     # Get student's national ID
     student_id = user.national_id
     
-    # Query flight evaluations for the student
-    flight_logs = []
-    flight_logs.extend(FlightEvaluation0_100.objects.filter(
+    # Query flight evaluations for the student, separated by evaluation type
+    latest_flight_0_100 = FlightEvaluation0_100.objects.filter(
         student_id=student_id
-    ).order_by('-session_date')[:5])
-    flight_logs.extend(FlightEvaluation100_120.objects.filter(
-        student_id=student_id
-    ).order_by('-session_date')[:5])
-    flight_logs.extend(FlightEvaluation120_170.objects.filter(
-        student_id=student_id
-    ).order_by('-session_date')[:5])
-
-    # Sort by date and take last 10
-    flight_logs.sort(key=lambda x: x.session_date, reverse=True)
-    flight_logs = flight_logs[:10]
+    ).order_by('-session_date')
     
-    # Fetch simulator logs for the student (last 10)
-    simulator_logs = SimEvaluation.objects.filter(
+    latest_flight_100_120 = FlightEvaluation100_120.objects.filter(
         student_id=student_id
-    ).order_by('-session_date')[:10]
+    ).order_by('-session_date')
+    
+    latest_flight_120_170 = FlightEvaluation120_170.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')
+    
+    # Fetch simulator logs for the student
+    latest_sim_sessions = SimEvaluation.objects.filter(
+        student_id=student_id
+    ).order_by('-session_date')
     
     context = {
-        'flight_logs': flight_logs,
-        'simulator_logs': simulator_logs,
+        'latest_flight_0_100': latest_flight_0_100,
+        'latest_flight_100_120': latest_flight_100_120,
+        'latest_flight_120_170': latest_flight_120_170,
+        'latest_sim_sessions': latest_sim_sessions,
         'user': user,
     }
     
@@ -470,4 +469,119 @@ def download_pdf(request, form_type, evaluation_id):
         
     except Exception as e:
         messages.error(request, f'Error al generar el PDF: {str(e)}')
+        return redirect('dashboard:dashboard')
+
+def get_evaluation_fields(form_type):
+    """Get field labels organized by category for each evaluation type."""
+    from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
+    
+    form = None
+    if form_type == '0_100':
+        form = FlightEvaluation0_100Form()
+        categories = {
+            'Pre-vuelo/encendido/taxeo': ['pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6'],
+            'Despegue/salida visual': ['to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6'],
+            'Maniobras básicas/avanzadas': ['mvrs_1', 'mvrs_2', 'mvrs_3', 'mvrs_4', 'mvrs_5', 'mvrs_6', 'mvrs_7', 'mvrs_8', 'mvrs_9', 'mvrs_10', 'mvrs_11', 'mvrs_12', 'mvrs_13', 'mvrs_14', 'mvrs_15', 'mvrs_16', 'mvrs_17', 'mvrs_18'],
+            'Navegación VFR': ['nav_1', 'nav_2', 'nav_3', 'nav_4', 'nav_5', 'nav_6'],
+            'Circuito/procedimiento': ['land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7', 'land_8', 'land_9', 'land_10'],
+            'Emergencias': ['emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5', 'emer_6'],
+            'Evaluación general': ['gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'],
+        }
+    elif form_type == '100_120':
+        form = FlightEvaluation100_120Form()
+        categories = {
+            'Pre-vuelo/encendido/taxeo': ['pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6'],
+            'Despegue/salida instrumental': ['to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6'],
+            'Maniobras IFR básicas': ['b_ifr_1', 'b_ifr_2', 'b_ifr_3', 'b_ifr_4', 'b_ifr_5', 'b_ifr_6', 'b_ifr_7', 'b_ifr_8', 'b_ifr_9', 'b_ifr_10', 'b_ifr_11'],
+            'Procedimientos IFR avanzados': ['a_ifr_1', 'a_ifr_2', 'a_ifr_3', 'a_ifr_4', 'a_ifr_5', 'a_ifr_6', 'a_ifr_7', 'a_ifr_8', 'a_ifr_9', 'a_ifr_10', 'a_ifr_11'],
+            'Aproximación final y aterrizaje': ['land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7'],
+            'Emergencias': ['emer_1', 'emer_2', 'emer_3', 'emer_4', 'emer_5'],
+            'Evaluación general': ['gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'],
+        }
+    elif form_type == '120_170':
+        form = FlightEvaluation120_170Form()
+        categories = {
+            'Pre-vuelo/encendido/taxeo': ['pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6'],
+            'Despegue/Salida VFR/IFR': ['to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6'],
+            'Instrumentos avanzados': ['inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11'],
+            'Aproximación final y aterrizaje': ['land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7'],
+            'Emergencias situacionales (simuladas)': ['emer_1', 'emer_2', 'emer_3', 'emer_4'],
+            'Evaluación general': ['gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'],
+        }
+    elif form_type == 'sim':
+        form = SimEvaluationForm()
+        # Get categories from sim form - need to check the form structure
+        categories = {
+            'Pre-vuelo': ['pre_1', 'pre_2', 'pre_3'],
+            'Despegue': ['to_1', 'to_2', 'to_3', 'to_4', 'to_5'],
+            'Procedimiento de salida': ['dep_1', 'dep_2', 'dep_3', 'dep_4', 'dep_5'],
+            'Instrumentos básicos': ['inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11', 'inst_12', 'inst_13'],
+            'Actitudes anormales': ['upset_1', 'upset_2', 'upset_3'],
+            'Misceláneos': ['misc_1', 'misc_2', 'misc_3', 'misc_4', 'misc_5', 'misc_6', 'misc_7'],
+            'Uso de radioayudas (VOR)': ['radio_1', 'radio_2', 'radio_3', 'radio_4', 'radio_5', 'radio_6', 'radio_7', 'radio_8', 'radio_9', 'radio_10', 'radio_11'],
+            'Uso de radioayudas (ADF)': ['radio_12', 'radio_13', 'radio_14', 'radio_15', 'radio_16', 'radio_17', 'radio_18', 'radio_19', 'radio_20', 'radio_21', 'radio_22'],
+            'Aproximaciones (ILS)': ['app_1', 'app_2', 'app_3', 'app_4', 'app_5', 'app_6', 'app_7', 'app_8'],
+            'Aproximaciones (VOR)': ['app_9', 'app_10', 'app_11', 'app_12', 'app_13', 'app_14', 'app_15', 'app_16'],
+            'Aproximaciones (ADF)': ['app_17', 'app_18', 'app_19', 'app_20', 'app_21', 'app_22', 'app_23', 'app_24'],
+            'Go-around': ['go_1', 'go_2'],
+        }
+    else:
+        form = None
+        categories = {}
+    
+    # Build field data with labels and values
+    field_data = {}
+    for category, field_names in categories.items():
+        field_data[category] = []
+        for field_name in field_names:
+            if form and hasattr(form, 'fields') and field_name in form.fields:
+                label = form.fields[field_name].label or field_name
+                field_data[category].append({
+                    'name': field_name,
+                    'label': label
+                })
+    
+    return field_data
+
+@login_required
+def session_detail(request, form_type, evaluation_id):
+    """Display detailed view of a flight or simulator session."""
+    try:
+        evaluation, _ = get_evaluation_and_template(form_type, evaluation_id)
+        
+        # Determine the return URL based on user role
+        if request.user.role == 'STUDENT':
+            return_url = 'fms:student_flightlog'
+        else:
+            return_url = 'fms:fms_dashboard'
+        
+        # Get organized field data
+        field_data = get_evaluation_fields(form_type)
+        
+        # Add field values and split into two columns for each category
+        for category, fields in field_data.items():
+            for field in fields:
+                field_value = getattr(evaluation, field['name'], None)
+                field['value'] = field_value
+            
+            # Split fields into two columns
+            total_fields = len(fields)
+            if total_fields > 0:
+                mid_point = (total_fields + 1) // 2  # Split as evenly as possible
+                field_data[category] = {
+                    'left': fields[:mid_point],
+                    'right': fields[mid_point:]
+                }
+        
+        context = {
+            'evaluation': evaluation,
+            'form_type': form_type,
+            'return_url': return_url,
+            'field_data': field_data,
+        }
+        
+        return render(request, 'fms/session_detail.html', context)
+        
+    except Exception as e:
+        messages.error(request, f'Error al cargar la sesión: {str(e)}')
         return redirect('dashboard:dashboard')

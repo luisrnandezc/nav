@@ -60,30 +60,29 @@ def instructor_flightlog(request):
     # Get instructor's national ID
     instructor_id = user.national_id
     
-    # Query flight evaluations for the instructor (load 90 initially)
-    all_flight_logs = []
-    all_flight_logs.extend(FlightEvaluation0_100.objects.filter(
+    # Query flight evaluations for the instructor, separated by evaluation type
+    latest_flight_0_100 = FlightEvaluation0_100.objects.filter(
         instructor_id=instructor_id
-    ))
-    all_flight_logs.extend(FlightEvaluation100_120.objects.filter(
-        instructor_id=instructor_id
-    ))
-    all_flight_logs.extend(FlightEvaluation120_170.objects.filter(
-        instructor_id=instructor_id
-    ))
-
-    # Sort by date (newest first) and take last 90
-    all_flight_logs.sort(key=lambda x: x.session_date, reverse=True)
-    flight_logs = all_flight_logs[:90]
+    ).order_by('-session_date')
     
-    # Fetch simulator logs for the instructor (last 90)
-    simulator_logs = SimEvaluation.objects.filter(
+    latest_flight_100_120 = FlightEvaluation100_120.objects.filter(
         instructor_id=instructor_id
-    ).order_by('-session_date')[:90]
+    ).order_by('-session_date')
+    
+    latest_flight_120_170 = FlightEvaluation120_170.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')
+    
+    # Fetch simulator logs for the instructor
+    latest_sim_sessions = SimEvaluation.objects.filter(
+        instructor_id=instructor_id
+    ).order_by('-session_date')
     
     context = {
-        'flight_logs': flight_logs,
-        'simulator_logs': simulator_logs,
+        'latest_flight_0_100': latest_flight_0_100,
+        'latest_flight_100_120': latest_flight_100_120,
+        'latest_flight_120_170': latest_flight_120_170,
+        'latest_sim_sessions': latest_sim_sessions,
         'user': user,
     }
     
@@ -549,10 +548,15 @@ def session_detail(request, form_type, evaluation_id):
     try:
         evaluation, _ = get_evaluation_and_template(form_type, evaluation_id)
         
-        # Determine the return URL based on user role
-        if request.user.role == 'STUDENT':
+        # Determine the return URL based on selected role in session, fallback to user role
+        selected_role = request.session.get('selected_role', None)
+        user_role = selected_role if selected_role else request.user.role
+        
+        if user_role == 'STUDENT':
             return_url = 'fms:student_flightlog'
-        else:
+        elif user_role == 'INSTRUCTOR':
+            return_url = 'fms:instructor_flightlog'
+        elif user_role == 'STAFF':
             return_url = 'fms:fms_dashboard'
         
         # Get organized field data

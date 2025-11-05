@@ -19,4 +19,5 @@ urlpatterns = [
     path('api/load_more_flights/', views.load_more_flights, name='load_more_flights'),
      path('pdf_download_waiting_page/<str:form_type>/<int:evaluation_id>/', views.pdf_download_waiting_page, name='pdf_download_waiting_page'),
      path('download_pdf/<str:form_type>/<int:evaluation_id>/', views.download_pdf, name='download_pdf'),
+     path('session_detail/<str:form_type>/<int:evaluation_id>/', views.session_detail, name='session_detail'),
 ]

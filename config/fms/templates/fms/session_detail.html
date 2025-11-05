@@ -1,0 +1,202 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Detalle de la sesión</title>
+        <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+        <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'session_detail.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="fms-container">
+            <div class="back-button">
+                <a href="{% url return_url %}" class="button">&larr; Volver</a>
+            </div>
+
+            <div class="detail-container">
+                <div class="detail-header">
+                    <h1 class="detail-header-title">
+                        {% if form_type == '0_100' %}
+                            Evaluación 0-100h
+                        {% elif form_type == '100_120' %}
+                            Evaluación 100-120h
+                        {% elif form_type == '120_170' %}
+                            Evaluación 120-170h
+                        {% elif form_type == 'sim' %}
+                            Sesión de Simulador
+                        {% endif %}
+                    </h1>
+                    <div class="detail-header-fields">
+                        <div class="detail-header-field">
+                            <span class="detail-header-field-label">Número:</span>
+                            <span class="detail-header-field-value">{{ evaluation.session_number }}{% if evaluation.session_letter %}{{ evaluation.session_letter }}{% endif %}</span>
+                        </div>
+                        <div class="detail-header-field">
+                            <span class="detail-header-field-label">Fecha:</span>
+                            <span class="detail-header-field-value">{{ evaluation.session_date|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="detail-header-field">
+                            <span class="detail-header-field-label">Calificación:</span>
+                            <span class="session-grade {% if evaluation.session_grade == 'S' or evaluation.session_grade == 'SS' %}grade-s{% elif evaluation.session_grade == 'NS' %}grade-ns{% elif evaluation.session_grade == 'NE' %}grade-ne{% endif %}">{{ evaluation.session_grade }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-sections">
+                    <!-- Información del Estudiante -->
+                    <div class="detail-section">
+                        <h3>Datos del alumno</h3>
+                        <div class="detail-section-two-columns">
+                            <div class="detail-column">
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Nombre:</span>
+                                    <span class="detail-field-value">{{ evaluation.student_first_name }} {{ evaluation.student_last_name }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Cédula:</span>
+                                    <span class="detail-field-value">{{ evaluation.student_id }}</span>
+                                </div>
+                            </div>
+                            <div class="detail-column">
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Tipo de Licencia:</span>
+                                    <span class="detail-field-value">{{ evaluation.student_license_type }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Curso:</span>
+                                    <span class="detail-field-value">{{ evaluation.course_type }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del Instructor -->
+                    <div class="detail-section">
+                        <h3>Datos del instructor</h3>
+                        <div class="detail-section-two-columns">
+                            <div class="detail-column">
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Nombre:</span>
+                                    <span class="detail-field-value">{{ evaluation.instructor_first_name }} {{ evaluation.instructor_last_name }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Cédula:</span>
+                                    <span class="detail-field-value">{{ evaluation.instructor_id }}</span>
+                                </div>
+                            </div>
+                            <div class="detail-column">
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Tipo de Licencia:</span>
+                                    <span class="detail-field-value">{{ evaluation.instructor_license_type }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Número de Licencia:</span>
+                                    <span class="detail-field-value">{{ evaluation.instructor_license_number }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información de la Sesión -->
+                    <div class="detail-section">
+                        <h3>Datos de la sesión</h3>
+                        <div class="detail-section-two-columns">
+                            <div class="detail-column">
+                                {% if form_type != 'sim' %}
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Reglas de vuelo:</span>
+                                    <span class="detail-field-value">{{ evaluation.get_flight_rules_display }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Aeronave:</span>
+                                    <span class="detail-field-value">{{ evaluation.aircraft.registration }}</span>
+                                </div>
+                                {% else %}
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Reglas de vuelo:</span>
+                                    <span class="detail-field-value">{{ evaluation.get_flight_rules_display }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Simulador:</span>
+                                    <span class="detail-field-value">{{ evaluation.simulator.name }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="detail-column">
+                                {% if form_type != 'sim' %}
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Horas acumuladas:</span>
+                                    <span class="detail-field-value">{{ evaluation.accumulated_flight_hours }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Horas de sesión:</span>
+                                    <span class="detail-field-value">{{ evaluation.session_flight_hours }}</span>
+                                </div>
+                                {% else %}
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Horas acumuladas:</span>
+                                    <span class="detail-field-value">{{ evaluation.accumulated_sim_hours }}</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Horas de sesión:</span>
+                                    <span class="detail-field-value">{{ evaluation.session_sim_hours }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calificaciones - Each category in its own card -->
+                    {% for category, columns in field_data.items %}
+                    <div class="detail-section">
+                        <h3>{{ category }}</h3>
+                        <div class="detail-section-two-columns">
+                            <div class="detail-column">
+                                {% for field in columns.left %}
+                                    <div class="detail-field detail-field-small">
+                                        <span class="detail-field-label detail-field-label-small">{{ field.label }}:</span>
+                                        <span class="detail-field-value detail-field-value-small">
+                                            {% if field.value %}
+                                                <span class="session-grade session-grade-small {% if field.value == 'S' or field.value == 'SS' %}grade-s{% elif field.value == 'NS' %}grade-ns{% elif field.value == 'NE' %}grade-ne{% endif %}">{{ field.value }}</span>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="detail-column">
+                                {% for field in columns.right %}
+                                    <div class="detail-field detail-field-small">
+                                        <span class="detail-field-label detail-field-label-small">{{ field.label }}:</span>
+                                        <span class="detail-field-value detail-field-value-small">
+                                            {% if field.value %}
+                                                <span class="session-grade session-grade-small {% if field.value == 'S' or field.value == 'SS' %}grade-s{% elif field.value == 'NS' %}grade-ns{% elif field.value == 'NE' %}grade-ne{% endif %}">{{ field.value }}</span>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Comentarios -->
+                {% if evaluation.comments %}
+                <div class="comments-section">
+                    <h3>Comentarios del Instructor</h3>
+                    <div class="comments-text">{{ evaluation.comments }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </body>
+</html>

@@ -43,11 +43,33 @@ def run_ai_analysis_for_report(report):
         # Call OpenAI API
         response = run_sms_voluntary_report_analysis(report)
         
-        if not response or response.startswith("Error:"):
+        # Debug: Log response type and preview
+        print("[{}] API Response type: {}, length: {}, preview: '{}'".format(
+            timezone.now(),
+            type(response).__name__,
+            len(str(response)) if response else 0,
+            str(response)[:100] if response else "None"
+        ))
+        
+        # Check for errors or empty response
+        if not response:
+            raise Exception("OpenAI API returned empty response")
+        
+        if isinstance(response, str) and response.startswith("Error:"):
             raise Exception("OpenAI API error: {}".format(response))
         
-        # Parse JSON response
-        parsed_response = json.loads(response)
+        # Validate response is not empty string
+        if isinstance(response, str) and not response.strip():
+            raise Exception("OpenAI API returned empty string response")
+        
+        # Parse JSON response with better error handling
+        try:
+            parsed_response = json.loads(response)
+        except (json.JSONDecodeError, ValueError) as e:
+            # ValueError is for older Python versions, JSONDecodeError for newer ones
+            raise Exception("Invalid JSON response from OpenAI API. Response: '{}'. Error: {}".format(
+                response[:200] if len(response) > 200 else response, str(e)
+            ))
         
         # Handle array response - extract the first (and only) object
         if isinstance(parsed_response, list) and len(parsed_response) > 0:

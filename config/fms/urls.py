@@ -9,6 +9,7 @@ urlpatterns = [
     path('student_flightlog/', views.student_flightlog, name='student_flightlog'),
     path('student_stats/', views.student_stats_page, name='student_stats_page'),
     path('instructor_flightlog/', views.instructor_flightlog, name='instructor_flightlog'),
+    path('instructor_stats/', views.instructor_stats, name='instructor_stats_page'),
      path('form_selection/', views.form_selection, name='form_selection'),
      path('submit_flight_evaluation_0_100/', views.submit_flight_evaluation_0_100, name='flight_evaluation_0_100'),
      path('submit_flight_evaluation_100_120/', views.submit_flight_evaluation_100_120, name='flight_evaluation_100_120'),

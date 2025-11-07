@@ -23,36 +23,13 @@
                 <p>Mis registros de vuelo y simulador</p>
             </div>
 
-            <div class="sections-container">
-                <!-- Instructor Statistics -->
-                <div class="section">
-                    <div class="section-header">
-                        <h2>Estadísticas del Instructor de Vuelo</h2>
-                    </div>
-                    <div class="stats-details">
-                        <div class="stat-detail-item">
-                            <span class="detail-label">Total de Horas de Instrucción:</span>
-                            <span class="detail-value">{{ total_flight_hours|floatformat:1 }} h</span>
-                        </div>
-                        <div class="stat-detail-item">
-                            <span class="detail-label">Total de Combustible Consumido (Litros):</span>
-                            <span class="detail-value">{{ total_consumed_liters|floatformat:1 }} l</span>
-                        </div>
-                        <div class="stat-detail-item">
-                            <span class="detail-label">Total de Combustible Consumido (Galones):</span>
-                            <span class="detail-value">{{ total_consumed_gallons|floatformat:1 }} gal</span>
-                        </div>
-                        <div class="stat-detail-item">
-                            <span class="detail-label">FF total (Litros/h):</span>
-                            <span class="detail-value">{{ fuel_rate_liters|floatformat:1 }} lph</span>
-                        </div>
-                        <div class="stat-detail-item">
-                            <span class="detail-label">FF total (Galones/h):</span>
-                            <span class="detail-value">{{ fuel_rate_gallons|floatformat:1 }} gph</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="student-list-button" style="text-align: center; padding: 20px;">
+                <a href="{% url 'fms:instructor_stats_page' %}" class="button">
+                    Estadísticas de Vuelo
+                </a>
+            </div>
 
+            <div class="sections-container">
                 <!-- Evaluations 0-100 -->
                 <div class="section">
                     <div class="section-header">

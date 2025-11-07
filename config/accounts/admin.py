@@ -77,6 +77,15 @@ class InstructorProfileAdmin(admin.ModelAdmin):
                      'instructor_license_type', 'instructor_type')
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
 
+    fieldsets = (
+        ('Información del usuario', {
+            'fields': ('user',)
+        }),
+        ('Información del instructor', {
+            'fields': ('instructor_type', 'instructor_license_type', 'instructor_hourly_rate')
+        }),
+    )
+
     def get_username(self, obj):
         return obj.user.username if obj.user else '-'
     get_username.short_description = 'Usuario'

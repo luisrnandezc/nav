@@ -8,7 +8,7 @@ from django.contrib.staticfiles.finders import find
 from django.contrib.auth.models import Group
 from django.db.models import Sum
 from decimal import Decimal
-from accounts.models import User
+from accounts.models import User, StudentProfile, InstructorProfile
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm, FlightReportForm
 from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport
 import weasyprint
@@ -640,14 +640,15 @@ def session_detail(request, form_type, evaluation_id):
         messages.error(request, f'Error al cargar la sesión: {str(e)}')
         return redirect('dashboard:dashboard')
 
-def calculate_user_stats(user_id, role_type='student'):
+def calculate_user_stats(user_id, role_type='student', instructor_hourly_rate=None, student_hourly_rate=None):
     """
     Helper function to calculate statistics for a user (student or instructor).
     
     Args:
         user_id: The national_id of the user
         role_type: Either 'student' or 'instructor' to determine which field to filter by
-    
+        instructor_hourly_rate: The hourly rate of the instructor
+        student_hourly_rate: The hourly rate of the student
     Returns:
         Dictionary with all calculated statistics.
     
@@ -664,6 +665,10 @@ def calculate_user_stats(user_id, role_type='student'):
     fuel_cost_yv204e = yv204e.fuel_cost
     fuel_cost_yv206e = yv206e.fuel_cost
 
+    if role_type == 'student' and student_hourly_rate is not None:
+        hourly_rate_yv204e = student_hourly_rate
+        hourly_rate_yv206e = student_hourly_rate
+
     # Determine which field to filter by based on role
     filter_field = 'student_id' if role_type == 'student' else 'instructor_id'
 
@@ -679,6 +684,11 @@ def calculate_user_stats(user_id, role_type='student'):
     fuel_rate_liters_yv206e = Decimal('0.0')
     fuel_rate_gallons_yv204e = Decimal('0.0')
     fuel_rate_gallons_yv206e = Decimal('0.0')
+    flight_hour_cost_yv204e = Decimal('0.0')
+    flight_hour_cost_yv206e = Decimal('0.0')
+    total_paid_to_instructor_yv204e = Decimal('0.0')
+    total_paid_to_instructor_yv206e = Decimal('0.0')
+    total_paid_to_instructor = Decimal('0.0')
     
     # Build filter kwargs dynamically
     filter_kwargs_yv204e = {filter_field: user_id, 'aircraft__registration': 'YV204E'}
@@ -779,12 +789,15 @@ def calculate_user_stats(user_id, role_type='student'):
     total_cost = total_flight_hours_dollars + total_fuel_cost
     
     # Calculate flight hour cost (cost per hour) - handle division by zero
-    flight_hour_cost_yv204e = Decimal('0.0')
-    flight_hour_cost_yv206e = Decimal('0.0')
     if total_flight_hours_yv204e > 0:
         flight_hour_cost_yv204e = (total_flight_hours_dollars_yv204e + total_fuel_cost_yv204e) / total_flight_hours_yv204e
     if total_flight_hours_yv206e > 0:
         flight_hour_cost_yv206e = (total_flight_hours_dollars_yv206e + total_fuel_cost_yv206e) / total_flight_hours_yv206e
+
+    if role_type == 'instructor' and instructor_hourly_rate is not None:
+        total_paid_to_instructor_yv204e = round(total_flight_hours_yv204e * instructor_hourly_rate, 1)
+        total_paid_to_instructor_yv206e = round(total_flight_hours_yv206e * instructor_hourly_rate, 1)
+        total_paid_to_instructor = total_paid_to_instructor_yv204e + total_paid_to_instructor_yv206e
 
     return {
         'total_flight_hours_yv204e': total_flight_hours_yv204e,
@@ -809,87 +822,70 @@ def calculate_user_stats(user_id, role_type='student'):
         'total_cost': total_cost,
         'flight_hour_cost_yv204e': flight_hour_cost_yv204e,
         'flight_hour_cost_yv206e': flight_hour_cost_yv206e,
+        'total_paid_to_instructor_yv204e': total_paid_to_instructor_yv204e,
+        'total_paid_to_instructor_yv206e': total_paid_to_instructor_yv206e,
+        'total_paid_to_instructor': total_paid_to_instructor,
     }
 
 @login_required
-@require_http_methods(["GET"])
-def user_stats(request):
-    """API endpoint to get user statistics (student or instructor)."""
-    from fleet.models import Aircraft
-    
-    user = request.user
-    user_id = user.national_id
-    
-    # Determine role type from user
-    role_type = 'student' if user.role == 'STUDENT' else 'instructor'
-    
-    # Only allow students and instructors
-    if user.role not in ['STUDENT', 'INSTRUCTOR']:
-        return JsonResponse({
-            'success': False,
-            'error': 'Acceso no autorizado'
-        }, status=403)
-
-    try:
-        stats = calculate_user_stats(user_id, role_type)
-    except Aircraft.DoesNotExist:
-        return JsonResponse({
-            'success': False,
-            'error': 'Aeronave no encontrada'
-        }, status=404)
-    
-    return JsonResponse({
-        'success': True,
-        'data': {
-            'total_flight_hours_yv204e': float(round(stats['total_flight_hours_yv204e'], 1)),
-            'total_flight_hours_yv206e': float(round(stats['total_flight_hours_yv206e'], 1)),
-            'total_flight_hours': float(round(stats['total_flight_hours'], 1)),
-            'total_flight_hours_dollars_yv204e': float(round(stats['total_flight_hours_dollars_yv204e'], 1)),
-            'total_flight_hours_dollars_yv206e': float(round(stats['total_flight_hours_dollars_yv206e'], 1)),
-            'total_flight_hours_dollars': float(round(stats['total_flight_hours_dollars'], 1)),
-            'total_fuel_cost_yv204e': float(round(stats['total_fuel_cost_yv204e'], 1)),
-            'total_fuel_cost_yv206e': float(round(stats['total_fuel_cost_yv206e'], 1)),
-            'total_fuel_cost': float(round(stats['total_fuel_cost'], 1)),
-            'total_consumed_liters': float(round(stats['total_consumed_liters'], 1)),
-            'total_consumed_liters_yv204e': float(round(stats['total_consumed_liters_yv204e'], 1)),
-            'total_consumed_liters_yv206e': float(round(stats['total_consumed_liters_yv206e'], 1)),
-            'total_consumed_gallons': float(round(stats['total_consumed_gallons'], 1)),
-            'total_consumed_gallons_yv204e': float(round(stats['total_consumed_gallons_yv204e'], 1)),
-            'total_consumed_gallons_yv206e': float(round(stats['total_consumed_gallons_yv206e'], 1)),
-            'fuel_rate_liters_yv204e': float(round(stats['fuel_rate_liters_yv204e'], 1)),
-            'fuel_rate_liters_yv206e': float(round(stats['fuel_rate_liters_yv206e'], 1)),
-            'fuel_rate_gallons_yv204e': float(round(stats['fuel_rate_gallons_yv204e'], 1)),
-            'fuel_rate_gallons_yv206e': float(round(stats['fuel_rate_gallons_yv206e'], 1)),
-            'total_cost': float(round(stats['total_cost'], 1)),
-            'flight_hour_cost_yv204e': float(round(stats['flight_hour_cost_yv204e'], 1)),
-            'flight_hour_cost_yv206e': float(round(stats['flight_hour_cost_yv206e'], 1)),
-        }
-    })
-
-@login_required
-def student_stats_page(request):
+def student_stats_page(request, student_id=None):
     """Display statistics page for a student."""
     from fleet.models import Aircraft
+    from accounts.models import StudentProfile
     
     user = request.user
-    user_id = user.national_id
     
-    # Check user role and selected role (for staff who are also instructors)
-    selected_role = request.session.get('selected_role', None)
-    is_student = user.role == 'STUDENT' or selected_role == 'STUDENT'
-    
-    # Only allow students (by role or selected role)
-    if not is_student:
-        messages.error(request, 'Acceso no autorizado')
-        return redirect('dashboard:dashboard')
+    # If student_id is provided, staff is viewing another student's stats
+    if student_id:
+        if user.role != 'STAFF':
+            messages.error(request, 'Acceso no autorizado')
+            return redirect('dashboard:dashboard')
+        try:
+            student = User.objects.get(national_id=student_id, role='STUDENT')
+            student_profile = StudentProfile.objects.get(user=student)
+            student_hourly_rate = student_profile.flight_rate
+            user_id = student_id
+        except User.DoesNotExist:
+            messages.error(request, 'Estudiante no encontrado')
+            return redirect('fms:user_stats_page')
+        except StudentProfile.DoesNotExist:
+            messages.error(request, 'Perfil de estudiante no encontrado')
+            return redirect('fms:user_stats_page')
+    else:
+        # User viewing their own stats
+        user_id = user.national_id
+        student = None
+        
+        # Check user role and selected role (for staff who are also instructors)
+        selected_role = request.session.get('selected_role', None)
+        is_student = user.role == 'STUDENT' or selected_role == 'STUDENT'
+
+        try:
+            student_profile = StudentProfile.objects.get(user=user)
+            student_hourly_rate = student_profile.flight_rate
+        except StudentProfile.DoesNotExist:
+            messages.error(request, 'Perfil de estudiante no encontrado')
+            return redirect('dashboard:dashboard')
+
+        # Check user role and selected role (for staff who are also students)
+        selected_role = request.session.get('selected_role', None)
+        is_student = user.role == 'STUDENT' or selected_role == 'STUDENT'
+        
+        # Only allow students (by role or selected role)
+        if not is_student:
+            messages.error(request, 'Acceso no autorizado')
+            return redirect('dashboard:dashboard')
 
     try:
-        stats = calculate_user_stats(user_id, 'student')
+        stats = calculate_user_stats(user_id, 'student', None, student_hourly_rate)
     except Aircraft.DoesNotExist:
         messages.error(request, 'Aeronave no encontrada')
+        if student_id:
+            return redirect('fms:user_stats_page')
         return redirect('dashboard:dashboard')
 
     context = {
+        'student': student,
         'total_flight_hours_yv204e': round(stats['total_flight_hours_yv204e'], 1),
         'total_flight_hours_yv206e': round(stats['total_flight_hours_yv206e'], 1),
         'total_flight_hours': round(stats['total_flight_hours'], 1),
@@ -916,29 +912,60 @@ def student_stats_page(request):
     return render(request, 'fms/student_stats.html', context)
 
 @login_required
-def instructor_stats(request):
+def instructor_stats_page(request, instructor_id=None):
     """Display statistics page for an instructor."""
     from fleet.models import Aircraft
+    from accounts.models import InstructorProfile
     
     user = request.user
-    user_id = user.national_id
     
-    # Check user role and selected role (for staff who are also instructors)
-    selected_role = request.session.get('selected_role', None)
-    is_instructor = user.role == 'INSTRUCTOR' or selected_role == 'INSTRUCTOR'
-    
-    # Only allow instructors (by role or selected role)
-    if not is_instructor:
-        messages.error(request, 'Acceso no autorizado')
-        return redirect('dashboard:dashboard')
+    # If instructor_id is provided, staff is viewing another instructor's stats
+    if instructor_id:
+        if user.role != 'STAFF':
+            messages.error(request, 'Acceso no autorizado')
+            return redirect('dashboard:dashboard')
+        try:
+            instructor = User.objects.get(national_id=instructor_id, role='INSTRUCTOR')
+            instructor_profile = InstructorProfile.objects.get(user=instructor)
+            instructor_hourly_rate = instructor_profile.instructor_hourly_rate
+            user_id = instructor_id
+        except User.DoesNotExist:
+            messages.error(request, 'Instructor no encontrado')
+            return redirect('fms:user_stats_page')
+        except InstructorProfile.DoesNotExist:
+            messages.error(request, 'Perfil de instructor no encontrado')
+            return redirect('fms:user_stats_page')
+    else:
+        # User viewing their own stats
+        user_id = user.national_id
+        instructor = None
+        
+        try:
+            instructor_profile = InstructorProfile.objects.get(user=user)
+            instructor_hourly_rate = instructor_profile.instructor_hourly_rate
+        except InstructorProfile.DoesNotExist:
+            messages.error(request, 'Perfil de instructor no encontrado')
+            return redirect('dashboard:dashboard')
+        
+        # Check user role and selected role (for staff who are also instructors)
+        selected_role = request.session.get('selected_role', None)
+        is_instructor = user.role == 'INSTRUCTOR' or selected_role == 'INSTRUCTOR'
+        
+        # Only allow instructors (by role or selected role)
+        if not is_instructor:
+            messages.error(request, 'Acceso no autorizado')
+            return redirect('dashboard:dashboard')
 
     try:
-        stats = calculate_user_stats(user_id, 'instructor')
+        stats = calculate_user_stats(user_id, 'instructor', instructor_hourly_rate, None)
     except Aircraft.DoesNotExist:
         messages.error(request, 'Aeronave no encontrada')
+        if instructor_id:
+            return redirect('fms:user_stats_page')
         return redirect('dashboard:dashboard')
 
     context = {
+        'instructor': instructor,
         'total_flight_hours_yv204e': round(stats['total_flight_hours_yv204e'], 1),
         'total_flight_hours_yv206e': round(stats['total_flight_hours_yv206e'], 1),
         'total_flight_hours': round(stats['total_flight_hours'], 1),
@@ -961,5 +988,27 @@ def instructor_stats(request):
         'total_cost': round(stats['total_cost'], 1),
         'flight_hour_cost_yv204e': round(stats['flight_hour_cost_yv204e'], 1),
         'flight_hour_cost_yv206e': round(stats['flight_hour_cost_yv206e'], 1),
+        'total_paid_to_instructor_yv204e': round(stats['total_paid_to_instructor_yv204e'], 1),
+        'total_paid_to_instructor_yv206e': round(stats['total_paid_to_instructor_yv206e'], 1),
+        'total_paid_to_instructor': round(stats['total_paid_to_instructor'], 1),
     }
     return render(request, 'fms/instructor_stats.html', context)
+
+@login_required
+def user_stats_page(request):
+    """Display a page listing all students and instructors with their stats."""
+    # Only allow staff
+    if request.user.role != 'STAFF':
+        messages.error(request, 'Acceso no autorizado')
+        return redirect('dashboard:dashboard')
+    
+    # Get all students and instructors
+    students = StudentProfile.objects.select_related('user').order_by('user__last_name', 'user__first_name')
+    instructors = InstructorProfile.objects.select_related('user').order_by('user__last_name', 'user__first_name')
+    
+    context = {
+        'students': students,
+        'instructors': instructors,
+    }
+    return render(request, 'fms/user_stats.html', context)
+

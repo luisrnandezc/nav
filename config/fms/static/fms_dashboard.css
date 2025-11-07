@@ -194,6 +194,10 @@
   opacity: 0.8;
 }
 
+.flight-details.three-columns {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
 .detail-item {
   display: flex;
   align-items: center;

@@ -777,8 +777,14 @@ def calculate_user_stats(user_id, role_type='student'):
     total_consumed_liters = total_consumed_liters_yv204e + total_consumed_liters_yv206e
     total_consumed_gallons = total_consumed_gallons_yv204e + total_consumed_gallons_yv206e
     total_cost = total_flight_hours_dollars + total_fuel_cost
-    flight_hour_cost_yv204e = (total_flight_hours_dollars_yv204e + total_fuel_cost_yv204e) / total_flight_hours_yv204e
-    flight_hour_cost_yv206e = (total_flight_hours_dollars_yv206e + total_fuel_cost_yv206e) / total_flight_hours_yv206e
+    
+    # Calculate flight hour cost (cost per hour) - handle division by zero
+    flight_hour_cost_yv204e = Decimal('0.0')
+    flight_hour_cost_yv206e = Decimal('0.0')
+    if total_flight_hours_yv204e > 0:
+        flight_hour_cost_yv204e = (total_flight_hours_dollars_yv204e + total_fuel_cost_yv204e) / total_flight_hours_yv204e
+    if total_flight_hours_yv206e > 0:
+        flight_hour_cost_yv206e = (total_flight_hours_dollars_yv206e + total_fuel_cost_yv206e) / total_flight_hours_yv206e
 
     return {
         'total_flight_hours_yv204e': total_flight_hours_yv204e,
@@ -868,8 +874,12 @@ def student_stats_page(request):
     user = request.user
     user_id = user.national_id
     
-    # Only allow students
-    if user.role != 'STUDENT':
+    # Check user role and selected role (for staff who are also instructors)
+    selected_role = request.session.get('selected_role', None)
+    is_student = user.role == 'STUDENT' or selected_role == 'STUDENT'
+    
+    # Only allow students (by role or selected role)
+    if not is_student:
         messages.error(request, 'Acceso no autorizado')
         return redirect('dashboard:dashboard')
 
@@ -913,8 +923,12 @@ def instructor_stats(request):
     user = request.user
     user_id = user.national_id
     
-    # Only allow instructors
-    if user.role != 'INSTRUCTOR':
+    # Check user role and selected role (for staff who are also instructors)
+    selected_role = request.session.get('selected_role', None)
+    is_instructor = user.role == 'INSTRUCTOR' or selected_role == 'INSTRUCTOR'
+    
+    # Only allow instructors (by role or selected role)
+    if not is_instructor:
         messages.error(request, 'Acceso no autorizado')
         return redirect('dashboard:dashboard')
 

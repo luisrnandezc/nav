@@ -1,0 +1,144 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Estadísticas del Estudiante</title>
+        <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+        <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="fms-container">
+            <div class="back-button">
+                <a href="{% url 'fms:student_flightlog' %}" class="button">&larr; Volver</a>
+            </div>
+
+            <div class="fms-header">
+                <h1>Estadísticas del Estudiante</h1>
+                <p>Resumen completo de vuelos y consumo</p>
+            </div>
+
+            <div class="sections-container">
+                <!-- Total Statistics -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Totales Generales</h2>
+                    </div>
+                    <div class="stats-details">
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Total de Horas de Vuelo:</span>
+                            <span class="detail-value">{{ total_flight_hours }} h</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Total de Combustible Consumido (Litros):</span>
+                            <span class="detail-value">{{ total_consumed_liters }} l</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Total de Combustible Consumido (Galones):</span>
+                            <span class="detail-value">{{ total_consumed_gallons }} gal</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo Total de Horas de Vuelo:</span>
+                            <span class="detail-value">${{ total_flight_hours_dollars }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo Total de Combustible:</span>
+                            <span class="detail-value">${{ total_fuel_cost }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo Total:</span>
+                            <span class="detail-value">${{ total_cost }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- YV204E Statistics -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Estadísticas YV204E</h2>
+                    </div>
+                    <div class="stats-details">
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Horas de Vuelo:</span>
+                            <span class="detail-value">{{ total_flight_hours_yv204e }} h</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Combustible Consumido (Litros):</span>
+                            <span class="detail-value">{{ total_consumed_liters_yv204e }} l</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Combustible Consumido (Galones):</span>
+                            <span class="detail-value">{{ total_consumed_gallons_yv204e }} gal</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo de Horas de Vuelo:</span>
+                            <span class="detail-value">${{ total_flight_hours_dollars_yv204e }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo de Combustible:</span>
+                            <span class="detail-value">${{ total_fuel_cost_yv204e }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">FF promedio (Litros/h):</span>
+                            <span class="detail-value">{{ fuel_rate_liters_yv204e }} lph</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">FF promedio (Galones/h):</span>
+                            <span class="detail-value">{{ fuel_rate_gallons_yv204e }} gph</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo por Hora de Vuelo ($/h):</span>
+                            <span class="detail-value">${{ flight_hour_cost_yv204e }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- YV206E Statistics -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Estadísticas YV206E</h2>
+                    </div>
+                    <div class="stats-details">
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Horas de Vuelo:</span>
+                            <span class="detail-value">{{ total_flight_hours_yv206e }} h</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Combustible Consumido (Litros):</span>
+                            <span class="detail-value">{{ total_consumed_liters_yv206e }} l</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Combustible Consumido (Galones):</span>
+                            <span class="detail-value">{{ total_consumed_gallons_yv206e }} gal</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo de Horas de Vuelo:</span>
+                            <span class="detail-value">${{ total_flight_hours_dollars_yv206e }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo de Combustible:</span>
+                            <span class="detail-value">${{ total_fuel_cost_yv206e }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">FF promedio (Litros/h):</span>
+                            <span class="detail-value">{{ fuel_rate_liters_yv206e }} lph</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">FF promedio (Galones/h):</span>
+                            <span class="detail-value">{{ fuel_rate_gallons_yv206e }} gph</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo por Hora de Vuelo ($/h):</span>
+                            <span class="detail-value">${{ flight_hour_cost_yv206e }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

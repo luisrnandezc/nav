@@ -14,7 +14,11 @@
     <body>
         <div class="fms-container">
             <div class="back-button">
-                <a href="{% url 'fms:student_flightlog' %}" class="button">&larr; Volver</a>
+                {% if student %}
+                    <a href="{% url 'fms:user_stats_page' %}" class="button">&larr; Volver</a>
+                {% else %}
+                    <a href="{% url 'fms:student_flightlog' %}" class="button">&larr; Volver</a>
+                {% endif %}
             </div>
 
             <div class="fms-header">

@@ -67,9 +67,39 @@ def run_sms_voluntary_report_analysis(report):
     Args:
         report (VoluntaryReport): The report to analyze
     """
+    import logging
+    import sys
+    
+    # Set up logging to both file and console
+    log_file_path = os.path.join(settings.BASE_DIR, 'sms_analysis.log')
+    
+    # Create logger
+    logger = logging.getLogger('sms_analysis')
+    logger.setLevel(logging.DEBUG)
+    
+    # Remove existing handlers to avoid duplicates
+    logger.handlers = []
+    
+    # File handler
+    file_handler = logging.FileHandler(log_file_path)
+    file_handler.setLevel(logging.DEBUG)
+    file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(file_formatter)
+    logger.addHandler(file_handler)
+    
+    # Console handler (for PythonAnywhere Always-On Task)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.DEBUG)
+    console_formatter = logging.Formatter('[LOG] %(asctime)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_formatter)
+    logger.addHandler(console_handler)
+    
+    logger.info("=" * 80)
+    logger.info("Starting run_sms_voluntary_report_analysis for report ID: {}".format(report.id))
 
     # Set SMS prompt
     base_prompt = settings.SMS_PROMPT
+    logger.info("SMS_PROMPT loaded, length: {} characters".format(len(base_prompt)))
 
     # Create a SimpleNamespace object to support {report.date} syntax in the prompt
     report_ns = SimpleNamespace(
@@ -78,19 +108,36 @@ def run_sms_voluntary_report_analysis(report):
         area=getattr(report, "area", "") or "",
         description=getattr(report, "description", "") or ""
     )
+    logger.info("Report namespace created - date: {}, time: {}, area: {}, description length: {}".format(
+        report_ns.date, report_ns.time, report_ns.area, len(report_ns.description)
+    ))
 
     rendered_prompt = base_prompt.format(report=report_ns)
+    logger.info("Rendered prompt length: {} characters".format(len(rendered_prompt)))
 
     # Retrieve the API key from environment variables
+    logger.info("Retrieving OPENAI_API_KEY from environment variables")
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        return "Error: OpenAI API key not found in environment variables."
+        error_msg = "Error: OpenAI API key not found in environment variables."
+        logger.error(error_msg)
+        print("[ERROR] {}".format(error_msg))
+        return error_msg
+    
+    logger.info("API key retrieved successfully (length: {} characters)".format(len(api_key) if api_key else 0))
 
     try:
+        logger.info("Attempting to initialize OpenAI client")
+        
         # Initialize the OpenAI client with the retrieved key
         client = OpenAI(api_key=api_key)
+        
+        logger.info("OpenAI client initialized successfully")
 
         # Make a request to the responses endpoint
+        logger.info("Making API request to OpenAI responses endpoint")
+        logger.info("Model: gpt-5-nano, reasoning: medium, text verbosity: medium")
+        
         response = client.responses.create(
             model="gpt-5-nano",
             reasoning = {"effort": "medium"},
@@ -98,11 +145,39 @@ def run_sms_voluntary_report_analysis(report):
             instructions = base_prompt,
             input=rendered_prompt,
         )
+        
+        logger.info("API request completed successfully")
+        
         # Extract the content from the response
         content = response.output_text
+        logger.info("Response content extracted, length: {} characters".format(len(content) if content else 0))
+        
+        logger.info("=" * 80)
         return content
         
+    except TypeError as e:
+        error_msg = "TypeError during OpenAI operation: {}".format(str(e))
+        logger.error(error_msg, exc_info=True)
+        print("[ERROR] {}".format(error_msg))
+        import traceback
+        logger.error("Full traceback: {}".format(traceback.format_exc()))
+        logger.info("=" * 80)
+        return "API key validation failed. Error: {}".format(e)
+    except AttributeError as e:
+        error_msg = "AttributeError during OpenAI operation: {}".format(str(e))
+        logger.error(error_msg, exc_info=True)
+        print("[ERROR] {}".format(error_msg))
+        import traceback
+        logger.error("Full traceback: {}".format(traceback.format_exc()))
+        logger.info("=" * 80)
+        return "API key validation failed. Error: {}".format(e)
     except Exception as e:
+        error_msg = "Exception during OpenAI operation: {} (Type: {})".format(str(e), type(e).__name__)
+        logger.error(error_msg, exc_info=True)
+        print("[ERROR] {}".format(error_msg))
+        import traceback
+        logger.error("Full traceback: {}".format(traceback.format_exc()))
+        logger.info("=" * 80)
         return "API key validation failed. Error: {}".format(e)
     
 @login_required

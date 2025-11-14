@@ -764,9 +764,9 @@ def calculate_user_stats(user_id, role_type='student', instructor_hourly_rate=No
     
     # Calculate fuel gallons consumed
     if total_consumed_liters_yv204e > 0:
-        total_consumed_gallons_yv204e = round(total_consumed_liters_yv204e / Decimal('3.78541'), 1)
+        total_consumed_gallons_yv204e = total_consumed_liters_yv204e / Decimal('3.78541')
     if total_consumed_liters_yv206e > 0:
-        total_consumed_gallons_yv206e = round(total_consumed_liters_yv206e / Decimal('3.78541'), 1)
+        total_consumed_gallons_yv206e = total_consumed_liters_yv206e / Decimal('3.78541')
     
     # Calculate fuel rate (flight hours / consumed fuel)
     if total_flight_hours_yv204e > 0:
@@ -795,8 +795,8 @@ def calculate_user_stats(user_id, role_type='student', instructor_hourly_rate=No
         flight_hour_cost_yv206e = (total_flight_hours_dollars_yv206e + total_fuel_cost_yv206e) / total_flight_hours_yv206e
 
     if role_type == 'instructor' and instructor_hourly_rate is not None:
-        total_paid_to_instructor_yv204e = round(total_flight_hours_yv204e * instructor_hourly_rate, 1)
-        total_paid_to_instructor_yv206e = round(total_flight_hours_yv206e * instructor_hourly_rate, 1)
+        total_paid_to_instructor_yv204e = total_flight_hours_yv204e * instructor_hourly_rate
+        total_paid_to_instructor_yv206e = total_flight_hours_yv206e * instructor_hourly_rate
         total_paid_to_instructor = total_paid_to_instructor_yv204e + total_paid_to_instructor_yv206e
 
     return {
@@ -855,10 +855,6 @@ def student_stats_page(request, student_id=None):
         # User viewing their own stats
         user_id = user.national_id
         student = None
-        
-        # Check user role and selected role (for staff who are also instructors)
-        selected_role = request.session.get('selected_role', None)
-        is_student = user.role == 'STUDENT' or selected_role == 'STUDENT'
 
         try:
             student_profile = StudentProfile.objects.get(user=user)
@@ -992,7 +988,10 @@ def instructor_stats_page(request, instructor_id=None):
         'total_paid_to_instructor_yv206e': round(stats['total_paid_to_instructor_yv206e'], 1),
         'total_paid_to_instructor': round(stats['total_paid_to_instructor'], 1),
     }
-    return render(request, 'fms/instructor_stats.html', context)
+    if instructor_id:
+        return render(request, 'fms/instructor_stats.html', context)
+    else:
+        return render(request, 'fms/instructor_stats_limited.html', context)
 
 @login_required
 def user_stats_page(request):

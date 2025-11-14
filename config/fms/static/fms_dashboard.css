@@ -213,6 +213,10 @@
   color: #dae1ff;
 }
 
+.stat-value {
+  color: #4CAF50;
+}
+
 .stats-details {
   display: flex;
   flex-direction: column;

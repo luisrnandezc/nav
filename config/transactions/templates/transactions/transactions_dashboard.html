@@ -22,8 +22,13 @@
         <p>Sistema de Gestión de Transacciones</p>
       </div>
 
-      <div class="add-transaction-button">
-        <a href="{% url 'transactions:add_transaction' %}" class="button">+ Agregar Transacción</a>
+      <div class="buttons-container">
+        <div class="add-transaction-button">
+          <a href="{% url 'transactions:add_transaction' %}" class="button">+ Agregar Transacción</a>
+        </div>
+        <div class="add-transaction-button">
+          <a href="{% url 'transactions:add_fuel_transaction' %}" class="button">+ Agregar Combustible</a>
+        </div>
       </div>
 
       <div class="transactions-list-container">

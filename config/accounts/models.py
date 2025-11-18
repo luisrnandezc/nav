@@ -288,7 +288,12 @@ class InstructorProfile(models.Model):
         default=LICENSE_PCA,
         verbose_name='Tipo de licencia',
     )
-
+    instructor_hourly_rate = models.DecimalField(
+        max_digits=3,
+        decimal_places=1,
+        default=20.0,
+        verbose_name="Tasa de instrucción ($/h)"
+    )
     #endregion
 
     class Meta:

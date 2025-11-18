@@ -12,19 +12,23 @@
             <div class="detail-item">
                 <span class="detail-label">Fecha:</span>
                 <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span>
-            </div>
-            <div class="detail-item">
+              </div>
+              <div class="detail-item">
                 <span class="detail-label">Sesión:</span>
-                <span class="detail-value">{{ session.session_number }}{% if session.session_letter %}{{ session.session_letter }}{% endif %}</span>
-            </div>
-            <div class="detail-item">
+                <span class="detail-value">{{ session.session_number }}{{ session.session_letter }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Horas:</span>
+                <span class="detail-value">{{ session.session_sim_hours }}</span>
+              </div>
+              <div class="detail-item">
                 <span class="detail-label">Simulador:</span>
                 <span class="detail-value">{{ session.simulator.name }}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Horas:</span>
-                <span class="detail-value">{{ session.session_sim_hours }}h</span>
-            </div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Instructor:</span>
+                <span class="detail-value">{{ session.instructor_first_name }} {{ session.instructor_last_name }}</span>
+              </div>
         </div>
     </a>
 {% endfor %}

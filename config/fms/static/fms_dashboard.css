@@ -188,7 +188,7 @@
 
 .flight-details {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
   font-size: 0.9rem;
   opacity: 0.8;

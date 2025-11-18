@@ -1,0 +1,274 @@
+/* Fuel Transaction Page Styles */
+
+.fuel-transaction-container {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.search-section,
+.results-section {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(218, 225, 255, 0.3);
+  border-radius: 15px;
+  padding: 25px;
+  backdrop-filter: blur(10px);
+}
+
+.search-form {
+  width: 100%;
+}
+
+.search-form-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.search-form-row .form-row {
+  flex: 0 1 auto;
+  min-width: 200px;
+  margin: 0;
+  margin-right: auto;
+  padding: 0;
+}
+
+.search-form-row .form-row label {
+  margin: 0;
+  margin-right: 10px;
+  white-space: nowrap;
+  padding: 0;
+  width: auto;
+  min-width: auto;
+  max-width: none;
+  justify-content: flex-start;
+}
+
+.search-form-row .submit-button {
+  margin-top: 0;
+  margin-bottom: 0;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.evaluations-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Evaluation Card */
+.evaluation-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.evaluation-card:hover {
+  background: rgba(218, 225, 255, 0.1);
+  border-color: #dae1ff;
+}
+
+.evaluation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.evaluation-type {
+  font-size: 1.2rem;
+  color: #dae1ff;
+  margin: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.evaluation-date {
+  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.evaluation-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #b8c5ff;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+/* Fuel Update Form */
+.fuel-update-form {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fuel-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.fuel-label {
+  font-weight: 600;
+  color: #dae1ff;
+  font-size: 1rem;
+  white-space: nowrap;
+  margin: 0;
+  margin-right: 10px;
+  padding: 0;
+  text-indent: 0;
+  display: inline-block;
+  width: auto;
+  min-width: auto;
+  max-width: none;
+  justify-content: flex-start;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.fuel-input {
+  flex: 0 1 auto;
+  min-width: 150px;
+  max-width: 200px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: 'Renogare-Regular', 'Arial', sans-serif;
+  margin-right: auto;
+}
+
+.fuel-input-row .update-button {
+  flex-shrink: 0;
+}
+
+.fuel-input:focus {
+  outline: none;
+  border-color: #dae1ff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.fuel-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.update-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 120px;
+}
+
+.update-button:hover {
+  background-color: #45a049;
+}
+
+.update-button:active {
+  transform: translateY(0);
+}
+
+.no-evaluations {
+  text-align: center;
+  padding: 40px 20px;
+  opacity: 0.6;
+  font-style: italic;
+  color: #dadada;
+  font-size: 1.1rem;
+}
+
+.no-evaluations p {
+  color: #dadada;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .search-form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-form-row .form-row {
+    min-width: 100%;
+  }
+  
+  .search-form-row .submit-button {
+    align-self: stretch;
+    width: 100%;
+  }
+  
+  .evaluation-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .fuel-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .fuel-label {
+    min-width: auto;
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+  
+  .fuel-input {
+    max-width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  
+  .fuel-input-row .update-button {
+    width: 100%;
+  }
+  
+  .evaluation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+

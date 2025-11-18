@@ -1,7 +1,9 @@
 from django import forms
 from django.utils import timezone
+from decimal import Decimal
 from .models import StudentTransaction
 from accounts.models import StudentProfile
+from fms.models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
 
 
 class StudentTransactionForm(forms.ModelForm):
@@ -84,3 +86,26 @@ class StudentTransactionForm(forms.ModelForm):
         if date_added and date_added > timezone.now().date():
             raise forms.ValidationError('La fecha de transacción no puede ser futura.')
         return date_added
+
+class FuelTransactionSearchForm(forms.Form):
+    """Simple form to search for student evaluations with missing fuel data."""
+    
+    student_national_id = forms.IntegerField(
+        required=True,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-field',
+            'required': True,
+            'placeholder': 'Ej: 12345678'
+        }),
+        label='ID del Estudiante'
+    )
+    
+    def clean_student_national_id(self):
+        student_id = self.cleaned_data.get('student_national_id')
+        if student_id:
+            from accounts.models import StudentProfile
+            try:
+                StudentProfile.objects.get(user__national_id=student_id)
+            except StudentProfile.DoesNotExist:
+                raise forms.ValidationError(f'No se encontró un estudiante con ID nacional {student_id}.')
+        return student_id

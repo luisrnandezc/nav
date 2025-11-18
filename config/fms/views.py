@@ -1011,3 +1011,182 @@ def user_stats_page(request):
     }
     return render(request, 'fms/user_stats.html', context)
 
+def fleet_flights_page(request):
+    """Display a page listing all flights and flight reports for the fleet."""
+    from fleet.models import Aircraft
+    from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport
+    
+    yv204e = Aircraft.objects.get(registration='YV204E')
+    yv206e = Aircraft.objects.get(registration='YV206E')
+
+    flights_yv204e_0_100 = FlightEvaluation0_100.objects.filter(aircraft=yv204e).order_by('-session_date')[:50]
+    flights_yv204e_100_120 = FlightEvaluation100_120.objects.filter(aircraft=yv204e).order_by('-session_date')[:50]
+    flights_yv204e_120_170 = FlightEvaluation120_170.objects.filter(aircraft=yv204e).order_by('-session_date')[:50]
+    flights_yv204e_reports = FlightReport.objects.filter(aircraft=yv204e).order_by('-flight_date')[:50]
+
+    flights_yv206e_0_100 = FlightEvaluation0_100.objects.filter(aircraft=yv206e).order_by('-session_date')[:50]
+    flights_yv206e_100_120 = FlightEvaluation100_120.objects.filter(aircraft=yv206e).order_by('-session_date')[:50]
+    flights_yv206e_120_170 = FlightEvaluation120_170.objects.filter(aircraft=yv206e).order_by('-session_date')[:50]
+    flights_yv206e_reports = FlightReport.objects.filter(aircraft=yv206e).order_by('-flight_date')[:50]
+
+    training_flights_yv204e = []
+    for flight in flights_yv204e_0_100:
+        training_flights_yv204e.append(flight)
+    for flight in flights_yv204e_100_120:
+        training_flights_yv204e.append(flight)
+    for flight in flights_yv204e_120_170:
+        training_flights_yv204e.append(flight)
+    # Sort by session_date in descending order (most recent first)
+    training_flights_yv204e.sort(key=lambda x: x.session_date, reverse=True)
+
+    training_flights_yv206e = []
+    for flight in flights_yv206e_0_100:
+        training_flights_yv206e.append(flight)
+    for flight in flights_yv206e_100_120:
+        training_flights_yv206e.append(flight)
+    for flight in flights_yv206e_120_170:
+        training_flights_yv206e.append(flight)
+    # Sort by session_date in descending order (most recent first)
+    training_flights_yv206e.sort(key=lambda x: x.session_date, reverse=True)
+
+    other_flight_yv204e = []
+    for flight in flights_yv204e_reports:
+        other_flight_yv204e.append(flight)
+    other_flight_yv206e = []
+    for flight in flights_yv206e_reports:
+        other_flight_yv206e.append(flight)
+    
+    context = {
+        'training_flights_yv204e': training_flights_yv204e,
+        'training_flights_yv206e': training_flights_yv206e,
+        'other_flight_yv204e': other_flight_yv204e,
+        'other_flight_yv206e': other_flight_yv206e,
+    }
+    return render(request, 'fms/fleet_flights.html', context)
+
+def calculate_aircraft_stats(aircraft_id):
+    """
+    Helper function to calculate statistics for a specific aircraft.
+    
+    Args:
+        aircraft_id: The id of the aircraft
+    Returns:
+        Dictionary with all calculated statistics.
+    
+    Raises:
+        Aircraft.DoesNotExist if the aircraft is not found.
+    """
+    from fleet.models import Aircraft
+    
+    # Get aircraft data
+    aircraft = Aircraft.objects.get(id=aircraft_id)
+    hourly_rate = aircraft.hourly_rate
+    fuel_cost = aircraft.fuel_cost
+
+    # Initialize totals
+    total_flight_hours = Decimal('0.0')
+    total_consumed_liters = Decimal('0.0')
+    total_consumed_gallons = Decimal('0.0')
+    fuel_rate_liters = Decimal('0.0')
+    fuel_rate_gallons = Decimal('0.0')
+    total_flight_hours_dollars = Decimal('0.0')
+    total_fuel_cost = Decimal('0.0')
+    total_cost = Decimal('0.0')
+    flight_hour_cost = Decimal('0.0')
+    
+    # Sum flight hours and fuel from all three evaluation types
+    flight_0_100_stats = FlightEvaluation0_100.objects.filter(aircraft=aircraft).aggregate(
+        total_hours=Sum('session_flight_hours'),
+        total_fuel=Sum('fuel_consumed')
+    )
+    flight_100_120_stats = FlightEvaluation100_120.objects.filter(aircraft=aircraft).aggregate(
+        total_hours=Sum('session_flight_hours'),
+        total_fuel=Sum('fuel_consumed')
+    )
+    
+    flight_120_170_stats = FlightEvaluation120_170.objects.filter(aircraft=aircraft).aggregate(
+        total_hours=Sum('session_flight_hours'),
+        total_fuel=Sum('fuel_consumed')
+    )
+
+    flight_reports_stats = FlightReport.objects.filter(aircraft=aircraft).aggregate(
+        total_hours=Sum('flight_hours'),
+        total_fuel=Sum('fuel_consumed')
+    )
+    
+    # Add up all the totals
+    if flight_0_100_stats['total_hours']:
+        total_flight_hours += flight_0_100_stats['total_hours']
+    if flight_0_100_stats['total_fuel']:
+        total_consumed_liters += flight_0_100_stats['total_fuel']
+
+    if flight_100_120_stats['total_hours']:
+        total_flight_hours += flight_100_120_stats['total_hours']
+    if flight_100_120_stats['total_fuel']:
+        total_consumed_liters += flight_100_120_stats['total_fuel']
+    
+    if flight_120_170_stats['total_hours']:
+        total_flight_hours += flight_120_170_stats['total_hours']
+    if flight_120_170_stats['total_fuel']:
+        total_consumed_liters += flight_120_170_stats['total_fuel']
+
+    if flight_reports_stats['total_hours']:
+        total_flight_hours += flight_reports_stats['total_hours']
+    if flight_reports_stats['total_fuel']:
+        total_consumed_liters += flight_reports_stats['total_fuel']
+    
+    # Calculate fuel gallons consumed
+    if total_consumed_liters > 0:
+        total_consumed_gallons = total_consumed_liters / Decimal('3.78541')
+    
+    # Calculate fuel rate (flight hours / consumed fuel)
+    if total_flight_hours > 0:
+        fuel_rate_liters = total_consumed_liters / total_flight_hours
+        fuel_rate_gallons = total_consumed_gallons / total_flight_hours
+
+    # Calculate total flight hours and fuel cost
+    total_flight_hours_dollars = total_flight_hours * hourly_rate
+    total_fuel_cost = total_consumed_liters * fuel_cost
+    total_cost = total_flight_hours_dollars + total_fuel_cost
+    
+    # Calculate flight hour cost (cost per hour) - handle division by zero
+    if total_flight_hours > 0:
+        flight_hour_cost = total_cost / total_flight_hours
+
+    return {
+        'total_flight_hours': total_flight_hours,
+        'total_flight_hours_dollars': total_flight_hours_dollars,
+        'total_fuel_cost': total_fuel_cost,
+        'total_consumed_liters': total_consumed_liters,
+        'total_consumed_gallons': total_consumed_gallons,
+        'fuel_rate_liters': fuel_rate_liters,
+        'fuel_rate_gallons': fuel_rate_gallons,
+        'total_cost': total_cost,
+        'flight_hour_cost': flight_hour_cost,
+    }
+
+@login_required
+def fleet_stats_page(request, aircraft_registration):
+    """Display statistics page for a specific aircraft."""
+    from fleet.models import Aircraft
+    
+    try:
+        aircraft = Aircraft.objects.get(registration=aircraft_registration)
+        stats = calculate_aircraft_stats(aircraft.id)
+        
+        context = {
+            'aircraft': aircraft,
+            'total_flight_hours': round(stats['total_flight_hours'], 1),
+            'total_flight_hours_dollars': round(stats['total_flight_hours_dollars'], 1),
+            'total_fuel_cost': round(stats['total_fuel_cost'], 1),
+            'total_consumed_liters': round(stats['total_consumed_liters'], 1),
+            'total_consumed_gallons': round(stats['total_consumed_gallons'], 1),
+            'fuel_rate_liters': round(stats['fuel_rate_liters'], 1),
+            'fuel_rate_gallons': round(stats['fuel_rate_gallons'], 1),
+            'total_cost': round(stats['total_cost'], 1),
+            'flight_hour_cost': round(stats['flight_hour_cost'], 1),
+        }
+        return render(request, 'fms/aircraft_stats.html', context)
+    except Aircraft.DoesNotExist:
+        messages.error(request, 'Aeronave no encontrada')
+        return redirect('fms:fleet_flights_page')

@@ -1,0 +1,194 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Estadísticas de la Flota</title>
+        <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+        <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="fms-container">
+            <div class="back-button">
+                <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
+            </div>
+
+            <div class="fms-header">
+                <h1>Estadísticas de la Flota</h1>
+                <p>Lista total de vuelos</p>
+            </div>
+
+            <div class="buttons-container">
+                <div class="student-list-button">
+                  <a href="{% url 'fms:fleet_stats_page' 'YV204E' %}" class="button">Estadísticas YV204E</a>
+                </div>
+                <div class="student-list-button">
+                  <a href="{% url 'fms:fleet_stats_page' 'YV206E' %}" class="button">Estadísticas YV206E</a>
+                </div>
+            </div>
+
+            <div class="sections-container">
+                <!-- YV204E Training Flight Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>YV204E - Vuelos de entrenamiento</h2>
+                    </div>
+                    <div class="flight-list">
+                        {% if training_flights_yv204e %}
+                            {% for flight in training_flights_yv204e %}
+                                <div class="flight-card">
+                                    <div class="flight-details three-columns">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fecha:</span>
+                                            <span class="detail-value">{{ flight.session_date }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Horas:</span>
+                                            <span class="detail-value">{{ flight.session_flight_hours }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Estudiante:</span>
+                                            <span class="detail-value">{{ flight.student_first_name }} {{ flight.student_last_name }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Instructor:</span>
+                                            <span class="detail-value">{{ flight.instructor_first_name }} {{ flight.instructor_last_name }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Combustible:</span>
+                                            <span class="detail-value">{{ flight.fuel_consumed }}l</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Nota:</span>
+                                            <span class="detail-value">{{ flight.session_grade }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-flights">No hay vuelos registrados</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- YV206E Training Flight Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>YV206E - Vuelos de entrenamiento</h2>
+                    </div>
+                    <div class="flight-list">
+                        {% if training_flights_yv206e %}
+                            {% for flight in training_flights_yv206e %}
+                                <div class="flight-card">
+                                    <div class="flight-details three-columns">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fecha:</span>
+                                            <span class="detail-value">{{ flight.session_date }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Horas:</span>
+                                            <span class="detail-value">{{ flight.session_flight_hours }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Estudiante:</span>
+                                            <span class="detail-value">{{ flight.student_first_name }} {{ flight.student_last_name }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Instructor:</span>
+                                            <span class="detail-value">{{ flight.instructor_first_name }} {{ flight.instructor_last_name }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Combustible:</span>
+                                            <span class="detail-value">{{ flight.fuel_consumed }}l</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Nota:</span>
+                                            <span class="detail-value">{{ flight.session_grade }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-flights">No hay vuelos registrados</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- YV204E Flight Reports Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>YV204E - Reportes de vuelo</h2>
+                    </div>
+                    <div class="flight-list">
+                        {% if other_flight_yv204e %}
+                            {% for flight in other_flight_yv204e %}
+                                <div class="flight-card">
+                                    <div class="flight-details two-columns">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fecha:</span>
+                                            <span class="detail-value">{{ flight.flight_date }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Horas:</span>
+                                            <span class="detail-value">{{ flight.flight_hours }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Piloto:</span>
+                                            <span class="detail-value">{{ flight.pilot_first_name }} {{ flight.pilot_last_name }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Combustible:</span>
+                                            <span class="detail-value">{{ flight.fuel_consumed }}l</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-flights">No hay vuelos registrados</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- YV206E Flight Reports Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>YV206E - Reportes de vuelo</h2>
+                    </div>
+                    <div class="flight-list">
+                        {% if other_flight_yv206e %}
+                            {% for flight in other_flight_yv206e %}
+                                <div class="flight-card">
+                                    <div class="flight-details two-columns">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Fecha:</span>
+                                            <span class="detail-value">{{ flight.flight_date }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Horas:</span>
+                                            <span class="detail-value">{{ flight.flight_hours }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Piloto:</span>
+                                            <span class="detail-value">{{ flight.pilot_first_name }} {{ flight.pilot_last_name }}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Combustible:</span>
+                                            <span class="detail-value">{{ flight.fuel_consumed }}l</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-flights">No hay vuelos registrados</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

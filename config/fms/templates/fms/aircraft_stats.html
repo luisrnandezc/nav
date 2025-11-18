@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Estadísticas de la Aeronave</title>
+        <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+        <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="fms-container">
+            <div class="back-button">
+                <a href="{% url 'fms:fleet_flights_page' %}" class="button">&larr; Volver</a>
+            </div>
+
+            <div class="fms-header">
+                <h1>{{ aircraft.registration }}</h1>
+            </div>
+
+            <div class="sections-container">
+                <!-- Total Statistics -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Estadísticas Generales</h2>
+                    </div>
+                    <div class="stats-details">
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Horas de Vuelo:</span>
+                            <span class="detail-value stat-value">{{ total_flight_hours }} h</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Combustible Consumido (Litros):</span>
+                            <span class="detail-value stat-value">{{ total_consumed_liters }} l</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Combustible Consumido (Galones):</span>
+                            <span class="detail-value stat-value">{{ total_consumed_gallons }} gal</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo de Horas de Vuelo:</span>
+                            <span class="detail-value stat-value">${{ total_flight_hours_dollars }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo de Combustible:</span>
+                            <span class="detail-value stat-value">${{ total_fuel_cost }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo Total:</span>
+                            <span class="detail-value stat-value">${{ total_cost }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">FF promedio (Litros/h):</span>
+                            <span class="detail-value stat-value">{{ fuel_rate_liters }} lph</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">FF promedio (Galones/h):</span>
+                            <span class="detail-value stat-value">{{ fuel_rate_gallons }} gph</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Costo por Hora de Vuelo ($/h):</span>
+                            <span class="detail-value stat-value">${{ flight_hour_cost }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

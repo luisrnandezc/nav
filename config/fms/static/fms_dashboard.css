@@ -140,6 +140,21 @@
   margin-bottom: 0;
 }
 
+.flight-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.flight-card:last-child {
+  margin-bottom: 0;
+}
+
 .load-more-btn {
   display: none;
   margin-top: 15px;
@@ -188,10 +203,18 @@
 
 .flight-details {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
   font-size: 0.9rem;
   opacity: 0.8;
+}
+
+.flight-details.three-columns {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.flight-details.two-columns {
+  grid-template-columns: 1fr 1fr;
 }
 
 .detail-item {
@@ -207,6 +230,10 @@
 
 .detail-value {
   color: #dae1ff;
+}
+
+.stat-value {
+  color: #4CAF50;
 }
 
 .stats-details {
@@ -240,6 +267,16 @@
   font-style: italic;
 }
 
+@media screen and (max-width: 1024px) {
+  .flight-details.three-columns {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .flight-details.two-columns {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media screen and (max-width: 768px) {
 
   .sections-container {
@@ -264,6 +301,24 @@
 
   .flight-details {
     grid-template-columns: 1fr;
+  }
+
+  .flight-details.three-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .flight-details.two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .flight-card {
+    padding: 12px;
+    margin-bottom: 12px;
+    margin-right: 0;
+  }
+
+  .section-header h2 {
+    font-size: 1.2rem;
   }
 
   .detail-label {
@@ -303,7 +358,7 @@
 @media screen and (max-width: 480px) {
   .fms-container {
     padding: 10px;
-      }
+  }
 
   .flight-info {
     flex-direction: column;
@@ -324,5 +379,29 @@
     padding: 10px 15px;
     min-width: 250px;
     max-width: 280px;
+  }
+
+  .section-header h2 {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+  }
+
+  .flight-card {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .detail-label {
+    font-size: 0.75rem;
+  }
+
+  .detail-value {
+    font-size: 0.75rem;
   }
 }

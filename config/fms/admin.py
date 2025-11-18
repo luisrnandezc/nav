@@ -500,7 +500,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
             'fields': (
                 'session_date', 'flight_rules', 'solo_flight', 'session_number', 
                 'session_letter', 'accumulated_flight_hours', 'session_flight_hours',
-                'initial_hourmeter', 'final_hourmeter',
+                'initial_hourmeter', 'final_hourmeter', 'fuel_consumed',
                 'aircraft', 'session_grade'
             )
         }),

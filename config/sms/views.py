@@ -71,7 +71,7 @@ def run_sms_voluntary_report_analysis(report):
     import sys
     
     # Set up logging to both file and console
-    log_file_path = os.path.join(settings.BASE_DIR, 'sms_analysis.log')
+    log_file_path = os.path.join(settings.BASE_DIR, 'logs/sms_analysis.log')
     
     # Create logger
     logger = logging.getLogger('sms_analysis')

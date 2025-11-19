@@ -43,7 +43,7 @@
                 <div class="transaction-item" data-transaction-id="{{ transaction.id }}">
                   <a href="{% url 'transactions:transaction_detail' transaction.id %}" class="transaction-link">
                     <div class="transaction-info">
-                      <span class="student-name">{{ transaction.get_student_full_name }}</span>
+                      <span class="student-name">{{ transaction.get_student_full_name }} | Balance: ${{ transaction.student_profile.balance }}</span>
                       <span class="transaction-amount {% if transaction.type == 'CREDITO' %}amount-credit{% else %}amount-debit{% endif %}">
                         {% if transaction.type == 'DEBITO' %}-{% else %}+{% endif %}${{ transaction.amount }}
                       </span>

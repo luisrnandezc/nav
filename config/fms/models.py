@@ -2725,3 +2725,81 @@ class FlightReport(models.Model):
     class Meta:
         verbose_name = 'Reporte de vuelo'
         verbose_name_plural = 'Reportes de vuelo'
+
+
+class DiscrepancyReport(models.Model):
+    """Discrepancy Report Model for Fleet Management System (FMS)"""
+
+    #region Choices
+
+    STATUS_CHOICES = [
+        ('PENDING', 'Pendiente'),
+        ('IN_PROGRESS', 'En proceso'),
+        ('COMPLETED', 'Completado'),
+        ('INVALID', 'Anulado'),
+    ]
+
+    TYPE_CHOICES = [
+        ('ENGINE', 'Motor'),
+        ('COMNS', 'Comunicaciones'),
+        ('AVIONICS', 'Aviónica'),
+        ('ELECTRICAL', 'Eléctrico'),
+        ('STRUCTURAL', 'Estructural'),
+        ('OTHER', 'Otro'),
+    ]
+
+    #endregion
+
+    #region Fields
+    aircraft = models.ForeignKey(
+        Aircraft,
+        on_delete=models.CASCADE,
+        verbose_name='Aeronave',
+    )
+    reportee_first_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Nombre'
+    )
+    reportee_last_name = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='Apellido'
+    )
+    discrepancy_type = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        default='ENGINE',
+        verbose_name='Tipo de discrepancia',
+    )
+    discrepancy_description = models.TextField(
+        blank=True, 
+        verbose_name='Descripción de la discrepancia', 
+        validators=[MaxLengthValidator(1000)]
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='PENDING',
+        verbose_name='Estado',
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Fecha de creación',
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Fecha de actualización',
+    )
+    #endregion
+
+    #region Methods
+
+    def __str__(self):
+        return f'{self.aircraft.registration} - {self.discrepancy_type} - {self.status}'
+    
+    class Meta:
+        verbose_name = 'Reporte de discrepancia'
+        verbose_name_plural = 'Reportes de discrepancia'
+
+    #endregion

@@ -432,6 +432,20 @@
         <div class="form-row comments-row">
           {{ form.comments }}
         </div>
+        <h1 class="subsection-header">Sección 12: Reporte de discrepancia</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section" id="discrepancy-section">
+            <div class="form-row" id="discrepancy-type-field">
+              {{ form.discrepancy_type.label_tag }}
+              {{ form.discrepancy_type }}
+            </div>
+            <div class="form-row">
+              {{ form.discrepancy_description.label_tag }}
+              {{ form.discrepancy_description }}
+            </div>
+          </div>
+        </details>
 
         <div class="submit-button-container">
           <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>

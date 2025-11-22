@@ -129,44 +129,15 @@
     width: 40px !important;
   }
 
-  #id_notes, #id_comments {
+  #id_notes, #id_comments, #id_discrepancy_description {
     width: 500px;
   }
 
   #discrepancy-section {
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
-  }
-
-  #discrepancy-section .form-row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin: 15px 0px;
-  }
-
-  #discrepancy-section .form-row label {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    margin-right: 0;
-  }
-
-  #discrepancy-section .form-row input,
-  #discrepancy-section .form-row select,
-  #discrepancy-section .form-row textarea {
-    width: 100%;
-    max-width: 600px;
-  }
-
-  #discrepancy-section #discrepancy-type-field select {
-    max-width: 200px;
   }
 
   .submit-button-container {
@@ -236,7 +207,7 @@
       justify-content: center;
     }
 
-    #id_notes, #id_comments {
+    #id_notes, #id_comments, #id_discrepancy_description {
       width: 90%;
     }
   }

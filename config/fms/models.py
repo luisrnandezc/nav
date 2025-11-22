@@ -2769,7 +2769,9 @@ class DiscrepancyReport(models.Model):
     discrepancy_type = models.CharField(
         max_length=20,
         choices=TYPE_CHOICES,
-        default='ENGINE',
+        null=True,
+        blank=True,
+        default=None,
         verbose_name='Tipo de discrepancia',
     )
     discrepancy_description = models.TextField(

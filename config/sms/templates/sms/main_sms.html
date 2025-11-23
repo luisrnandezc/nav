@@ -18,53 +18,16 @@
 
     <div class="main-container">
       <div class="data-container">
-        <div class="sms-actions-container">
-          <div class="actions-header">
-            <h2>Acciones Pendientes: <span class="actions-count">{{ pending_actions|length }}</span></h2>
-          </div>
-          
-          <div class="actions-list">
-            {% for action in pending_actions %}
-              <div class="action-card">
-                <div class="action-header">
-                  <div class="action-date">{{ action.created_at|date:"d/m" }}</div>
-                  <div class="action-status status-pending">Pendiente</div>
-                </div>
-                <div class="action-description">
-                  {{ action.description|truncatechars:80 }}
-                </div>
-                <div class="action-footer">
-                  <div class="action-report">
-                    Reporte: {{ action.report.report.date|date:"d/m" }} - {{ action.report.report.get_area_display }}
-                  </div>
-                  {% if action.assigned_to %}
-                    <div class="action-assigned">
-                      Asignado a: {{ action.assigned_to.username }}
-                    </div>
-                  {% else %}
-                    <div class="action-assigned not-assigned">
-                      Sin asignar
-                    </div>
-                  {% endif %}
-                </div>
-              </div>
-            {% empty %}
-              <div class="no-actions">
-                <p>No hay acciones pendientes</p>
-              </div>
-            {% endfor %}
-          </div>
-        </div>
       </div>
       <div class="dashboard-container">
           <div class="left-column">
             <div class="dashboard-square">
-              <h1 class="square-header">Agregar reporte</h1>
-                <a class="image-link" href="{% url 'sms:voluntary_report' %}">
+              <h1 class="square-header">Agregar RPV</h1>
+                <a class="image-link" href="{% url 'sms:voluntary_hazard_report' %}">
                   <img 
                     class="logo-img" 
                     src="{% static 'img/addReport.png' %}" 
-                    alt="Reporte SMS" 
+                    alt="RPV" 
                     title="Agregar reporte SMS.">
                 </a>
             </div>
@@ -93,7 +56,7 @@
             <div class="dashboard-square">
               <h1 class="square-header">Ver reportes</h1>
               {% if request.user.is_authenticated and can_manage_sms %}
-                <a class="image-link" href="{% url 'sms:report_list' %}">
+                <a class="image-link" href="">
                   <img
                    class="logo-img" 
                    src="{% static 'img/viewReport.png' %}" 

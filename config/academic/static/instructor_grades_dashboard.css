@@ -3,7 +3,7 @@
 
 * {
     font-family: 'Renogare-Regular', 'Arial', sans-serif;
-    color: #ffffff;
+    color: #dae1ff;
     font-size: 16px;
     box-sizing: border-box;
   }
@@ -49,22 +49,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 100vh;
     padding: 20px;
     overflow-x: auto;
   }
   
-  .grades-dashboard-header {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
-  .grades-dashboard-header h1 {
-    font-size: 3.0rem;
-    letter-spacing: 5px;
-    margin: 0 0 10px 0;
+  .main-header {
     color: #dae1ff;
+    font-size: 2.5rem;
+    margin: 50px 0px 30px 0px;
   }
   
   .buttons-container {
@@ -132,7 +126,7 @@
     padding: 40px 20px;
     opacity: 0.6;
     font-style: italic;
-    color: #dadada;
+    color: #dae1ff;
   }
 
   /* Grade card layout */
@@ -176,7 +170,7 @@
   .grade-line { 
     font-size: 0.95rem; 
     margin-bottom: 10px; 
-    color: #ffffff;
+    color: #dae1ff;
   }
 
   .grade-label { 
@@ -189,7 +183,7 @@
   .grade-score {
     font-weight: bold;
     font-size: 0.95rem;
-    color: #ffffff;
+    color: #dae1ff;
   }
 
   .grade-card.status-passed .grade-score {
@@ -253,8 +247,8 @@
       padding: 10px;
     }
 
-    .grades-dashboard-header h1 {
-      margin: 20px 0 20px 0;
+    .main-header {
+      margin: 50px 0 30px 0;
       font-size: 2.0rem;
     }
 
@@ -268,8 +262,10 @@
   }
   
   @media screen and (max-width: 650px) {
-    .grades-dashboard-header h1 {
+    .main-header {
       font-size: 2.0rem;
+      margin: 20px 0 20px 0;
+
     }
 
     .grades-dashboard-container {

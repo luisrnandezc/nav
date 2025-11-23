@@ -679,3 +679,17 @@ openai.APIConnectionError: Connection error.
 2025-11-23 12:30:37,233 - INFO - API request completed successfully
 2025-11-23 12:30:37,233 - INFO - Response content extracted, length: 2141 characters
 2025-11-23 12:30:37,233 - INFO - ================================================================================
+2025-11-23 16:16:07,453 - INFO - ================================================================================
+2025-11-23 16:16:07,453 - INFO - Starting run_ai_analysis_for_voluntary_hazard_report for VHR ID: 6
+2025-11-23 16:16:07,453 - INFO - AI analysis prompt loaded, length: 7559 characters
+2025-11-23 16:16:07,453 - INFO - Report namespace created - date: 2025-11-23, time: 16:15:00, area: OPERATIONS, description length: 347
+2025-11-23 16:16:07,453 - INFO - Rendered prompt length: 7853 characters
+2025-11-23 16:16:07,455 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2025-11-23 16:16:07,455 - INFO - API key retrieved successfully (length: 164 characters)
+2025-11-23 16:16:07,455 - INFO - Attempting to initialize OpenAI client
+2025-11-23 16:16:07,803 - INFO - OpenAI client initialized successfully
+2025-11-23 16:16:07,803 - INFO - Making API request to OpenAI responses endpoint
+2025-11-23 16:16:07,803 - INFO - Model: gpt-5.1, reasoning: medium, text verbosity: medium, tools: [{'type': 'web_search'}]
+2025-11-23 16:16:42,312 - INFO - API request completed successfully
+2025-11-23 16:16:42,312 - INFO - Response content extracted, length: 2434 characters
+2025-11-23 16:16:42,312 - INFO - ================================================================================

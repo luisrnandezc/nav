@@ -13,7 +13,7 @@
   <body>
     <div class="back-button">
       {% if user_role == 'STAFF' %}
-        <a href="{% url 'sms:main_sms' %}" class="button">&larr; Volver</a>
+        <a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
       {% elif user_role == 'INSTRUCTOR' %}
         <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
       {% else %}

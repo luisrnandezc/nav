@@ -16,18 +16,40 @@ import sys
 
 
 @login_required
-def main_sms(request):
+def sms_dashboard(request):
     """
     A view to handle the SMS main page.
     """
-    # Get reports count for the gauge
-    reports_count = VoluntaryHazardReport.objects.count()
+    # Get all voluntary hazard reports ordered by most recent first
+    voluntary_reports = VoluntaryHazardReport.objects.all().order_by('-created_at')
     
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
-        'reports_count': reports_count,
+        'voluntary_reports': voluntary_reports,
     }
-    return render(request, 'sms/main_sms.html', context)
+    return render(request, 'sms/sms_dashboard.html', context)
+
+@login_required
+def voluntary_hazard_report_detail(request, report_id):
+    """
+    A view to display the detail of a Voluntary Hazard Report.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+    
+    # Parse AI analysis result if available
+    ai_analysis = report.ai_analysis_result if report.ai_analysis_result else {}
+    risks = ai_analysis.get('risks', {})
+    actions = ai_analysis.get('actions', {})
+    is_valid = ai_analysis.get('is_valid', 'NO')
+    
+    context = {
+        'report': report,
+        'ai_analysis': ai_analysis,
+        'risks': risks,
+        'actions': actions,
+        'is_valid': is_valid,
+    }
+    return render(request, 'sms/voluntary_hazard_report_detail.html', context)
 
 def voluntary_hazard_report(request):
     """

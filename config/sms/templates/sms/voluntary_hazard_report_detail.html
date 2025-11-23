@@ -1,0 +1,165 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>NAV | Detalle del Reporte RVP</title>
+		<link href="{% static 'voluntary_hazard_report_detail.css' %}" rel="stylesheet" />
+		<link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="main-container">
+			<div class="detail-container">
+                <div class="back-button">
+                    <a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
+                </div>
+				<div class="detail-header">
+					<h1>Detalle del Reporte RVP</h1>
+				</div>
+
+				<div class="detail-content">
+					<!-- Report Information Section -->
+					<div class="info-section">
+						<h2 class="section-title">Información del Reporte</h2>
+						<div class="info-grid">
+							<div class="info-item">
+								<span class="info-label">Fecha</span>
+								<span class="info-value">{{ report.date|date:"d/m/Y" }}</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Hora</span>
+								<span class="info-value">{{ report.time|time:"H:i" }}</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Área</span>
+								<span class="info-value">{{ report.get_area_display }}</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Rol del Reportante</span>
+								<span class="info-value">{{ report.get_role_display|default:"No especificado" }}</span>
+							</div>
+						</div>
+						<div class="info-grid">
+							<div class="info-item">
+								<span class="info-label">Nombre del Reportante</span>
+								<span class="info-value">
+									{% if report.is_anonymous == 'YES' %}
+										Anónimo
+									{% else %}
+										{{ report.first_name|default:"No especificado" }}
+									{% endif %}
+								</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Apellido del Reportante</span>
+								<span class="info-value">
+									{% if report.is_anonymous == 'YES' %}
+										Anónimo
+									{% else %}
+										{{ report.last_name|default:"No especificado" }}
+									{% endif %}
+								</span>
+							</div>
+						</div>
+						<div class="info-item">
+							<span class="info-label">Descripción del Peligro</span>
+							<div class="analysis-text">{{ report.description }}</div>
+						</div>
+					</div>
+
+					<!-- AI Analysis Results Section -->
+					{% if ai_analysis %}
+						<div class="info-section">
+							<h2 class="section-title">Resultados del Análisis de IA</h2>
+							<div class="info-grid">
+								<div class="info-item">
+									<span class="info-label">Análisis válido</span>
+									<span class="info-value">
+										{% if is_valid == 'SI' %}
+											<span style="color: #4CAF50; font-weight: bold;">SÍ</span>
+										{% else %}
+											<span style="color: #f44336; font-weight: bold;">NO</span>
+										{% endif %}
+									</span>
+								</div>
+								<div class="info-item">
+									<span class="info-label">Estado del Análisis IA</span>
+									<span class="info-value">{{ report.get_ai_analysis_status_display }}</span>
+								</div>
+							</div>
+						</div>
+
+						<!-- Risks Section -->
+						{% if risks %}
+							<div class="info-section">
+								<h2 class="section-title">Análisis de Riesgos</h2>
+								<div class="risk-analysis-list">
+									{% for risk_key, risk_data in risks.items %}
+										<div class="risk-item">
+											<div class="risk-header">
+												<span class="risk-evaluation-badge">{{ risk_data.evaluation|default:"N/A" }}</span>
+												<span class="risk-key">{{ risk_key|upper }}</span>
+											</div>
+											<div class="risk-text">{{ risk_data.description|default:"Sin descripción" }}</div>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+						{% endif %}
+
+						<!-- Actions Section -->
+						{% if actions %}
+							<div class="info-section">
+								<h2 class="section-title">Acciones de Mitigación</h2>
+								<div class="recommendations-list">
+									{% for risk_key, action_list in actions.items %}
+										<div class="recommendation-item">
+											<div class="recommendation-header">
+												<span class="recommendation-risk-label">Riesgo: {{ risk_key|upper }}</span>
+											</div>
+											<ul class="action-list">
+												{% for action in action_list %}
+													<li class="action-item">{{ action }}</li>
+												{% endfor %}
+											</ul>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+						{% endif %}
+					{% endif %}
+
+					<!-- Analysis Metadata -->
+					<div class="info-section">
+						<h2 class="section-title">Información del Análisis</h2>
+						<div class="info-grid">
+							<div class="info-item">
+								<span class="info-label">Fecha de Creación</span>
+								<span class="info-value">
+									{% if report.created_at %}
+										{{ report.created_at|date:"d/m/Y H:i" }}
+									{% else %}
+										No disponible
+									{% endif %}
+								</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Última Actualización</span>
+								<span class="info-value">
+									{% if report.updated_at %}
+										{{ report.updated_at|date:"d/m/Y H:i" }}
+									{% else %}
+										No disponible
+									{% endif %}
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

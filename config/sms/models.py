@@ -48,7 +48,7 @@ class VoluntaryHazardReport(models.Model):
         max_length=3,
         choices=ANONYMOUS_CHOICES,
         default='NO',
-        verbose_name="Reporte anónimo"
+        verbose_name="Anónimo"
     )
     first_name = models.CharField(
         max_length=200, 
@@ -82,7 +82,7 @@ class VoluntaryHazardReport(models.Model):
         max_length=20,
         choices=AREA_CHOICES,
         default='OPERATIONS',
-        verbose_name="Área del peligro"
+        verbose_name="Área"
     )
     description = models.TextField(
         max_length=1000,
@@ -92,7 +92,7 @@ class VoluntaryHazardReport(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default='PENDING',
-        verbose_name="Estado del análisis de IA",
+        verbose_name="IA Estatus",
         db_index=True  # Database index for fast queries
     )
     ai_analysis_result = models.JSONField(

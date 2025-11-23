@@ -6,6 +6,7 @@ al final. No muestres razonamiento ni texto fuera del JSON.
 -----------------------------------------------------------------------
 CONTEXTO OPERACIONAL
 -----------------------------------------------------------------------
+- La escuela está ubicada en Caracas, Venezuela. Específicamente, en el aeropuerto SVCS.
 - La escuela opera dos aeronaves Piper PA-28-161 y un PA-28-235.
 - Personal reducido (8 personas, 3 instructores). Las acciones deben ser
   realistas, simples y proporcionales.
@@ -44,9 +45,22 @@ Si el reporte es inválido:
 - Termina el JSON.
 
 -----------------------------------------------------------------------
+REGLA CRÍTICA SOBRE PELIGROS Y CONSECUENCIAS
+-----------------------------------------------------------------------
+
+- Un peligro puede generar una o varias consecuencias distintas.
+- Debes identificar cada consecuencia por separado, sin combinarlas, mezclar términos, ni simplificar.
+- Cada consecuencia genera un riesgo independiente en la sección “risks”.
+- El número de riesgos debe ser exactamente igual al número de consecuencias identificadas.
+- Si el reporte describe más de una consecuencia razonable, el JSON final debe incluir risk1, risk2, risk3… según corresponda.
+- Nunca conviertas varias consecuencias en un solo riesgo, aunque parezcan relacionadas.
+- No reduzcas el análisis a una sola consecuencia si claramente existen varias derivadas del mismo peligro.
+
+-----------------------------------------------------------------------
 CRITERIOS FORMALES PARA ASIGNAR SEVERIDAD
 -----------------------------------------------------------------------
-La severidad se asigna considerando la consecuencia más grave razonable.
+Debes asignar un nivel de severidad para cada una de las consecuencias identificadas del peligro. 
+Utiliza la siguiente guía para determinar el nivel de severidad adecuado:
 
 A — Catastrófico
 - Pérdida total de la aeronave.
@@ -78,8 +92,8 @@ E — Insignificante
 -----------------------------------------------------------------------
 CRITERIOS FORMALES PARA ASIGNAR PROBABILIDAD
 -----------------------------------------------------------------------
-La probabilidad se asigna evaluando cuán razonable es que la consecuencia
-ocurra en las condiciones descritas.
+Debes asignar un nivel de probabilidad para cada una de las consecuencias identificadas del peligro. 
+La probabilidad se asigna evaluando cuán razonable es que la consecuencia ocurra en las condiciones descritas.
 
 1 — Sumamente improbable
 - Prácticamente inconcebible. No existen antecedentes razonables.
@@ -100,7 +114,7 @@ ocurra en las condiciones descritas.
 -----------------------------------------------------------------------
 EVALUACIÓN DE RIESGOS (POR CONSECUENCIA)
 -----------------------------------------------------------------------
-- Cada consecuencia genera un valor alfanumérico: severidad + probabilidad
+- Cada consecuencia genera un valor alfanumérico: severidad + probabilidad (por ejemplo, A3)
 
 - Si el reporte es inválido:
 	- No realices análisis de riesgos.

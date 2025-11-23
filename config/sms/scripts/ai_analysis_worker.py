@@ -27,12 +27,12 @@ from sms.models import VoluntaryReport, ReportAnalysis
 from sms.views import run_sms_voluntary_report_analysis
 
 
-def run_ai_analysis_for_report(report):
+def run_ai_analysis_for_voluntary_hazard_report(voluntary_hazard_report):
     """
-    Run AI analysis for a specific report and save results to database.
+    Run AI analysis for a specific Voluntary Hazard Report (VHR) and save results to database.
     """
     try:
-        print("[{}] Processing report {}: {}".format(
+        print("[{}] Processing VHR {}: {}".format(
             timezone.now(), report.id, report.description[:50]
         ))
         
@@ -41,7 +41,7 @@ def run_ai_analysis_for_report(report):
         report.save(update_fields=['ai_analysis_status'])
 
         # Call OpenAI API
-        response = run_sms_voluntary_report_analysis(report)
+        response = run_sms_voluntary_hazard_report_analysis(report)
         
         # Debug: Log response type and preview
         print("[{}] API Response type: {}, length: {}, preview: '{}'".format(
@@ -128,7 +128,7 @@ def main_worker_loop():
         try:
             # Get reports from last 48 hours with PENDING status
             yesterday = timezone.now() - timedelta(days=2)
-            pending_reports = VoluntaryReport.objects.filter(
+            pending_reports = VoluntaryHazardReport.objects.filter(
                 ai_analysis_status='PENDING',
                 created_at__gte=yesterday
             ).order_by('created_at')
@@ -138,7 +138,7 @@ def main_worker_loop():
                 
                 # Process one report at a time
                 for report in pending_reports:
-                    success = run_ai_analysis_for_report(report)
+                    success = run_ai_analysis_for_voluntary_hazard_report(report)
                     if success:
                         print("[{}] Report {} processed successfully".format(timezone.now(), report.id))
                     else:

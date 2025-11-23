@@ -1,6 +1,5 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import ReportAnalysis
 from django.core.mail import EmailMessage
 from django.conf import settings
 import logging
@@ -8,7 +7,7 @@ import json
 
 logger = logging.getLogger('sms.signals')
 
-SMS_NOTIFICATION_SUBJECT = "Nuevo análisis de reporte voluntario de SMS"
+SMS_NOTIFICATION_SUBJECT = "Nuevo análisis de reporte de peligro voluntario de SMS"
 SMS_NOTIFICATION_MESSAGE = """
 Buen día,
 
@@ -27,8 +26,8 @@ SARA
 (Safety Analyst and Reporting Assistant)
 """
 
-@receiver(post_save, sender=ReportAnalysis)
-def send_sms_analysis_email(sender, instance, created, **kwargs):
+@receiver(post_save)
+def send_sms_analysis_email(instance, created, **kwargs):
     if not created:
         return
 

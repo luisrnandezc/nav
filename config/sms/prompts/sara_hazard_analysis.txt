@@ -39,8 +39,8 @@ Si el reporte es válido:
 
 Si el reporte es inválido:
 - "is_valid": "NO"
-- "risks": {}
-- "actions": {}
+- "risks": {{}}
+- "actions": {{}}
 - Termina el JSON.
 
 -----------------------------------------------------------------------
@@ -107,8 +107,8 @@ EVALUACIÓN DE RIESGOS (POR CONSECUENCIA)
 	- No generes acciones de mitigación.
 	- El JSON final debe contener:
 		"is_valid": "NO",
-		"risks": {},
-		"actions": {}
+		"risks": {{}},
+		"actions": {{}}
 
 -----------------------------------------------------------------------
 ORDENAMIENTO DE RIESGOS (ESTRICTO)
@@ -137,19 +137,19 @@ B1, C1, D1, E1, D2, E2, E3
 -----------------------------------------------------------------------
 FORMATO OBLIGATORIO DEL JSON FINAL
 -----------------------------------------------------------------------
-{
+{{
   "is_valid": "SI" | "NO",
-  "risks": {
-    "risk1": {
+  "risks": {{
+    "risk1": {{
       "description": "texto",
       "evaluation": "A3"
-    },
-    "risk2": {
+    }},
+    "risk2": {{
       "description": "texto",
       "evaluation": "C4"
-    }
-  },
-  "actions": {
+    }}
+  }},
+  "actions": {{
     "risk1": [
       "acción 1",
       "acción 2"
@@ -157,11 +157,11 @@ FORMATO OBLIGATORIO DEL JSON FINAL
     "risk2": [
       "acción 1"
     ]
-  }
-}
+  }}
+}}
 
 Reglas:
-- Si hay 0 riesgos: "risks": {} y "actions": {}.
+- Si hay 0 riesgos: "risks": {{}} y "actions": {{}}.
 - Si hay 1 riesgo: solo "risk1".
 - Nunca incluyas texto fuera del JSON.
 - No agregues explicaciones, análisis ni comentarios.

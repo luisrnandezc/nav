@@ -23,13 +23,13 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 # Import Django models and functions
-from sms.models import VoluntaryReport, ReportAnalysis
-from sms.views import run_sms_voluntary_report_analysis
+from sms.models import VoluntaryHazardReport
+from sms.views import run_ai_analysis_for_voluntary_hazard_report
 
 
-def run_ai_analysis_for_voluntary_hazard_report(voluntary_hazard_report):
+def run_ai_analysis(report):
     """
-    Run AI analysis for a specific Voluntary Hazard Report (VHR) and save results to database.
+    Run AI analysis for a specific Voluntary Hazard Report (VHR).
     """
     try:
         print("[{}] Processing VHR {}: {}".format(
@@ -41,7 +41,7 @@ def run_ai_analysis_for_voluntary_hazard_report(voluntary_hazard_report):
         report.save(update_fields=['ai_analysis_status'])
 
         # Call OpenAI API
-        response = run_sms_voluntary_hazard_report_analysis(report)
+        response = run_ai_analysis_for_voluntary_hazard_report(report)
         
         # Debug: Log response type and preview
         print("[{}] API Response type: {}, length: {}, preview: '{}'".format(
@@ -79,26 +79,13 @@ def run_ai_analysis_for_voluntary_hazard_report(voluntary_hazard_report):
         else:
             raise Exception("Invalid JSON response format: expected array or object")
         
-        # Create analysis record
-        is_valid_value = parsed_data.get('is_valid', 'NO')
-        is_valid = 'YES' if is_valid_value == 'SI' else 'NO'
-        
-        analysis_record = ReportAnalysis.objects.create(
-            report=report,
-            is_valid=is_valid,
-            severity=parsed_data.get('severity', ''),
-            probability=parsed_data.get('probability', ''),
-            value=parsed_data.get('value', ''),
-            risk_analysis=parsed_data.get('risk_analysis', []),
-            recommendations=parsed_data.get('recommendations', [])
-        )
-        
         # Update status to COMPLETED
         report.ai_analysis_status = 'COMPLETED'
-        report.save(update_fields=['ai_analysis_status'])
+        report.ai_analysis_result = parsed_data
+        report.save(update_fields=['ai_analysis_status', 'ai_analysis_result'])
         
-        print("[{}] Successfully completed AI analysis for report {} (Analysis ID: {})".format(
-            timezone.now(), report.id, analysis_record.id
+        print("[{}] Successfully completed AI analysis for report {}".format(
+            timezone.now(), report.id
         ))
         
         return True
@@ -110,7 +97,8 @@ def run_ai_analysis_for_voluntary_hazard_report(voluntary_hazard_report):
         # Update status to FAILED
         try:
             report.ai_analysis_status = 'FAILED'
-            report.save(update_fields=['ai_analysis_status'])
+            report.ai_analysis_result = {}
+            report.save(update_fields=['ai_analysis_status', 'ai_analysis_result'])
         except:
             pass
         
@@ -138,7 +126,7 @@ def main_worker_loop():
                 
                 # Process one report at a time
                 for report in pending_reports:
-                    success = run_ai_analysis_for_voluntary_hazard_report(report)
+                    success = run_ai_analysis(report)
                     if success:
                         print("[{}] Report {} processed successfully".format(timezone.now(), report.id))
                     else:

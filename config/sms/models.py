@@ -95,6 +95,12 @@ class VoluntaryHazardReport(models.Model):
         verbose_name="Estado del análisis de IA",
         db_index=True  # Database index for fast queries
     )
+    ai_analysis_result = models.JSONField(
+        default=dict,
+        verbose_name="Resultado del análisis de IA",
+        blank=True,
+        null=True
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación",

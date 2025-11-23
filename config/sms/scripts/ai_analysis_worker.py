@@ -12,6 +12,7 @@ import time
 import json
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import Q
 
 # Add Django project to Python path
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -117,7 +118,7 @@ def main_worker_loop():
             # Get reports from last 48 hours with PENDING status
             yesterday = timezone.now() - timedelta(days=2)
             pending_reports = VoluntaryHazardReport.objects.filter(
-                ai_analysis_status='PENDING',
+                Q(ai_analysis_status='PENDING') | Q(ai_analysis_status='FAILED'),
                 created_at__gte=yesterday
             ).order_by('created_at')
 

@@ -55,8 +55,16 @@ def voluntary_hazard_report(request):
             form = SMSVoluntaryHazardReportForm(user=request.user)
         else:
             form = SMSVoluntaryHazardReportForm()
+    
+    selected_role = request.session.get('selected_role', None)
+    user_role = selected_role if selected_role else request.user.role
 
-    return render(request, 'sms/voluntary_hazard_report.html', {'form': form})
+    context = {
+        'form': form,
+        'user_role': user_role,
+    }
+
+    return render(request, 'sms/voluntary_hazard_report.html', context)
 
 def voluntary_hazard_report_ai_analysis_logger():
     """
@@ -140,12 +148,19 @@ def run_ai_analysis_for_voluntary_hazard_report(report):
 
         # Make a request to the responses endpoint
         logger.info("Making API request to OpenAI responses endpoint")
-        logger.info("Model: gpt-5, reasoning: high, text verbosity: high")
+
+        model = "gpt-5.1"
+        tools = [{"type": "web_search"}]
+        reasoning = {"effort": "medium"}
+        text = {"verbosity": "medium"}
+
+        logger.info("Model: {}, reasoning: {}, text verbosity: {}, tools: {}".format(model, reasoning["effort"], text["verbosity"], tools))
         
         response = client.responses.create(
-            model="gpt-5",
-            reasoning = {"effort": "high"},
-            text = {"verbosity": "high"},
+            model=model,
+            tools=tools,
+            reasoning = reasoning,
+            text = text,
             instructions = base_prompt,
             input=rendered_prompt,
         )

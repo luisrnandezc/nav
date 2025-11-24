@@ -26,13 +26,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 25px;
+    padding: 20px;
   }
 
   .main-header { 
-    color: #ffffff;
+    color: #dae1ff;
     font-size: 2.0rem;
-    margin: 25px 0px 25px 0px;
+    margin: 50px 0px 30px 0px;
     text-align: center;
   }
 
@@ -46,9 +46,9 @@
   }
 
   .subsection-header {
-    color: #ffffff;
-    margin: 40px 0px 25px 0px;
-    text-decoration: underline solid 2px rgb(232, 71, 40);
+    color: #dae1ff;
+    margin: 40px 0px 20px 0px;
+    text-decoration: underline solid 2px #e84728;
     text-underline-offset: 10px;
     align-self: center;
   }
@@ -62,7 +62,7 @@
   }
 
   summary {
-    color: #ffffff;
+    color: #dae1ff;
     text-align: center;
   }
 
@@ -95,7 +95,7 @@
     align-items: center;
     justify-content: right;
     width: 275px;
-    color: #ffffff;
+    color: #dae1ff;
     text-align: right;
     margin-right: 10px;
   }
@@ -103,12 +103,6 @@
   .form-field {
     width: 150px;
     display: inline-block;
-  }
-
-  .disabled-field {
-    background-color: #b2b2b2;
-    color: #000000;
-    cursor: not-allowed;
   }
 
   .radio-field {
@@ -147,19 +141,24 @@
     width: 125px;
     height: 40px;
     border-radius: 3px;
-    color: #ffffff;
+    color: #dae1ff;
     background-color: transparent;
   }
   
   .submit-button:hover {
     background-color: rgb(232, 71, 40);
-    color: #ffffff;
+    color: #dae1ff;
     border: 0px solid #ffffff;
     border-radius: 3px;
     cursor: pointer;
   }
 
   @media (max-width: 1150px) {
+
+    .main-header {
+      font-size: 2.0rem;
+      margin: 20px 0px 30px 0px;
+    }
 
     .fixed-fields-container, div.collapsible-section {
       flex-direction: column;

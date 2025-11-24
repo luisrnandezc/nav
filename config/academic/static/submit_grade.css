@@ -282,11 +282,6 @@
   }
 
   @media screen and (max-width: 850px) {
-    .main-container {
-      padding: 10px;
-      margin: 10px;
-    }
-
     .form-container {
       width: 95%;
     }
@@ -315,6 +310,11 @@
   }
 
   @media screen and (max-width: 650px) {
+    .main-header {
+      font-size: 2.0rem;
+      margin: 20px 0 20px 0;
+    }
+
     .grade-top { 
       grid-template-columns: 1fr; 
       gap: 10px; 
@@ -360,15 +360,6 @@
   }
 
   @media screen and (max-width: 500px) {
-    .main-container {
-      margin: 5px;
-      padding-bottom: 30px;
-    }
-
-    .main-header {
-      font-size: 1.5rem;
-    }
-
     .form-field {
       width: 160px;
     }

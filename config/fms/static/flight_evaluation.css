@@ -30,10 +30,12 @@
   }
 
   .main-header { 
-    color: rgb(232, 71, 40);
-    font-size: 2.0rem;
-    margin: 25px 0px 25px 0px;
+    color: #dae1ff;
+    font-size: 2.5rem;
+    margin: 50px 0px 30px 0px;
     text-align: center;
+    width: 100%;
+    letter-spacing: 3px;
   }
 
   .form-container {
@@ -46,9 +48,9 @@
   }
 
   .subsection-header {
-    color: #ffffff;
-    margin: 40px 0px 25px 0px;
-    text-decoration: underline solid 2px rgb(232, 71, 40);
+    color: #dae1ff;
+    margin: 40px 0px 20px 0px;
+    text-decoration: underline solid 2px #e84728;
     text-underline-offset: 10px;
     align-self: center;
   }
@@ -186,8 +188,9 @@
 
   @media (max-width: 650px) {
 
-    .main-container {
-      padding: 10px;
+    .main-header {
+      font-size: 2.0rem;
+      margin: 20px 0 20px 0;
     }
 
     label {

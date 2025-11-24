@@ -11,18 +11,20 @@
   </head>
 
   <body>
-    <div class="back-button">
-      {% if user_role == 'STAFF' %}
-        <a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
-      {% elif user_role == 'INSTRUCTOR' %}
-        <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-      {% else %}
-        <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-      {% endif %}
-    </div>
-
     <div class="main-container">
+
+      <div class="back-button">
+        {% if user_role == 'STAFF' %}
+          <a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
+        {% elif user_role == 'INSTRUCTOR' %}
+          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+        {% else %}
+          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+        {% endif %}
+      </div>
+
       <h1 class="main-header">Reporte voluntario de peligro (RVP)</h1>
+      
       <form class="form-container" method="post"  action="{% url 'sms:voluntary_hazard_report' %}">
         {% csrf_token %}
         <h1 class="subsection-header" id="section-1-header">Sección 1: Datos del reportante (Opcional)</h1>

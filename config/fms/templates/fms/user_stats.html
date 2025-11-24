@@ -6,21 +6,18 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>NAV | Estadísticas de Usuarios</title>
-        <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
-        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
         <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     </head>
 
     <body>
-        <div class="fms-container">
+        <div class="main-container">
             <div class="back-button">
                 <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
             </div>
 
-            <div class="fms-header">
-                <h1>Estadísticas de Usuarios</h1>
-                <p>Vista general de estudiantes e instructores</p>
-            </div>
+
+            <h1 class="main-header">Estadísticas de Usuarios</h1>
 
             <div class="sections-container">
                 <!-- Students Section -->
@@ -46,7 +43,7 @@
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Horas NAV:</span>
-                                            <span class="detail-value">{{ student_profile.nav_flight_hours }}h</span>
+                                            <span class="detail-value">{{ student_profile.nav_flight_hours }}</span>
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">ID:</span>
@@ -58,7 +55,7 @@
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Horas Totales:</span>
-                                            <span class="detail-value">{{ student_profile.flight_hours }}h</span>
+                                            <span class="detail-value">{{ student_profile.flight_hours }}</span>
                                         </div>
                                     </div>
                                 </a>

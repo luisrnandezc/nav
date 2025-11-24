@@ -32,7 +32,7 @@
 
 .student-username {
   background: #28a745;
-  color: #fff;
+  color: #dae1ff;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -56,7 +56,7 @@
   }
 
 .detail-value.low-balance {
-  color: #ffffff;
+  color: #dae1ff;
   font-weight: bold;
   background-color: rgba(220, 53, 69, 0.8);
   padding: 2px 6px;
@@ -106,7 +106,6 @@
 
 .toggle-permission-btn:hover {
   background: rgba(218, 225, 255, 0.1);
-  transform: translateY(-1px);
 }
 
 .toggle-permission-btn.permission-active {
@@ -142,7 +141,7 @@
   right: 20px;
   padding: 15px 20px;
   border-radius: 5px;
-  color: #ffffff;
+  color: #dae1ff;
   font-weight: bold;
   z-index: 1000;
   max-width: 400px;

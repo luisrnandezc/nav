@@ -33,10 +33,11 @@ body {
 }
 
 .main-header {
-  color: rgb(232, 71, 40);
-  font-size: 2.0rem;
-  margin: 50px 0px 25px 0px;
+  color: #dae1ff;
+  font-size: 2.5rem;
+  margin: 50px 0px 30px 0px;
   text-align: center;
+  letter-spacing: 3px;
 }
 
 .form-container {
@@ -49,9 +50,9 @@ body {
 }
 
 .subsection-header {
-  color: #ffffff;
-  margin: 40px 0px 25px 0px;
-  text-decoration: underline solid 2px rgb(232, 71, 40);
+  color: #dae1ff;
+  margin: 40px 0px 20px 0px;
+  text-decoration: underline solid 2px #e84728;
   text-underline-offset: 10px;
   align-self: center;
 }
@@ -84,7 +85,7 @@ label {
   align-items: center;
   justify-content: flex-end;
   width: 275px;
-  color: #ffffff;
+  color: #dae1ff;
   text-align: right;
   flex-shrink: 0;
 }
@@ -227,7 +228,7 @@ label {
   width: 125px;
   height: 40px;
   border-radius: 3px;
-  color: #ffffff;
+  color: #dae1ff;
   background-color: transparent;
   min-width: 175px;
   padding: 12px 30px;
@@ -238,9 +239,9 @@ label {
 }
 
 .submit-button:hover {
-  background-color: rgb(232, 71, 40);
-  color: #ffffff;
-  border: 0px solid #ffffff;
+  background-color: #e84728;
+  color: #dae1ff;
+  border: 0px solid #dae1ff;
   border-radius: 3px;
   cursor: pointer;
 }
@@ -264,8 +265,10 @@ label {
 }
 
 @media (max-width: 650px) {
-  .main-container {
-    padding: 10px;
+
+  .main-header {
+    font-size: 2.0rem;
+    margin: 20px 0 20px 0;
   }
 
   label {
@@ -333,14 +336,16 @@ label {
   }
   
   .submit-button {
-    min-width: 150px;
+    width: 50%;
+    max-width: 200px;
     padding: 10px 25px;
+    text-align: center;
   }
 }
 
 @media screen and (max-width: 480px) {
+
   .submit-button {
-    min-width: 150px;
     padding: 8px 20px;
   }
 }
@@ -365,5 +370,5 @@ label {
   margin: 0;
   cursor: pointer;
   font-weight: 500;
-  color: #fff;
+  color: #dae1ff;
 }

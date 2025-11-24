@@ -11,17 +11,16 @@
     </head>
 
     <body>
-        <div class="grade-logs-container">
+        <div class="main-container">
+
             <div class="back-button">
                 <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
             </div>
-            <div class="grade-logs-header">
-                <h1>Registro de calificaciones</h1>
-            </div>
+
+            <h1 class="main-header">Registro de calificaciones</h1>
 
             <div class="grade-logs-list-container">
                 <div class="grade-logs-section">
-                    <h2>Historial de calificaciones</h2>
                     <div class="grade-logs-list">
                         {% for log in grade_logs %}
                             <div class="grade-card {% if log.passed %}status-passed{% else %}status-failed{% endif %}">

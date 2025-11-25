@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VoluntaryHazardReport
+from .models import VoluntaryHazardReport, Risk, MitigationAction
 
 
 @admin.register(VoluntaryHazardReport)
@@ -17,6 +17,52 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
         }),
         ('Análisis de IA', {
             'fields': ('ai_analysis_status', 'ai_analysis_result')
+        }),
+        ('Metadatos', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Risk)
+class RiskAdmin(admin.ModelAdmin):
+    list_display = ('id', 'report', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('description', 'report__description')
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        ('Información del Riesgo', {
+            'fields': ('report', 'description', 'status')
+        }),
+        ('Evaluación pre-mitigación', {
+            'fields': ('pre_evaluation_severity', 'pre_evaluation_probability')
+        }),
+        ('Evaluación post-mitigación', {
+            'fields': ('post_evaluation_severity', 'post_evaluation_probability')
+        }),
+        ('Metadatos', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(MitigationAction)
+class MitigationActionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'risk', 'status', 'due_date', 'created_at')
+    list_filter = ('status', 'due_date', 'created_at')
+    search_fields = ('description', 'risk__description', 'notes')
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        ('Información de la Acción', {
+            'fields': ('risk', 'description')
+        }),
+        ('Estado y Fechas', {
+            'fields': ('status', 'due_date')
+        }),
+        ('Notas', {
+            'fields': ('notes',)
         }),
         ('Metadatos', {
             'fields': ('created_at', 'updated_at'),

@@ -185,6 +185,64 @@ body {
   color: #dae1ff;
   line-height: 1.6;
   font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.risk-evaluation-update-form {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.risk-evaluation-form-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.risk-evaluation-select-group {
+  flex: 0 0 auto;
+  min-width: 120px;
+}
+
+.risk-evaluation-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #b0b0b0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.risk-evaluation-select {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #000000;
+  font-size: 0.9rem;
+  text-transform: none;
+}
+
+.risk-evaluation-update-button {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-end;
+  height: fit-content;
+}
+
+.risk-evaluation-update-button:hover {
+  background-color: transparent;
+  border: 1px solid #dae1ff;
 }
 
 .no-risks-message {

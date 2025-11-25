@@ -96,6 +96,49 @@ def delete_risk(request, report_id, risk_key):
 
 @login_required
 @require_http_methods(["POST"])
+def update_risk_evaluation(request, report_id, risk_key):
+    """
+    Update the evaluation (severity and probability) of a specific risk.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    severity = request.POST.get('severity', '').strip().upper()
+    probability = request.POST.get('probability', '').strip()
+
+    if not severity or not probability:
+        messages.error(request, 'Severidad y probabilidad son requeridos.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if severity not in ['A', 'B', 'C', 'D', 'E']:
+        messages.error(request, 'Severidad inválida. Debe ser A, B, C, D o E.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if probability not in ['1', '2', '3', '4', '5']:
+        messages.error(request, 'Probabilidad inválida. Debe ser 1, 2, 3, 4 o 5.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+
+    if risk_key not in risks:
+        messages.warning(request, 'El riesgo solicitado no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    risks[risk_key]['evaluation'] = f'{severity}{probability}'
+    ai_analysis['risks'] = risks
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, f'Se actualizó la evaluación del {risk_key} a {severity}{probability}.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+@require_http_methods(["POST"])
 def delete_action(request, report_id, risk_key, action_index):
     """
     Remove a single action from the AI analysis payload.

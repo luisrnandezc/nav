@@ -48,8 +48,81 @@ def voluntary_hazard_report_detail(request, report_id):
         'risks': risks,
         'actions': actions,
         'is_valid': is_valid,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
     }
     return render(request, 'sms/voluntary_hazard_report_detail.html', context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def delete_risk(request, report_id, risk_key):
+    """
+    Remove a specific risk (and its related actions) from the AI analysis payload.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+    actions = ai_analysis.get('actions', {}) or {}
+
+    if risk_key not in risks:
+        messages.warning(request, 'El riesgo solicitado no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    risks.pop(risk_key, None)
+    actions.pop(risk_key, None)
+
+    ai_analysis['risks'] = risks
+    ai_analysis['actions'] = actions
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, f'Se eliminó el {risk_key} y sus acciones asociadas.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def delete_action(request, report_id, risk_key, action_index):
+    """
+    Remove a single action from the AI analysis payload.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    actions = ai_analysis.get('actions', {}) or {}
+
+    if risk_key not in actions:
+        messages.warning(request, 'Las acciones para este riesgo no existen.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    action_list = actions.get(risk_key) or []
+
+    try:
+        action_list.pop(int(action_index))
+    except (IndexError, ValueError, TypeError):
+        messages.warning(request, 'La acción solicitada no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if action_list:
+        actions[risk_key] = action_list
+    else:
+        actions.pop(risk_key, None)
+
+    ai_analysis['actions'] = actions
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, 'Se eliminó la acción seleccionada.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
 def voluntary_hazard_report(request):
     """

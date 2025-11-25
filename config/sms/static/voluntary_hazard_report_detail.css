@@ -187,6 +187,22 @@ body {
   font-size: 1rem;
 }
 
+.risk-delete-button {
+  background-color: #e84728;
+  color: #dae1ff;
+  border: 0px;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.risk-delete-button:hover {
+  background-color: transparent;
+  border: 1px solid #dae1ff;
+}
+
 /* Action List Styling */
 .recommendation-header {
   margin-bottom: 10px;
@@ -220,6 +236,33 @@ body {
   font-size: 0.95rem;
   line-height: 1.5;
   text-transform: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.action-text {
+  flex: 1;
+}
+
+.action-delete-form {
+  margin: 0;
+}
+
+.action-delete-button {
+  background-color: #e84728;
+  color: #dae1ff;
+  border: 0px;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.action-delete-button:hover {
+  background-color: transparent;
+  border: 1px solid #dae1ff;
 }
 
 /* Mobile Responsiveness */

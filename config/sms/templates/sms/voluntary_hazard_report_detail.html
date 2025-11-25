@@ -120,6 +120,52 @@
 											{% endif %}
 										</div>
 										<div class="risk-text">{{ risk_data.description|default:"Sin descripción" }}</div>
+										{% if can_manage_sms %}
+											{% with current_eval=risk_data.evaluation|default:"A1" %}
+												{% with current_severity=current_eval|slice:":1" current_probability=current_eval|slice:"1:2" %}
+													<form
+														method="post"
+														action="{% url 'sms:update_risk_evaluation' report.id risk_key %}"
+														class="risk-evaluation-update-form"
+													>
+														{% csrf_token %}
+														<div class="risk-evaluation-form-row">
+															<div class="risk-evaluation-select-group">
+																<label for="risk-evaluation-severity-{{ risk_key }}" class="risk-evaluation-label">Severidad</label>
+																<select
+																	id="risk-evaluation-severity-{{ risk_key }}"
+																	name="severity"
+																	class="risk-evaluation-select"
+																	required
+																>
+																	<option value="A" {% if current_severity == "A" %}selected{% endif %}>A - Catastrófico</option>
+																	<option value="B" {% if current_severity == "B" %}selected{% endif %}>B - Peligroso</option>
+																	<option value="C" {% if current_severity == "C" %}selected{% endif %}>C - Grave</option>
+																	<option value="D" {% if current_severity == "D" %}selected{% endif %}>D - Leve</option>
+																	<option value="E" {% if current_severity == "E" %}selected{% endif %}>E - Insignificante</option>
+																</select>
+															</div>
+															<div class="risk-evaluation-select-group">
+																<label for="risk-evaluation-probability-{{ risk_key }}" class="risk-evaluation-label">Probabilidad</label>
+																<select
+																	id="risk-evaluation-probability-{{ risk_key }}"
+																	name="probability"
+																	class="risk-evaluation-select"
+																	required
+																>
+																	<option value="1" {% if current_probability == "1" %}selected{% endif %}>1 - Sumamente improbable</option>
+																	<option value="2" {% if current_probability == "2" %}selected{% endif %}>2 - Improbable</option>
+																	<option value="3" {% if current_probability == "3" %}selected{% endif %}>3 - Remota</option>
+																	<option value="4" {% if current_probability == "4" %}selected{% endif %}>4 - Ocasional</option>
+																	<option value="5" {% if current_probability == "5" %}selected{% endif %}>5 - Frecuente</option>
+																</select>
+															</div>
+															<button type="submit" class="risk-evaluation-update-button">Actualizar</button>
+														</div>
+													</form>
+												{% endwith %}
+											{% endwith %}
+										{% endif %}
 									</div>
 								{% endfor %}
 								</div>

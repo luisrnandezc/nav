@@ -64,7 +64,7 @@ def renumber_risks(risks, actions):
             new_actions[new_key] = actions[old_key]
     
     return new_risks, new_actions
-    
+
 
 @login_required
 def voluntary_hazard_report_detail(request, report_id):
@@ -79,6 +79,9 @@ def voluntary_hazard_report_detail(request, report_id):
     actions = ai_analysis.get('actions', {}) or {}
     is_valid = ai_analysis.get('is_valid', 'NO')
 
+    # Renumber risks sequentially
+    risks, actions = renumber_risks(risks, actions)
+
     risk_entries = []
     for risk_key, risk_data in risks.items():
         risk_entries.append({
@@ -86,9 +89,6 @@ def voluntary_hazard_report_detail(request, report_id):
             'data': risk_data,
             'actions': actions.get(risk_key, []) or [],
         })
-
-    # Renumber remaining risks sequentially
-    risks, actions = renumber_risks(risks, actions)
     
     context = {
         'report': report,
@@ -330,7 +330,7 @@ def voluntary_hazard_report(request):
         if form.is_valid():
             try:
                 form.save()
-                return redirect('dashboard:dashboard')
+                return redirect('sms:sms_dashboard')
             except Exception as e:
                 messages.error(request, f'Error al guardar el reporte: {str(e)}')
         else:

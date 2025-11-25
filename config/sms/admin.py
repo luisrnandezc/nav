@@ -7,7 +7,7 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
     list_display = ('id', 'date', 'time', 'area', 'is_anonymous', 'ai_analysis_status', 'created_at')
     list_filter = ('ai_analysis_status', 'area', 'is_anonymous', 'date')
     search_fields = ('description', 'first_name', 'last_name', 'area')
-    readonly_fields = ('created_at', 'updated_at', 'ai_analysis_result')
+    readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información del Reporte', {
             'fields': ('date', 'time', 'area', 'description')

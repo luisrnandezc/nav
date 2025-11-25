@@ -707,3 +707,31 @@ openai.APIConnectionError: Connection error.
 2025-11-25 10:56:16,201 - INFO - API request completed successfully
 2025-11-25 10:56:16,201 - INFO - Response content extracted, length: 54 characters
 2025-11-25 10:56:16,201 - INFO - ================================================================================
+2025-11-25 18:43:04,525 - INFO - ================================================================================
+2025-11-25 18:43:04,525 - INFO - Starting run_ai_analysis_for_voluntary_hazard_report for VHR ID: 4
+2025-11-25 18:43:04,525 - INFO - AI analysis prompt loaded, length: 7559 characters
+2025-11-25 18:43:04,525 - INFO - Report namespace created - date: 2025-11-25, time: 18:42:00, area: OPERATIONS, description length: 68
+2025-11-25 18:43:04,525 - INFO - Rendered prompt length: 7574 characters
+2025-11-25 18:43:04,525 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2025-11-25 18:43:04,525 - INFO - API key retrieved successfully (length: 164 characters)
+2025-11-25 18:43:04,525 - INFO - Attempting to initialize OpenAI client
+2025-11-25 18:43:04,841 - INFO - OpenAI client initialized successfully
+2025-11-25 18:43:04,841 - INFO - Making API request to OpenAI responses endpoint
+2025-11-25 18:43:04,841 - INFO - Model: gpt-5.1, reasoning: medium, text verbosity: medium, tools: [{'type': 'web_search'}]
+2025-11-25 18:43:09,670 - INFO - API request completed successfully
+2025-11-25 18:43:09,670 - INFO - Response content extracted, length: 54 characters
+2025-11-25 18:43:09,681 - INFO - ================================================================================
+2025-11-25 18:51:13,919 - INFO - ================================================================================
+2025-11-25 18:51:13,919 - INFO - Starting run_ai_analysis_for_voluntary_hazard_report for VHR ID: 5
+2025-11-25 18:51:13,919 - INFO - AI analysis prompt loaded, length: 7559 characters
+2025-11-25 18:51:13,919 - INFO - Report namespace created - date: 2025-11-25, time: 18:50:00, area: OPERATIONS, description length: 112
+2025-11-25 18:51:13,919 - INFO - Rendered prompt length: 7618 characters
+2025-11-25 18:51:13,919 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2025-11-25 18:51:13,919 - INFO - API key retrieved successfully (length: 164 characters)
+2025-11-25 18:51:13,919 - INFO - Attempting to initialize OpenAI client
+2025-11-25 18:51:14,202 - INFO - OpenAI client initialized successfully
+2025-11-25 18:51:14,218 - INFO - Making API request to OpenAI responses endpoint
+2025-11-25 18:51:14,218 - INFO - Model: gpt-5.1, reasoning: medium, text verbosity: medium, tools: [{'type': 'web_search'}]
+2025-11-25 18:51:20,405 - INFO - API request completed successfully
+2025-11-25 18:51:20,405 - INFO - Response content extracted, length: 54 characters
+2025-11-25 18:51:20,405 - INFO - ================================================================================

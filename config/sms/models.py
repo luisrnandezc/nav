@@ -6,6 +6,11 @@ from datetime import timedelta, date
 import json
 
 
+def default_due_date():
+    """Return a date 30 days from today."""
+    return timezone.now().date() + timedelta(days=30)
+
+
 class VoluntaryHazardReport(models.Model):
     """
     Voluntary Hazard Report Model for Safety Management System (SMS)
@@ -101,6 +106,10 @@ class VoluntaryHazardReport(models.Model):
         blank=True,
         null=True
     )
+    human_validated = models.BooleanField(
+        default=False,
+        verbose_name="Validado",
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación",
@@ -125,3 +134,153 @@ class VoluntaryHazardReport(models.Model):
     def has_ai_analysis(self):
         """Check if this report has a completed AI hazard analysis"""
         return self.ai_analysis_status == 'COMPLETED'
+
+    def is_validated_by_human(self):
+        """Check if this report is validated by a human"""
+        return self.human_validated
+
+
+class Risk(models.Model):
+    """
+    Risk Model for Safety Management System (SMS)
+    """
+
+    #region Choices
+    STATUS_CHOICES = [
+        ('NOT_EVALUATED', 'No evaluado'),
+        ('INTOLERABLE', 'Intolerable'),
+        ('TOLERABLE', 'Tolerable'),
+        ('ACCEPTABLE', 'Aceptable'),
+    ]
+
+    SEVERITY_CHOICES = [
+        ('0', '-'),
+        ('A', 'A - Catastrófico'),
+        ('B', 'B - Peligroso'),
+        ('C', 'C - Grave'),
+        ('D', 'D - Leve'),
+        ('E', 'E - Insignificante'),
+    ]
+
+    PROBABILITY_CHOICES = [
+        ('0', '-'),
+        ('1', '1 - Sumamente improbable'),
+        ('2', '2 - Improbable'),
+        ('3', '3 - Remota'),
+        ('4', '4 - Ocasional'),
+        ('5', '5 - Frecuente'),
+    ]
+    #endregion
+
+    #region Fields
+    report = models.ForeignKey(
+        VoluntaryHazardReport, 
+        on_delete=models.CASCADE, 
+        verbose_name="Reporte Voluntario de Peligro",
+        related_name="risks"
+    )
+    description = models.TextField(
+        verbose_name="Descripción",
+    )
+    pre_evaluation_severity = models.CharField(
+        max_length=1,
+        choices=SEVERITY_CHOICES,
+        default='0',
+        verbose_name="Severidad pre-mitigación",
+    )
+    pre_evaluation_probability = models.CharField(
+        max_length=1, 
+        choices=PROBABILITY_CHOICES,
+        default='0',
+        verbose_name="Probabilidad pre-mitigación",
+    )
+    post_evaluation_severity = models.CharField(
+        max_length=1, 
+        choices=SEVERITY_CHOICES,
+        default='0',
+        verbose_name="Severidad post-mitigación",
+    )
+    post_evaluation_probability = models.CharField(
+        max_length=1, 
+        choices=PROBABILITY_CHOICES,
+        default='0',
+        verbose_name="Probabilidad post-mitigación",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='NOT_EVALUATED',
+        verbose_name="Estatus",
+    )
+    created_at = models.DateField(
+        default=timezone.now,
+        verbose_name="Fecha de creación"
+    )
+    updated_at = models.DateField(
+        default=timezone.now,
+        verbose_name="Fecha de actualización"
+    )
+    #endregion
+
+    class Meta:
+        verbose_name = "Riesgo"
+        verbose_name_plural = "Riesgos"
+        
+    def __str__(self):
+        return "{}".format(self.status)
+
+
+class MitigationAction(models.Model):
+    """
+    Mitigation Action Model for Safety Management System (SMS)
+    """
+
+    #region Choices
+    STATUS_CHOICES = [
+        ('PENDING', 'Sin completar'),
+        ('COMPLETED', 'Completada'),
+        ('EXPIRED', 'Vencida'),
+    ]
+    #endregion
+
+    #region Fields
+    risk = models.ForeignKey(
+        Risk, 
+        on_delete=models.CASCADE, 
+        verbose_name="Riesgo",
+        related_name="mitigation_actions"
+    )
+    description = models.TextField(
+        verbose_name="Descripción",
+    )
+    status=models.CharField(
+        max_length=9,
+        choices=STATUS_CHOICES,
+        default='PENDING',
+        verbose_name="Estatus",
+    )
+    due_date = models.DateField(
+        default=default_due_date,
+        verbose_name="Fecha límite"
+    )
+    notes = models.TextField(
+        verbose_name="Notas",
+        blank=True,
+        null=True
+    )
+    created_at = models.DateField(
+        default=timezone.now,
+        verbose_name="Fecha de creación"
+    )
+    updated_at = models.DateField(
+        default=timezone.now,
+        verbose_name="Fecha de actualización"
+    )
+    #endregion
+
+    class Meta:
+        verbose_name = "Acción de mitigación"
+        verbose_name_plural = "Acciones de mitigación"
+        
+    def __str__(self):
+        return "{} {}".format(self.status, self.due_date)

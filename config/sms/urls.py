@@ -10,4 +10,5 @@ urlpatterns = [
     path('voluntary_hazard_report/<int:report_id>/risk/<str:risk_key>/delete/', views.delete_risk, name='delete_risk'),
     path('voluntary_hazard_report/<int:report_id>/risk/<str:risk_key>/actions/<int:action_index>/delete/', views.delete_action, name='delete_action'),
     path('voluntary_hazard_report/<int:report_id>/risk/add/', views.add_risk, name='add_risk'),
+    path('voluntary_hazard_report/<int:report_id>/risk/<str:risk_key>/actions/add/', views.add_action, name='add_action'),
 ]

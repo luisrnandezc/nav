@@ -93,9 +93,9 @@
 						</div>
 
 						<!-- Risks Section -->
-						{% if risks %}
-							<div class="info-section">
-								<h2 class="section-title">Análisis de Riesgos</h2>
+						<div class="info-section">
+							<h2 class="section-title">Análisis de Riesgos</h2>
+							{% if risks %}
 								<div class="risk-analysis-list">
 								{% for risk_key, risk_data in risks.items %}
 									<div class="risk-item">
@@ -123,8 +123,57 @@
 									</div>
 								{% endfor %}
 								</div>
-							</div>
-						{% endif %}
+							{% else %}
+								<p class="no-risks-message">No hay riesgos registrados en el análisis actual.</p>
+							{% endif %}
+
+							{% if can_manage_sms %}
+								<div class="risk-add-form">
+									<h3>Agregar nuevo riesgo</h3>
+									<form method="post" action="{% url 'sms:add_risk' report.id %}">
+										{% csrf_token %}
+										<label for="risk-description" class="risk-form-label">Descripción</label>
+										<textarea
+											id="risk-description"
+											name="description"
+											rows="3"
+											class="risk-form-textarea"
+											required
+											placeholder="Describe el nuevo riesgo identificado...(mínimo 50 caracteres)"
+											minlength="50"
+											maxlength="1000"
+										></textarea>
+										<div class="risk-form-row">
+											<div class="risk-select-group">
+												<label for="risk-severity" class="risk-form-label">Severidad</label>
+												<select id="risk-severity" name="severity" required>
+													<option value="" selected disabled>Seleccione</option>
+													<option value="A">A</option>
+													<option value="B">B</option>
+													<option value="C">C</option>
+													<option value="D">D</option>
+													<option value="E">E</option>
+												</select>
+											</div>
+											<div class="risk-select-group">
+												<label for="risk-probability" class="risk-form-label">Probabilidad</label>
+												<select id="risk-probability" name="probability" required>
+													<option value="" selected disabled>Seleccione</option>
+													<option value="1">1</option>
+													<option value="2">2</option>
+													<option value="3">3</option>
+													<option value="4">4</option>
+													<option value="5">5</option>
+												</select>
+											</div>
+										</div>
+										<div class="risk-form-row" id="risk-submit-button-container">
+											<button type="submit" class="risk-submit-button">Agregar riesgo</button>
+										</div>
+									</form>
+								</div>
+							{% endif %}
+						</div>
 
 						<!-- Actions Section -->
 						{% if actions %}

@@ -124,6 +124,61 @@ def delete_action(request, report_id, risk_key, action_index):
     messages.success(request, 'Se eliminó la acción seleccionada.')
     return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
+
+@login_required
+@require_http_methods(["POST"])
+def add_risk(request, report_id):
+    """
+    Append a new risk (with evaluation and description) to the AI analysis payload.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    description = (request.POST.get('description') or '').strip()
+    severity = (request.POST.get('severity') or '').strip().upper()
+    probability = (request.POST.get('probability') or '').strip()
+
+    if not description:
+        messages.error(request, 'La descripción del riesgo es obligatoria.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if severity not in ['A', 'B', 'C', 'D', 'E']:
+        messages.error(request, 'Seleccione un nivel de severidad válido.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if probability not in ['1', '2', '3', '4', '5']:
+        messages.error(request, 'Seleccione un nivel de probabilidad válido.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+
+    next_index = 1
+    if risks:
+        existing_indexes = []
+        for key in risks.keys():
+            if key.startswith('risk'):
+                suffix = key.replace('risk', '')
+                if suffix.isdigit():
+                    existing_indexes.append(int(suffix))
+        next_index = max(existing_indexes, default=0) + 1
+
+    new_risk_key = f"risk{next_index}"
+    risks[new_risk_key] = {
+        'description': description,
+        'evaluation': f'{severity}{probability}',
+    }
+
+    ai_analysis['risks'] = risks
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, 'Se agregó un nuevo riesgo al análisis.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
 def voluntary_hazard_report(request):
     """
     A view to handle the SMS voluntary hazard report.

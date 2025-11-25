@@ -176,43 +176,72 @@
 						</div>
 
 						<!-- Actions Section -->
-						{% if actions %}
-							<div class="info-section">
-								<h2 class="section-title">Acciones de Mitigación</h2>
+						<div class="info-section">
+							<h2 class="section-title">Acciones de Mitigación</h2>
+							{% if risk_entries %}
 								<div class="recommendations-list">
-									{% for risk_key, action_list in actions.items %}
+									{% for risk_entry in risk_entries %}
 										<div class="recommendation-item">
 											<div class="recommendation-header">
-												<span class="recommendation-risk-label">{{ "Riesgo "|add:risk_key|cut:"risk" }}</span>
+												<span class="recommendation-risk-label">{{ "Riesgo "|add:risk_entry.key|cut:"risk" }} | Evaluación: {{ risk_entry.data.evaluation|default:"N/A" }}</span>
 											</div>
 											<ul class="action-list">
-												{% for action in action_list %}
-													<li class="action-item">
-														<span class="action-text">{{ action }}</span>
-														{% if can_manage_sms %}
-															<form
-																method="post"
-																action="{% url 'sms:delete_action' report.id risk_key forloop.counter0 %}"
-																class="action-delete-form"
-															>
-																{% csrf_token %}
-																<button
-																	type="submit"
-																	class="action-delete-button"
-																	onclick="return confirm('¿Eliminar esta acción?');"
+												{% if risk_entry.actions %}
+													{% for action in risk_entry.actions %}
+														<li class="action-item">
+															<span class="action-text">{{ action }}</span>
+															{% if can_manage_sms %}
+																<form
+																	method="post"
+																	action="{% url 'sms:delete_action' report.id risk_entry.key forloop.counter0 %}"
+																	class="action-delete-form"
 																>
-																	X
-																</button>
-															</form>
-														{% endif %}
+																	{% csrf_token %}
+																	<button
+																		type="submit"
+																		class="action-delete-button"
+																		onclick="return confirm('¿Eliminar esta acción?');"
+																	>
+																		X
+																	</button>
+																</form>
+															{% endif %}
+														</li>
+													{% endfor %}
+												{% else %}
+													<li class="action-item action-item-empty">
+														<span class="action-text">No hay acciones de mitigación registradas.</span>
 													</li>
-												{% endfor %}
+												{% endif %}
 											</ul>
+											{% if can_manage_sms %}
+												<form
+													method="post"
+													action="{% url 'sms:add_action' report.id risk_entry.key %}"
+													class="action-add-form"
+												>
+													{% csrf_token %}
+													<label class="action-form-label" for="action-description-{{ risk_entry.key }}">Nueva acción</label>
+													<textarea
+														id="action-description-{{ risk_entry.key }}"
+														name="description"
+														rows="2"
+														class="action-form-textarea"
+														required
+														placeholder="Describe la acción de mitigación...(mínimo 50 caracteres)"
+													></textarea>
+													<div class="action-form-row" id="action-submit-button-container">
+														<button type="submit" class="action-submit-button">Agregar acción</button>
+													</div>
+												</form>
+											{% endif %}
 										</div>
 									{% endfor %}
 								</div>
-							</div>
-						{% endif %}
+							{% else %}
+								<p class="no-actions-message">No se han definido riesgos para asociar acciones de mitigación.</p>
+							{% endif %}
+						</div>
 					{% endif %}
 
 					<!-- Analysis Metadata -->

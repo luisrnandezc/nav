@@ -38,15 +38,24 @@ def voluntary_hazard_report_detail(request, report_id):
     
     # Parse AI analysis result if available
     ai_analysis = report.ai_analysis_result if report.ai_analysis_result else {}
-    risks = ai_analysis.get('risks', {})
-    actions = ai_analysis.get('actions', {})
+    risks = ai_analysis.get('risks', {}) or {}
+    actions = ai_analysis.get('actions', {}) or {}
     is_valid = ai_analysis.get('is_valid', 'NO')
+
+    risk_entries = []
+    for risk_key, risk_data in risks.items():
+        risk_entries.append({
+            'key': risk_key,
+            'data': risk_data,
+            'actions': actions.get(risk_key, []) or [],
+        })
     
     context = {
         'report': report,
         'ai_analysis': ai_analysis,
         'risks': risks,
         'actions': actions,
+        'risk_entries': risk_entries,
         'is_valid': is_valid,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
     }
@@ -177,6 +186,43 @@ def add_risk(request, report_id):
     report.save(update_fields=['ai_analysis_result', 'updated_at'])
 
     messages.success(request, 'Se agregó un nuevo riesgo al análisis.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_action(request, report_id, risk_key):
+    """
+    Append a new mitigation action to the specified risk.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    description = (request.POST.get('description') or '').strip()
+    if not description:
+        messages.error(request, 'La descripción de la acción es obligatoria.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+    actions = ai_analysis.get('actions', {}) or {}
+
+    if risk_key not in risks:
+        messages.error(request, 'El riesgo seleccionado no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    action_list = actions.get(risk_key, []) or []
+    action_list.append(description)
+    actions[risk_key] = action_list
+
+    ai_analysis['actions'] = actions
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, 'Se agregó una nueva acción de mitigación.')
     return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
 def voluntary_hazard_report(request):

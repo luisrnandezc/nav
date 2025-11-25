@@ -29,6 +29,43 @@ def sms_dashboard(request):
     }
     return render(request, 'sms/sms_dashboard.html', context)
 
+
+def renumber_risks(risks, actions):
+    """
+    Renumber risks sequentially starting from 1.
+    
+    Args:
+        risks: Dictionary of risks with keys like 'risk1', 'risk2', etc.
+        actions: Dictionary of actions with keys matching risk keys
+        
+    Returns:
+        Tuple of (renumbered_risks, renumbered_actions) dictionaries
+    """
+    if not risks:
+        return risks, actions
+    
+    # Extract and sort risk keys by their numeric value
+    def get_risk_number(key):
+        try:
+            return int(key.replace('risk', ''))
+        except (ValueError, AttributeError):
+            return 0
+    
+    sorted_keys = sorted(risks.keys(), key=get_risk_number)
+    
+    # Create new dictionaries with sequential numbering
+    new_risks = {}
+    new_actions = {}
+    
+    for index, old_key in enumerate(sorted_keys, start=1):
+        new_key = f'risk{index}'
+        new_risks[new_key] = risks[old_key]
+        if old_key in actions:
+            new_actions[new_key] = actions[old_key]
+    
+    return new_risks, new_actions
+    
+
 @login_required
 def voluntary_hazard_report_detail(request, report_id):
     """
@@ -49,6 +86,9 @@ def voluntary_hazard_report_detail(request, report_id):
             'data': risk_data,
             'actions': actions.get(risk_key, []) or [],
         })
+
+    # Renumber remaining risks sequentially
+    risks, actions = renumber_risks(risks, actions)
     
     context = {
         'report': report,
@@ -59,6 +99,7 @@ def voluntary_hazard_report_detail(request, report_id):
         'is_valid': is_valid,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
     }
+
     return render(request, 'sms/voluntary_hazard_report_detail.html', context)
 
 
@@ -67,6 +108,7 @@ def voluntary_hazard_report_detail(request, report_id):
 def delete_risk(request, report_id, risk_key):
     """
     Remove a specific risk (and its related actions) from the AI analysis payload.
+    After deletion, renumber all remaining risks sequentially.
     """
     report = get_object_or_404(VoluntaryHazardReport, id=report_id)
 
@@ -82,8 +124,12 @@ def delete_risk(request, report_id, risk_key):
         messages.warning(request, 'El riesgo solicitado no existe.')
         return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
+    # Delete the risk and its actions
     risks.pop(risk_key, None)
     actions.pop(risk_key, None)
+
+    # Renumber remaining risks sequentially
+    risks, actions = renumber_risks(risks, actions)
 
     ai_analysis['risks'] = risks
     ai_analysis['actions'] = actions

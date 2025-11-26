@@ -7,3 +7,4 @@ users/
 config/db.sqlite3
 config/.env
 config/sms_prompt.txt
+config/sms/logs/

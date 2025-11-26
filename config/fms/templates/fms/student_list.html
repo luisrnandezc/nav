@@ -6,9 +6,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Lista de Estudiantes</title>
-    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
-    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <link href="{% static 'student_list.css' %}" rel="stylesheet" />
     <script>
       window.csrfToken = '{{ csrf_token }}';
@@ -17,22 +16,19 @@
   </head>
 
   <body>
-    <div class="fms-container">
+    <div class="main-container">
       <div class="back-button">
         <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
       </div>
 
-      <div class="fms-header">
-        <h1>Lista de Estudiantes</h1>
-        <p>Total de estudiantes: {{ total_students }}</p>
-      </div>
+      <h1 class="main-header">Lista de Estudiantes</h1>
 
       <div class="sections-container">
         <!-- Students List Section -->
         <div class="section">
           <div class="section-header">
             <h2>Balance de Estudiantes</h2>
-            <p>Estudiantes activos en el sistema</p>
+            <p>Estudiantes activos en el sistema: {{ total_students }}</p>
           </div>
           <div class="flight-list">
             {% if students %}

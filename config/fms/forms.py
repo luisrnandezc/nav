@@ -1,6 +1,6 @@
 from django import forms
 from django.db import transaction
-from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation, FlightReport
+from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation, FlightReport, DiscrepancyReport
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
 import decimal
@@ -373,7 +373,23 @@ class FlightEvaluation0_100Form(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-field'}),
         label='Aeronave'
     )
-    
+
+    discrepancy_type = forms.ChoiceField(
+        choices=[('', '---------')] + list(DiscrepancyReport.TYPE_CHOICES),
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Tipo de discrepancia',
+        initial='',
+        required=False
+    )
+
+    discrepancy_description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Mínimo 50 caracteres, máximo 1000 caracteres'}),
+        label='Descripción de la discrepancia',
+        required=False,
+        max_length=1000,
+        min_length=50
+    )
+
     class Meta:
         model = FlightEvaluation0_100
         fields = [
@@ -574,6 +590,9 @@ class FlightEvaluation0_100Form(forms.ModelForm):
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
         self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
         
+        # Ensure discrepancy_type is set to empty by default
+        self.fields['discrepancy_type'].initial = ''
+        
         if user:
             profile = user.instructor_profile
             self.fields['instructor_id'].initial = user.national_id
@@ -602,24 +621,41 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
             aircraft = self.cleaned_data.get('aircraft')
             fuel_consumed = self.cleaned_data.get('fuel_consumed')
-            fuel_cost = aircraft.fuel_cost
+            
+            if aircraft:
+                fuel_cost = aircraft.fuel_cost
 
-            if student_id and session_flight_hours:
-                student_profile = StudentProfile.objects.get(user__national_id=student_id)
-                # Update student's accumulated flight hours and flight balance
-                student_profile.flight_hours += session_flight_hours
-                student_profile.nav_flight_hours += session_flight_hours
+                if student_id and session_flight_hours:
+                    student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                    # Update student's accumulated flight hours and flight balance
+                    student_profile.flight_hours += session_flight_hours
+                    student_profile.nav_flight_hours += session_flight_hours
 
-                if student_profile.flight_rate != 130.0:
-                    hourly_rate = student_profile.flight_rate
-                else:
-                    hourly_rate = aircraft.hourly_rate
+                    if student_profile.flight_rate != 130.0:
+                        hourly_rate = student_profile.flight_rate
+                    else:
+                        hourly_rate = aircraft.hourly_rate
 
-                student_profile.balance -= round(session_flight_hours*hourly_rate + fuel_cost*fuel_consumed, 2)
-                student_profile.save()
-                # Update aircraft's total hours
-                aircraft.total_hours += session_flight_hours
-                aircraft.save()
+                    student_profile.balance -= round(session_flight_hours*hourly_rate + fuel_cost*fuel_consumed, 2)
+                    student_profile.save()
+                    # Update aircraft's total hours
+                    aircraft.total_hours += session_flight_hours
+                    aircraft.save()
+
+                # Create discrepancy report if description is provided
+                discrepancy_description = self.cleaned_data.get('discrepancy_description')
+                if discrepancy_description and discrepancy_description.strip():
+                    # Get discrepancy_type, can be None if not provided
+                    discrepancy_type = self.cleaned_data.get('discrepancy_type') or None
+                    
+                    DiscrepancyReport.objects.create(
+                        aircraft=aircraft,
+                        reportee_first_name=self.cleaned_data.get('instructor_first_name') or '',
+                        reportee_last_name=self.cleaned_data.get('instructor_last_name') or '',
+                        discrepancy_type=discrepancy_type,
+                        discrepancy_description=discrepancy_description.strip(),
+                        status='PENDING'
+                    )
 
         return instance
     
@@ -669,6 +705,16 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             except StudentProfile.DoesNotExist:
                 raise forms.ValidationError(f"No se encontró un perfil de estudiante con ID: {student_id}")
         
+        # Validate discrepancy fields
+        discrepancy_type = cleaned_data.get('discrepancy_type')
+        discrepancy_description = cleaned_data.get('discrepancy_description')
+        
+        # If discrepancy type is selected, description is required
+        if discrepancy_type and not discrepancy_description:
+            raise forms.ValidationError(
+                "Si selecciona un tipo de discrepancia, debe proporcionar una descripción."
+            )
+        
         return cleaned_data
 
 class FlightEvaluation100_120Form(forms.ModelForm):
@@ -678,6 +724,22 @@ class FlightEvaluation100_120Form(forms.ModelForm):
         empty_label=None,
         widget=forms.Select(attrs={'class': 'form-field'}),
         label='Aeronave'
+    )
+
+    discrepancy_type = forms.ChoiceField(
+        choices=[('', '---------')] + list(DiscrepancyReport.TYPE_CHOICES),
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Tipo de discrepancia',
+        initial='',
+        required=False
+    )
+
+    discrepancy_description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Mínimo 50 caracteres, máximo 1000 caracteres'}),
+        label='Descripción de la discrepancia',
+        required=False,
+        max_length=1000,
+        min_length=50
     )
     
     class Meta:
@@ -864,6 +926,9 @@ class FlightEvaluation100_120Form(forms.ModelForm):
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
         self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
         
+        # Ensure discrepancy_type is set to empty by default
+        self.fields['discrepancy_type'].initial = ''
+        
         if user:
             profile = user.instructor_profile
             self.fields['instructor_id'].initial = user.national_id
@@ -892,25 +957,42 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
             aircraft = self.cleaned_data.get('aircraft')
             fuel_consumed = self.cleaned_data.get('fuel_consumed')
-            fuel_cost = aircraft.fuel_cost
 
-            if student_id and session_flight_hours:
-                student_profile = StudentProfile.objects.get(user__national_id=student_id)
-                # Update student's accumulated flight hours and flight balance
-                student_profile.flight_hours += session_flight_hours
-                student_profile.nav_flight_hours += session_flight_hours
+            if aircraft:
+                fuel_cost = aircraft.fuel_cost
 
-                if student_profile.flight_rate != 130.0:
-                    hourly_rate = student_profile.flight_rate
-                else:
-                    hourly_rate = aircraft.hourly_rate
+                if student_id and session_flight_hours:
+                    student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                    # Update student's accumulated flight hours and flight balance
+                    student_profile.flight_hours += session_flight_hours
+                    student_profile.nav_flight_hours += session_flight_hours
 
-                student_profile.balance -= round(session_flight_hours*aircraft.hourly_rate + fuel_cost*fuel_consumed, 2)
-                student_profile.save()
-                # Update aircraft's total hours
-                aircraft.total_hours += session_flight_hours
-                aircraft.save()
+                    if student_profile.flight_rate != 130.0:
+                        hourly_rate = student_profile.flight_rate
+                    else:
+                        hourly_rate = aircraft.hourly_rate
 
+                    student_profile.balance -= round(session_flight_hours*aircraft.hourly_rate + fuel_cost*fuel_consumed, 2)
+                    student_profile.save()
+                    # Update aircraft's total hours
+                    aircraft.total_hours += session_flight_hours
+                    aircraft.save()
+
+                # Create discrepancy report if description is provided
+                discrepancy_description = self.cleaned_data.get('discrepancy_description')
+                if discrepancy_description and discrepancy_description.strip():
+                    # Get discrepancy_type, can be None if not provided
+                    discrepancy_type = self.cleaned_data.get('discrepancy_type') or None
+                    
+                    DiscrepancyReport.objects.create(
+                        aircraft=aircraft,
+                        reportee_first_name=self.cleaned_data.get('instructor_first_name') or '',
+                        reportee_last_name=self.cleaned_data.get('instructor_last_name') or '',
+                        discrepancy_type=discrepancy_type,
+                        discrepancy_description=discrepancy_description.strip(),
+                        status='PENDING'
+                    )
+                
         return instance
 
     def clean(self):
@@ -959,6 +1041,16 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             except StudentProfile.DoesNotExist:
                 raise forms.ValidationError(f"No se encontró un perfil de estudiante con ID: {student_id}")
         
+        # Validate discrepancy fields
+        discrepancy_type = cleaned_data.get('discrepancy_type')
+        discrepancy_description = cleaned_data.get('discrepancy_description')
+        
+        # If discrepancy type is selected, description is required
+        if discrepancy_type and not discrepancy_description:
+            raise forms.ValidationError(
+                "Si selecciona un tipo de discrepancia, debe proporcionar una descripción."
+            )
+        
         return cleaned_data
 
 class FlightEvaluation120_170Form(forms.ModelForm):
@@ -968,6 +1060,22 @@ class FlightEvaluation120_170Form(forms.ModelForm):
         empty_label=None,
         widget=forms.Select(attrs={'class': 'form-field'}),
         label='Aeronave'
+    )
+
+    discrepancy_type = forms.ChoiceField(
+        choices=[('', '---------')] + list(DiscrepancyReport.TYPE_CHOICES),
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Tipo de discrepancia',
+        initial='',
+        required=False
+    )
+
+    discrepancy_description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Mínimo 50 caracteres, máximo 1000 caracteres'}),
+        label='Descripción de la discrepancia',
+        required=False,
+        max_length=1000,
+        min_length=50
     )
     
     class Meta:
@@ -1129,6 +1237,9 @@ class FlightEvaluation120_170Form(forms.ModelForm):
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
         self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
         
+        # Ensure discrepancy_type is set to empty by default
+        self.fields['discrepancy_type'].initial = ''
+        
         if user:
             profile = user.instructor_profile
             self.fields['instructor_id'].initial = user.national_id
@@ -1157,24 +1268,41 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             session_flight_hours = self.cleaned_data.get('session_flight_hours')
             aircraft = self.cleaned_data.get('aircraft')
             fuel_consumed = self.cleaned_data.get('fuel_consumed')
-            fuel_cost = aircraft.fuel_cost
 
-            if student_id and session_flight_hours:
-                student_profile = StudentProfile.objects.get(user__national_id=student_id)
-                # Update student's accumulated flight hours and flight balance
-                student_profile.flight_hours += session_flight_hours
-                student_profile.nav_flight_hours += session_flight_hours
+            if aircraft:
+                fuel_cost = aircraft.fuel_cost
 
-                if student_profile.flight_rate != 130.0:
-                    hourly_rate = student_profile.flight_rate
-                else:
-                    hourly_rate = aircraft.hourly_rate
+                if student_id and session_flight_hours:
+                    student_profile = StudentProfile.objects.get(user__national_id=student_id)
+                    # Update student's accumulated flight hours and flight balance
+                    student_profile.flight_hours += session_flight_hours
+                    student_profile.nav_flight_hours += session_flight_hours
 
-                student_profile.balance -= round(session_flight_hours*hourly_rate + fuel_cost*fuel_consumed, 2)
-                student_profile.save()
-                # Update aircraft's total hours
-                aircraft.total_hours += session_flight_hours
-                aircraft.save()
+                    if student_profile.flight_rate != 130.0:
+                        hourly_rate = student_profile.flight_rate
+                    else:
+                        hourly_rate = aircraft.hourly_rate
+
+                    student_profile.balance -= round(session_flight_hours*hourly_rate + fuel_cost*fuel_consumed, 2)
+                    student_profile.save()
+                    # Update aircraft's total hours
+                    aircraft.total_hours += session_flight_hours
+                    aircraft.save()
+
+                 # Create discrepancy report if description is provided
+                discrepancy_description = self.cleaned_data.get('discrepancy_description')
+                if discrepancy_description and discrepancy_description.strip():
+                    # Get discrepancy_type, can be None if not provided
+                    discrepancy_type = self.cleaned_data.get('discrepancy_type') or None
+                    
+                    DiscrepancyReport.objects.create(
+                        aircraft=aircraft,
+                        reportee_first_name=self.cleaned_data.get('instructor_first_name') or '',
+                        reportee_last_name=self.cleaned_data.get('instructor_last_name') or '',
+                        discrepancy_type=discrepancy_type,
+                        discrepancy_description=discrepancy_description.strip(),
+                        status='PENDING'
+                    )
 
         return instance
     
@@ -1224,6 +1352,16 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             except StudentProfile.DoesNotExist:
                 raise forms.ValidationError(f"No se encontró un perfil de estudiante con ID: {student_id}")
         
+        # Validate discrepancy fields
+        discrepancy_type = cleaned_data.get('discrepancy_type')
+        discrepancy_description = cleaned_data.get('discrepancy_description')
+        
+        # If discrepancy type is selected, description is required
+        if discrepancy_type and not discrepancy_description:
+            raise forms.ValidationError(
+                "Si selecciona un tipo de discrepancia, debe proporcionar una descripción."
+            )
+        
         return cleaned_data
     
 class FlightReportForm(forms.ModelForm):
@@ -1233,6 +1371,22 @@ class FlightReportForm(forms.ModelForm):
         empty_label=None,
         widget=forms.Select(attrs={'class': 'form-field'}),
         label='Aeronave'
+    )
+
+    discrepancy_type = forms.ChoiceField(
+        choices=[('', '---------')] + list(DiscrepancyReport.TYPE_CHOICES),
+        widget=forms.Select(attrs={'class': 'form-field'}),
+        label='Tipo de discrepancia',
+        initial='',
+        required=False
+    )
+
+    discrepancy_description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Mínimo 50 caracteres, máximo 1000 caracteres'}),
+        label='Descripción de la discrepancia',
+        required=False,
+        max_length=1000,
+        min_length=50
     )
     
     class Meta:
@@ -1276,6 +1430,9 @@ class FlightReportForm(forms.ModelForm):
         user = kwargs.pop('user', None)  # Extract the 'user' argument from kwargs
         super().__init__(*args, **kwargs)
         
+        # Ensure discrepancy_type is set to empty by default
+        self.fields['discrepancy_type'].initial = ''
+        
         if user:
             self.fields['pilot_id'].initial = user.national_id
             self.fields['pilot_first_name'].initial = user.first_name
@@ -1301,10 +1458,25 @@ class FlightReportForm(forms.ModelForm):
             flight_hours = self.cleaned_data.get('flight_hours')
             aircraft = self.cleaned_data.get('aircraft')
 
-            if flight_hours:
+            if flight_hours and aircraft:
                 # Update aircraft's total hours
                 aircraft.total_hours += flight_hours
                 aircraft.save()
+
+                # Create discrepancy report if description is provided
+                discrepancy_description = self.cleaned_data.get('discrepancy_description')
+                if discrepancy_description and discrepancy_description.strip():
+                    # Get discrepancy_type, use default 'ENGINE' if not provided
+                    discrepancy_type = self.cleaned_data.get('discrepancy_type') or 'ENGINE'
+                    
+                    DiscrepancyReport.objects.create(
+                        aircraft=aircraft,
+                        reportee_first_name=self.cleaned_data.get('pilot_first_name') or '',
+                        reportee_last_name=self.cleaned_data.get('pilot_last_name') or '',
+                        discrepancy_type=discrepancy_type,
+                        discrepancy_description=discrepancy_description.strip(),
+                        status='PENDING'
+                    )                
 
         return instance
 
@@ -1333,5 +1505,15 @@ class FlightReportForm(forms.ModelForm):
                 f"Horómetro final: {final_hourmeter}"
             )
         cleaned_data['flight_hours'] = calculated_flight_hours
+
+        # Validate discrepancy fields
+        discrepancy_type = cleaned_data.get('discrepancy_type')
+        discrepancy_description = cleaned_data.get('discrepancy_description')
+        
+        # If discrepancy type is selected, description is required
+        if discrepancy_type and not discrepancy_description:
+            raise forms.ValidationError(
+                "Si selecciona un tipo de discrepancia, debe proporcionar una descripción."
+            )        
     
         return cleaned_data

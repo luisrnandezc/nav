@@ -6,27 +6,23 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>NAV | Estadísticas de la Flota</title>
-        <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
-        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
         <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     </head>
 
     <body>
-        <div class="fms-container">
+        <div class="main-container">
             <div class="back-button">
                 <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
             </div>
 
-            <div class="fms-header">
-                <h1>Estadísticas de la Flota</h1>
-                <p>Lista total de vuelos</p>
-            </div>
+            <h1 class="main-header">Estadísticas de la Flota</h1>
 
             <div class="buttons-container">
-                <div class="student-list-button">
+                <div class="main-button">
                   <a href="{% url 'fms:fleet_stats_page' 'YV204E' %}" class="button">Estadísticas YV204E</a>
                 </div>
-                <div class="student-list-button">
+                <div class="main-button">
                   <a href="{% url 'fms:fleet_stats_page' 'YV206E' %}" class="button">Estadísticas YV206E</a>
                 </div>
             </div>
@@ -59,8 +55,8 @@
                                             <span class="detail-value">{{ flight.instructor_first_name }} {{ flight.instructor_last_name }}</span>
                                         </div>
                                         <div class="detail-item">
-                                            <span class="detail-label">Combustible:</span>
-                                            <span class="detail-value">{{ flight.fuel_consumed }}l</span>
+                                            <span class="detail-label">Combustible (Litros):</span>
+                                            <span class="detail-value">{{ flight.fuel_consumed }}</span>
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Nota:</span>
@@ -102,8 +98,8 @@
                                             <span class="detail-value">{{ flight.instructor_first_name }} {{ flight.instructor_last_name }}</span>
                                         </div>
                                         <div class="detail-item">
-                                            <span class="detail-label">Combustible:</span>
-                                            <span class="detail-value">{{ flight.fuel_consumed }}l</span>
+                                            <span class="detail-label">Combustible (Litros):</span>
+                                            <span class="detail-value">{{ flight.fuel_consumed }}</span>
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Nota:</span>
@@ -141,8 +137,8 @@
                                             <span class="detail-value">{{ flight.pilot_first_name }} {{ flight.pilot_last_name }}</span>
                                         </div>
                                         <div class="detail-item">
-                                            <span class="detail-label">Combustible:</span>
-                                            <span class="detail-value">{{ flight.fuel_consumed }}l</span>
+                                            <span class="detail-label">Combustible (Litros):</span>
+                                            <span class="detail-value">{{ flight.fuel_consumed }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -176,8 +172,8 @@
                                             <span class="detail-value">{{ flight.pilot_first_name }} {{ flight.pilot_last_name }}</span>
                                         </div>
                                         <div class="detail-item">
-                                            <span class="detail-label">Combustible:</span>
-                                            <span class="detail-value">{{ flight.fuel_consumed }}l</span>
+                                            <span class="detail-label">Combustible (Litros):</span>
+                                            <span class="detail-value">{{ flight.fuel_consumed }}</span>
                                         </div>
                                     </div>
                                 </div>

@@ -6,23 +6,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Reporte de vuelo</title>
-    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <link href="{% static 'flight_evaluation.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     <script src="{% static 'js/flight_evaluation_dynamics.js' %}"></script>
   </head>
 
-  <body></body>
+  <body>
     <div class="main-container">
+
       <div class="back-button">
-        {% if user.role == 'INSTRUCTOR' %}
+        {% if user_role == 'INSTRUCTOR' %}
           <a href="{% url 'fms:form_selection' %}" class="button">&larr; Volver</a>
-        {% elif user.role == 'STAFF' %}
+        {% elif user_role == 'STAFF' %}
           <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
         {% else %}
           <a href="javascript:history.back()" class="button">&larr; Volver</a>
         {% endif %}
       </div>
+      
       <h1 class="main-header">Reporte de vuelo</h1>
+      
       <form class="form-container" method="post"  action="{% url 'fms:flight_report' %}">
         {% csrf_token %}
         <h1 class="subsection-header">Sección 1: Datos del piloto</h1>
@@ -83,6 +86,19 @@
         <div class="form-row comments-row">
           {{ form.comments }}
         </div>
+        <h1 class="subsection-header">Sección 4: Reporte de discrepancia</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section" id="discrepancy-section">
+            <div class="form-row" id="discrepancy-type-field">
+              {{ form.discrepancy_type.label_tag }}
+              {{ form.discrepancy_type }}
+            </div>
+            <div class="form-row">
+              {{ form.discrepancy_description }}
+            </div>
+          </div>
+        </details>        
 
         <div class="submit-button-container">
           <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>

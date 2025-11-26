@@ -6,13 +6,12 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>NAV | Estadísticas del Instructor</title>
-        <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
-        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
         <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
     </head>
 
     <body>
-        <div class="fms-container">
+        <div class="main-container">
             <div class="back-button">
                 {% if instructor %}
                     <a href="{% url 'fms:user_stats_page' %}" class="button">&larr; Volver</a>
@@ -21,10 +20,7 @@
                 {% endif %}
             </div>
 
-            <div class="fms-header">
-                <h1>Estadísticas del Instructor</h1>
-                <p>Resumen completo de vuelos y consumo</p>
-            </div>
+            <h1 class="main-header">Estadísticas del Instructor</h1>
 
             <div class="sections-container">
                 <!-- Total Statistics -->
@@ -35,15 +31,15 @@
                     <div class="stats-details">
                         <div class="stat-detail-item">
                             <span class="detail-label">Total de Horas de Instrucción:</span>
-                            <span class="detail-value">{{ total_flight_hours }} h</span>
+                            <span class="detail-value">{{ total_flight_hours }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">Total de Combustible Consumido (Litros):</span>
-                            <span class="detail-value">{{ total_consumed_liters }} l</span>
+                            <span class="detail-value">{{ total_consumed_liters }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">Total de Combustible Consumido (Galones):</span>
-                            <span class="detail-value">{{ total_consumed_gallons }} gal</span>
+                            <span class="detail-value">{{ total_consumed_gallons }}</span>
                         </div>
                     </div>
                 </div>
@@ -56,23 +52,23 @@
                     <div class="stats-details">
                         <div class="stat-detail-item">
                             <span class="detail-label">Horas de Vuelo:</span>
-                            <span class="detail-value stat-value">{{ total_flight_hours_yv204e }} h</span>
+                            <span class="detail-value stat-value">{{ total_flight_hours_yv204e }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">Combustible Consumido (Litros):</span>
-                            <span class="detail-value stat-value">{{ total_consumed_liters_yv204e }} l</span>
+                            <span class="detail-value stat-value">{{ total_consumed_liters_yv204e }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">Combustible Consumido (Galones):</span>
-                            <span class="detail-value stat-value">{{ total_consumed_gallons_yv204e }} gal</span>
+                            <span class="detail-value stat-value">{{ total_consumed_gallons_yv204e }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">FF promedio (Litros/h):</span>
-                            <span class="detail-value stat-value">{{ fuel_rate_liters_yv204e }} lph</span>
+                            <span class="detail-value stat-value">{{ fuel_rate_liters_yv204e }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">FF promedio (Galones/h):</span>
-                            <span class="detail-value stat-value">{{ fuel_rate_gallons_yv204e }} gph</span>
+                            <span class="detail-value stat-value">{{ fuel_rate_gallons_yv204e }}</span>
                         </div>
                     </div>
                 </div>
@@ -85,23 +81,23 @@
                     <div class="stats-details">
                         <div class="stat-detail-item">
                             <span class="detail-label">Horas de Vuelo:</span>
-                            <span class="detail-value stat-value">{{ total_flight_hours_yv206e }} h</span>
+                            <span class="detail-value stat-value">{{ total_flight_hours_yv206e }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">Combustible Consumido (Litros):</span>
-                            <span class="detail-value stat-value">{{ total_consumed_liters_yv206e }} l</span>
+                            <span class="detail-value stat-value">{{ total_consumed_liters_yv206e }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">Combustible Consumido (Galones):</span>
-                            <span class="detail-value stat-value">{{ total_consumed_gallons_yv206e }} gal</span>
+                            <span class="detail-value stat-value">{{ total_consumed_gallons_yv206e }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">FF promedio (Litros/h):</span>
-                            <span class="detail-value stat-value">{{ fuel_rate_liters_yv206e }} lph</span>
+                            <span class="detail-value stat-value">{{ fuel_rate_liters_yv206e }}</span>
                         </div>
                         <div class="stat-detail-item">
                             <span class="detail-label">FF promedio (Galones/h):</span>
-                            <span class="detail-value stat-value">{{ fuel_rate_gallons_yv206e }} gph</span>
+                            <span class="detail-value stat-value">{{ fuel_rate_gallons_yv206e }}</span>
                         </div>
                     </div>
                 </div>

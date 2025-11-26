@@ -9,12 +9,14 @@
     <link rel="stylesheet" href="{% static 'shared_components.css' %}">
 </head>
 <body>
-    <div class="back-button">
-      <a href="{% url 'scheduler:staff_flight_requests_dashboard' %}" class="button">&larr; Volver</a>
-    </div>
-
     <div class="main-container">
+
+        <div class="back-button">
+            <a href="{% url 'scheduler:staff_flight_requests_dashboard' %}" class="button">&larr; Volver</a>
+        </div>
+
         <h1 class="main-header">Nuevo periodo de vuelo</h1>
+
         <div class="form-container">
             <form method="post">
                 {% csrf_token %}

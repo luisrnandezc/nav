@@ -1,6 +1,6 @@
 * {
     font-family: 'Renogare-Regular', 'Arial', sans-serif;
-    color: #ffffff;
+    color: #dae1ff;
     font-size: 16px;
     box-sizing: border-box;
 }
@@ -78,13 +78,13 @@ body {
   width: 200px;
   height: 50px;
   background-color: transparent;
-  border: 1px solid #ffffff;
+  border: 1px solid #dae1ff;
   border-radius: 3px;
 }
 
 .button:hover {
   background-color: rgb(0, 0, 0, 0.25);
-  border: 1px solid #ffffff;
+  border: 1px solid #dae1ff;
   border-radius: 3px;
   cursor: pointer;
 }

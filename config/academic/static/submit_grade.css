@@ -24,15 +24,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    margin: 25px;
+    padding: 20px;
     min-height: 100vh;
     padding-bottom: 50px;
   }
 
   .main-header {
-    color: rgb(232, 71, 40);
-    font-size: 2.0rem;
-    margin: 50px 0px 25px 0px;
+    color: #dae1ff;
+    font-size: 2.5rem;
+    margin: 50px 0px 30px 0px;
   }
 
   .form-container {
@@ -42,7 +42,6 @@
     justify-content: center;
     width: 75%;
     height: 100%;
-    margin-top: 25px;
   }
 
   .form-row {
@@ -55,7 +54,7 @@
 
   label {
     width: 200px;
-    color: #ffffff;
+    color: #dae1ff;
     text-align: right;
     margin-right: 10px;
     display: flex;
@@ -77,13 +76,13 @@
   }
 
   .error-message {
-    color: rgb(232, 71, 40);
+    color: #e84728;
     font-size: 0.9rem;
     display: block;
   }
 
   .help-text {
-    color: #dadada;
+    color: #dae1ff;
     font-size: 0.8rem;
     margin-left: 210px;
     margin-top: 5px;
@@ -110,14 +109,14 @@
     width: 200px;
     height: 40px;
     border-radius: 3px;
-    color: #ffffff;
+    color: #dae1ff;
     background-color: transparent;
   }
 
   .submit-button:hover {
-    background-color: rgb(232, 71, 40);
-    color: #ffffff;
-    border: 0px solid #ffffff;
+    background-color: #e84728;
+    color: #dae1ff;
+    border: 0px solid #dae1ff;
     border-radius: 3px;
     cursor: pointer;
   }
@@ -143,26 +142,26 @@
 
   .message.success {
     background-color: rgba(40, 167, 69, 0.2);
-    color: #ffffff;
+    color: #dae1ff;
     border: 1px solid rgba(40, 167, 69, 0.3);
     font-weight: bold;
   }
 
   .message.error {
     background-color: rgba(220, 53, 69, 0.2);
-    color: #dadada;
+    color: #dae1ff;
     border: 1px solid rgba(220, 53, 69, 0.3);
   }
 
   .message.info {
     background-color: rgba(23, 162, 184, 0.2);
-    color: #dadada;
+    color: #dae1ff;
     border: 1px solid rgba(23, 162, 184, 0.3);
   }
 
   .message.warning {
     background-color: rgba(255, 193, 7, 0.2);
-    color: #dadada;
+    color: #dae1ff;
     border: 1px solid rgba(255, 193, 7, 0.3);
   }
 
@@ -198,7 +197,7 @@
     padding: 40px 20px;
     opacity: 0.6;
     font-style: italic;
-    color: #dadada;
+    color: #dae1ff;
   }
 
   /* Grade card layout */
@@ -219,7 +218,7 @@
   .grade-top {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    align-items: start;
+    align-items: center;
     gap: 20px;
   }
 
@@ -234,7 +233,7 @@
   .grade-line { 
     font-size: 0.95rem; 
     margin-bottom: 10px; 
-    color: #ffffff;
+    color: #dae1ff;
   }
 
   .grade-label { 
@@ -247,7 +246,7 @@
   .grade-score {
     font-weight: bold;
     font-size: 0.95rem;
-    color: #ffffff;
+    color: #dae1ff;
   }
 
   .delete-form {
@@ -257,8 +256,8 @@
   }
 
   .delete-btn {
-    background-color: #dc3545;
-    color: white;
+    background-color: #e84728;
+    color: #dae1ff;
     border: none;
     border-radius: 6px;
     padding: 8px 16px;
@@ -270,12 +269,10 @@
   }
 
   .delete-btn:hover {
-    background-color: #c82333;
-    transform: translateY(-1px);
-  }
-
-  .delete-btn:active {
-    transform: translateY(0);
+    background-color: transparent;
+    color: #dae1ff;
+    border: 1px solid #dae1ff;
+    border-radius: 6px;
   }
 
   @media screen and (max-width: 1200px) {
@@ -285,11 +282,6 @@
   }
 
   @media screen and (max-width: 850px) {
-    .main-container {
-      padding: 10px;
-      margin: 10px;
-    }
-
     .form-container {
       width: 95%;
     }
@@ -318,6 +310,11 @@
   }
 
   @media screen and (max-width: 650px) {
+    .main-header {
+      font-size: 2.0rem;
+      margin: 20px 0 20px 0;
+    }
+
     .grade-top { 
       grid-template-columns: 1fr; 
       gap: 10px; 
@@ -363,15 +360,6 @@
   }
 
   @media screen and (max-width: 500px) {
-    .main-container {
-      margin: 5px;
-      padding-bottom: 30px;
-    }
-
-    .main-header {
-      font-size: 1.5rem;
-    }
-
     .form-field {
       width: 160px;
     }

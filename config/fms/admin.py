@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.shortcuts import redirect
-from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport
+from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport, DiscrepancyReport
 
 @admin.register(SimEvaluation)
 class SimEvaluationAdmin(admin.ModelAdmin):
@@ -628,3 +628,49 @@ class FlightReportAdmin(admin.ModelAdmin):
     class Meta:
         verbose_name = 'Reporte de vuelo'
         verbose_name_plural = 'Reportes de vuelo'
+
+@admin.register(DiscrepancyReport)
+class DiscrepancyReportAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'aircraft',
+        'reportee_full_name',
+        'discrepancy_type',
+        'status',
+        'created_at',
+        'updated_at'
+    ]
+    list_filter = ['status', 'discrepancy_type', 'aircraft', 'created_at']
+    search_fields = [
+        'aircraft__registration',
+        'reportee_first_name',
+        'reportee_last_name',
+        'discrepancy_description'
+    ]
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at']
+    readonly_fields = ['created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Información de la aeronave', {
+            'fields': ('aircraft',)
+        }),
+        ('Información del reportante', {
+            'fields': ('reportee_first_name', 'reportee_last_name')
+        }),
+        ('Detalles de la discrepancia', {
+            'fields': ('discrepancy_type', 'discrepancy_description')
+        }),
+        ('Estado y fechas', {
+            'fields': ('status', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def reportee_full_name(self, obj):
+        return f"{obj.reportee_first_name} {obj.reportee_last_name}"
+    reportee_full_name.short_description = 'Reportante'
+    
+    class Meta:
+        verbose_name = 'Reporte de discrepancia'
+        verbose_name_plural = 'Reportes de discrepancia'

@@ -22,30 +22,7 @@ body {
   background-attachment: fixed;
 }
 
-.button {
-  text-transform: uppercase;
-  font-size: 1.0rem;
-  width: 200px;
-  height: 50px;
-  background-color: transparent;
-  border: 1px solid #ffffff;
-  border-radius: 3px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.button:hover {
-  background-color: rgb(0, 0, 0, 0.25);
-  border: 1px solid #ffffff;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.flight-requests-container {
+.main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,24 +32,13 @@ body {
   overflow-x: auto;
 }
 
-.flight-requests-header {
+.main-header {
+  color: #dae1ff;
+  font-size: 2.5rem;
+  margin: 50px 0px 30px 0px;
   text-align: center;
-  margin-bottom: 30px;
-  margin-top: 50px;
-}
-
-.flight-requests-header h1 {
-  font-size: 3.0rem;
-  letter-spacing: 5px;
-  margin: 0 0 10px 0;
-  line-height: 1.2;
-  text-align: center;
-}
-
-.flight-requests-header p {
-  font-size: 1.25rem;
-  margin: 0;
-  opacity: 0.8;
+  width: 100%;
+  letter-spacing: 3px;
 }
 
 .buttons-container {
@@ -84,11 +50,7 @@ body {
   flex-wrap: wrap;
 }
 
-.add-flight-period-button {
-  margin-bottom: 30px;
-}
-
-.add-flight-period-button .button {
+.main-button .button {
   background-color: rgba(218, 225, 255, 0.2);
   border: 1px solid #dae1ff;
   color: #dae1ff;
@@ -96,38 +58,14 @@ body {
   padding: 15px 25px;
   border-radius: 5px;
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   transition: all 0.3s ease;
   white-space: nowrap;
-  min-width: 250px;
+  min-width: 300px;
   text-align: center;
 }
 
-.add-flight-period-button .button:hover {
-  background-color: #d63e20;
-  border-color: #d63e20;
-}
-
-.see-period-calendar-button .button {
-  background-color: rgba(218, 225, 255, 0.2);
-  border: 1px solid #dae1ff;
-  color: #dae1ff;
-  font-size: 1rem;
-  padding: 15px 25px;
-  border-radius: 5px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  min-width: 250px;
-  text-align: center;
-}
-
-.see-period-calendar-button .button:hover {
+.main-button .button:hover {
   background-color: #d63e20;
   border-color: #d63e20;
 }
@@ -446,7 +384,8 @@ body {
 
 /* Responsive Design */
 @media screen and (max-width: 1400px) {
-  .flight-requests-container {
+
+  .main-container {
     flex-direction: column;
     height: auto;
     min-height: 100vh;
@@ -454,9 +393,6 @@ body {
 }
 
 @media screen and (max-width: 1200px) {
-  .flight-requests-container {
-    padding: 15px;
-  }
   
   .flight-requests-header h1 {
     font-size: 2.5rem;
@@ -476,9 +412,6 @@ body {
 }
 
 @media screen and (max-width: 850px) {
-  .flight-requests-container {
-    padding: 10px;
-  }
 
   .flight-requests-header {
     margin-bottom: 20px;
@@ -512,6 +445,12 @@ body {
 }
 
 @media screen and (max-width: 650px) {
+
+  .main-header {
+    font-size: 2.0rem;
+    margin: 20px 0 20px 0;
+  }
+
   .flight-requests-header {
     margin-bottom: 15px;
   }
@@ -520,10 +459,6 @@ body {
     font-size: 1.8rem;
     letter-spacing: 2px;
     margin-bottom: 6px;
-  }
-
-  .flight-requests-container {
-    padding: 10px;
   }
 
   .buttons-container {
@@ -617,15 +552,12 @@ body {
 }
 
 @media screen and (max-width: 360px) {
-  .flight-requests-container {
-    padding: 5px;
-  }
 
-  .flight-requests-header {
+  .main-header {
     margin-bottom: 8px;
   }
 
-  .flight-requests-header h1 {
+  .main-header h1 {
     font-size: 1.1rem;
     letter-spacing: 0.5px;
     margin-bottom: 3px;

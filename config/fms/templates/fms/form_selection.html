@@ -6,28 +6,42 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Selección de formato</title>
-    <link href="{% static 'form_selection.css' %}" rel="stylesheet" />
+    <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
     <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
   </head>
 
   <body>
-    <div class="back-button">
-      {% if user.role == 'INSTRUCTOR' %}
-        <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-      {% elif user.role == 'STAFF' %}
-        <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
-      {% else %}
-        <a href="javascript:history.back()" class="button">&larr; Volver</a>
-      {% endif %}
-    </div>
-
     <div class="main-container">
+
+      <div class="back-button">
+        {% if user_role == 'INSTRUCTOR' %}
+          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+        {% elif user_role == 'STAFF' %}
+          <a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a>
+        {% else %}
+          <a href="javascript:history.back()" class="button">&larr; Volver</a>
+        {% endif %}
+      </div>
+
       <h1 class="main-header">Selección de formato</h1>
-      <a class="submit-button" href="{% url 'fms:sim_evaluation' %}">Simulador</a>
-      <a class="submit-button" href="{% url 'fms:flight_evaluation_0_100' %}">0-100 horas</a>
-      <a class="submit-button" href="{% url 'fms:flight_evaluation_100_120' %}">100-120 horas</a>
-      <a class="submit-button" href="{% url 'fms:flight_evaluation_120_170' %}">120-170 horas</a>
-      <a class="submit-button" href="{% url 'fms:flight_report' %}">Otro</a>
+
+      <div class="buttons-container form-buttons-container">
+        <div class="main-button format-button">
+          <a class="button" href="{% url 'fms:sim_evaluation' %}">Simulador</a>
+        </div>
+        <div class="main-button format-button">
+          <a class="button" href="{% url 'fms:flight_evaluation_0_100' %}">0-100 horas</a>
+        </div>
+        <div class="main-button format-button">
+          <a class="button" href="{% url 'fms:flight_evaluation_100_120' %}">100-120 horas</a>
+        </div>
+        <div class="main-button format-button">
+          <a class="button" href="{% url 'fms:flight_evaluation_120_170' %}">120-170 horas</a>
+        </div>
+        <div class="main-button format-button">
+          <a class="button" href="{% url 'fms:flight_report' %}">Otro</a>
+        </div>
+      </div>
     </div>
   </body>
 </html>

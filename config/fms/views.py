@@ -208,7 +208,15 @@ def fms_dashboard(request):
 @login_required
 def form_selection(request):
     """Handle form selection."""
-    return render(request, 'fms/form_selection.html')
+
+    selected_role = request.session.get('selected_role', None)
+    user_role = selected_role if selected_role else request.user.role
+
+    context = {
+        'user_role': user_role
+    }
+
+    return render(request, 'fms/form_selection.html', context)
 
 @login_required
 def submit_sim_evaluation(request):
@@ -302,7 +310,15 @@ def submit_flight_report(request):
     else:  
         form = FlightReportForm(user=request.user)
 
-    return render(request, 'fms/flight_report.html', {'form': form})
+    selected_role = request.session.get('selected_role', None)
+    user_role = selected_role if selected_role else request.user.role
+
+    context = {
+        'form': form,
+        'user_role': user_role
+    }
+
+    return render(request, 'fms/flight_report.html', context)
 
 @login_required
 @require_http_methods(["GET"])

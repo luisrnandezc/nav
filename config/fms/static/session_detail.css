@@ -8,8 +8,7 @@
     border: 1px solid #dae1ff;
     border-radius: 15px;
     padding: 30px;
-    margin-top: 60px;
-    margin-bottom: 30px;
+    margin: 30px 0 30px 0;
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
@@ -122,7 +121,7 @@
 }
 
 .session-grade {
-    color: #fff;
+    color: #dae1ff;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 1rem;

@@ -77,7 +77,8 @@ def voluntary_hazard_report_detail(request, report_id):
     ai_analysis = report.ai_analysis_result if report.ai_analysis_result else {}
     risks = ai_analysis.get('risks', {}) or {}
     actions = ai_analysis.get('actions', {}) or {}
-    is_valid = ai_analysis.get('is_valid', 'NO')
+    is_valid = report.is_valid
+    invalidity_reason = report.invalidity_reason
 
     # Renumber risks sequentially
     risks, actions = renumber_risks(risks, actions)
@@ -97,10 +98,76 @@ def voluntary_hazard_report_detail(request, report_id):
         'actions': actions,
         'risk_entries': risk_entries,
         'is_valid': is_valid,
+        'invalidity_reason': invalidity_reason,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
     }
 
     return render(request, 'sms/voluntary_hazard_report_detail.html', context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def update_validity(request, report_id):
+    """
+    Update the validity status of a hazard report.
+    - If changing from NO to YES: requires at least one risk
+    - If changing from YES to NO: deletes all risks/actions and requires invalidity reason
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    current_validity = report.is_valid
+
+    new_validity = request.POST.get('new_validity', '').strip()
+    reason = request.POST.get('reason', '').strip()
+
+    if new_validity not in ['True', 'False']:
+        messages.error(request, 'Validez inválida.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    # Convert string to boolean for comparison
+    new_validity = new_validity == 'True'
+
+    # If validity is not changing, do nothing
+    if current_validity == new_validity:
+        messages.info(request, 'La validez no ha cambiado.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    # Changing from False to True: requires at least one risk
+    if not current_validity and new_validity:
+        risks = ai_analysis.get('risks', {}) or {}
+        if not risks:
+            messages.error(request, 'No se puede validar el reporte sin al menos un riesgo registrado.')
+            return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        
+        ai_analysis['is_valid'] = 'True'
+        ai_analysis['invalidity_reason'] = ""
+        report.is_valid = True
+        report.invalidity_reason = None  # Clear invalidity reason if it exists
+
+    # Changing from True to False: delete all risks/actions and require reason
+    elif current_validity and not new_validity:
+        if not reason:
+            messages.error(request, 'Debe proporcionar una justificación para invalidar el reporte.')
+            return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        
+        # Delete all risks and actions
+        ai_analysis['risks'] = {}
+        ai_analysis['actions'] = {}	
+        ai_analysis['is_valid'] = 'False'
+        ai_analysis['invalidity_reason'] = reason
+        report.is_valid = False
+        report.invalidity_reason = reason
+
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'is_valid', 'invalidity_reason', 'updated_at'])
+
+    messages.success(request, f'Se actualizó la validez del reporte.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
 
 @login_required

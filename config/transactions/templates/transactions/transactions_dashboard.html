@@ -17,16 +17,13 @@
         <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
       </div>
 
-      <div class="transactions-header">
-        <h1>Panel de Transacciones</h1>
-        <p>Sistema de Gestión de Transacciones</p>
-      </div>
+      <h1 class="main-header">Panel de Transacciones</h1>
 
       <div class="buttons-container">
-        <div class="add-transaction-button">
+        <div class="main-button">
           <a href="{% url 'transactions:add_transaction' %}" class="button">+ Agregar Transacción</a>
         </div>
-        <div class="add-transaction-button">
+        <div class="main-button">
           <a href="{% url 'transactions:add_fuel_transaction' %}" class="button">+ Agregar Combustible</a>
         </div>
       </div>

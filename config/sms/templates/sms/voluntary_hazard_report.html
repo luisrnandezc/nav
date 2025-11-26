@@ -5,23 +5,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NAV | Reporte SMS voluntario</title>
-    <link href="{% static 'voluntary_report.css' %}" rel="stylesheet" />
+    <title>NAV | Reporte Voluntario de Peligro (RVP)</title>
+    <link href="{% static 'voluntary_hazard_report.css' %}" rel="stylesheet" />
     <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
   </head>
 
   <body>
-    <div class="back-button">
-      {% if user.role == 'STAFF' %}
-        <a href="{% url 'sms:main_sms' %}" class="button">&larr; Volver</a>
-      {% else %}
-        <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-      {% endif %}
-    </div>
-
     <div class="main-container">
-      <h1 class="main-header">Reporte SMS voluntario</h1>
-      <form class="form-container" method="post"  action="{% url 'sms:voluntary_report' %}">
+
+      <div class="back-button">
+        {% if user_role == 'STAFF' %}
+          <a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
+        {% elif user_role == 'INSTRUCTOR' %}
+          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+        {% else %}
+          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+        {% endif %}
+      </div>
+
+      <h1 class="main-header">Reporte voluntario de peligro (RVP)</h1>
+      
+      <form class="form-container" method="post"  action="{% url 'sms:voluntary_hazard_report' %}">
         {% csrf_token %}
         <h1 class="subsection-header" id="section-1-header">Sección 1: Datos del reportante (Opcional)</h1>
         <div class="fixed-fields-container">
@@ -46,7 +50,7 @@
                 </div>
             </div>
         </div>
-        <h1 class="subsection-header">Sección 2: Datos del evento</h1>
+        <h1 class="subsection-header">Sección 2: Datos del peligro</h1>
         <div class="fixed-fields-container">
             <div class="left-column">
                 <div class="form-row">
@@ -65,7 +69,7 @@
                 </div>
             </div>
         </div>
-        <h1 class="subsection-header">Sección 3: Descripción del evento</h1>
+        <h1 class="subsection-header">Sección 3: Descripción del peligro</h1>
         <div class="form-row comments-row">
             {{ form.description }}
         </div>

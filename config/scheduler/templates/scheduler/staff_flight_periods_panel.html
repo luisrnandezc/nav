@@ -15,18 +15,18 @@
     <script src="{% static 'js/staff_flight_periods_panel_dynamics.js' %}"></script>
 </head>
 <body>
-    <div class="flight-periods-container">
+    <div class="main-container">
+        
         <div class="back-button">
             <a href="{% url 'scheduler:staff_flight_requests_dashboard' %}" class="button">&larr; Volver</a>
         </div>
 
-        <div class="flight-periods-header">
-            <h1>Períodos de Vuelo</h1>
-            <p>Sistema de Gestión de Solicitudes de Vuelo</p>
-        </div>
+        <h1 class="main-header">Períodos de Vuelo</h1>
 
-        <div class="refresh-button">
-            <a href="{% url 'scheduler:create_staff_flight_period_grids' %}" class="button">🔄 Actualizar</a>
+        <div class="buttons-container">
+            <div class="main-button">
+                <a href="{% url 'scheduler:create_staff_flight_period_grids' %}" class="button">🔄 Actualizar</a>
+            </div>
         </div>
 
         <div class="flight-periods-list-container">

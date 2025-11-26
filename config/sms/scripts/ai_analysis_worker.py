@@ -12,6 +12,7 @@ import time
 import json
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import Q
 
 # Add Django project to Python path
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -23,16 +24,16 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 # Import Django models and functions
-from sms.models import VoluntaryReport, ReportAnalysis
-from sms.views import run_sms_voluntary_report_analysis
+from sms.models import VoluntaryHazardReport
+from sms.views import run_ai_analysis_for_voluntary_hazard_report
 
 
-def run_ai_analysis_for_report(report):
+def run_ai_analysis(report):
     """
-    Run AI analysis for a specific report and save results to database.
+    Run AI analysis for a specific Voluntary Hazard Report (VHR).
     """
     try:
-        print("[{}] Processing report {}: {}".format(
+        print("[{}] Processing VHR {}: {}".format(
             timezone.now(), report.id, report.description[:50]
         ))
         
@@ -41,7 +42,7 @@ def run_ai_analysis_for_report(report):
         report.save(update_fields=['ai_analysis_status'])
 
         # Call OpenAI API
-        response = run_sms_voluntary_report_analysis(report)
+        response = run_ai_analysis_for_voluntary_hazard_report(report)
         
         # Debug: Log response type and preview
         print("[{}] API Response type: {}, length: {}, preview: '{}'".format(
@@ -79,26 +80,15 @@ def run_ai_analysis_for_report(report):
         else:
             raise Exception("Invalid JSON response format: expected array or object")
         
-        # Create analysis record
-        is_valid_value = parsed_data.get('is_valid', 'NO')
-        is_valid = 'YES' if is_valid_value == 'SI' else 'NO'
-        
-        analysis_record = ReportAnalysis.objects.create(
-            report=report,
-            is_valid=is_valid,
-            severity=parsed_data.get('severity', ''),
-            probability=parsed_data.get('probability', ''),
-            value=parsed_data.get('value', ''),
-            risk_analysis=parsed_data.get('risk_analysis', []),
-            recommendations=parsed_data.get('recommendations', [])
-        )
-        
-        # Update status to COMPLETED
+        # Update status to COMPLETED and set validity and invalidity reason
         report.ai_analysis_status = 'COMPLETED'
-        report.save(update_fields=['ai_analysis_status'])
+        report.ai_analysis_result = parsed_data
+        report.is_valid = parsed_data.get('is_valid') == 'True'
+        report.invalidity_reason = parsed_data.get('invalidity_reason') if parsed_data.get('is_valid') == 'False' else None
+        report.save(update_fields=['ai_analysis_status', 'ai_analysis_result', 'is_valid', 'invalidity_reason'])
         
-        print("[{}] Successfully completed AI analysis for report {} (Analysis ID: {})".format(
-            timezone.now(), report.id, analysis_record.id
+        print("[{}] Successfully completed AI analysis for report {}".format(
+            timezone.now(), report.id
         ))
         
         return True
@@ -110,7 +100,10 @@ def run_ai_analysis_for_report(report):
         # Update status to FAILED
         try:
             report.ai_analysis_status = 'FAILED'
-            report.save(update_fields=['ai_analysis_status'])
+            report.ai_analysis_result = {}
+            report.is_valid = False
+            report.invalidity_reason = None
+            report.save(update_fields=['ai_analysis_status', 'ai_analysis_result', 'is_valid', 'invalidity_reason'])
         except:
             pass
         
@@ -128,8 +121,8 @@ def main_worker_loop():
         try:
             # Get reports from last 48 hours with PENDING status
             yesterday = timezone.now() - timedelta(days=2)
-            pending_reports = VoluntaryReport.objects.filter(
-                ai_analysis_status='PENDING',
+            pending_reports = VoluntaryHazardReport.objects.filter(
+                Q(ai_analysis_status='PENDING') | Q(ai_analysis_status='FAILED'),
                 created_at__gte=yesterday
             ).order_by('created_at')
 
@@ -138,7 +131,7 @@ def main_worker_loop():
                 
                 # Process one report at a time
                 for report in pending_reports:
-                    success = run_ai_analysis_for_report(report)
+                    success = run_ai_analysis(report)
                     if success:
                         print("[{}] Report {} processed successfully".format(timezone.now(), report.id))
                     else:

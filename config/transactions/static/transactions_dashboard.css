@@ -3,7 +3,7 @@
 
 * {
   font-family: 'Renogare-Regular', 'Arial', sans-serif;
-  color: #ffffff;
+  color: #dae1ff;
   font-size: 16px;
   box-sizing: border-box;
 }
@@ -55,38 +55,25 @@ body {
   overflow-x: auto;
 }
 
-.transactions-header {
+.main-header {
+  color: #dae1ff;
+  font-size: 2.5rem;
+  margin: 50px 0px 30px 0px;
   text-align: center;
-  margin-bottom: 30px;
-  margin-top: 50px;
-}
-
-.transactions-header h1 {
-  font-size: 3.0rem;
-  letter-spacing: 5px;
-  margin: 0 0 10px 0;
-}
-
-.transactions-header p {
-  font-size: 1.25rem;
-  margin: 0;
-  opacity: 0.8;
+  width: 100%;
+  letter-spacing: 3px;
 }
 
 .buttons-container {
   display: flex;
+  flex-direction: row;
   gap: 20px;
-  justify-content: center;
-  align-items: center;
   margin-bottom: 30px;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
-.add-transaction-button {
-  margin-bottom: 0;
-}
-
-.add-transaction-button .button {
+.main-button .button {
   background-color: rgba(218, 225, 255, 0.2);
   border: 1px solid #dae1ff;
   color: #dae1ff;
@@ -94,16 +81,14 @@ body {
   padding: 15px 25px;
   border-radius: 5px;
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   transition: all 0.3s ease;
   white-space: nowrap;
-  min-width: 250px;
+  min-width: 300px;
   text-align: center;
 }
 
-.add-transaction-button .button:hover {
+.main-button .button:hover {
   background-color: #d63e20;
   border-color: #d63e20;
 }
@@ -184,7 +169,7 @@ body {
 }
 
 .transaction-amount {
-  color: #fff;
+  color: #dae1ff;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -249,7 +234,7 @@ body {
 
 .confirm-button {
   background-color: #e84728;
-  color: #fff;
+  color: #dae1ff;
   border: none;
   padding: 8px 16px;
   border-radius: 5px;
@@ -265,7 +250,7 @@ body {
 
 .unconfirm-button {
   background-color: #e84728;
-  color: #fff;
+  color: #dae1ff;
   border: none;
   padding: 8px 16px;
   border-radius: 5px;
@@ -312,12 +297,10 @@ body {
 }
 
 @media screen and (max-width: 768px) {
-  .transactions-container {
-    padding: 10px;
-  }
 
-  .transactions-header h1 {
+  .main-header {
     font-size: 2.0rem;
+    margin: 20px 0 20px 0;
   }
 
   .transaction-details {
@@ -329,7 +312,7 @@ body {
     gap: 15px;
   }
 
-  .add-transaction-button .button {
+  .main-button .button {
     padding: 12px 20px;
     min-width: 250px;
     display: inline-flex;
@@ -339,17 +322,20 @@ body {
 }
 
 @media screen and (max-width: 650px) {
-  .transactions-header h1 {
-    font-size: 2.0rem;
-  }
-
-  .transactions-container {
-    padding: 10px;
-  }
 
   .button {
     font-size: 1.0rem;
     width: 150px;
+  }
+
+  .student-name {
+    font-size: 0.75rem;
+  }
+
+  .transaction-amount {
+    width: 75px;
+    font-size: 0.75rem;
+    text-align: center;
   }
 }
 
@@ -370,7 +356,7 @@ body {
     gap: 10px;
   }
 
-  .add-transaction-button .button {
+  .main-button .button {
     font-size: 0.8rem;
     padding: 10px 15px;
     min-width: 220px;

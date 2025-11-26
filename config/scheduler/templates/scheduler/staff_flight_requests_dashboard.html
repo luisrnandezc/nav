@@ -24,26 +24,20 @@
             </div>
         {% endif %}
 
-        <div class="flight-requests-container">
+        <div class="main-container">
+
             <div class="back-button">
                 <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
             </div>
-            <div class="flight-requests-header">
-                <h1>Solicitudes de Vuelo</h1>
-            </div>
+
+            <h1 class="main-header">Solicitudes de Vuelo</h1>
 
             <div class="buttons-container">
-                <div class="add-flight-period-button">
-                    <a
-                        href="{% url 'scheduler:create_flight_period' %}" 
-                        class="button">+ Crear Periodo
-                    </a>
+                <div class="main-button">
+                    <a href="{% url 'scheduler:create_flight_period' %}" class="button">+ Crear Periodo</a>
                 </div>
-                <div class="see-period-calendar-button">
-                    <a 
-                        href="{% url 'scheduler:create_staff_flight_period_grids' %}" 
-                        class="button">+ Ver Calendario
-                    </a>
+                <div class="main-button">
+                    <a href="{% url 'scheduler:create_staff_flight_period_grids' %}" class="button">+ Ver Calendario</a>
                 </div>
             </div>
 

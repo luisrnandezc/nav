@@ -3,78 +3,430 @@ import json
 from types import SimpleNamespace
 from django.shortcuts import render, redirect, get_object_or_404
 from openai import OpenAI
-from .forms import SMSVoluntaryReportForm, SMSAnalysisEditForm
+from .forms import SMSVoluntaryHazardReportForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from .models import ReportAnalysis, VoluntaryReport, SMSAction
+from .models import VoluntaryHazardReport
 from django.conf import settings
+import logging
+import sys
 
 
 @login_required
-def main_sms(request):
+def sms_dashboard(request):
     """
     A view to handle the SMS main page.
     """
-    # Get reports count for the gauge
-    reports_count = VoluntaryReport.objects.count()
-    
-    # Get pending SMS actions
-    pending_actions = SMSAction.objects.filter(status='PENDING').select_related('report__report', 'assigned_to').order_by('-created_at')[:10]
+    # Get all voluntary hazard reports ordered by most recent first
+    voluntary_reports = VoluntaryHazardReport.objects.all().order_by('-created_at')
     
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
-        'reports_count': reports_count,
-        'pending_actions': pending_actions,
+        'voluntary_reports': voluntary_reports,
     }
-    return render(request, 'sms/main_sms.html', context)
+    return render(request, 'sms/sms_dashboard.html', context)
 
-def voluntary_report(request):
+
+def renumber_risks(risks, actions):
     """
-    A view to handle the SMS voluntary report.
+    Renumber risks sequentially starting from 1.
+    
+    Args:
+        risks: Dictionary of risks with keys like 'risk1', 'risk2', etc.
+        actions: Dictionary of actions with keys matching risk keys
+        
+    Returns:
+        Tuple of (renumbered_risks, renumbered_actions) dictionaries
+    """
+    if not risks:
+        return risks, actions
+    
+    # Extract and sort risk keys by their numeric value
+    def get_risk_number(key):
+        try:
+            return int(key.replace('risk', ''))
+        except (ValueError, AttributeError):
+            return 0
+    
+    sorted_keys = sorted(risks.keys(), key=get_risk_number)
+    
+    # Create new dictionaries with sequential numbering
+    new_risks = {}
+    new_actions = {}
+    
+    for index, old_key in enumerate(sorted_keys, start=1):
+        new_key = f'risk{index}'
+        new_risks[new_key] = risks[old_key]
+        if old_key in actions:
+            new_actions[new_key] = actions[old_key]
+    
+    return new_risks, new_actions
+
+
+@login_required
+def voluntary_hazard_report_detail(request, report_id):
+    """
+    A view to display the detail of a Voluntary Hazard Report.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+    
+    # Parse AI analysis result if available
+    ai_analysis = report.ai_analysis_result if report.ai_analysis_result else {}
+    risks = ai_analysis.get('risks', {}) or {}
+    actions = ai_analysis.get('actions', {}) or {}
+    is_valid = report.is_valid
+    invalidity_reason = report.invalidity_reason
+
+    # Renumber risks sequentially
+    risks, actions = renumber_risks(risks, actions)
+
+    risk_entries = []
+    for risk_key, risk_data in risks.items():
+        risk_entries.append({
+            'key': risk_key,
+            'data': risk_data,
+            'actions': actions.get(risk_key, []) or [],
+        })
+    
+    context = {
+        'report': report,
+        'ai_analysis': ai_analysis,
+        'risks': risks,
+        'actions': actions,
+        'risk_entries': risk_entries,
+        'is_valid': is_valid,
+        'invalidity_reason': invalidity_reason,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+    }
+
+    return render(request, 'sms/voluntary_hazard_report_detail.html', context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def update_validity(request, report_id):
+    """
+    Update the validity status of a hazard report.
+    - If changing from NO to YES: requires at least one risk
+    - If changing from YES to NO: deletes all risks/actions and requires invalidity reason
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    current_validity = report.is_valid
+
+    new_validity = request.POST.get('new_validity', '').strip()
+    reason = request.POST.get('reason', '').strip()
+
+    if new_validity not in ['True', 'False']:
+        messages.error(request, 'Validez inválida.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    # Convert string to boolean for comparison
+    new_validity = new_validity == 'True'
+
+    # If validity is not changing, do nothing
+    if current_validity == new_validity:
+        messages.info(request, 'La validez no ha cambiado.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    # Changing from False to True: requires at least one risk
+    if not current_validity and new_validity:
+        risks = ai_analysis.get('risks', {}) or {}
+        if not risks:
+            messages.error(request, 'No se puede validar el reporte sin al menos un riesgo registrado.')
+            return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        
+        ai_analysis['is_valid'] = 'True'
+        ai_analysis['invalidity_reason'] = ""
+        report.is_valid = True
+        report.invalidity_reason = None  # Clear invalidity reason if it exists
+
+    # Changing from True to False: delete all risks/actions and require reason
+    elif current_validity and not new_validity:
+        if not reason:
+            messages.error(request, 'Debe proporcionar una justificación para invalidar el reporte.')
+            return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        
+        # Delete all risks and actions
+        ai_analysis['risks'] = {}
+        ai_analysis['actions'] = {}	
+        ai_analysis['is_valid'] = 'False'
+        ai_analysis['invalidity_reason'] = reason
+        report.is_valid = False
+        report.invalidity_reason = reason
+
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'is_valid', 'invalidity_reason', 'updated_at'])
+
+    messages.success(request, f'Se actualizó la validez del reporte.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def delete_risk(request, report_id, risk_key):
+    """
+    Remove a specific risk (and its related actions) from the AI analysis payload.
+    After deletion, renumber all remaining risks sequentially.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+    actions = ai_analysis.get('actions', {}) or {}
+
+    if risk_key not in risks:
+        messages.warning(request, 'El riesgo solicitado no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    # Delete the risk and its actions
+    risks.pop(risk_key, None)
+    actions.pop(risk_key, None)
+
+    # Renumber remaining risks sequentially
+    risks, actions = renumber_risks(risks, actions)
+
+    ai_analysis['risks'] = risks
+    ai_analysis['actions'] = actions
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, f'Se eliminó el {risk_key} y sus acciones asociadas.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def update_risk_evaluation(request, report_id, risk_key):
+    """
+    Update the evaluation (severity and probability) of a specific risk.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    severity = request.POST.get('severity', '').strip().upper()
+    probability = request.POST.get('probability', '').strip()
+
+    if not severity or not probability:
+        messages.error(request, 'Severidad y probabilidad son requeridos.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if severity not in ['A', 'B', 'C', 'D', 'E']:
+        messages.error(request, 'Severidad inválida. Debe ser A, B, C, D o E.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if probability not in ['1', '2', '3', '4', '5']:
+        messages.error(request, 'Probabilidad inválida. Debe ser 1, 2, 3, 4 o 5.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+
+    if risk_key not in risks:
+        messages.warning(request, 'El riesgo solicitado no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    risks[risk_key]['evaluation'] = f'{severity}{probability}'
+    ai_analysis['risks'] = risks
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, f'Se actualizó la evaluación del {risk_key} a {severity}{probability}.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def delete_action(request, report_id, risk_key, action_index):
+    """
+    Remove a single action from the AI analysis payload.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    actions = ai_analysis.get('actions', {}) or {}
+
+    if risk_key not in actions:
+        messages.warning(request, 'Las acciones para este riesgo no existen.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    action_list = actions.get(risk_key) or []
+
+    try:
+        action_list.pop(int(action_index))
+    except (IndexError, ValueError, TypeError):
+        messages.warning(request, 'La acción solicitada no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if action_list:
+        actions[risk_key] = action_list
+    else:
+        actions.pop(risk_key, None)
+
+    ai_analysis['actions'] = actions
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, 'Se eliminó la acción seleccionada.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_risk(request, report_id):
+    """
+    Append a new risk (with evaluation and description) to the AI analysis payload.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    description = (request.POST.get('description') or '').strip()
+    severity = (request.POST.get('severity') or '').strip().upper()
+    probability = (request.POST.get('probability') or '').strip()
+
+    if not description:
+        messages.error(request, 'La descripción del riesgo es obligatoria.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if severity not in ['A', 'B', 'C', 'D', 'E']:
+        messages.error(request, 'Seleccione un nivel de severidad válido.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if probability not in ['1', '2', '3', '4', '5']:
+        messages.error(request, 'Seleccione un nivel de probabilidad válido.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+
+    next_index = 1
+    if risks:
+        existing_indexes = []
+        for key in risks.keys():
+            if key.startswith('risk'):
+                suffix = key.replace('risk', '')
+                if suffix.isdigit():
+                    existing_indexes.append(int(suffix))
+        next_index = max(existing_indexes, default=0) + 1
+
+    new_risk_key = f"risk{next_index}"
+    risks[new_risk_key] = {
+        'description': description,
+        'evaluation': f'{severity}{probability}',
+    }
+
+    ai_analysis['risks'] = risks
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, 'Se agregó un nuevo riesgo al análisis.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_action(request, report_id, risk_key):
+    """
+    Append a new mitigation action to the specified risk.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    description = (request.POST.get('description') or '').strip()
+    if not description:
+        messages.error(request, 'La descripción de la acción es obligatoria.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+    actions = ai_analysis.get('actions', {}) or {}
+
+    if risk_key not in risks:
+        messages.error(request, 'El riesgo seleccionado no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    action_list = actions.get(risk_key, []) or []
+    action_list.append(description)
+    actions[risk_key] = action_list
+
+    ai_analysis['actions'] = actions
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, 'Se agregó una nueva acción de mitigación.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+def voluntary_hazard_report(request):
+    """
+    A view to handle the SMS voluntary hazard report.
     """
 
     if request.method == 'POST':
         is_anonymous = request.POST.get('is_anonymous') == 'YES'
 
         if is_anonymous or not request.user.is_authenticated:
-            form = SMSVoluntaryReportForm(request.POST)
+            form = SMSVoluntaryHazardReportForm(request.POST)
         else:
-            form = SMSVoluntaryReportForm(request.POST, user=request.user)
+            form = SMSVoluntaryHazardReportForm(request.POST, user=request.user)
 
         if form.is_valid():
             try:
                 form.save()
-                return redirect('dashboard:dashboard')
+                return redirect('sms:sms_dashboard')
             except Exception as e:
                 messages.error(request, f'Error al guardar el reporte: {str(e)}')
         else:
             messages.error(request, 'Por favor corrija los errores en el formulario.')
     else:
         if request.user.is_authenticated:
-            form = SMSVoluntaryReportForm(user=request.user)
+            form = SMSVoluntaryHazardReportForm(user=request.user)
         else:
-            form = SMSVoluntaryReportForm()
-
-    return render(request, 'sms/voluntary_report.html', {'form': form})
-
-def run_sms_voluntary_report_analysis(report):
-    """
-    A function to run the AI analysis for the SMS voluntary report.
+            form = SMSVoluntaryHazardReportForm()
     
-    Args:
-        report (VoluntaryReport): The report to analyze
+    selected_role = request.session.get('selected_role', None)
+    user_role = selected_role if selected_role else request.user.role
+
+    context = {
+        'form': form,
+        'user_role': user_role,
+    }
+
+    return render(request, 'sms/voluntary_hazard_report.html', context)
+
+def voluntary_hazard_report_ai_analysis_logger():
     """
-    import logging
-    import sys
-    
+    A function to set up the logger for the AI analysis of the SMS Voluntary Hazard Report (VHR).
+    """
     # Set up logging to both file and console
-    log_file_path = os.path.join(settings.BASE_DIR, 'sms_analysis.log')
+    log_file_path = os.path.join(settings.BASE_DIR, 'sms/logs/voluntary_hazard_report_ai_analysis.log')
     
     # Create logger
-    logger = logging.getLogger('sms_analysis')
+    logger = logging.getLogger('voluntary_hazard_report_ai_analysis')
     logger.setLevel(logging.DEBUG)
     
     # Remove existing handlers to avoid duplicates
@@ -94,12 +446,24 @@ def run_sms_voluntary_report_analysis(report):
     console_handler.setFormatter(console_formatter)
     logger.addHandler(console_handler)
     
-    logger.info("=" * 80)
-    logger.info("Starting run_sms_voluntary_report_analysis for report ID: {}".format(report.id))
+    return logger
 
-    # Set SMS prompt
-    base_prompt = settings.SMS_PROMPT
-    logger.info("SMS_PROMPT loaded, length: {} characters".format(len(base_prompt)))
+def run_ai_analysis_for_voluntary_hazard_report(report):
+    """
+    A function to run the AI analysis for the SMS Voluntary Hazard Report (VHR).
+    
+    Args:
+        report (VoluntaryHazardReport): The Voluntary Hazard Report (VHR) to analyze
+    """
+
+    logger = voluntary_hazard_report_ai_analysis_logger()
+
+    logger.info("=" * 80)
+    logger.info("Starting run_ai_analysis_for_voluntary_hazard_report for VHR ID: {}".format(report.id))
+
+    # Set AI analysis prompt
+    base_prompt = settings.SARA_HAZARD_ANALYSIS_PROMPT
+    logger.info("AI analysis prompt loaded, length: {} characters".format(len(base_prompt)))
 
     # Create a SimpleNamespace object to support {report.date} syntax in the prompt
     report_ns = SimpleNamespace(
@@ -136,12 +500,19 @@ def run_sms_voluntary_report_analysis(report):
 
         # Make a request to the responses endpoint
         logger.info("Making API request to OpenAI responses endpoint")
-        logger.info("Model: gpt-5-nano, reasoning: medium, text verbosity: medium")
+
+        model = "gpt-5.1"
+        tools = [{"type": "web_search"}]
+        reasoning = {"effort": "medium"}
+        text = {"verbosity": "medium"}
+
+        logger.info("Model: {}, reasoning: {}, text verbosity: {}, tools: {}".format(model, reasoning["effort"], text["verbosity"], tools))
         
         response = client.responses.create(
-            model="gpt-5-nano",
-            reasoning = {"effort": "medium"},
-            text = {"verbosity": "medium"},
+            model=model,
+            tools=tools,
+            reasoning = reasoning,
+            text = text,
             instructions = base_prompt,
             input=rendered_prompt,
         )
@@ -179,174 +550,3 @@ def run_sms_voluntary_report_analysis(report):
         logger.error("Full traceback: {}".format(traceback.format_exc()))
         logger.info("=" * 80)
         return "API key validation failed. Error: {}".format(e)
-    
-@login_required
-def report_list(request):
-    """
-    Display the report list page for the current user.
-    """
-    user = request.user
-    
-    # Fetch grade logs for the student (last 10)
-    reports = ReportAnalysis.objects.order_by('-created_at')[:10]
-    
-    context = {
-        'reports': reports,
-    }
-    
-    return render(request, 'sms/report_list.html', context)
-
-@login_required
-def report_detail(request, report_id):
-    """
-    Display the report detail page for the given report ID.
-    Allow editing of AI analysis fields.
-    """
-    report = ReportAnalysis.objects.get(id=report_id)
-    
-    if request.method == 'POST':
-        form = SMSAnalysisEditForm(request.POST, instance=report)
-        if form.is_valid():
-            form.save()
-            return redirect('sms:report_list')
-        else:
-            messages.error(request, 'Por favor corrija los errores en el formulario.')
-    else:
-        form = SMSAnalysisEditForm(instance=report)
-    
-    context = {
-        'report': report,
-        'form': form,
-    }
-    
-    return render(request, 'sms/report_detail.html', context)
-
-
-# Risk Management Views
-@login_required
-@require_http_methods(["POST"])
-def delete_risk_item(request, report_id, item_index):
-    """Delete a specific risk item"""
-    try:
-        report = get_object_or_404(ReportAnalysis, id=report_id)
-        risk_analysis = list(report.risk_analysis)
-        
-        if 0 <= item_index < len(risk_analysis):
-            risk_analysis.pop(item_index)
-            report.risk_analysis = risk_analysis
-            report.save()
-            return JsonResponse({'success': True, 'message': 'Risk deleted successfully'})
-        else:
-            return JsonResponse({'success': False, 'message': 'Invalid item index'}, status=400)
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=500)
-
-
-@login_required
-@require_http_methods(["POST"])
-def add_risk_item(request, report_id):
-    """Add a new risk item"""
-    try:
-        report = get_object_or_404(ReportAnalysis, id=report_id)
-        data = json.loads(request.body)
-        
-        new_risk = {
-            'relevance': data.get('relevance', 'medium'),
-            'text': data.get('text', '')
-        }
-        
-        risk_analysis = list(report.risk_analysis)
-        risk_analysis.append(new_risk)
-        report.risk_analysis = risk_analysis
-        report.save()
-        
-        return JsonResponse({
-            'success': True, 
-            'message': 'Risk added successfully',
-            'new_index': len(risk_analysis) - 1
-        })
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=500)
-
-
-# Recommendation Management Views
-@login_required
-@require_http_methods(["POST"])
-def delete_recommendation_item(request, report_id, item_index):
-    """Delete a specific recommendation item"""
-    try:
-        report = get_object_or_404(ReportAnalysis, id=report_id)
-        recommendations = list(report.recommendations)
-        
-        if 0 <= item_index < len(recommendations):
-            recommendations.pop(item_index)
-            report.recommendations = recommendations
-            report.save()
-            return JsonResponse({'success': True, 'message': 'Recommendation deleted successfully'})
-        else:
-            return JsonResponse({'success': False, 'message': 'Invalid item index'}, status=400)
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=500)
-
-
-@login_required
-@require_http_methods(["POST"])
-def add_recommendation_item(request, report_id):
-    """Add a new recommendation item"""
-    try:
-        report = get_object_or_404(ReportAnalysis, id=report_id)
-        data = json.loads(request.body)
-        
-        new_recommendation = {
-            'relevance': data.get('relevance', 'medium'),
-            'text': data.get('text', '')
-        }
-        
-        recommendations = list(report.recommendations)
-        recommendations.append(new_recommendation)
-        report.recommendations = recommendations
-        report.save()
-        
-        return JsonResponse({
-            'success': True, 
-            'message': 'Recommendation added successfully',
-            'new_index': len(recommendations) - 1
-        })
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=500)
-
-@login_required
-def create_actions_from_recommendations(request, report_id):
-    """
-    Create SMSAction objects from the recommendations of a ReportAnalysis.
-    """
-    try:
-        # Get the report analysis
-        report_analysis = ReportAnalysis.objects.get(id=report_id)
-        
-        # Check if user has permission to manage SMS
-        if not request.user.has_perm('accounts.can_manage_sms'):
-            messages.error(request, 'No tiene permisos para crear acciones.')
-            return redirect('sms:report_detail', report_id=report_id)
-        
-        # Check if actions have already been created
-        if report_analysis.actions_created:
-            messages.warning(request, 'Las acciones ya han sido creadas para este reporte.')
-            return redirect('sms:report_detail', report_id=report_id)
-        
-        # Create actions from recommendations
-        actions_created = SMSAction.create_actions_from_recommendations(report_analysis)
-        
-        if actions_created:
-            messages.success(request, f'Se crearon {len(actions_created)} acciones exitosamente.')
-        else:
-            messages.info(request, 'No hay recomendaciones para crear acciones.')
-        
-        return redirect('sms:report_detail', report_id=report_id)
-        
-    except ReportAnalysis.DoesNotExist:
-        messages.error(request, 'El análisis de reporte no existe.')
-        return redirect('sms:report_list')
-    except Exception as e:
-        messages.error(request, f'Error al crear acciones: {str(e)}')
-        return redirect('sms:report_detail', report_id=report_id)

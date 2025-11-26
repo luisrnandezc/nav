@@ -2,120 +2,121 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NAV | Agregar Transacción de Combustible</title>
-    <link href="{% static 'add_transaction.css' %}" rel="stylesheet" />
-    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
-    <link href="{% static 'fuel_transaction.css' %}" rel="stylesheet" />
-    <script src="{% static 'js/add_fuel_transaction_dynamics.js' %}"></script>
-  </head>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>NAV | Agregar Transacción de Combustible</title>
+		<link href="{% static 'add_transaction.css' %}" rel="stylesheet" />
+		<link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+		<link href="{% static 'fuel_transaction.css' %}" rel="stylesheet" />
+		<script src="{% static 'js/add_fuel_transaction_dynamics.js' %}"></script>
+	</head>
 
-  <body>
-    <div class="main-container">
-      <div class="back-button">
-          <a href="{% url 'transactions:transactions_dashboard' %}" class="button">&larr; Volver</a>
-      </div>
-      
-      <h1 class="main-header">Agregar Transacción de Combustible</h1>
-      
-      <!-- Global Container for Search and Results -->
-      <div class="fuel-transaction-container">
-        <!-- Search Section -->
-        <div class="search-section">
-            <form method="post" action="{% url 'transactions:add_fuel_transaction' %}" class="search-form">
-                {% csrf_token %}
-                <div class="search-form-row">
-                <div class="form-row">
-                    {{ search_form.student_national_id.label_tag }}
-                    {{ search_form.student_national_id }}
-                </div>
-                    <button type="submit" class="submit-button">Buscar</button>
-                </div>
-                {% if search_form.student_national_id.errors %}
-                    <div class="field-error">{{ search_form.student_national_id.errors.0 }}</div>
-                {% endif %}
-            </form>
-        </div>
+	<body>
+		<div class="main-container">
 
-        <!-- Results Section -->
-        {% if student_profile %}
-          <div class="results-section">
-          <h2 class="subsection-header">
-            Evaluaciones de {{ student_profile.user.first_name }} {{ student_profile.user.last_name }} (ID: {{ student_profile.user.national_id }})
-          </h2>
-          
-          {% if evaluations %}
-            <div class="evaluations-container">
-              {% for eval_data in evaluations %}
-                <div class="evaluation-card">
-                  <div class="evaluation-header">
-                    <h3 class="evaluation-type">{{ eval_data.model_name }}</h3>
-                    <span class="evaluation-date">{{ eval_data.evaluation.session_date }}</span>
-                  </div>
-                  
-                  <div class="evaluation-details">
-                    <div class="detail-item">
-                      <span class="detail-label">Aeronave:</span>
-                      <span class="detail-value">{{ eval_data.evaluation.aircraft.registration }}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Instructor:</span>
-                        <span class="detail-value">{{ eval_data.evaluation.instructor_first_name }} {{ eval_data.evaluation.instructor_last_name }}</span>
-                      </div>
-                    <div class="detail-item">
-                      <span class="detail-label">Sesión:</span>
-                      <span class="detail-value">{{ eval_data.evaluation.session_number }}</span>
-                    </div>
-                    <div class="detail-item">
-                      <span class="detail-label">Combustible Actual:</span>
-                      <span class="detail-value">{{ eval_data.evaluation.fuel_consumed }} L</span>
-                    </div>
-                  </div>
-                  
-                  <form method="post" action="{% url 'transactions:update_fuel_consumed' %}" class="fuel-update-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="evaluation_id" value="{{ eval_data.evaluation.id }}">
-                    <input type="hidden" name="model_type" value="{{ eval_data.model_type }}">
-                    
-                    <div class="fuel-input-row">
-                      <label for="fuel_consumed_{{ eval_data.evaluation.id }}" class="fuel-label">
-                        Litros de Combustible:
-                      </label>
-                      <input 
-                        type="number" 
-                        name="fuel_consumed" 
-                        id="fuel_consumed_{{ eval_data.evaluation.id }}"
-                        class="fuel-input"
-                        step="0.1"
-                        min="0.1"
-                        max="1000"
-                        required
-                        placeholder="Ej: 25.5"
-                      >
-                      <button type="submit" class="update-button">Actualizar</button>
-                    </div>
-                  </form>
-                </div>
-              {% endfor %}
-            </div>
-          {% else %}
-            <div class="no-evaluations">
-              <p>No se encontraron evaluaciones con combustible sin especificar para este estudiante.</p>
-            </div>
-          {% endif %}
-          </div>
-        {% endif %}
-      </div>
+			<div class="back-button">
+				<a href="{% url 'transactions:transactions_dashboard' %}" class="button">&larr; Volver</a>
+			</div>
+			
+			<h1 class="main-header">Agregar Combustible</h1>
+			
+			<!-- Global Container for Search and Results -->
+			<div class="fuel-transaction-container">
+				<!-- Search Section -->
+				<div class="search-section">
+					<form method="post" action="{% url 'transactions:add_fuel_transaction' %}" class="search-form">
+						{% csrf_token %}
+						<div class="search-form-row">
+							<div class="form-row">
+								{{ search_form.student_national_id.label_tag }}
+								{{ search_form.student_national_id }}
+							</div>
+							<button type="submit" class="submit-button">Buscar</button>
+						</div>
+						{% if search_form.student_national_id.errors %}
+							<div class="field-error">{{ search_form.student_national_id.errors.0 }}</div>
+						{% endif %}
+					</form>
+				</div>
 
-      {% if messages %}
-        <div class="success-messages">
-          {% for message in messages %}
-            <div class="message {{ message.tags }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-  </body>
+				<!-- Results Section -->
+				{% if student_profile %}
+					<div class="results-section">
+						<h2 class="subsection-header">
+							Evaluaciones de {{ student_profile.user.first_name }} {{ student_profile.user.last_name }} (ID: {{ student_profile.user.national_id }})
+						</h2>
+						
+						{% if evaluations %}
+							<div class="evaluations-container">
+								{% for eval_data in evaluations %}
+									<div class="evaluation-card">
+										<div class="evaluation-header">
+											<h3 class="evaluation-type">{{ eval_data.model_name }}</h3>
+											<span class="evaluation-date">{{ eval_data.evaluation.session_date }}</span>
+										</div>
+										
+										<div class="evaluation-details">
+											<div class="detail-item">
+												<span class="detail-label">Aeronave:</span>
+												<span class="detail-value">{{ eval_data.evaluation.aircraft.registration }}</span>
+											</div>
+											<div class="detail-item">
+												<span class="detail-label">Instructor:</span>
+												<span class="detail-value">{{ eval_data.evaluation.instructor_first_name }} {{ eval_data.evaluation.instructor_last_name }}</span>
+											</div>
+											<div class="detail-item">
+												<span class="detail-label">Sesión:</span>
+												<span class="detail-value">{{ eval_data.evaluation.session_number }}</span>
+											</div>
+											<div class="detail-item">
+												<span class="detail-label">Combustible Actual:</span>
+												<span class="detail-value">{{ eval_data.evaluation.fuel_consumed }} L</span>
+											</div>
+										</div>
+										
+										<form method="post" action="{% url 'transactions:update_fuel_consumed' %}" class="fuel-update-form">
+											{% csrf_token %}
+											<input type="hidden" name="evaluation_id" value="{{ eval_data.evaluation.id }}">
+											<input type="hidden" name="model_type" value="{{ eval_data.model_type }}">
+											
+											<div class="fuel-input-row">
+												<label for="fuel_consumed_{{ eval_data.evaluation.id }}" class="fuel-label">
+													Litros de Combustible:
+												</label>
+												<input 
+													type="number" 
+													name="fuel_consumed" 
+													id="fuel_consumed_{{ eval_data.evaluation.id }}"
+													class="fuel-input"
+													step="0.1"
+													min="0.1"
+													max="1000"
+													required
+													placeholder="Ej: 25.5"
+												>
+												<button type="submit" class="update-button">Actualizar</button>
+											</div>
+										</form>
+									</div>
+								{% endfor %}
+							</div>
+						{% else %}
+							<div class="no-evaluations">
+								<p>No se encontraron evaluaciones con combustible sin especificar para este estudiante.</p>
+							</div>
+						{% endif %}
+					</div>
+				{% endif %}
+			</div>
+
+			{% if messages %}
+				<div class="success-messages">
+					{% for message in messages %}
+						<div class="message {{ message.tags }}">{{ message }}</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</div>
+	</body>
 </html>

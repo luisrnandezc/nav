@@ -1,16 +1,16 @@
 from django import forms
-from .models import VoluntaryReport, ReportAnalysis
+from .models import VoluntaryHazardReport
 
-class SMSVoluntaryReportForm(forms.ModelForm):
+class SMSVoluntaryHazardReportForm(forms.ModelForm):
     
     class Meta:
-        model = VoluntaryReport
+        model = VoluntaryHazardReport
         fields = [
             'is_anonymous', 'first_name', 'last_name', 'role', 'date', 'time', 'area', 'description',
         ]
 
         labels = {
-            'is_anonymous': 'Reporte anónimo',
+            'is_anonymous': 'Reporte de peligro anónimo',
             'first_name': 'Nombre',
             'last_name': 'Apellido',
             'role': 'Rol',
@@ -50,72 +50,3 @@ class SMSVoluntaryReportForm(forms.ModelForm):
             cleaned_data['role'] = 'OTHER'
 
         return cleaned_data
-
-class SMSAnalysisEditForm(forms.ModelForm):
-    """Form for editing AI analysis results by SMS managers"""
-    
-    class Meta:
-        model = ReportAnalysis
-        fields = [
-            'is_valid', 'severity', 'probability'
-        ]
-        
-        labels = {
-            'is_valid': 'Validez del Reporte',
-            'severity': 'Nivel de Severidad',
-            'probability': 'Nivel de Probabilidad', 
-        }
-        
-        widgets = {
-            'is_valid': forms.Select(attrs={'class': 'form-field'}),
-        }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        
-        # Make all fields not required for partial updates
-        for field_name, field in self.fields.items():
-            field.required = False
-        
-        # Override severity field with proper choices and widget
-        self.fields['severity'] = forms.ChoiceField(
-            choices=[
-                ('', 'Seleccione severidad'),
-                ('A', 'A - Catastrófico'),
-                ('B', 'B - Peligroso'),
-                ('C', 'C - Grave'),
-                ('D', 'D - Leve'),
-                ('E', 'E - Insignificante'),
-            ],
-            widget=forms.Select(attrs={'class': 'form-field'}),
-            label='Nivel de Severidad',
-            required=False
-        )
-        
-        # Override probability field with proper choices and widget
-        self.fields['probability'] = forms.ChoiceField(
-            choices=[
-                ('', 'Seleccione probabilidad'),
-                ('1', '1 - Sumamente improbable'),
-                ('2', '2 - Improbable'),
-                ('3', '3 - Remoto'),
-                ('4', '4 - Ocasional'),
-                ('5', '5 - Frecuente'),
-            ],
-            widget=forms.Select(attrs={'class': 'form-field'}),
-            label='Nivel de Probabilidad',
-            required=False
-        )
-    
-    def save(self, commit=True):
-        """Override save to automatically generate the value field"""
-        instance = super().save(commit=False)
-        
-        # Auto-generate value from severity + probability
-        if instance.severity and instance.probability:
-            instance.value = f"{instance.severity}{instance.probability}"
-        
-        if commit:
-            instance.save()
-        
-        return instance

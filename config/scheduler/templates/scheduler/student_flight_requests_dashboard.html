@@ -15,16 +15,16 @@
     </head>
 
     <body>
-        <div class="flight-requests-container">
+        <div class="main-container">
+
             <div class="back-button">
                 <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
             </div>
-            <div class="flight-requests-header">
-                <h1>Agenda tu vuelo</h1>
-            </div>
+
+            <h1 class="main-header">Agenda tu vuelo</h1>
 
             <div class="buttons-container">
-                <div class="see-period-calendar-button">
+                <div class="main-button">
                     {% if has_active_periods %}
                         <a 
                             href="{% url 'scheduler:create_student_flight_period_grids' %}" 

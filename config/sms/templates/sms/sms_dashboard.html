@@ -65,8 +65,11 @@
                     </div>
 
                     <div class="report-area">
-                      <span class="report-label">Válido:</span>
-                      <span class="report-value">{{ report.is_valid|yesno:"SÍ,NO" }}</span>
+                      {% if report.is_valid %}
+                        <span class="report-value report-validity status-valid">VÁLIDO</span>
+                      {% else %}
+                        <span class="report-value report-validity status-invalid">INVÁLIDO</span>
+                      {% endif %}
                     </div>
                     
                     <div class="report-description">

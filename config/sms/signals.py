@@ -35,12 +35,10 @@ def send_rvp_analysis_email(instance, created, **kwargs):
 
     # Recipients list
     recipients = [
-        r for r in [
-            settings.SMS_NOTIFICATION_EMAIL_1,
-            settings.SMS_NOTIFICATION_EMAIL_2,
-            settings.SMS_NOTIFICATION_EMAIL_3,
-            settings.SMS_NOTIFICATION_EMAIL_4,
-        ] if r
+        settings.SMS_NOTIFICATION_EMAIL_1,
+        settings.SMS_NOTIFICATION_EMAIL_2,
+        settings.SMS_NOTIFICATION_EMAIL_3,
+        settings.SMS_NOTIFICATION_EMAIL_4,
     ]
 
     try:

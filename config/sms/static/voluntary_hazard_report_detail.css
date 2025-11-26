@@ -208,6 +208,24 @@ body {
   border: 1px solid #dae1ff;
 }
 
+.risk-badge-red {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: #f44336;
+  color: #ffb3b3;
+}
+
+.risk-badge-orange {
+  background: rgba(255, 152, 0, 0.2);
+  border-color: #ff9800;
+  color: #ffd28a;
+}
+
+.risk-badge-green {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: #4caf50;
+  color: #b2ffb2;
+}
+
 .risk-key {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.7);

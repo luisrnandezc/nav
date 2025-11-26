@@ -1,4 +1,5 @@
 {% load static %}
+{% load sms_extras %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -106,7 +107,7 @@
 								{% for risk_key, risk_data in risks.items %}
 									<div class="risk-item">
 										<div class="risk-header">
-											<span class="risk-evaluation-badge">{{ risk_data.evaluation|default:"N/A" }}</span>
+											<span class="risk-evaluation-badge {{ risk_data.evaluation|risk_color }}">{{ risk_data.evaluation|default:"N/A" }}</span>
 											<span class="risk-key">{{ "Riesgo "|add:risk_key|cut:"risk" }}</span>
 											{% if can_manage_sms %}
 												<form

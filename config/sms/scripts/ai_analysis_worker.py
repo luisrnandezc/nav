@@ -80,10 +80,12 @@ def run_ai_analysis(report):
         else:
             raise Exception("Invalid JSON response format: expected array or object")
         
-        # Update status to COMPLETED
+        # Update status to COMPLETED and set validity and invalidity reason
         report.ai_analysis_status = 'COMPLETED'
         report.ai_analysis_result = parsed_data
-        report.save(update_fields=['ai_analysis_status', 'ai_analysis_result'])
+        report.is_valid = parsed_data.get('is_valid') == 'True'
+        report.invalidity_reason = parsed_data.get('invalidity_reason') if parsed_data.get('is_valid') == 'False' else None
+        report.save(update_fields=['ai_analysis_status', 'ai_analysis_result', 'is_valid', 'invalidity_reason'])
         
         print("[{}] Successfully completed AI analysis for report {}".format(
             timezone.now(), report.id
@@ -99,7 +101,9 @@ def run_ai_analysis(report):
         try:
             report.ai_analysis_status = 'FAILED'
             report.ai_analysis_result = {}
-            report.save(update_fields=['ai_analysis_status', 'ai_analysis_result'])
+            report.is_valid = False
+            report.invalidity_reason = None
+            report.save(update_fields=['ai_analysis_status', 'ai_analysis_result', 'is_valid', 'invalidity_reason'])
         except:
             pass
         

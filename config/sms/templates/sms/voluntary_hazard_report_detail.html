@@ -73,15 +73,15 @@
 					<!-- AI Analysis Results Section -->
 					{% if ai_analysis %}
 						<div class="info-section">
-							<h2 class="section-title">Resultados del Análisis de IA</h2>
+							<h2 class="section-title" id="ai-analysis-results-section">Resultados del Análisis de IA</h2>
 							<div class="info-grid">
 								<div class="info-item">
 									<span class="info-label">Análisis válido</span>
 									<span class="info-value">
-										{% if is_valid == 'SI' %}
-											<span style="color: #4CAF50; font-weight: bold;">SÍ</span>
+										{% if is_valid %}
+											<span style="color: #3be65a; font-weight: bold; background-color: rgb(76, 174, 79, 0.3); padding: 5px 10px; border-radius: 5px;">SÍ</span>
 										{% else %}
-											<span style="color: #f44336; font-weight: bold;">NO</span>
+											<span style="color: #f16b61; font-weight: bold; background-color: rgb(244, 67, 54, 0.3); padding: 5px 10px; border-radius: 5px;">NO</span>
 										{% endif %}
 									</span>
 								</div>
@@ -90,6 +90,12 @@
 									<span class="info-value">{{ report.get_ai_analysis_status_display }}</span>
 								</div>
 							</div>
+							{% if not is_valid %}
+								<div class="info-item">
+									<span class="info-label">Motivo de invalidación</span>
+									<div class="invalidity-reason-text">{{ invalidity_reason|default:"No especificado" }}</div>
+								</div>
+							{% endif %}
 						</div>
 
 						<!-- Risks Section -->
@@ -194,10 +200,10 @@
 												<label for="risk-severity" class="risk-form-label">Severidad</label>
 												<select id="risk-severity" name="severity" required>
 													<option value="" selected disabled>Seleccione</option>
-													<option value="A">A</option>
-													<option value="B">B</option>
-													<option value="C">C</option>
-													<option value="D">D</option>
+													<option value="A">A - Catastrófico</option>
+													<option value="B">B - Peligroso</option>
+													<option value="C">C - Grave</option>
+													<option value="D">D - Leve</option>
 													<option value="E">E</option>
 												</select>
 											</div>
@@ -205,11 +211,11 @@
 												<label for="risk-probability" class="risk-form-label">Probabilidad</label>
 												<select id="risk-probability" name="probability" required>
 													<option value="" selected disabled>Seleccione</option>
-													<option value="1">1</option>
-													<option value="2">2</option>
-													<option value="3">3</option>
-													<option value="4">4</option>
-													<option value="5">5</option>
+													<option value="1">1 - Sumamente improbable</option>
+													<option value="2">2 - Improbable</option>
+													<option value="3">3 - Remota</option>
+													<option value="4">4 - Ocasional</option>
+													<option value="5">5 - Frecuente</option>
 												</select>
 											</div>
 										</div>
@@ -316,6 +322,62 @@
 							</div>
 						</div>
 					</div>
+
+					<!-- Modify Validity Section -->
+					{% if can_manage_sms %}
+						<div class="info-section">
+							<h2 class="section-title">Modificar validez</h2>
+							{% if not is_valid %}
+								{% if not risks %}
+									<p class="validity-warning-text">⚠️ No se puede validar el reporte sin al menos un riesgo registrado.</p>
+								{% endif %}
+								<form method="post" action="{% url 'sms:update_validity' report.id %}" class="validity-update-form">
+									{% csrf_token %}
+									<input type="hidden" name="new_validity" value="True">
+									<label for="validity-reason" class="validity-form-label">Razón del cambio</label>
+									<textarea
+										id="validity-reason"
+										name="reason"
+										rows="3"
+										class="validity-form-textarea"
+										{% if not risks %}disabled{% endif %}
+										placeholder="Indique el motivo para validar el reporte..."
+									></textarea>
+									<div class="validity-form-row">
+										<button
+											type="submit"
+											class="validity-update-button"
+											{% if not risks %}disabled{% endif %}
+										>
+											Actualizar a VÁLIDO
+										</button>
+									</div>
+								</form>
+							{% else %}
+								<div class="validity-warning-box">
+									<p class="validity-warning-text">⚠️ Al invalidar este reporte, se eliminarán todos los riesgos y acciones de mitigación asociadas.</p>
+								</div>
+								<form method="post" action="{% url 'sms:update_validity' report.id %}" class="validity-update-form">
+									{% csrf_token %}
+									<input type="hidden" name="new_validity" value="False">
+									<label for="validity-reason" class="validity-form-label">Justificación de invalidación</label>
+									<textarea
+										id="validity-reason"
+										name="reason"
+										rows="3"
+										class="validity-form-textarea"
+										required
+										placeholder="Indique el motivo para invalidar el reporte..."
+									></textarea>
+									<div class="validity-form-row">
+										<button type="submit" class="validity-update-button validity-update-button-danger">
+											Invalidar reporte
+										</button>
+									</div>
+								</form>
+							{% endif %}
+						</div>
+					{% endif %}
 				</div>
 			</div>
 		</div>

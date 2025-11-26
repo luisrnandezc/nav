@@ -39,7 +39,8 @@ Si el reporte es válido:
    - No inventes escenarios no soportados por el texto.
 
 Si el reporte es inválido:
-- "is_valid": "NO"
+- "is_valid": "False"
+- "invalidity_reason": "Explicación concisa de por qué este reporte no es válido"
 - "risks": {{}}
 - "actions": {{}}
 - Termina el JSON.
@@ -120,7 +121,8 @@ EVALUACIÓN DE RIESGOS (POR CONSECUENCIA)
 	- No realices análisis de riesgos.
 	- No generes acciones de mitigación.
 	- El JSON final debe contener:
-		"is_valid": "NO",
+		"is_valid": "False",
+    "invalidity_reason": "Explicación concisa de porque este reporte no es válido",
 		"risks": {{}},
 		"actions": {{}}
 
@@ -152,7 +154,8 @@ B1, C1, D1, E1, D2, E2, E3
 FORMATO OBLIGATORIO DEL JSON FINAL
 -----------------------------------------------------------------------
 {{
-  "is_valid": "SI" | "NO",
+  "is_valid": "True" | "False",
+  "invalidity_reason": "" | "Explicación concisa de porque este reporte no es válido"
   "risks": {{
     "risk1": {{
       "description": "texto",

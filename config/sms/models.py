@@ -93,6 +93,15 @@ class VoluntaryHazardReport(models.Model):
         max_length=1000,
         verbose_name="Descripción del peligro"
     )
+    is_valid = models.BooleanField(
+        default=False,
+        verbose_name="Es válido",
+    )
+    invalidity_reason = models.TextField(
+        verbose_name="Motivo de invalidación",
+        blank=True,
+        null=True
+    )
     ai_analysis_status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,

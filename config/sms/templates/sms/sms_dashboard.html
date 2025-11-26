@@ -63,6 +63,11 @@
                         {% endif %}
                       </span>
                     </div>
+
+                    <div class="report-area">
+                      <span class="report-label">Válido:</span>
+                      <span class="report-value">{{ report.is_valid|yesno:"SÍ,NO" }}</span>
+                    </div>
                     
                     <div class="report-description">
                       <span class="report-label">Descripción:</span>

@@ -29,8 +29,20 @@ SARA
 def send_rvp_analysis_email(instance, created, **kwargs):
     """
     Send an email notification when the RVP AI analysis is completed.
+    Only sends email once per report when status becomes 'COMPLETED'.
     """
+    # Don't send on creation or if status is not COMPLETED
     if created or instance.ai_analysis_status != 'COMPLETED':
+        return
+    
+    # Don't send if email was already sent
+    if instance.analysis_email_sent:
+        return
+    
+    # Check if ai_analysis_status was actually updated in this save
+    update_fields = kwargs.get('update_fields')
+    if update_fields and 'ai_analysis_status' not in update_fields:
+        # Status wasn't changed in this save, so don't send email
         return
 
     # Recipients list
@@ -56,6 +68,11 @@ def send_rvp_analysis_email(instance, created, **kwargs):
             to=recipients
         )
         email.send(fail_silently=False)
+        
+        # Mark email as sent to prevent duplicate emails
+        instance.analysis_email_sent = True
+        instance.save(update_fields=['analysis_email_sent'])
+        
         logger.info(f"RVP analysis email sent to recipients: {recipients}")
     except Exception as e:
         logger.error(f"Failed to send RVP analysis email to recipients: {recipients}. Error: {e}")

@@ -128,6 +128,11 @@ class VoluntaryHazardReport(models.Model):
         default=False,
         verbose_name="Validado",
     )
+    analysis_email_sent = models.BooleanField(
+        default=False,
+        verbose_name="Email de análisis enviado",
+        help_text="Indica si se ha enviado el email de notificación cuando el análisis fue completado",
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación",

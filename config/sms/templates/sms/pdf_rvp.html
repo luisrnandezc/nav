@@ -15,11 +15,16 @@
             <!-- Logo and form title -->
             <section class="header-container">
                 <img class="logo" id="logo" src="{{ logo_path }}" alt="Logo">
-                <h1 id="title">REPORTE VOLUNTARIO DE PELIGROS (RVP)</h1>
+                <div id="title-container">
+                    <h1 id="title">REPORTE VOLUNTARIO DE PELIGROS (RVP)</h1>
+                    {% if report.code %}
+                        <p id="code-title">CÓDIGO: {{ report.code }}</p>
+                    {% endif %}
+                </div>
                 <div id="code">
-                    <p>EDICIÓN ORG</p>
-                    <P>JUN2025</P>
-                    <p>F02-25-CSO-RVP</p>
+                    <p class="form-text">EDICIÓN ORG</p>
+                    <p class="form-text">JUN2025</p>
+                    <p class="form-text">F02-25-CSO-RVP</p>
                 </div>
             </section>
 
@@ -48,15 +53,21 @@
                             <td class="cell-title cell-right">Fecha</td>
                         </tr>
                         <tr>
-                            <td class="cell-data cell-left">Luis Hernández</td>
-                            <td class="cell-data cell-right">26/11/2025</td>
+                            <td class="cell-data cell-left">
+                                {% if report.is_anonymous == 'YES' %}
+                                    Anónimo
+                                {% else %}
+                                    {{ report.first_name|default:"No especificado" }} {{ report.last_name|default:"" }}
+                                {% endif %}
+                            </td>
+                            <td class="cell-data cell-right">{{ report.date|date:"d/m/Y" }}</td>
                         </tr>
                         <tr>
                             <td class="cell-title cell-left">Cargo o función en la institución</td>
                             <td class="cell-title cell-right">Hora</td>
                         </tr>
                         <tr>
-                            <td class="cell-data cell-left">Instructor</td>
+                            <td class="cell-data cell-left">{{ report.get_role_display|default:"No especificado" }}</td>
                             <td class="cell-data cell-right">{{ report.time|time:"H:i" }}</td>
                         </tr>
                     </tbody>
@@ -88,14 +99,21 @@
             <!-- Section 4: Report validity -->
             <section class="section-container" id="section-4-container">
                 <h1 class="section-title" id="section-4-title">4. CONDICIÓN DEL REPORTE</h1>
-                <div id="report-validity-container">
-                    <div id="report-validity-description-container">
-                        <p id="report-validity-description">{% if report.is_valid %}VÁLIDO{% else %}INVÁLIDO{% endif %}</p>
-                    </div>
-                    <div id="report-validity-reason-container">
-                        <p id="report-validity-reason-title">En caso de ser inválido, indique el motivo:</p>
-                        <p id="report-validity-reason">{% if report.is_valid %}N/A{% else %}{{ report.invalidity_reason }}{% endif %}</p>
-                    </div>
+                <div class="validity-row" id="validity-row-1">
+                    <div class="validity-label">Condición</div>
+                    <div class="validity-label">Motivo de invalidación (si aplica)</div>
+                </div>
+                <div class="validity-row" id="validity-row-2">
+                    <div class="validity-value" id="report-validity-condition">{% if report.is_valid %}VÁLIDO{% else %}INVÁLIDO{% endif %}</div>
+                    {% if report.is_valid %}
+                        <div class="validity-value" id="report-is-valid">
+                            N/A
+                        </div>
+                    {% else %}
+                        <div class="validity-value" id="report-is-invalid">
+                            {{ report.invalidity_reason|default:"No especificado" }}
+                        </div>
+                    {% endif %}
                 </div>
             </section>
 

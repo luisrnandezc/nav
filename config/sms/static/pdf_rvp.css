@@ -36,12 +36,28 @@ img.logo#logo {
     object-fit: contain;
 }
 
-#title {
+#title-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}   
+
+#title {
+    text-align: center;
     text-transform: uppercase;
+    margin-bottom: 0px;
+}
+
+#code-title {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.form-text {
+    font-size: 0.75rem;
 }
 
 /* General styles */
@@ -153,60 +169,72 @@ p.hazard-description-text {
 }
 
 /* Section 4: Report validity */
-#section-4-container {
-    border-bottom: 0px !important;
-}
-
 #section-4-title {
     margin-bottom: 0px !important;
 }
 
-#report-validity-container {
+.validity-row {
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin: 0px !important;
-    padding: 0px !important;
 }
 
-#report-validity-description-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 25%;
-    margin: 0px;
-    padding: 0px;
-    border-bottom: 1px solid #000000;
+#validity-row-1 {
+    padding-top: 5px;
 }
 
-p#report-validity-description {
-    text-align: center;
-    justify-content: center;
-    align-items: center;
+#validity-row-2 {
+    padding-bottom: 5px;
 }
 
-#report-validity-reason-container {
-    width: 75%;
-    border-left: 1px solid #000000;
-    border-bottom: 1px solid #000000;
-    margin: 0px;
-    padding: 0px;
-    align-items: left;
-    justify-items: left;
+.validity-row:first-of-type {
+    border-top: none;
 }
 
-p#report-validity-reason-title {
-    text-align: left;
+.validity-label {
+    padding: 4px 6px;
     font-size: 0.75rem;
-    padding-left: 5px;
+    font-weight: bold;
+    text-align: center;
 }
 
-p#report-validity-reason {
+.validity-label:first-child {
+    width: 25%;
+}
+
+.validity-label:last-child {
+    width: 75%;
+    border-right: none;
+}
+
+.validity-value {
+    padding: 4px 6px;
+    font-size: 0.6rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.validity-value:first-child {
+    width: 25%;
+}
+
+.validity-value:last-child {
+    width: 75%;
+    border-right: none;
+}
+
+#report-validity-condition {
+    text-align: center;
+}
+
+#report-is-valid {
+    text-align: center;
+}
+
+#report-is-invalid {
     text-align: justify;
-    font-size: 0.5rem;
-    padding-left: 5px;
 }
-
 
 /* Section 5: Received by */
 #received-by-table-container {

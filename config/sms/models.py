@@ -49,6 +49,15 @@ class VoluntaryHazardReport(models.Model):
     #endregion
     
     #region Fields
+    code = models.CharField(
+        max_length=100,
+        verbose_name="Código",
+        help_text="Código de entrada para la BD del SMS",
+        blank=True,
+        null=True,
+        unique=True
+    )
+    
     is_anonymous = models.CharField(
         max_length=3,
         choices=ANONYMOUS_CHOICES,

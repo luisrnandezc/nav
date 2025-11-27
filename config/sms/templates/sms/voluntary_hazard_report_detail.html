@@ -366,6 +366,7 @@
 										id="validity-reason"
 										name="reason"
 										rows="3"
+										maxlength="200"
 										class="validity-form-textarea"
 										required
 										placeholder="Indique el motivo para invalidar el reporte..."
@@ -379,6 +380,31 @@
 							{% endif %}
 						</div>
 					{% endif %}
+
+					<!-- PDF Download Section -->
+					<div class="info-section" id="register-section-container">
+						<div class="register-container">
+							<div class="register-text-container">
+								{% if report.code %}
+									<p id="register-warning-text" style="color: #f44336; font-weight: bold;">⚠️ Este reporte ya ha sido registrado con el código: <strong>{{ report.code }}</strong></p>
+								{% else %}
+									<p>Al registrar el reporte, se generará el PDF y se crearán las acciones de mitigación definidas
+										en la sección "ACCIONES DE MITIGACIÓN".
+									</p>
+									<p id="register-warning-text">⚠️ IMPORTANTE: Esta acción no se puede deshacer.</p>
+								{% endif %}
+							</div>
+							{% if not report.code %}
+								<a href="{% url 'sms:register_rvp' report.id %}" class="register-button" target="_blank" onclick="return confirm('¿Está seguro que desea registrar este reporte? Esta acción generará el PDF y creará las acciones de mitigación en la base de datos. Esta acción no se puede deshacer.');">
+									Registrar
+								</a>
+							{% else %}
+								<a href="{% url 'sms:register_rvp' report.id %}" class="register-button" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" title="Este reporte ya ha sido registrado">
+									Registrado
+								</a>
+							{% endif %}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

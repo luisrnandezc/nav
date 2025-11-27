@@ -4,13 +4,13 @@ from .models import VoluntaryHazardReport, Risk, MitigationAction
 
 @admin.register(VoluntaryHazardReport)
 class VoluntaryHazardReportAdmin(admin.ModelAdmin):
-    list_display = ('id', 'date', 'time', 'area', 'is_anonymous', 'ai_analysis_status', 'is_valid', 'created_at')
+    list_display = ('id', 'code', 'date', 'time', 'area', 'is_anonymous', 'ai_analysis_status', 'is_valid', 'created_at')
     list_filter = ('ai_analysis_status', 'area', 'is_anonymous', 'date', 'is_valid')
-    search_fields = ('description', 'first_name', 'last_name', 'area')
+    search_fields = ('description', 'first_name', 'last_name', 'area', 'code')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información del Reporte', {
-            'fields': ('date', 'time', 'area', 'description', 'is_valid', 'invalidity_reason')
+            'fields': ('code', 'date', 'time', 'area', 'description', 'is_valid', 'invalidity_reason')
         }),
         ('Información del Reportante', {
             'fields': ('is_anonymous', 'first_name', 'last_name', 'role')

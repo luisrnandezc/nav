@@ -7,6 +7,7 @@ users/
 config/db.sqlite3
 config/.env
 config/sms_prompt.txt
+config/sms/prompts/sara_hazard_analysis.txt
 config/sms/logs/*
 !config/sms/logs/.gitkeep
 config/sms_analysis.log

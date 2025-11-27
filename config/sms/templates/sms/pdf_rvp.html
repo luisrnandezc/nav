@@ -130,8 +130,8 @@
                                 <td class="section-5-cell-title">Fecha de recepción</td>
                             </tr>
                             <tr>
-                                <td class="section-5-cell-data">{{ user.first_name }} {{ user.last_name }}</td>
-                                <td class="section-5-cell-data">{{ user.national_id }}</td>
+                                <td class="section-5-cell-data">{{ user.first_name|default:"No especificado" }} {{ user.last_name|default:"No especificado" }}</td>
+                                <td class="section-5-cell-data">{{ user.national_id|default:"No especificado" }}</td>
                                 <td class="section-5-cell-data">_______________________</td>
                                 <td class="section-5-cell-data">{{ report.date|date:"d/m/Y" }}</td>
                             </tr>

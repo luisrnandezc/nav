@@ -16,7 +16,7 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
             'fields': ('is_anonymous', 'first_name', 'last_name', 'role')
         }),
         ('Análisis de IA', {
-            'fields': ('ai_analysis_status', 'ai_analysis_result')
+            'fields': ('ai_analysis_status', 'ai_analysis_result', 'analysis_email_sent')
         }),
         ('Metadatos', {
             'fields': ('created_at', 'updated_at'),

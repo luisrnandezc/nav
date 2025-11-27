@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
+from django.db import transaction
 from .models import VoluntaryHazardReport
 from django.conf import settings
 import logging
@@ -110,44 +111,65 @@ def voluntary_hazard_report_detail(request, report_id):
 
 
 @login_required
-def download_rvp_pdf(request, report_id):
-    """Download PDF for a specific voluntary hazard report."""
+def register_rvp(request, report_id):
+    """Register a specific voluntary hazard report.
+    
+    This will generate the report PDF and create the risk and action objects in the database.
+    """
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para registrar reportes.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    
     try:
-        report = get_object_or_404(VoluntaryHazardReport, id=report_id)
-        
-        # Find the static image path (logo)
-        raw_logo_path = find('img/evaluation_logo.png')
-        if raw_logo_path:
-            logo_path = Path(raw_logo_path).as_posix()
-            logo_uri = f'file:///{logo_path}'
-        else:
-            logo_uri = ''
+        with transaction.atomic():
+            report = get_object_or_404(VoluntaryHazardReport, id=report_id)
 
-        # Render the PDF template with report data and logo path
-        html_string = render_to_string('sms/pdf_rvp.html', {
-            'report': report,
-            'logo_path': logo_uri,
-            'user': request.user
-        })
-        
-        # Get the base URL for static files
-        base_url = request.build_absolute_uri()
+            # Check if report is already registered
+            if report.code:
+                messages.warning(request, 'Este reporte ya ha sido registrado anteriormente.')
+                return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
-        # Find the CSS file path
-        css_path = find('pdf.css')
-        
-        # Generate PDF using WeasyPrint with CSS
-        html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
-        pdf = html_doc.write_pdf(stylesheets=[weasyprint.CSS(filename=css_path)] if css_path else None)
-        
-        # Create HTTP response with PDF content
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
-        
-        return response
+            # Create the unique code for the report
+            report.code = f"SMS-RVP-{report_id}"
+            report.save(update_fields=['code'])
+
+            # Human validate the report
+            report.human_validated = True
+            report.save(update_fields=['human_validated'])
+            
+            # Find the static image path (logo)
+            raw_logo_path = find('img/evaluation_logo.png')
+            if raw_logo_path:
+                logo_path = Path(raw_logo_path).as_posix()
+                logo_uri = f'file:///{logo_path}'
+            else:
+                logo_uri = ''
+
+            # Render the PDF template with report data and logo path
+            html_string = render_to_string('sms/pdf_rvp.html', {
+                'report': report,
+                'logo_path': logo_uri,
+                'user': request.user
+            })
+            
+            # Get the base URL for static files
+            base_url = request.build_absolute_uri()
+
+            # Find the CSS file path
+            css_path = find('pdf_rvp.css')
+            
+            # Generate PDF using WeasyPrint with CSS
+            html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
+            pdf = html_doc.write_pdf(stylesheets=[weasyprint.CSS(filename=css_path)] if css_path else None)
+            
+            # Create HTTP response with PDF content
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
+
+            return response
         
     except Exception as e:
-        messages.error(request, f'Error al generar el PDF: {str(e)}')
+        messages.error(request, f'Error al registrar el reporte: {str(e)}')
         return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
 

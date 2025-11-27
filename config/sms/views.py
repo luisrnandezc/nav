@@ -18,7 +18,7 @@ import logging
 import sys
 import weasyprint
 from pathlib import Path
-
+from django.utils import timezone
 
 @login_required
 def sms_dashboard(request):
@@ -124,6 +124,10 @@ def register_rvp(request, report_id):
         with transaction.atomic():
             report = get_object_or_404(VoluntaryHazardReport, id=report_id)
 
+            if not report.date or not report.description:
+                messages.error(request, 'No se puede registrar el reporte sin fecha o descripción del peligro.')
+                return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
             # Check if report is already registered
             if report.code:
                 messages.warning(request, 'Este reporte ya ha sido registrado anteriormente.')
@@ -157,6 +161,9 @@ def register_rvp(request, report_id):
 
             # Find the CSS file path
             css_path = find('pdf_rvp.css')
+            if not css_path:
+                messages.error(request, 'No se encontró el archivo CSS para generar el PDF del RVP.')
+                return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
             
             # Generate PDF using WeasyPrint with CSS
             html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
@@ -164,12 +171,16 @@ def register_rvp(request, report_id):
             
             # Create HTTP response with PDF content
             response = HttpResponse(pdf, content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
+            if report.date:
+                response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
+            else:
+                report.date = timezone.now().date()
+                response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
 
             return response
         
     except Exception as e:
-        messages.error(request, f'Error al registrar el reporte: {str(e)}')
+        messages.error(request, 'Ocurrió un error al generar el PDF. Por favor, contacte al administrador.')
         return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
 

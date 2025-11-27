@@ -379,6 +379,15 @@
 							{% endif %}
 						</div>
 					{% endif %}
+
+					<!-- PDF Download Section -->
+					<div class="info-section">
+						<div class="pdf-download-container">
+							<a href="{% url 'sms:download_rvp_pdf' report.id %}" class="pdf-download-button" target="_blank">
+								Descargar PDF
+							</a>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

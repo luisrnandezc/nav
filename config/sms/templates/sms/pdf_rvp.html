@@ -1,0 +1,126 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>NAV | Formulario de Reporte Voluntario de Peligro (RVP)</title>
+        <link href="{% static 'pdf_rvp.css' %}" rel="stylesheet"> 
+    </head>
+
+    <body>
+        <section class="main-container">
+
+            <!-- Logo and form title -->
+            <section class="header-container">
+                <img class="logo" id="logo" src="{{ logo_path }}" alt="Logo">
+                <h1 id="title">REPORTE VOLUNTARIO DE PELIGROS (RVP)</h1>
+                <div id="code">
+                    <p>EDICIÓN ORG</p>
+                    <P>JUN2025</P>
+                    <p>F02-25-CSO-RVP</p>
+                </div>
+            </section>
+
+            <!-- Notes -->
+            <section class="notes-container">
+                <div class="note-container" id="first-note-container">
+                    <p id="first-note">Este documento puede ser enviado de forma digital a la Coordinación de SMS
+                        al correo NAVSMS@GMAIL.COM, o puede ser entregado de manera física a cualquier
+                        instructor o personal directivo del CIA.
+                    </p>
+                </div>
+                <div class="note-container" id="second-note-container">
+                    <p id="second-note">NAV Academia de Aviación garantiza que este formulario es de carácter <span id="bold-text">CONFIDENCIAL</span>,
+                        <span id="bold-text">ANÓNIMO</span> y <span id="bold-text">NO PUNITIVO</span>.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 1: Report data -->
+            <section class="section-container">
+                <h1 class="section-title">1. DATOS DEL REPORTE</h1>
+                <table border="1" class="report-data-table">
+                    <tbody>
+                        <tr>
+                            <td class="cell-title cell-left">Nombre y apellido</td>
+                            <td class="cell-title cell-right">Fecha</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-data cell-left">Luis Hernández</td>
+                            <td class="cell-data cell-right">26/11/2025</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-title cell-left">Cargo o función en la institución</td>
+                            <td class="cell-title cell-right">Hora</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-data cell-left">Instructor</td>
+                            <td class="cell-data cell-right">{{ report.time|time:"H:i" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Section 2: Hazard area -->
+            <section class="section-container">
+                <h1 class="section-title">2. ÁREA DE PELIGRO</h1>
+                {% if report.area == 'ADMIN' %}
+                <p id="hazard-area-description">Sede admin: X              |  Plataforma:                |  Ofic. Aeropuerto:                |  Operaciones:               |  Otro:        </p>
+                {% elif report.area == 'PLATFORM' %}
+                <p id="hazard-area-description">Sede admin:                |  Plataforma: X              |  Ofic. Aeropuerto:                |  Operaciones:               |  Otro:        </p>
+                {% elif report.area == 'AIRPORT_OFFICE' %}
+                <p id="hazard-area-description">Sede admin:                |  Plataforma:                |  Ofic. Aeropuerto: X              |  Operaciones:               |  Otro:        </p>
+                {% elif report.area == 'OPERATIONS' %}
+                <p id="hazard-area-description">Sede admin:                |  Plataforma:                |  Ofic. Aeropuerto:                |  Operaciones: X             |  Otro:        </p>
+                {% elif report.area == 'OTHER' %}
+                <p id="hazard-area-description">Sede admin:                |  Plataforma:                |  Ofic. Aeropuerto:                |  Operaciones:               |  Otro: X      </p>
+                {% endif %}
+            </section>
+
+            <!-- Section 3: Hazard description -->
+            <section class="section-container">
+                <h1 class="section-title">3. DESCRIPCIÓN DEL PELIGRO</h1>
+                <p class="hazard-description-text">{{ report.description }}</p>
+            </section>
+
+            <!-- Section 4: Report validity -->
+            <section class="section-container" id="section-4-container">
+                <h1 class="section-title" id="section-4-title">4. CONDICIÓN DEL REPORTE</h1>
+                <div id="report-validity-container">
+                    <div id="report-validity-description-container">
+                        <p id="report-validity-description">{% if report.is_valid %}VÁLIDO{% else %}INVÁLIDO{% endif %}</p>
+                    </div>
+                    <div id="report-validity-reason-container">
+                        <p id="report-validity-reason-title">En caso de ser inválido, indique el motivo:</p>
+                        <p id="report-validity-reason">{% if report.is_valid %}N/A{% else %}{{ report.invalidity_reason }}{% endif %}</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Received by -->
+            <section class="section-container">
+                <h1 class="section-title">5. RECIBIDO POR</h1>
+                <div id="received-by-table-container">
+                    <table border="1" class="received-by-table">
+                        <tbody>
+                            <tr>
+                                <td class="section-5-cell-title">Nombre y apellido</td>
+                                <td class="section-5-cell-title">C.I</td>
+                                <td class="section-5-cell-title">Firma</td>
+                                <td class="section-5-cell-title">Fecha de recepción</td>
+                            </tr>
+                            <tr>
+                                <td class="section-5-cell-data">{{ user.first_name }} {{ user.last_name }}</td>
+                                <td class="section-5-cell-data">{{ user.national_id }}</td>
+                                <td class="section-5-cell-data">_______________________</td>
+                                <td class="section-5-cell-data">{{ report.date|date:"d/m/Y" }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </body>
+</html>

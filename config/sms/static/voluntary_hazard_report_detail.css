@@ -635,6 +635,36 @@ option {
   border-radius: 4px;
 }
 
+/* PDF Download Section */
+.pdf-download-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.pdf-download-button {
+  background-color: #2196F3;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.pdf-download-button:hover {
+  background-color: transparent;
+  border: 1px solid #dae1ff;
+  color: #dae1ff;
+}
+
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
   .main-container {

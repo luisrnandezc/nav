@@ -1,0 +1,231 @@
+* {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    color: #000000;
+    font-size: 16px;
+    letter-spacing: 0px;
+    box-sizing: border-box;
+}
+
+@page {
+    size: letter;
+    margin: 1cm;
+}
+  
+html,
+body {
+    width: 100%;
+    max-width: 21cm;
+    margin: 0px;
+    padding: 10px;
+    overflow-x: hidden;
+}
+
+/* Header */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+img.logo#logo {
+    width: 75px;
+    max-width: 75px;
+    height: auto;
+    object-fit: contain;
+}
+
+#title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+/* General styles */
+.section-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 5px 0px;
+    padding: 0px;
+    border: 1px solid #000000;
+}
+
+.section-title {
+    margin-top: 0px;
+    padding-top: 0px;
+    width: 100%;
+}
+
+h1.section-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-align: center;
+    background: #d3d3d3;
+    padding: 5px 0 5px 0;
+}
+
+/* Notes */
+.notes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 5px 0px;
+    padding: 5px 0px;
+}
+
+.note-container#first-note-container {
+    border: 1px dashed #000000;
+    padding: 5px;
+}
+
+#first-note {
+    text-align: justify;
+}
+
+p#first-note {
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: justify;
+}
+
+p#second-note {
+    font-size: 0.75rem;
+}
+
+span#bold-text {
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+/* Section 1: Report data */
+.report-data-table {
+    margin-top: 0px;
+    padding: 0 10px 0 10px;
+    width: 100%;
+}
+
+.cell-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-align: left;
+    padding: 0px;
+}
+
+.cell-data {
+    font-size: 0.75rem;
+    text-align: left;
+    padding: 5px 0 15px 0;
+}
+
+.cell-left {
+    width: 75%;
+}
+
+.cell-right {
+    width: 25%;
+}
+
+/* Section 2: Hazard area */
+p#hazard-area-description {
+    white-space: pre-wrap;
+    font-size: 0.75rem;
+    text-align: center;
+    width: 100%;
+    margin: 0px 0 5px 0;
+    padding: 0px 0 10px 0;
+}
+
+/* Section 3: Hazard description */
+p.hazard-description-text {
+    font-size: 0.9rem;
+    text-align: justify;
+    width: 100%;
+    height: 200px;
+    margin-top: 0px;
+    padding: 0px 5px 0 5px;
+}
+
+/* Section 4: Report validity */
+#section-4-container {
+    border-bottom: 0px !important;
+}
+
+#section-4-title {
+    margin-bottom: 0px !important;
+}
+
+#report-validity-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+#report-validity-description-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+    margin: 0px;
+    padding: 0px;
+    border-bottom: 1px solid #000000;
+}
+
+p#report-validity-description {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#report-validity-reason-container {
+    width: 75%;
+    border-left: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    margin: 0px;
+    padding: 0px;
+    align-items: left;
+    justify-items: left;
+}
+
+p#report-validity-reason-title {
+    text-align: left;
+    font-size: 0.75rem;
+    padding-left: 5px;
+}
+
+p#report-validity-reason {
+    text-align: justify;
+    font-size: 0.5rem;
+    padding-left: 5px;
+}
+
+
+/* Section 5: Received by */
+#received-by-table-container {
+    padding: 0px 0px 10px 0px;
+}
+
+table.received-by-table {
+    margin-top: 0px;
+    width: 100%;
+}
+
+.section-5-cell-title, .section-5-cell-data {
+    width: 25%;
+    font-size: 0.75rem;
+    text-align: center;
+    padding: 0px 20px 0px 20px;
+}
+
+.section-5-cell-title {
+    font-weight: bold;
+    padding-bottom: 10px;
+}

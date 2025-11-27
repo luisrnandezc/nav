@@ -386,7 +386,7 @@
 						<div class="register-container">
 							<div class="register-text-container">
 								{% if report.code %}
-									<p id="register-warning-text" style="color: #f44336; font-weight: bold;">⚠️ Este reporte ya ha sido registrado con el código: <strong>{{ report.code }}</strong></p>
+									<p id="register-warning-text">⚠️ Este reporte ya ha sido registrado con el código: {{ report.code }}</p>
 								{% else %}
 									<p>Al registrar el reporte, se generará el PDF y se crearán las acciones de mitigación definidas
 										en la sección "ACCIONES DE MITIGACIÓN".

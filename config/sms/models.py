@@ -148,8 +148,8 @@ class VoluntaryHazardReport(models.Model):
     #endregion
 
     class Meta:
-        verbose_name = "Reporte de peligro voluntario"
-        verbose_name_plural = "Reportes de peligro voluntarios"
+        verbose_name = "RVP"
+        verbose_name_plural = "RVP"
         
     def __str__(self):
         return "{} {}".format(self.date, self.area)

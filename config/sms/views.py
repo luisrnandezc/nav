@@ -12,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
 from django.db import transaction
-from .models import VoluntaryHazardReport
+from .models import VoluntaryHazardReport, Risk
 from django.conf import settings
 import logging
 import sys
@@ -176,12 +176,135 @@ def register_rvp(request, report_id):
             else:
                 report.date = timezone.now().date()
                 response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
-
+            
+            # Store success message in session to show after PDF download
+            messages.success(request, f'El reporte ha sido registrado con el código {report.code}.')
+            
             return response
         
     except Exception as e:
         messages.error(request, 'Ocurrió un error al generar el PDF. Por favor, contacte al administrador.')
         return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+def create_risks(request, report_id):
+    """
+    Create risks in the database from the SMS analysis result.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    
+    # Check if SMS analysis exists
+    ai_analysis = report.ai_analysis_result or {}
+    risks_data = ai_analysis.get('risks', {}) or {}
+    
+    if not risks_data:
+        messages.error(request, 'No hay riesgos en el análisis SMS para crear.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    
+    # Check if risks already exist in the database
+    existing_risks = Risk.objects.filter(report=report)
+    if existing_risks.exists():
+        messages.warning(request, 'Ya existen riesgos en la base de datos para este reporte. No se crearán riesgos duplicados.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    try:
+        with transaction.atomic():
+            # Determine the status of the risk
+            intolerable_levels = ['5A', '5B', '5C', '4A', '4B', '3A']
+            tolerable_levels = ['5D', '5E', '4C', '4D', '4E', '3B', '3C', '3D', '2A', '2B', '2C', '1A']
+            acceptable_levels = ['3E', '2D', '2E', '1B', '1C', '1D', '1E']
+
+            risks_created = 0
+            for risk_key, risk_data in risks_data.items():
+                evaluation = risk_data.get('evaluation', '')
+                if not evaluation or len(evaluation) < 2:
+                    continue
+                
+                if evaluation in intolerable_levels:
+                    status = 'INTOLERABLE'
+                elif evaluation in tolerable_levels:
+                    status = 'TOLERABLE'
+                elif evaluation in acceptable_levels:
+                    status = 'ACCEPTABLE'
+                else:
+                    status = 'NOT_EVALUATED'
+
+                Risk.objects.create(
+                    report=report,
+                    description=risk_data.get('description', ''),
+                    pre_evaluation_severity=evaluation[0],
+                    pre_evaluation_probability=evaluation[1],
+                    status=status,
+                )
+                risks_created += 1
+
+            if risks_created > 0:
+                messages.success(request, f'Se crearon {risks_created} riesgo(s) en la base de datos correctamente.')
+            else:
+                messages.warning(request, 'No se pudieron crear riesgos. Verifique que el análisis de IA contenga datos válidos.')
+                
+    except Exception as e:
+        messages.error(request, f'Error al crear los riesgos: {str(e)}')
+    
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
+def create_mmrs(request, report_id):
+    """
+    Create the MMRs for a specific voluntary hazard report.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    
+    if not report.human_validated:
+        messages.error(request, 'El reporte debe estar validado antes de crear las MMRs.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    
+    if report.mmrs_created:
+        messages.error(request, 'Las MMRs para este reporte ya han sido creadas previamente.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    # Store the risks in the database
+    sms_result = report.ai_analysis_result
+    for risk_key, risk_data in sms_result['risks'].items():
+
+        # Determine the status of the risk
+        intolerable_levels = ['5A', '5B', '5C', '4A', '4B', '3A']
+        tolerable_levels = ['5D', '5E', '4C', '4D', '4E', '3B', '3C', '3D', '2A', '2B', '2C', '1A']
+        acceptable_levels = ['3E', '2D', '2E','1B', '1C', '1D', '1E']
+
+        evaluation = risk_data['evaluation']
+        if evaluation in intolerable_levels:
+            status = 'INTOLERABLE'
+        elif evaluation in tolerable_levels:
+            status = 'TOLERABLE'
+        elif evaluation in acceptable_levels:
+            status = 'ACCEPTABLE'
+        else:
+            status = 'NOT_EVALUATED'
+
+        risk = Risk.objects.create(
+            report=report,
+            description=risk_data['description'],
+            pre_evaluation_severity=evaluation[0],
+            pre_evaluation_probability=evaluation[1],
+            status=status,
+        )
+
+    report.mmrs_created = True
+    report.save(update_fields=['mmrs_created'])
+
+    messages.success(request, 'Las MMRs para este reporte han sido creadas correctamente.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
 
 @login_required

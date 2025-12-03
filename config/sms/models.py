@@ -133,6 +133,11 @@ class VoluntaryHazardReport(models.Model):
         verbose_name="Email de análisis enviado",
         help_text="Indica si se ha enviado el email de notificación cuando el análisis fue completado",
     )
+    mmrs_created = models.BooleanField(
+        default=False,
+        verbose_name="MMRs creadas",
+        help_text="Indica si se han creado las MMRs para el reporte",
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación",
@@ -209,31 +214,31 @@ class Risk(models.Model):
         max_length=1,
         choices=SEVERITY_CHOICES,
         default='0',
-        verbose_name="Severidad pre-mitigación",
+        verbose_name="Severidad pre-mitigación"
     )
     pre_evaluation_probability = models.CharField(
         max_length=1, 
         choices=PROBABILITY_CHOICES,
         default='0',
-        verbose_name="Probabilidad pre-mitigación",
+        verbose_name="Probabilidad pre-mitigación"
     )
     post_evaluation_severity = models.CharField(
         max_length=1, 
         choices=SEVERITY_CHOICES,
         default='0',
-        verbose_name="Severidad post-mitigación",
+        verbose_name="Severidad post-mitigación"
     )
     post_evaluation_probability = models.CharField(
         max_length=1, 
         choices=PROBABILITY_CHOICES,
         default='0',
-        verbose_name="Probabilidad post-mitigación",
+        verbose_name="Probabilidad post-mitigación"
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='NOT_EVALUATED',
-        verbose_name="Estatus",
+        verbose_name="Estatus"
     )
     created_at = models.DateField(
         default=timezone.now,

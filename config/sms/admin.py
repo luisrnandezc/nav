@@ -27,7 +27,7 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
 
 @admin.register(Risk)
 class RiskAdmin(admin.ModelAdmin):
-    list_display = ('id', 'report', 'status', 'created_at')
+    list_display = ('id', 'report', 'pre_evaluation_severity', 'pre_evaluation_probability', 'status', 'created_at')
     list_filter = ('status', 'created_at')
     search_fields = ('description', 'report__description')
     readonly_fields = ('created_at', 'updated_at')

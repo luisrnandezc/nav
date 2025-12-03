@@ -388,21 +388,60 @@
 								{% if report.code %}
 									<p id="register-warning-text">⚠️ Este reporte ya ha sido registrado con el código: {{ report.code }}</p>
 								{% else %}
-									<p>Al registrar el reporte, se generará el PDF y se crearán las acciones de mitigación definidas
-										en la sección "ACCIONES DE MITIGACIÓN".
-									</p>
+									<p>Al registrar el reporte, se generará el PDF y se le asignará el código único de registro para la base de datos.</p>
 									<p id="register-warning-text">⚠️ IMPORTANTE: Esta acción no se puede deshacer.</p>
 								{% endif %}
 							</div>
-							{% if not report.code %}
-								<a href="{% url 'sms:register_rvp' report.id %}" class="register-button" target="_blank" onclick="return confirm('¿Está seguro que desea registrar este reporte? Esta acción generará el PDF y creará las acciones de mitigación en la base de datos. Esta acción no se puede deshacer.');">
-									Registrar
-								</a>
-							{% else %}
-								<a href="{% url 'sms:register_rvp' report.id %}" class="register-button" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" title="Este reporte ya ha sido registrado">
-									Registrado
-								</a>
-							{% endif %}
+							<div class="buttons-container">
+								<div class="button">
+									{% if not report.code %}
+										<a 
+										href="{% url 'sms:register_rvp' report.id %}" 
+										class="register-button" 
+										target="_blank" 
+										onclick="return confirm('¿Está seguro que desea registrar este reporte? Esta acción generará el PDF Esta acción no se puede deshacer.');">
+											Registrar
+										</a>
+									{% else %}
+										<a 
+										href="{% url 'sms:register_rvp' report.id %}" 
+										class="register-button" 
+										style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" 
+										title="Este reporte ya ha sido registrado">
+											Registrado
+										</a>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- MMRs Creation Section -->
+					<div class="info-section" id="register-section-container">
+						<div class="register-container">
+							<div class="register-text-container">
+								{% if report.mmrs_created %}
+									<p id="register-warning-text">⚠️ Las MMRs para este reporte ya han sido creadas.</p>
+								{% else %}
+									<p>Al presionar el botón se crearán las MMRs para el reporte.</p>
+									<p id="register-warning-text">⚠️ IMPORTANTE: Esta acción no se puede deshacer.</p>
+								{% endif %}
+							</div>
+							<div class="buttons-container">
+								<div class="button">
+									{% if report.human_validated and not report.mmrs_created %}
+										<a 
+										href="{% url 'sms:create_mmrs' report.id %}" 
+										class="register-button" 
+										target="_blank" 
+										onclick="return confirm('¿Está seguro que desea crear las MMRs para este reporte? Esta acción no se puede deshacer.');">
+											Crear MMRs
+										</a>
+									{% else %}
+										<span class="register-button" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">MMRs creadas</span>
+									{% endif %}
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

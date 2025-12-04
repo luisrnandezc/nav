@@ -831,3 +831,114 @@ def run_ai_analysis_for_voluntary_hazard_report(report):
         logger.error("Full traceback: {}".format(traceback.format_exc()))
         logger.info("=" * 80)
         return "API key validation failed. Error: {}".format(e)
+
+
+@login_required
+def action_detail(request, action_id):
+    """
+    A view to display the detail of a MitigationAction.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    context = {
+        'action': action,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+    }
+    
+    return render(request, 'sms/action_detail.html', context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def update_action_notes(request, action_id):
+    """
+    Update the notes for a mitigation action.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se pueden modificar las notas de una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    notes = request.POST.get('notes', '').strip()
+    action.notes = notes if notes else None
+    action.updated_at = timezone.now().date()
+    action.save(update_fields=['notes', 'updated_at'])
+    
+    messages.success(request, 'Las notas se actualizaron correctamente.')
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def update_action_due_date(request, action_id):
+    """
+    Update the due date for a mitigation action.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se puede modificar la fecha límite de una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    due_date_str = request.POST.get('due_date', '').strip()
+    if not due_date_str:
+        messages.error(request, 'La fecha límite es obligatoria.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    try:
+        from datetime import datetime
+        due_date = datetime.strptime(due_date_str, '%Y-%m-%d').date()
+        if due_date < timezone.now().date():
+            action.status = 'EXPIRED'
+        else:
+            action.status = 'PENDING'
+        action.due_date = due_date
+        action.updated_at = timezone.now().date()
+        action.save(update_fields=['due_date', 'updated_at', 'status'])
+        messages.success(request, 'La fecha límite se actualizó correctamente.')
+    except ValueError:
+        messages.error(request, 'Formato de fecha inválido.')
+    
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def mark_action_completed(request, action_id):
+    """
+    Mark a mitigation action as completed.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    action.status = 'COMPLETED'
+    action.updated_at = timezone.now().date()
+    action.save(update_fields=['status', 'updated_at'])
+    
+    messages.success(request, 'La acción se marcó como completada.')
+
+    risk = action.risk
+    uncompleted_actions_count = 0
+    for mmr_action in risk.mitigation_actions.all():
+        if mmr_action.status != 'COMPLETED':
+            uncompleted_actions_count += 1
+    if uncompleted_actions_count == 0:
+        risk.condition = 'MITIGATED'
+    else:
+        risk.condition = 'UNMITIGATED'
+    risk.save(update_fields=['condition'])
+
+    return redirect('sms:action_detail', action_id=action_id)

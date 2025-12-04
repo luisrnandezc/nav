@@ -66,97 +66,101 @@
 					<!-- Unmitigated Risks -->
 					{% if unmitigated_risks %}
 						{% for risk in unmitigated_risks %}
-							<div class="report-card">
-								<div class="report-header">
-									<div class="report-date-time">
-										<span class="report-date">Riesgo ID: {{ risk.id }}</span>
-										<span class="report-time">Creado: {{ risk.created_at|date:"d/m/Y" }}</span>
-									</div>
-									{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
-										<div class="report-status-badge status-critical">
-											SIN MITIGAR
+							<a href="{% url 'sms:risk_detail' risk.id %}" class="report-card-link">
+								<div class="report-card">
+									<div class="report-header">
+										<div class="report-date-time">
+											<span class="report-date">Riesgo ID: {{ risk.id }}</span>
+											<span class="report-time">Creado: {{ risk.created_at|date:"d/m/Y" }}</span>
 										</div>
-									{% else %}
-										<div class="report-status-badge status-unmitigated">
-											SIN MITIGAR
-										</div>
-									{% endif %}
-								</div>
-								
-								<div class="report-content">
-									{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
-										<div class="critical-risk-warning">
-											<span class="critical-risk-text">⚠️ RIESGO CRÍTICO</span>
-										</div>
-									{% endif %}
-									<div class="report-data-section">
-										<div class="report-data">
-											<span class="report-label">Reporte:</span>
-											<span class="report-value">{{ risk.report.code|default:"No registrado" }}</span>
-										</div>
-										<div class="report-data">
-											<span class="report-label">Pre-evaluación:</span>
-											<span class="report-value">{{ risk.pre_evaluation }}</span>
-										</div>
-										<div class="report-data">
-											<span class="report-label">Estado:</span>
-											<span class="report-value">{{ risk.get_status_display }}</span>
-										</div>
-										<div class="report-data">
-											<span class="report-label">Condición:</span>
-											<span class="report-value">{{ risk.get_condition_display }}</span>
-										</div>
+										{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
+											<div class="report-status-badge status-critical">
+												SIN MITIGAR
+											</div>
+										{% else %}
+											<div class="report-status-badge status-unmitigated">
+												SIN MITIGAR
+											</div>
+										{% endif %}
 									</div>
 									
-									<div class="report-description">
-										<span class="report-label">Descripción:</span>
-										<p class="report-description-text">{{ risk.description|truncatewords:30 }}</p>
+									<div class="report-content">
+										{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
+											<div class="critical-risk-warning">
+												<span class="critical-risk-text">⚠️ RIESGO CRÍTICO</span>
+											</div>
+										{% endif %}
+										<div class="report-data-section">
+											<div class="report-data">
+												<span class="report-label">Reporte:</span>
+												<span class="report-value">{{ risk.report.code|default:"No registrado" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Pre-evaluación:</span>
+												<span class="report-value">{{ risk.pre_evaluation }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Estado:</span>
+												<span class="report-value">{{ risk.get_status_display }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Condición:</span>
+												<span class="report-value">{{ risk.get_condition_display }}</span>
+											</div>
+										</div>
+										
+										<div class="report-description">
+											<span class="report-label">Descripción:</span>
+											<p class="report-description-text">{{ risk.description|truncatewords:30 }}</p>
+										</div>
 									</div>
 								</div>
-							</div>
+							</a>
 						{% endfor %}
 					{% endif %}
 
 					<!-- Mitigated Risks -->
 					{% if mitigated_risks %}
 						{% for risk in mitigated_risks %}
-							<div class="report-card">
-								<div class="report-header">
-									<div class="report-date-time">
-										<span class="report-date">Riesgo ID: {{ risk.id }}</span>
-										<span class="report-time">Creado: {{ risk.created_at|date:"d/m/Y" }}</span>
-									</div>
-									<div class="report-status-badge status-mitigated">
-										MITIGADO
-									</div>
-								</div>
-								
-								<div class="report-content">
-									<div class="report-data-section">
-										<div class="report-data">
-											<span class="report-label">Reporte:</span>
-											<span class="report-value">{{ risk.report.code|default:"No registrado" }}</span>
+							<a href="{% url 'sms:risk_detail' risk.id %}" class="report-card-link">
+								<div class="report-card">
+									<div class="report-header">
+										<div class="report-date-time">
+											<span class="report-date">Riesgo ID: {{ risk.id }}</span>
+											<span class="report-time">Creado: {{ risk.created_at|date:"d/m/Y" }}</span>
 										</div>
-										<div class="report-data">
-											<span class="report-label">Pre-evaluación:</span>
-											<span class="report-value">{{ risk.pre_evaluation }}</span>
-										</div>
-										<div class="report-data">
-											<span class="report-label">Estado:</span>
-											<span class="report-value">{{ risk.get_status_display }}</span>
-										</div>
-										<div class="report-data">
-											<span class="report-label">Condición:</span>
-											<span class="report-value">{{ risk.get_condition_display }}</span>
+										<div class="report-status-badge status-mitigated">
+											MITIGADO
 										</div>
 									</div>
 									
-									<div class="report-description">
-										<span class="report-label">Descripción:</span>
-										<p class="report-description-text">{{ risk.description|truncatewords:30 }}</p>
+									<div class="report-content">
+										<div class="report-data-section">
+											<div class="report-data">
+												<span class="report-label">Reporte:</span>
+												<span class="report-value">{{ risk.report.code|default:"No registrado" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Pre-evaluación:</span>
+												<span class="report-value">{{ risk.pre_evaluation }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Estado:</span>
+												<span class="report-value">{{ risk.get_status_display }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Condición:</span>
+												<span class="report-value">{{ risk.get_condition_display }}</span>
+											</div>
+										</div>
+										
+										<div class="report-description">
+											<span class="report-label">Descripción:</span>
+											<p class="report-description-text">{{ risk.description|truncatewords:30 }}</p>
+										</div>
 									</div>
 								</div>
-							</div>
+							</a>
 						{% endfor %}
 					{% endif %}
 
@@ -238,7 +242,7 @@
 									<div class="report-content">
 										<div class="report-data-section">
 											<div class="report-data">
-												<span class="report-label">Riesgo:</span>
+												<span class="report-label">Reporte:</span>
 												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
 											</div>
 											<div class="report-data">
@@ -283,7 +287,7 @@
 									<div class="report-content">
 										<div class="report-data-section">
 											<div class="report-data">
-												<span class="report-label">Riesgo:</span>
+												<span class="report-label">Reporte:</span>
 												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
 											</div>
 											<div class="report-data">

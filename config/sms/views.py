@@ -2,6 +2,7 @@ import os
 import json
 from types import SimpleNamespace
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from openai import OpenAI
 from .forms import SMSVoluntaryHazardReportForm
 from django.contrib import messages
@@ -834,15 +835,50 @@ def run_ai_analysis_for_voluntary_hazard_report(report):
 
 
 @login_required
+def risk_detail(request, risk_id):
+    """
+    A view to display the detail of a Risk and its related actions.
+    """
+    risk = get_object_or_404(Risk, id=risk_id)
+    
+    # Get all actions related to this risk
+    all_actions = risk.mitigation_actions.all()
+    pending_actions = all_actions.filter(status='PENDING')
+    completed_actions = all_actions.filter(status='COMPLETED')
+    expired_actions = all_actions.filter(status='EXPIRED')
+    
+    context = {
+        'risk': risk,
+        'pending_actions': pending_actions,
+        'completed_actions': completed_actions,
+        'expired_actions': expired_actions,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+    }
+    
+    return render(request, 'sms/risk_detail.html', context)
+
+
+@login_required
 def action_detail(request, action_id):
     """
     A view to display the detail of a MitigationAction.
     """
     action = get_object_or_404(MitigationAction, id=action_id)
     
+    # Determine the back URL based on the referrer
+    referer = request.META.get('HTTP_REFERER', '')
+    # Check if the referer contains '/risk/' which indicates it came from risk_detail page
+    if '/risk/' in referer:
+        # If coming from risk_detail page, go back to that risk's detail page
+        back_url = reverse('sms:risk_detail', args=[action.risk.id])
+    else:
+        # Default to SMS dashboard (from sms_dashboard or direct access)
+        back_url = reverse('sms:sms_dashboard')
+    
     context = {
         'action': action,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'back_url': back_url,
     }
     
     return render(request, 'sms/action_detail.html', context)

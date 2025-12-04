@@ -109,7 +109,7 @@
 										<div class="risk-header">
 											<span class="risk-evaluation-badge {{ risk_data.evaluation|risk_color }}">{{ risk_data.evaluation|default:"N/A" }}</span>
 											<span class="risk-key">{{ "Riesgo "|add:risk_key|cut:"risk" }}</span>
-											{% if can_manage_sms %}
+											{% if can_manage_sms and not report.mmrs_created %}
 												<form
 													method="post"
 													action="{% url 'sms:delete_risk' report.id risk_key %}"
@@ -127,7 +127,7 @@
 											{% endif %}
 										</div>
 										<div class="risk-text">{{ risk_data.description|default:"Sin descripción" }}</div>
-										{% if can_manage_sms %}
+										{% if can_manage_sms and not report.mmrs_created %}
 											{% with current_eval=risk_data.evaluation|default:"A1" %}
 												{% with current_severity=current_eval|slice:":1" current_probability=current_eval|slice:"1:2" %}
 													<form
@@ -180,7 +180,7 @@
 								<p class="no-risks-message">No hay riesgos registrados en el análisis actual.</p>
 							{% endif %}
 
-							{% if can_manage_sms %}
+							{% if can_manage_sms and not report.mmrs_created %}
 								<div class="risk-add-form">
 									<h3>Agregar nuevo riesgo</h3>
 									<form method="post" action="{% url 'sms:add_risk' report.id %}">
@@ -243,7 +243,7 @@
 													{% for action in risk_entry.actions %}
 														<li class="action-item">
 															<span class="action-text">{{ action }}</span>
-															{% if can_manage_sms %}
+															{% if can_manage_sms and not report.mmrs_created %}
 																<form
 																	method="post"
 																	action="{% url 'sms:delete_action' report.id risk_entry.key forloop.counter0 %}"
@@ -267,7 +267,7 @@
 													</li>
 												{% endif %}
 											</ul>
-											{% if can_manage_sms %}
+											{% if can_manage_sms and not report.mmrs_created %}
 												<form
 													method="post"
 													action="{% url 'sms:add_action' report.id risk_entry.key %}"
@@ -368,11 +368,11 @@
 										rows="3"
 										maxlength="200"
 										class="validity-form-textarea"
-										required
+										{% if report.code %}disabled{% else %}required{% endif %}
 										placeholder="Indique el motivo para invalidar el reporte..."
 									></textarea>
 									<div class="validity-form-row">
-										<button type="submit" class="validity-update-button validity-update-button-danger">
+										<button type="submit" class="validity-update-button validity-update-button-danger" {% if report.code %}disabled{% endif %}>
 											Invalidar reporte
 										</button>
 									</div>
@@ -388,25 +388,73 @@
 								{% if report.code %}
 									<p id="register-warning-text">⚠️ Este reporte ya ha sido registrado con el código: {{ report.code }}</p>
 								{% else %}
-									<p>Al registrar el reporte, se generará el PDF y se crearán las acciones de mitigación definidas
-										en la sección "ACCIONES DE MITIGACIÓN".
-									</p>
+									<p>Al registrar el reporte, se generará el PDF y se le asignará el código único de registro para la base de datos.</p>
 									<p id="register-warning-text">⚠️ IMPORTANTE: Esta acción no se puede deshacer.</p>
 								{% endif %}
 							</div>
-							{% if not report.code %}
-								<a href="{% url 'sms:register_rvp' report.id %}" class="register-button" target="_blank" onclick="return confirm('¿Está seguro que desea registrar este reporte? Esta acción generará el PDF y creará las acciones de mitigación en la base de datos. Esta acción no se puede deshacer.');">
-									Registrar
-								</a>
-							{% else %}
-								<a href="{% url 'sms:register_rvp' report.id %}" class="register-button" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" title="Este reporte ya ha sido registrado">
-									Registrado
-								</a>
-							{% endif %}
+							<div class="buttons-container">
+								<div class="button">
+									{% if not report.code %}
+										<a 
+										href="{% url 'sms:register_rvp' report.id %}" 
+										class="register-button" 
+										onclick="return confirm('¿Está seguro que desea registrar este reporte? Esta acción generará el PDF Esta acción no se puede deshacer.');">
+											Registrar
+										</a>
+									{% else %}
+										<a 
+										href="{% url 'sms:register_rvp' report.id %}" 
+										class="register-button" 
+										style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" 
+										title="Este reporte ya ha sido registrado">
+											Registrado
+										</a>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- MMRs Creation Section -->
+					<div class="info-section" id="register-section-container">
+						<div class="register-container">
+							<div class="register-text-container">
+								{% if report.mmrs_created %}
+									<p id="register-warning-text">⚠️ Las MMRs para este reporte ya han sido creadas.</p>
+								{% else %}
+									<p>Al presionar el botón se crearán las MMRs para el reporte.</p>
+									<p id="register-warning-text">⚠️ IMPORTANTE: Esta acción no se puede deshacer.</p>
+								{% endif %}
+							</div>
+							<div class="buttons-container">
+								<div class="button">
+									{% if report.human_validated and not report.mmrs_created %}
+										<a 
+										href="{% url 'sms:create_mmrs' report.id %}" 
+										class="register-button" 
+										onclick="return confirm('¿Está seguro que desea crear las MMRs para este reporte? Esta acción no se puede deshacer.');">
+											Crear MMRs
+										</a>
+									{% else %}
+										<span class="register-button" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">MMRs creadas</span>
+									{% endif %}
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		
+		{% if should_download_pdf %}
+		<script>
+			// Auto-trigger PDF download after page loads
+			window.addEventListener('load', function() {
+				setTimeout(function() {
+					window.location.href = "{% url 'sms:download_rvp_pdf' report.id %}";
+				}, 500); // Small delay to ensure page is fully loaded
+			});
+		</script>
+		{% endif %}
 	</body>
 </html>

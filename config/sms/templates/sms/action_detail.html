@@ -1,0 +1,172 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>NAV | Detalle de MMR</title>
+		<link href="{% static 'action_detail.css' %}" rel="stylesheet" />
+		<link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="main-container">
+			<div class="detail-container">
+				<div class="back-button">
+					<a href="{{ back_url }}" class="button">&larr; Volver</a>
+				</div>
+				<div class="detail-header">
+					<h1>Detalle de MMR</h1>
+				</div>
+
+				<div class="detail-content">
+					<!-- Action Information Section -->
+					<div class="info-section">
+						<h2 class="section-title">Información de la Acción</h2>
+						<div class="info-grid">
+							<div class="info-item">
+								<span class="info-label">MMR ID</span>
+								<span class="info-value">{{ action.id }}</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Estado</span>
+								<span class="info-value">
+									{% if action.status == 'PENDING' %}
+										<span class="status-badge status-pending">{{ action.get_status_display }}</span>
+									{% elif action.status == 'COMPLETED' %}
+										<span class="status-badge status-completed">{{ action.get_status_display }}</span>
+									{% elif action.status == 'EXPIRED' %}
+										<span class="status-badge status-expired">{{ action.get_status_display }}</span>
+									{% endif %}
+								</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Fecha de creación</span>
+								<span class="info-value">{{ action.created_at|date:"d/m/Y" }}</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Fecha límite</span>
+								<span class="info-value">{{ action.due_date|date:"d/m/Y" }}</span>
+							</div>
+						</div>
+						<div class="info-grid">
+							<div class="info-item">
+								<span class="info-label">Reporte</span>
+								<span class="info-value">{{ action.risk.report.code|default:"No registrado" }}</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Riesgo ID</span>
+								<span class="info-value">{{ action.risk.id }}</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Pre-evaluación del Riesgo</span>
+								<span class="info-value">{{ action.risk.pre_evaluation }}</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Estado del Riesgo</span>
+								<span class="info-value">{{ action.risk.get_status_display }}</span>
+							</div>
+						</div>
+						<div class="info-item">
+							<span class="info-label">Descripción</span>
+							<div class="analysis-text">{{ action.description }}</div>
+						</div>
+					</div>
+
+					<!-- Notes Section -->
+					{% if can_manage_sms %}
+						<div class="info-section">
+							<h2 class="section-title">Notas</h2>
+							{% if action.status == 'COMPLETED' %}
+								{% if action.notes %}
+									<div class="analysis-text">{{ action.notes }}</div>
+								{% else %}
+									<div class="analysis-text" style="color: rgba(255, 255, 255, 0.5); font-style: italic;">No hay notas registradas.</div>
+								{% endif %}
+								<p class="readonly-notice">⚠️ Esta acción está completada. Las notas no pueden ser modificadas.</p>
+							{% else %}
+								<form method="post" action="{% url 'sms:update_action_notes' action.id %}" class="notes-form">
+									{% csrf_token %}
+									<textarea
+										name="notes"
+										rows="5"
+										maxlength="200"
+										class="notes-textarea"
+										placeholder="Agregar notas sobre esta acción de mitigación..."
+									>{{ action.notes|default:"" }}</textarea>
+									<div class="form-row">
+										<button type="submit" class="update-button">Guardar notas</button>
+									</div>
+								</form>
+							{% endif %}
+						</div>
+					{% else %}
+						{% if action.notes %}
+							<div class="info-section">
+								<h2 class="section-title">Notas</h2>
+								<div class="analysis-text">{{ action.notes }}</div>
+							</div>
+						{% endif %}
+					{% endif %}
+
+					<!-- Update Due Date Section -->
+					{% if can_manage_sms %}
+						<div class="info-section">
+							<h2 class="section-title">Fecha Límite</h2>
+							{% if action.status == 'COMPLETED' %}
+								<div class="info-item">
+									<span class="info-label">Fecha límite</span>
+									<span class="info-value">{{ action.due_date|date:"d/m/Y" }}</span>
+								</div>
+								<p class="readonly-notice">⚠️ Esta acción está completada. La fecha límite no puede ser modificada.</p>
+							{% else %}
+								<form method="post" action="{% url 'sms:update_action_due_date' action.id %}" class="due-date-form">
+									{% csrf_token %}
+									<div class="form-row">
+										<label for="due_date" class="form-label">Nueva fecha límite</label>
+										<input
+											type="date"
+											id="due_date"
+											name="due_date"
+											value="{{ action.due_date|date:'Y-m-d' }}"
+											class="date-input"
+											required
+										/>
+									</div>
+									<div class="form-row">
+										<button type="submit" class="update-button">Actualizar fecha límite</button>
+									</div>
+								</form>
+							{% endif %}
+						</div>
+					{% endif %}
+
+					<!-- Mark as Completed Section -->
+					{% if can_manage_sms and action.status != 'COMPLETED' %}
+						<div class="info-section">
+							<h2 class="section-title">Marcar como Completada</h2>
+							<div class="warning-box">
+								<p class="warning-text">⚠️ <strong>IMPORTANTE:</strong> Al marcar esta acción como completada:</p>
+								<ul class="warning-list">
+									<li>El estado cambiará permanentemente a "Completada"</li>
+									<li>Las notas y la fecha límite <strong>NO podrán ser modificadas</strong> después de esta acción</li>
+									<li>Esta acción <strong>NO puede ser revertida</strong></li>
+								</ul>
+							</div>
+							<form method="post" action="{% url 'sms:mark_action_completed' action.id %}" class="complete-form">
+								{% csrf_token %}
+								<div class="form-row">
+									<button type="submit" class="complete-button" onclick="return confirm('⚠️ ADVERTENCIA: Al marcar esta acción como completada, las notas y la fecha límite no podrán ser modificadas y esta acción no puede ser revertida.\n\n¿Está seguro que desea continuar?');">
+										Marcar como completada
+									</button>
+								</div>
+							</form>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+

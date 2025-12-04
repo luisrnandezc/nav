@@ -398,7 +398,6 @@
 										<a 
 										href="{% url 'sms:register_rvp' report.id %}" 
 										class="register-button" 
-										target="_blank" 
 										onclick="return confirm('¿Está seguro que desea registrar este reporte? Esta acción generará el PDF Esta acción no se puede deshacer.');">
 											Registrar
 										</a>
@@ -433,7 +432,6 @@
 										<a 
 										href="{% url 'sms:create_mmrs' report.id %}" 
 										class="register-button" 
-										target="_blank" 
 										onclick="return confirm('¿Está seguro que desea crear las MMRs para este reporte? Esta acción no se puede deshacer.');">
 											Crear MMRs
 										</a>
@@ -447,5 +445,16 @@
 				</div>
 			</div>
 		</div>
+		
+		{% if should_download_pdf %}
+		<script>
+			// Auto-trigger PDF download after page loads
+			window.addEventListener('load', function() {
+				setTimeout(function() {
+					window.location.href = "{% url 'sms:download_rvp_pdf' report.id %}";
+				}, 500); // Small delay to ensure page is fully loaded
+			});
+		</script>
+		{% endif %}
 	</body>
 </html>

@@ -479,13 +479,60 @@ body {
 
 /* Tablet */
 @media screen and (max-width: 1024px) {
+  .sms-school-status-container {
+    width: 95%;
+    padding: 22px;
+  }
+
   .reports-section-container {
     max-width: 100%;
     padding: 20px;
   }
+
+  .sms-status-stats {
+    gap: 25px;
+  }
 }
 
 @media screen and (max-width: 768px) {
+  .sms-header h1 {
+    font-size: 2.0rem;
+  }
+
+  .buttons-container {
+    gap: 15px;
+  }
+
+  .main-button .button {
+    min-width: 150px;
+    font-size: 0.9rem;
+    padding: 12px 20px;
+  }
+
+  .sms-school-status-container {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .sms-school-status-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .sms-status-badge {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+  }
+
+  .sms-status-stats {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 15px;
+  }
+
+  .sms-stat-value {
+    font-size: 1.5rem;
+  }
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
@@ -507,6 +554,11 @@ body {
     gap: 10px;
   }
 
+  .report-data-section {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
   .report-label {
     min-width: auto;
   }
@@ -517,6 +569,53 @@ body {
     padding: 10px;
   }
 
+  .sms-header h1 {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+  }
+
+  .sms-header p {
+    font-size: 0.8rem;
+  }
+
+  .buttons-container {
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .main-button .button {
+    min-width: 120px;
+    font-size: 0.8rem;
+    padding: 10px 15px;
+  }
+
+  .sms-school-status-container {
+    padding: 15px;
+  }
+
+  .sms-school-status-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .sms-status-badge {
+    font-size: 1rem;
+    padding: 8px 16px;
+    letter-spacing: 1px;
+  }
+
+  .sms-status-stats {
+    padding: 10px;
+    gap: 15px;
+  }
+
+  .sms-stat-label {
+    font-size: 0.8rem;
+  }
+
+  .sms-stat-value {
+    font-size: 1.3rem;
+  }
+
   .reports-section-container {
     max-width: 100%;
     padding: 15px;
@@ -524,5 +623,9 @@ body {
 
   .section-header h2 {
     font-size: 1.2rem;
+  }
+
+  .report-data-section {
+    gap: 8px;
   }
 }

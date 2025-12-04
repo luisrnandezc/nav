@@ -678,7 +678,7 @@ def voluntary_hazard_report(request):
         if form.is_valid():
             try:
                 form.save()
-                return redirect('sms:sms_dashboard')
+                return redirect('sms:voluntary_hazard_reports_dashboard')
             except Exception as e:
                 messages.error(request, f'Error al guardar el reporte: {str(e)}')
         else:

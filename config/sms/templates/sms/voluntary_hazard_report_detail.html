@@ -109,7 +109,7 @@
 										<div class="risk-header">
 											<span class="risk-evaluation-badge {{ risk_data.evaluation|risk_color }}">{{ risk_data.evaluation|default:"N/A" }}</span>
 											<span class="risk-key">{{ "Riesgo "|add:risk_key|cut:"risk" }}</span>
-											{% if can_manage_sms %}
+											{% if can_manage_sms and not report.mmrs_created %}
 												<form
 													method="post"
 													action="{% url 'sms:delete_risk' report.id risk_key %}"
@@ -127,7 +127,7 @@
 											{% endif %}
 										</div>
 										<div class="risk-text">{{ risk_data.description|default:"Sin descripción" }}</div>
-										{% if can_manage_sms %}
+										{% if can_manage_sms and not report.mmrs_created %}
 											{% with current_eval=risk_data.evaluation|default:"A1" %}
 												{% with current_severity=current_eval|slice:":1" current_probability=current_eval|slice:"1:2" %}
 													<form
@@ -180,7 +180,7 @@
 								<p class="no-risks-message">No hay riesgos registrados en el análisis actual.</p>
 							{% endif %}
 
-							{% if can_manage_sms %}
+							{% if can_manage_sms and not report.mmrs_created %}
 								<div class="risk-add-form">
 									<h3>Agregar nuevo riesgo</h3>
 									<form method="post" action="{% url 'sms:add_risk' report.id %}">
@@ -243,7 +243,7 @@
 													{% for action in risk_entry.actions %}
 														<li class="action-item">
 															<span class="action-text">{{ action }}</span>
-															{% if can_manage_sms %}
+															{% if can_manage_sms and not report.mmrs_created %}
 																<form
 																	method="post"
 																	action="{% url 'sms:delete_action' report.id risk_entry.key forloop.counter0 %}"
@@ -267,7 +267,7 @@
 													</li>
 												{% endif %}
 											</ul>
-											{% if can_manage_sms %}
+											{% if can_manage_sms and not report.mmrs_created %}
 												<form
 													method="post"
 													action="{% url 'sms:add_action' report.id risk_entry.key %}"

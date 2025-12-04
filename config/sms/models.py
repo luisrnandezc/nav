@@ -329,8 +329,8 @@ class MitigationAction(models.Model):
     #endregion
 
     class Meta:
-        verbose_name = "Acción de mitigación"
-        verbose_name_plural = "Acciones de mitigación"
+        verbose_name = "MMR"
+        verbose_name_plural = "MMR"
         
     def __str__(self):
         if self.risk.report.code:

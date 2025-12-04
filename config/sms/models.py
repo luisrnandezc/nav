@@ -7,8 +7,8 @@ import json
 
 
 def default_due_date():
-    """Return a date 30 days from today."""
-    return timezone.now().date() + timedelta(days=30)
+    """Return a date 15 days from today."""
+    return timezone.now().date() + timedelta(days=15)
 
 
 class VoluntaryHazardReport(models.Model):
@@ -270,9 +270,9 @@ class Risk(models.Model):
         
     def __str__(self):
         if self.report.code:
-            return "{} - {}".format(self.report.code, self.condition)
+            return "{} - {} - ID: {}".format(self.report.code, self.condition, self.id)
         else:
-            return "NO REGISTRADO - {}".format(self.condition)
+            return "NO REGISTRADO - {} - ID: {}".format(self.condition, self.id)
 
     def pre_evaluation(self):
         """Return the risk evaluation before mitigation"""

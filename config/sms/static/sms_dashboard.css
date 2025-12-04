@@ -91,7 +91,7 @@ body {
   width: 90%;
   max-width: 1400px;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(218, 225, 255, 0.3);
+  border: 1px solid #4169E1;
   border-radius: 15px;
   padding: 25px;
   backdrop-filter: blur(10px);
@@ -125,7 +125,7 @@ body {
   width: 90%;
   max-width: 1400px;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(218, 225, 255, 0.3);
+  border: 1px solid #4169E1;
   border-radius: 15px;
   padding: 25px;
   backdrop-filter: blur(10px);

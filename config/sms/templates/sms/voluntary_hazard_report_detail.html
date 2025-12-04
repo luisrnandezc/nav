@@ -368,11 +368,11 @@
 										rows="3"
 										maxlength="200"
 										class="validity-form-textarea"
-										required
+										{% if report.code %}disabled{% else %}required{% endif %}
 										placeholder="Indique el motivo para invalidar el reporte..."
 									></textarea>
 									<div class="validity-form-row">
-										<button type="submit" class="validity-update-button validity-update-button-danger">
+										<button type="submit" class="validity-update-button validity-update-button-danger" {% if report.code %}disabled{% endif %}>
 											Invalidar reporte
 										</button>
 									</div>

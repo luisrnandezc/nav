@@ -5,6 +5,7 @@ app_name = 'sms'
 
 urlpatterns = [
     path('', views.sms_dashboard, name='sms_dashboard'),
+    path('voluntary_hazard_reports_dashboard/', views.voluntary_hazard_reports_dashboard, name='voluntary_hazard_reports_dashboard'),
     path('voluntary_hazard_report/', views.voluntary_hazard_report, name='voluntary_hazard_report'),
     path('voluntary_hazard_report/<int:report_id>/', views.voluntary_hazard_report_detail, name='voluntary_hazard_report_detail'),
     path('voluntary_hazard_report/<int:report_id>/register/', views.register_rvp, name='register_rvp'),

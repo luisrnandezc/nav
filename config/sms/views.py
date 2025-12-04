@@ -25,14 +25,69 @@ def sms_dashboard(request):
     """
     A view to handle the SMS main page.
     """
-    # Get all voluntary hazard reports ordered by most recent first
-    voluntary_reports = VoluntaryHazardReport.objects.all().order_by('-created_at')
+    # Get all the risk data.
+    mitigated_risks = Risk.objects.filter(condition='MITIGATED')
+    mitigated_risks_count = mitigated_risks.count()
+    unmitigated_risks = Risk.objects.filter(condition='UNMITIGATED')
+    unmitigated_risks_count = unmitigated_risks.count()
+    
+    # Get all the action data.
+    completed_actions = MitigationAction.objects.filter(status='COMPLETED')
+    completed_actions_count = completed_actions.count()
+    pending_actions = MitigationAction.objects.filter(status='PENDING')
+    pending_actions_count = pending_actions.count()
+    expired_actions = MitigationAction.objects.filter(status='EXPIRED')
+    expired_actions_count = expired_actions.count()
+
+    # Compute SMS school status.
+    intolerable_risks_count = 0
+    tolerable_risks_count = 0
+    acceptable_risks_count = 0
+    for risk in unmitigated_risks:
+        if risk.status == 'INTOLERABLE':
+            intolerable_risks_count += 1
+        elif risk.status == 'TOLERABLE':
+            tolerable_risks_count += 1
+        elif risk.status == 'ACCEPTABLE':
+            acceptable_risks_count += 1
+        else:
+            continue
+    
+    sms_school_status = 'NO CALCULADO'
+    if intolerable_risks_count > 0:
+        sms_school_status = 'INTOLERABLE'
+    elif tolerable_risks_count > 0:
+        if tolerable_risks_count >= 10:
+            sms_school_status = 'INTOLERABLE'
+        sms_school_status = 'TOLERABLE'
+    else:
+        sms_school_status = 'ACEPTABLE'
     
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
-        'voluntary_reports': voluntary_reports,
+        'mitigated_risks': mitigated_risks,
+        'unmitigated_risks': unmitigated_risks,
+        'unmitigated_risks_count': unmitigated_risks_count,
+        'completed_actions': completed_actions,
+        'pending_actions': pending_actions,
+        'pending_actions_count': pending_actions_count,
+        'expired_actions': expired_actions,
+        'sms_school_status': sms_school_status,
     }
     return render(request, 'sms/sms_dashboard.html', context)
+
+
+@login_required
+def voluntary_hazard_reports_dashboard(request):
+    """
+    A view to handle the RVP main page.
+    """
+    # Get all voluntary hazard reports ordered by most recent first
+    voluntary_reports = VoluntaryHazardReport.objects.all().order_by('-created_at')
+    context = {
+        'voluntary_reports': voluntary_reports,
+    }
+    return render(request, 'sms/voluntary_hazard_reports_dashboard.html', context)
 
 
 def renumber_risks(risks, actions):

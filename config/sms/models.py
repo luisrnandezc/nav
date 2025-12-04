@@ -7,8 +7,8 @@ import json
 
 
 def default_due_date():
-    """Return a date 30 days from today."""
-    return timezone.now().date() + timedelta(days=30)
+    """Return a date 15 days from today."""
+    return timezone.now().date() + timedelta(days=15)
 
 
 class VoluntaryHazardReport(models.Model):
@@ -133,6 +133,11 @@ class VoluntaryHazardReport(models.Model):
         verbose_name="Email de análisis enviado",
         help_text="Indica si se ha enviado el email de notificación cuando el análisis fue completado",
     )
+    mmrs_created = models.BooleanField(
+        default=False,
+        verbose_name="MMRs creadas",
+        help_text="Indica si se han creado las MMRs para el reporte",
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación",
@@ -148,11 +153,14 @@ class VoluntaryHazardReport(models.Model):
     #endregion
 
     class Meta:
-        verbose_name = "Reporte de peligro voluntario"
-        verbose_name_plural = "Reportes de peligro voluntarios"
+        verbose_name = "RVP"
+        verbose_name_plural = "RVP"
         
     def __str__(self):
-        return "{} {}".format(self.date, self.area)
+        if self.code:
+            return "{} - {}".format(self.code, self.area)
+        else:
+            return "NO REGISTRADO - {}".format(self.area)
     
     def has_ai_analysis(self):
         """Check if this report has a completed AI hazard analysis"""
@@ -174,6 +182,11 @@ class Risk(models.Model):
         ('INTOLERABLE', 'Intolerable'),
         ('TOLERABLE', 'Tolerable'),
         ('ACCEPTABLE', 'Aceptable'),
+    ]
+
+    CONDITION_CHOICES = [
+        ('UNMITIGATED', 'Sin mitigar'),
+        ('MITIGATED', 'Mitigado'),
     ]
 
     SEVERITY_CHOICES = [
@@ -209,31 +222,37 @@ class Risk(models.Model):
         max_length=1,
         choices=SEVERITY_CHOICES,
         default='0',
-        verbose_name="Severidad pre-mitigación",
+        verbose_name="Severidad pre-mitigación"
     )
     pre_evaluation_probability = models.CharField(
         max_length=1, 
         choices=PROBABILITY_CHOICES,
         default='0',
-        verbose_name="Probabilidad pre-mitigación",
+        verbose_name="Probabilidad pre-mitigación"
     )
     post_evaluation_severity = models.CharField(
         max_length=1, 
         choices=SEVERITY_CHOICES,
         default='0',
-        verbose_name="Severidad post-mitigación",
+        verbose_name="Severidad post-mitigación"
     )
     post_evaluation_probability = models.CharField(
         max_length=1, 
         choices=PROBABILITY_CHOICES,
         default='0',
-        verbose_name="Probabilidad post-mitigación",
+        verbose_name="Probabilidad post-mitigación"
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='NOT_EVALUATED',
-        verbose_name="Estatus",
+        verbose_name="Estatus"
+    )
+    condition = models.CharField(
+        max_length=20,
+        choices=CONDITION_CHOICES,
+        default='UNMITIGATED',
+        verbose_name="Condición"
     )
     created_at = models.DateField(
         default=timezone.now,
@@ -250,7 +269,15 @@ class Risk(models.Model):
         verbose_name_plural = "Riesgos"
         
     def __str__(self):
-        return "{}".format(self.status)
+        if self.report.code:
+            return "{} - {} - ID: {}".format(self.report.code, self.condition, self.id)
+        else:
+            return "NO REGISTRADO - {} - ID: {}".format(self.condition, self.id)
+
+    def pre_evaluation(self):
+        """Return the risk evaluation before mitigation"""
+        return f"{self.pre_evaluation_severity}{self.pre_evaluation_probability}"
+    pre_evaluation.short_description = "Pre-evaluación"
 
 
 class MitigationAction(models.Model):
@@ -302,8 +329,11 @@ class MitigationAction(models.Model):
     #endregion
 
     class Meta:
-        verbose_name = "Acción de mitigación"
-        verbose_name_plural = "Acciones de mitigación"
+        verbose_name = "MMR"
+        verbose_name_plural = "MMR"
         
     def __str__(self):
-        return "{} {}".format(self.status, self.due_date)
+        if self.risk.report.code:
+            return "{} - {}".format(self.risk.report.code, self.status)
+        else:
+            return "NO REGISTRADO - {}".format(self.status)

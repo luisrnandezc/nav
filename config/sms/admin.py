@@ -27,13 +27,13 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
 
 @admin.register(Risk)
 class RiskAdmin(admin.ModelAdmin):
-    list_display = ('id', 'report', 'status', 'created_at')
-    list_filter = ('status', 'created_at')
-    search_fields = ('description', 'report__description')
+    list_display = ('id', 'report', 'pre_evaluation', 'status', 'condition', 'created_at')
+    list_filter = ('report__code', 'status', 'condition', 'created_at')
+    search_fields = ('description', 'report__description', 'report__code')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información del Riesgo', {
-            'fields': ('report', 'description', 'status')
+            'fields': ('report', 'description', 'status', 'condition')
         }),
         ('Evaluación pre-mitigación', {
             'fields': ('pre_evaluation_severity', 'pre_evaluation_probability')

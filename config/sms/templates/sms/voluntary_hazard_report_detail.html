@@ -15,7 +15,7 @@
 		<div class="main-container">
 			<div class="detail-container">
                 <div class="back-button">
-                    <a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
+                    <a href="{{ back_url }}" class="button">&larr; Volver</a>
                 </div>
 				<div class="detail-header">
 					<h1>Detalle del RVP</h1>
@@ -61,6 +61,16 @@
 										Anónimo
 									{% else %}
 										{{ report.last_name|default:"No especificado" }}
+									{% endif %}
+								</span>
+							</div>
+							<div class="info-item">
+								<span class="info-label">Resuelto</span>
+								<span class="info-value">
+									{% if report.is_resolved %}
+										<span class="report-resolved-badge status-resolved-yes">Sí</span>
+									{% else %}
+										<span class="report-resolved-badge status-resolved-no">No</span>
 									{% endif %}
 								</span>
 							</div>

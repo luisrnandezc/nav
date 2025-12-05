@@ -28,11 +28,8 @@
 
 			<!-- Voluntary Hazard Reports Container -->
 			<div class="reports-section-container">
-				<div class="section-header">
+				<div class="section-header header-centered">
 					<h2>Reportes Voluntarios de Peligro (RVP)</h2>
-					<a href="{% url 'sms:voluntary_hazard_report' %}" class="add-button">
-						Agregar RVP
-					</a>
 				</div>
 				
 				<div class="reports-list-container">
@@ -40,21 +37,21 @@
 						{% for report in voluntary_reports %}
 							<a href="{% url 'sms:voluntary_hazard_report_detail' report.id %}" class="report-card-link">
 								<div class="report-card">
-									<div class="report-header">
-										<div class="report-date-time">
-											<span class="report-date">{{ report.date|date:"d/m/Y" }}</span>
-											<span class="report-time">{{ report.time|time:"H:i" }}</span>
-										</div>
+									<div class="status-container">
+										{% if report.is_resolved %}
+											<span class="report-resolved-badge status-resolved-yes">Resuelto</span>
+										{% else %}
+											<span class="report-resolved-badge status-resolved-no">No resuelto</span>
+										{% endif %}
 										<div class="report-status-badge status-{{ report.ai_analysis_status|lower }}">
 											{{ report.get_ai_analysis_status_display }}
 										</div>
 									</div>
-									
 									<div class="report-content">
 										<div class="report-data-section">
 											<div class="report-data">
-												<span class="report-label">Área del peligro:</span>
-												<span class="report-value">{{ report.get_area_display }}</span>
+												<span class="report-label">Fecha de creación:</span>
+												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Reportante:</span>
@@ -71,6 +68,14 @@
 											<div class="report-data">
 												<span class="report-label">Email enviado:</span>
 												<span class="report-value">{{ report.analysis_email_sent|yesno:"Sí,No" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Hora de creación:</span>
+												<span class="report-value">{{ report.time|date:"H:i" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Área del peligro:</span>
+												<span class="report-value">{{ report.get_area_display }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">MMR creadas:</span>
@@ -104,7 +109,7 @@
 
 			<!-- Mandatory Event Reports Container -->
 			<div class="reports-section-container">
-				<div class="section-header">
+				<div class="section-header header-centered">
 					<h2>Reportes Obligatorios de Suceso (ROS)</h2>
 				</div>
 				

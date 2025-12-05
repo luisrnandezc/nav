@@ -26,6 +26,11 @@ def sms_dashboard(request):
     """
     A view to handle the SMS main page.
     """
+
+    # Get all the non resolved voluntary hazard reports, ordered by most recent first
+    non_resolved_voluntary_reports = VoluntaryHazardReport.objects.filter(mmrs_created=True, is_resolved=False).order_by('-created_at')
+    non_resolved_voluntary_reports_count = non_resolved_voluntary_reports.count()
+
     # Get all the risk data.
     mitigated_risks = Risk.objects.filter(condition='MITIGATED')
     mitigated_risks_count = mitigated_risks.count()
@@ -39,6 +44,9 @@ def sms_dashboard(request):
     pending_actions_count = pending_actions.count()
     expired_actions = MitigationAction.objects.filter(status='EXPIRED')
     expired_actions_count = expired_actions.count()
+
+    # Get all voluntary hazard reports with MMRs created, ordered by most recent first
+    voluntary_reports = VoluntaryHazardReport.objects.filter(mmrs_created=True).order_by('-created_at')
 
     # Compute SMS school status.
     intolerable_risks_count = 0
@@ -74,6 +82,9 @@ def sms_dashboard(request):
         'pending_actions_count': pending_actions_count,
         'expired_actions': expired_actions,
         'sms_school_status': sms_school_status,
+        'voluntary_reports': voluntary_reports,
+        'non_resolved_voluntary_reports': non_resolved_voluntary_reports,
+        'non_resolved_voluntary_reports_count': non_resolved_voluntary_reports_count,
     }
     return render(request, 'sms/sms_dashboard.html', context)
 
@@ -158,6 +169,15 @@ def voluntary_hazard_report_detail(request, report_id):
         # Clear the session flag
         del request.session['download_rvp_pdf']
     
+    # Determine the back URL based on the referrer
+    referer = request.META.get('HTTP_REFERER', '')
+    if '/voluntary_hazard_reports_dashboard/' in referer:
+        back_url = reverse('sms:voluntary_hazard_reports_dashboard')
+    elif '/report_with_mmrs/' in referer:
+        back_url = reverse('sms:report_with_mmrs_detail', args=[report.id])
+    else:
+        back_url = reverse('sms:sms_dashboard')
+    
     context = {
         'report': report,
         'ai_analysis': ai_analysis,
@@ -168,6 +188,7 @@ def voluntary_hazard_report_detail(request, report_id):
         'invalidity_reason': invalidity_reason,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
         'should_download_pdf': should_download_pdf,
+        'back_url': back_url,
     }
 
     return render(request, 'sms/voluntary_hazard_report_detail.html', context)
@@ -444,9 +465,10 @@ def update_validity(request, report_id):
         ai_analysis['invalidity_reason'] = reason
         report.is_valid = False
         report.invalidity_reason = reason
+        report.is_resolved = True  # Mark as resolved when invalidated
 
     report.ai_analysis_result = ai_analysis
-    report.save(update_fields=['ai_analysis_result', 'is_valid', 'invalidity_reason', 'updated_at'])
+    report.save(update_fields=['ai_analysis_result', 'is_valid', 'invalidity_reason', 'is_resolved', 'updated_at'])
 
     messages.success(request, f'Se actualizó la validez del reporte.')
     return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
@@ -835,6 +857,34 @@ def run_ai_analysis_for_voluntary_hazard_report(report):
 
 
 @login_required
+def report_with_mmrs_detail(request, report_id):
+    """
+    A view to display the detail of a Voluntary Hazard Report with its risks and actions.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id, mmrs_created=True)
+    
+    # Get all risks related to this report
+    all_risks = report.risks.all()
+    
+    # Get all actions related to this report (through risks)
+    all_actions = MitigationAction.objects.filter(risk__report=report)
+    pending_actions = all_actions.filter(status='PENDING')
+    completed_actions = all_actions.filter(status='COMPLETED')
+    expired_actions = all_actions.filter(status='EXPIRED')
+    
+    context = {
+        'report': report,
+        'risks': all_risks,
+        'pending_actions': pending_actions,
+        'completed_actions': completed_actions,
+        'expired_actions': expired_actions,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+    }
+    
+    return render(request, 'sms/report_with_mmrs_detail.html', context)
+
+
+@login_required
 def risk_detail(request, risk_id):
     """
     A view to display the detail of a Risk and its related actions.
@@ -847,12 +897,22 @@ def risk_detail(request, risk_id):
     completed_actions = all_actions.filter(status='COMPLETED')
     expired_actions = all_actions.filter(status='EXPIRED')
     
+    # Determine the back URL based on the referrer
+    referer = request.META.get('HTTP_REFERER', '')
+    if '/report_with_mmrs/' in referer:
+        # If coming from report_with_mmrs_detail page, go back to that report's detail page
+        back_url = reverse('sms:report_with_mmrs_detail', args=[risk.report.id])
+    else:
+        # Default to SMS dashboard
+        back_url = reverse('sms:sms_dashboard')
+    
     context = {
         'risk': risk,
         'pending_actions': pending_actions,
         'completed_actions': completed_actions,
         'expired_actions': expired_actions,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'back_url': back_url,
     }
     
     return render(request, 'sms/risk_detail.html', context)
@@ -871,6 +931,9 @@ def action_detail(request, action_id):
     if '/risk/' in referer:
         # If coming from risk_detail page, go back to that risk's detail page
         back_url = reverse('sms:risk_detail', args=[action.risk.id])
+    elif '/report_with_mmrs/' in referer:
+        # If coming from report_with_mmrs_detail page, go back to that report's detail page
+        back_url = reverse('sms:report_with_mmrs_detail', args=[action.risk.report.id])
     else:
         # Default to SMS dashboard (from sms_dashboard or direct access)
         back_url = reverse('sms:sms_dashboard')

@@ -187,7 +187,7 @@ body {
 
 .sms-status-stats {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 30px;
   padding: 20px;
   border-top: 1px solid rgba(218, 225, 255, 0.3);
@@ -292,6 +292,22 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.report-header-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.status-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .report-date-time {
   display: flex;
   flex-direction: column;
@@ -385,7 +401,7 @@ body {
 
 .report-data-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
 }
 
@@ -433,6 +449,26 @@ body {
 .status-invalid {
   color: #fff200;
   background-color: rgb(244, 67, 54, 0.3);
+}
+
+.report-resolved-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.status-resolved-yes {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
+}
+
+.status-resolved-no {
+  background: rgba(255, 193, 7, 0.2);
+  color: #FFC107;
 }
 
 .report-description {
@@ -552,6 +588,12 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+
+  .report-header-center {
+    align-self: center;
+    width: 100%;
+    justify-content: center;
   }
 
   .report-data-section {

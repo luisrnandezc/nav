@@ -5,7 +5,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>NAV | Detalle de Riesgo</title>
+		<title>NAV | Detalle de RVP con MMRs</title>
 		<link href="{% static 'risk_detail.css' %}" rel="stylesheet" />
 		<link href="{% static 'shared_components.css' %}" rel="stylesheet" />
 		<link href="{% static 'sms_dashboard.css' %}" rel="stylesheet" />
@@ -14,82 +14,147 @@
 	<body>
 		<div class="main-container">
 			<div class="back-button">
-				<a href="{{ back_url }}" class="button">&larr; Volver</a>
+				<a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
 			</div>
 			<div class="detail-header">
-				<h1>Detalle de Riesgo</h1>
+				<h1>Detalle de RVP</h1>
 			</div>
 
 			<div class="detail-content">
-				<!-- Risk Information Section -->
-				<div class="info-section">
-					<h2 class="section-title">Información del Riesgo</h2>
+				<!-- Report Information Section -->
+				<div class="reports-section-container">
+					<div class="section-header header-centered">
+						<h2>Información del Reporte</h2>
+					</div>
 					<div class="info-grid">
 						<div class="info-item">
-							<span class="info-label">Riesgo ID</span>
-							<span class="info-value">{{ risk.id }}</span>
+							<span class="info-label">Código de Registro</span>
+							<span class="info-value">{{ report.code|default:"No registrado" }}</span>
 						</div>
 						<div class="info-item">
-							<span class="info-label">Estatus</span>
-							<span class="info-value">
-								{% if risk.status == 'INTOLERABLE' %}
-									<span class="status-badge status-intolerable">{{ risk.get_status_display }}</span>
-								{% elif risk.status == 'TOLERABLE' %}
-									<span class="status-badge status-tolerable">{{ risk.get_status_display }}</span>
-								{% elif risk.status == 'ACCEPTABLE' %}
-									<span class="status-badge status-aceptable">{{ risk.get_status_display }}</span>
-								{% else %}
-									<span class="status-badge status-not-evaluated">{{ risk.get_status_display }}</span>
-								{% endif %}
-							</span>
+							<span class="info-label">Fecha</span>
+							<span class="info-value">{{ report.date|date:"d/m/Y" }}</span>
 						</div>
 						<div class="info-item">
-							<span class="info-label">Condición</span>
-							<span class="info-value">
-								{% if risk.condition == 'MITIGATED' %}
-									<span class="status-badge status-mitigated">{{ risk.get_condition_display }}</span>
-								{% else %}
-									<span class="status-badge status-unmitigated">{{ risk.get_condition_display }}</span>
-								{% endif %}
-							</span>
+							<span class="info-label">Hora</span>
+							<span class="info-value">{{ report.time|time:"H:i" }}</span>
 						</div>
 						<div class="info-item">
-							<span class="info-label">Fecha de creación</span>
-							<span class="info-value">{{ risk.created_at|date:"d/m/Y" }}</span>
+							<span class="info-label">Área</span>
+							<span class="info-value">{{ report.get_area_display }}</span>
 						</div>
 					</div>
 					<div class="info-grid">
 						<div class="info-item">
-							<span class="info-label">Reporte</span>
-							<span class="info-value">{{ risk.report.code|default:"No registrado" }}</span>
+							<span class="info-label">Rol del Reportante</span>
+							<span class="info-value">{{ report.get_role_display|default:"No especificado" }}</span>
 						</div>
 						<div class="info-item">
-							<span class="info-label">Pre-evaluación</span>
-							<span class="info-value">{{ risk.pre_evaluation }}</span>
-						</div>
-						<div class="info-item">
-							<span class="info-label">Post-evaluación</span>
+							<span class="info-label">Nombre del Reportante</span>
 							<span class="info-value">
-								{% if risk.post_evaluation_severity != '0' and risk.post_evaluation_probability != '0' %}
-									{{ risk.post_evaluation_severity }}{{ risk.post_evaluation_probability }}
+								{% if report.is_anonymous == 'YES' %}
+									Anónimo
 								{% else %}
-									No evaluado
+									{{ report.first_name|default:"No especificado" }}
 								{% endif %}
 							</span>
 						</div>
 						<div class="info-item">
-							<span class="info-label">Fecha de actualización</span>
-							<span class="info-value">{{ risk.updated_at|date:"d/m/Y" }}</span>
+							<span class="info-label">Apellido del Reportante</span>
+							<span class="info-value">
+								{% if report.is_anonymous == 'YES' %}
+									Anónimo
+								{% else %}
+									{{ report.last_name|default:"No especificado" }}
+								{% endif %}
+							</span>
+						</div>
+						<div class="info-item">
+							<span class="info-label">Validez</span>
+							<span class="info-value">
+								{% if report.is_valid %}
+									<span class="status-badge status-aceptable">VÁLIDO</span>
+								{% else %}
+									<span class="status-badge status-intolerable">INVÁLIDO</span>
+								{% endif %}
+							</span>
 						</div>
 					</div>
-					{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
-						<div class="critical-risk-warning">
-							<span class="critical-risk-text">⚠️ RIESGO CRÍTICO</span>
-						</div>
-					{% endif %}
 					<div class="info-item">
-						<span class="info-label">Descripción</span>
-						<div class="analysis-text">{{ risk.description }}</div>
+						<span class="info-label">Descripción del Peligro</span>
+						<div class="analysis-text">{{ report.description }}</div>
+					</div>
+				</div>
+
+				<!-- Risks Section -->
+				<div class="reports-section-container">
+					<div class="section-header header-centered">
+						<h2>Riesgos</h2>
+					</div>
+					
+					<div class="reports-list-container">
+						{% if risks %}
+							{% for risk in risks %}
+								<a href="{% url 'sms:risk_detail' risk.id %}" class="report-card-link">
+									<div class="report-card">
+										<div class="report-header">
+											<div class="report-date-time">
+												<span class="report-date">Riesgo ID: {{ risk.id }}</span>
+												<span class="report-time">Creado: {{ risk.created_at|date:"d/m/Y" }}</span>
+											</div>
+											{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
+												<div class="report-status-badge status-critical">
+													SIN MITIGAR
+												</div>
+											{% elif risk.condition == 'MITIGATED' %}
+												<div class="report-status-badge status-mitigated">
+													MITIGADO
+												</div>
+											{% else %}
+												<div class="report-status-badge status-unmitigated">
+													SIN MITIGAR
+												</div>
+											{% endif %}
+										</div>
+										
+										<div class="report-content">
+											{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
+												<div class="critical-risk-warning">
+													<span class="critical-risk-text">⚠️ RIESGO CRÍTICO</span>
+												</div>
+											{% endif %}
+											<div class="report-data-section">
+												<div class="report-data">
+													<span class="report-label">Pre-evaluación:</span>
+													<span class="report-value">{{ risk.pre_evaluation }}</span>
+												</div>
+												<div class="report-data">
+													<span class="report-label">Estado:</span>
+													<span class="report-value">{{ risk.get_status_display }}</span>
+												</div>
+												<div class="report-data">
+													<span class="report-label">Condición:</span>
+													<span class="report-value">{{ risk.get_condition_display }}</span>
+												</div>
+												<div class="report-data">
+													<span class="report-label">Fecha de actualización:</span>
+													<span class="report-value">{{ risk.updated_at|date:"d/m/Y" }}</span>
+												</div>
+											</div>
+											
+											<div class="report-description">
+												<span class="report-label">Descripción:</span>
+												<p class="report-description-text">{{ risk.description|truncatewords:30 }}</p>
+											</div>
+										</div>
+									</div>
+								</a>
+							{% endfor %}
+						{% else %}
+							<div class="no-reports">
+								<p>No hay riesgos registrados para este reporte.</p>
+							</div>
+						{% endif %}
 					</div>
 				</div>
 
@@ -118,8 +183,8 @@
 										<div class="report-content">
 											<div class="report-data-section">
 												<div class="report-data">
-													<span class="report-label">Reporte:</span>
-													<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
+													<span class="report-label">Riesgo ID:</span>
+													<span class="report-value">{{ action.risk.id }}</span>
 												</div>
 												<div class="report-data">
 													<span class="report-label">Estado:</span>
@@ -130,8 +195,8 @@
 													<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
 												</div>
 												<div class="report-data">
-													<span class="report-label">Riesgo ID:</span>
-													<span class="report-value">{{ action.risk.id }}</span>
+													<span class="report-label">Fecha de creación:</span>
+													<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
 												</div>
 											</div>
 											
@@ -163,20 +228,20 @@
 										<div class="report-content">
 											<div class="report-data-section">
 												<div class="report-data">
-													<span class="report-label">Reporte:</span>
-													<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
+													<span class="report-label">Riesgo ID:</span>
+													<span class="report-value">{{ action.risk.id }}</span>
 												</div>
 												<div class="report-data">
 													<span class="report-label">Estado:</span>
 													<span class="report-value">{{ action.get_status_display }}</span>
 												</div>
 												<div class="report-data">
-													<span class="report-label">Riesgo ID:</span>
-													<span class="report-value">{{ action.risk.id }}</span>
-												</div>
-												<div class="report-data">
 													<span class="report-label">Fecha límite:</span>
 													<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
+												</div>
+												<div class="report-data">
+													<span class="report-label">Fecha de creación:</span>
+													<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
 												</div>
 											</div>
 											
@@ -208,20 +273,20 @@
 										<div class="report-content">
 											<div class="report-data-section">
 												<div class="report-data">
-													<span class="report-label">Reporte:</span>
-													<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
+													<span class="report-label">Riesgo ID:</span>
+													<span class="report-value">{{ action.risk.id }}</span>
 												</div>
 												<div class="report-data">
 													<span class="report-label">Estado:</span>
 													<span class="report-value">{{ action.get_status_display }}</span>
 												</div>
 												<div class="report-data">
-													<span class="report-label">Riesgo ID:</span>
-													<span class="report-value">{{ action.risk.id }}</span>
-												</div>
-												<div class="report-data">
 													<span class="report-label">Fecha límite:</span>
 													<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
+												</div>
+												<div class="report-data">
+													<span class="report-label">Fecha de creación:</span>
+													<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
 												</div>
 											</div>
 											
@@ -237,7 +302,7 @@
 
 						{% if not pending_actions and not completed_actions and not expired_actions %}
 							<div class="no-reports">
-								<p>No hay acciones de mitigación registradas para este riesgo.</p>
+								<p>No hay acciones de mitigación registradas para este reporte.</p>
 							</div>
 						{% endif %}
 					</div>

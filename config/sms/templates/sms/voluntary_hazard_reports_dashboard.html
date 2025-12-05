@@ -39,11 +39,11 @@
 								<div class="report-card">
 									<div class="status-container">
 										{% if report.is_resolved %}
-											<span class="report-resolved-badge status-resolved-yes">Resuelto</span>
+											<span class="badge badge-green badge-medium">Resuelto</span>
 										{% else %}
-											<span class="report-resolved-badge status-resolved-no">No resuelto</span>
+											<span class="badge badge-yellow badge-medium">No resuelto</span>
 										{% endif %}
-										<div class="report-status-badge status-{{ report.ai_analysis_status|lower }}">
+										<div class="badge badge-medium {% if report.ai_analysis_status == 'PENDING' %}badge-yellow{% elif report.ai_analysis_status == 'PROCESSING' %}badge-blue{% elif report.ai_analysis_status == 'COMPLETED' %}badge-green{% elif report.ai_analysis_status == 'FAILED' %}badge-red{% endif %}">
 											{{ report.get_ai_analysis_status_display }}
 										</div>
 									</div>
@@ -85,9 +85,9 @@
 
 										<div class="report-area">
 											{% if report.is_valid %}
-												<span class="report-value report-validity status-valid">VÁLIDO</span>
+												<span class="badge badge-green badge-medium">VÁLIDO</span>
 											{% else %}
-												<span class="report-value report-validity status-invalid">INVÁLIDO</span>
+												<span class="badge badge-red badge-medium">INVÁLIDO</span>
 											{% endif %}
 										</div>
 										

@@ -23,7 +23,7 @@
 			<!-- Report Information Section -->
 			<div class="cards-container">
 				<div class="cards-container-header">
-					<h2>Información del Reporte</h2>
+					<h2>Datos del Reporte</h2>
 				</div>
 				<div class="info-grid">
 					<div class="info-item">
@@ -31,46 +31,34 @@
 						<span class="info-value">{{ report.date|date:"d/m/Y" }}</span>
 					</div>
 					<div class="info-item">
-						<span class="info-label">Hora</span>
-						<span class="info-value">{{ report.time|time:"H:i" }}</span>
+						<span class="info-label">Nombre del Reportante</span>
+						<span class="info-value">
+							{% if report.is_anonymous == 'YES' %}
+								Anónimo
+							{% else %}
+								{{ report.first_name|default:"No especificado" }} {{ report.last_name|default:"" }}
+							{% endif %}
+						</span>
 					</div>
 					<div class="info-item">
 						<span class="info-label">Área</span>
 						<span class="info-value">{{ report.get_area_display }}</span>
 					</div>
 					<div class="info-item">
+						<span class="info-label">Hora</span>
+						<span class="info-value">{{ report.time|time:"H:i" }}</span>
+					</div>
+					<div class="info-item">
 						<span class="info-label">Rol del Reportante</span>
 						<span class="info-value">{{ report.get_role_display|default:"No especificado" }}</span>
 					</div>
-				</div>
-				<div class="info-grid">
-					<div class="info-item">
-						<span class="info-label">Nombre del Reportante</span>
-						<span class="info-value">
-							{% if report.is_anonymous == 'YES' %}
-								Anónimo
-							{% else %}
-								{{ report.first_name|default:"No especificado" }}
-							{% endif %}
-						</span>
-					</div>
-					<div class="info-item">
-						<span class="info-label">Apellido del Reportante</span>
-						<span class="info-value">
-							{% if report.is_anonymous == 'YES' %}
-								Anónimo
-							{% else %}
-								{{ report.last_name|default:"No especificado" }}
-							{% endif %}
-						</span>
-					</div>
-					<div class="info-item">
+					<div class="info-item info-item-resolved">
 						<span class="info-label">Resuelto</span>
 						<span class="info-value">
 							{% if report.is_resolved %}
-								<span class="report-resolved-badge status-resolved-yes">Sí</span>
+								<span class="badge badge-green badge-medium">Sí</span>
 							{% else %}
-								<span class="report-resolved-badge status-resolved-no">No</span>
+								<span class="badge badge-yellow badge-medium">No</span>
 							{% endif %}
 						</span>
 					</div>
@@ -87,21 +75,20 @@
 					<div class="cards-container-header">
 						<h2>Resultados del Análisis de IA</h2>
 					</div>
-					<h2 class="section-title" id="ai-analysis-results-section">Resultados del Análisis de IA</h2>
-					<div class="info-grid">
+					<div class="info-grid info-grid-centered">
 						<div class="info-item">
-							<span class="info-label">Análisis válido</span>
-							<span class="info-value">
+							<span class="info-label info-label-centered">Condición del Reporte</span>
+							<span class="info-value info-value-centered">
 								{% if is_valid %}
-									<span style="color: #3be65a; font-weight: bold; background-color: rgb(76, 174, 79, 0.3); padding: 5px 10px; border-radius: 5px;">SÍ</span>
+									<span class="badge badge-green badge-medium">VÁLIDO</span>
 								{% else %}
-									<span style="color: #f16b61; font-weight: bold; background-color: rgb(244, 67, 54, 0.3); padding: 5px 10px; border-radius: 5px;">NO</span>
+									<span class="badge badge-red badge-medium">INVÁLIDO</span>
 								{% endif %}
 							</span>
 						</div>
 						<div class="info-item">
-							<span class="info-label">Estado del Análisis IA</span>
-							<span class="info-value">{{ report.get_ai_analysis_status_display }}</span>
+							<span class="info-label info-label-centered">Estatus del Análisis</span>
+							<span class="info-value info-value-centered">{{ report.get_ai_analysis_status_display }}</span>
 						</div>
 					</div>
 					{% if not is_valid %}
@@ -122,7 +109,7 @@
 						{% for risk_key, risk_data in risks.items %}
 							<div class="risk-item">
 								<div class="risk-header">
-									<span class="risk-evaluation-badge {{ risk_data.evaluation|risk_color }}">{{ risk_data.evaluation|default:"N/A" }}</span>
+									<span class="badge badge-medium {{ risk_data.evaluation|risk_color }}">{{ risk_data.evaluation|default:"N/A" }}</span>
 									<span class="risk-key">{{ "Riesgo "|add:risk_key|cut:"risk" }}</span>
 									{% if can_manage_sms and not report.mmrs_created %}
 										<form

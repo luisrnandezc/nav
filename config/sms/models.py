@@ -33,10 +33,10 @@ class VoluntaryHazardReport(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('PENDING', 'Pendiente de análisis'),
-        ('PROCESSING', 'Analizando con IA'),
-        ('COMPLETED', 'Análisis completado'),
-        ('FAILED', 'Error en análisis'),
+        ('PENDING', 'Pendiente'),
+        ('PROCESSING', 'Analizando'),
+        ('COMPLETED', 'Completado'),
+        ('FAILED', 'Error'),
     ]
 
     AREA_CHOICES = [

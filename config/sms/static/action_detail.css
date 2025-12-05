@@ -55,34 +55,7 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Status Badge */
-.status-badge {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.status-pending {
-  background: rgba(255, 152, 0, 0.2);
-  border: 1px solid #ff9800;
-  color: #ffd28a;
-}
-
-.status-completed {
-  background: rgba(76, 175, 80, 0.2);
-  border: 1px solid #4caf50;
-  color: #b2ffb2;
-}
-
-.status-expired {
-  background: rgba(244, 67, 54, 0.2);
-  border: 1px solid #f44336;
-  color: #ffb3b3;
-}
+/* Badge styles moved to sms_base.css - using standardized badge classes */
 
 /* Forms */
 .notes-form,
@@ -290,7 +263,7 @@
     font-size: 1rem;
   }
 
-  .status-badge {
+  /* Badge styles moved to sms_base.css */
     font-size: 0.8rem;
     padding: 5px 12px;
   }

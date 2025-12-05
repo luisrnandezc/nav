@@ -34,11 +34,11 @@
 						<span class="info-label">Estatus</span>
 						<span class="info-value">
 							{% if action.status == 'PENDING' %}
-								<span class="status-badge status-pending">{{ action.get_status_display }}</span>
+								<span class="badge badge-yellow badge-medium">{{ action.get_status_display }}</span>
 							{% elif action.status == 'COMPLETED' %}
-								<span class="status-badge status-completed">{{ action.get_status_display }}</span>
+								<span class="badge badge-green badge-medium">{{ action.get_status_display }}</span>
 							{% elif action.status == 'EXPIRED' %}
-								<span class="status-badge status-expired">{{ action.get_status_display }}</span>
+								<span class="badge badge-red badge-medium">{{ action.get_status_display }}</span>
 							{% endif %}
 						</span>
 					</div>

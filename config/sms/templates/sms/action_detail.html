@@ -8,12 +8,13 @@
 		<title>NAV | Detalle de MMR</title>
 		<link href="{% static 'sms_base.css' %}" rel="stylesheet" />
 		<link href="{% static 'action_detail.css' %}" rel="stylesheet" />
+		<script src="{% static 'js/action_detail_dynamics.js' %}"></script>
 	</head>
 
 	<body>
 		<div class="main-container">
 			<div class="back-button">
-				<a href="{{ back_url }}" class="button">&larr; Volver</a>
+				<button onclick="goBack()" class="button">&larr; Volver</button>
 			</div>
 			<div class="main-header">
 				<h1>Detalle de MMR</h1>

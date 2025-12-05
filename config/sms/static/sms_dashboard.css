@@ -94,7 +94,7 @@
 
 .sms-status-stats {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 30px;
   padding: 20px;
   border-top: 1px solid rgba(218, 225, 255, 0.3);

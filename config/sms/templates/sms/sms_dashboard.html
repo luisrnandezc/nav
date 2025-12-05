@@ -37,14 +37,18 @@
 			</div>
 
 			<!-- SMS School Status Section -->
-			<div class="sms-school-status-container">
-				<div class="sms-school-status-header">
+			<div class="reports-section-container">
+				<div class="section-header header-centered">
 					<h2>Estatus SMS</h2>
 				</div>
 				<div class="sms-school-status-content">
 					<span class="sms-status-badge {% if sms_school_status == 'NO CALCULADO' %}status-no-calculado{% elif sms_school_status == 'INTOLERABLE' %}status-intolerable{% elif sms_school_status == 'TOLERABLE' %}status-tolerable{% elif sms_school_status == 'ACEPTABLE' %}status-aceptable{% endif %}">{{ sms_school_status }}</span>
 				</div>
 				<div class="sms-status-stats">
+					<div class="sms-stat-item">
+						<span class="sms-stat-label">RVP no resueltos</span>
+						<span class="sms-stat-value">{{ non_resolved_voluntary_reports_count }}</span>
+					</div>
 					<div class="sms-stat-item">
 						<span class="sms-stat-label">Riesgos no mitigados</span>
 						<span class="sms-stat-value">{{ unmitigated_risks_count }}</span>
@@ -53,6 +57,87 @@
 						<span class="sms-stat-label">MMR pendientes</span>
 						<span class="sms-stat-value">{{ pending_actions_count }}</span>
 					</div>
+				</div>
+			</div>
+
+			<!-- Voluntary Hazard Reports Section -->
+			<div class="reports-section-container">
+				<div class="section-header header-centered">
+					<h2>Reportes Voluntarios de Peligro (RVP)</h2>
+				</div>
+				
+				<div class="reports-list-container">
+					{% if voluntary_reports %}
+						{% for report in voluntary_reports %}
+							<a href="{% url 'sms:report_with_mmrs_detail' report.id %}" class="report-card-link">
+								<div class="report-card">
+									<div class="status-container">
+										{% if report.is_resolved %}
+											<span class="report-resolved-badge status-resolved-yes">Resuelto</span>
+										{% else %}
+											<span class="report-resolved-badge status-resolved-no">No resuelto</span>
+										{% endif %}
+										<div class="report-status-badge status-{{ report.ai_analysis_status|lower }}">
+											{{ report.get_ai_analysis_status_display }}
+										</div>
+									</div>
+									<div class="report-content">
+										<div class="report-data-section">
+											<div class="report-data">
+												<span class="report-label">Fecha de creación:</span>
+												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Reportante:</span>
+												<span class="report-value">
+													{% if report.is_anonymous == 'YES' %}
+														Anónimo
+													{% elif report.first_name or report.last_name %}
+														{{ report.first_name }} {{ report.last_name }}
+													{% else %}
+														No especificado
+													{% endif %}
+												</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Email enviado:</span>
+												<span class="report-value">{{ report.analysis_email_sent|yesno:"Sí,No" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Hora de creación:</span>
+												<span class="report-value">{{ report.time|date:"H:i" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Área del peligro:</span>
+												<span class="report-value">{{ report.get_area_display }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">MMR creadas:</span>
+												<span class="report-value">{{ report.mmrs_created|yesno:"Sí,No" }}</span>
+											</div>
+										</div>
+
+										<div class="report-area">
+											{% if report.is_valid %}
+												<span class="report-value report-validity status-valid">VÁLIDO</span>
+											{% else %}
+												<span class="report-value report-validity status-invalid">INVÁLIDO</span>
+											{% endif %}
+										</div>
+										
+										<div class="report-description">
+											<span class="report-label">Descripción:</span>
+											<p class="report-description-text">{{ report.description|truncatewords:30 }}</p>
+										</div>
+									</div>
+								</div>
+							</a>
+						{% endfor %}
+					{% else %}
+						<div class="no-reports">
+							<p>No hay RVP con MMR creadas.</p>
+						</div>
+					{% endif %}
 				</div>
 			</div>
 

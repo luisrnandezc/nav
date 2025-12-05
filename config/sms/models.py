@@ -138,6 +138,11 @@ class VoluntaryHazardReport(models.Model):
         verbose_name="MMRs creadas",
         help_text="Indica si se han creado las MMRs para el reporte",
     )
+    is_resolved = models.BooleanField(
+        default=False,
+        verbose_name="Resuelto",
+        help_text="Indica si el reporte ha sido resuelto",
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación",

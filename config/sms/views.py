@@ -32,14 +32,12 @@ def sms_dashboard(request):
     non_resolved_voluntary_reports_count = non_resolved_voluntary_reports.count()
 
     # Get all the risk data.
-    mitigated_risks = Risk.objects.filter(condition='MITIGATED')
-    mitigated_risks_count = mitigated_risks.count()
+    mitigated_risks = Risk.objects.filter(condition='MITIGATED').order_by('-created_at')[:10]
     unmitigated_risks = Risk.objects.filter(condition='UNMITIGATED')
     unmitigated_risks_count = unmitigated_risks.count()
     
     # Get all the action data.
-    completed_actions = MitigationAction.objects.filter(status='COMPLETED')
-    completed_actions_count = completed_actions.count()
+    completed_actions = MitigationAction.objects.filter(status='COMPLETED').order_by('-created_at')[:10]
     pending_actions = MitigationAction.objects.filter(status='PENDING')
     pending_actions_count = pending_actions.count()
     expired_actions = MitigationAction.objects.filter(status='EXPIRED')
@@ -81,6 +79,7 @@ def sms_dashboard(request):
         'pending_actions': pending_actions,
         'pending_actions_count': pending_actions_count,
         'expired_actions': expired_actions,
+        'expired_actions_count': expired_actions_count,
         'sms_school_status': sms_school_status,
         'voluntary_reports': voluntary_reports,
         'non_resolved_voluntary_reports': non_resolved_voluntary_reports,
@@ -925,23 +924,9 @@ def action_detail(request, action_id):
     """
     action = get_object_or_404(MitigationAction, id=action_id)
     
-    # Determine the back URL based on the referrer
-    referer = request.META.get('HTTP_REFERER', '')
-    # Check if the referer contains '/risk/' which indicates it came from risk_detail page
-    if '/risk/' in referer:
-        # If coming from risk_detail page, go back to that risk's detail page
-        back_url = reverse('sms:risk_detail', args=[action.risk.id])
-    elif '/report_with_mmrs/' in referer:
-        # If coming from report_with_mmrs_detail page, go back to that report's detail page
-        back_url = reverse('sms:report_with_mmrs_detail', args=[action.risk.report.id])
-    else:
-        # Default to SMS dashboard (from sms_dashboard or direct access)
-        back_url = reverse('sms:sms_dashboard')
-    
     context = {
         'action': action,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
-        'back_url': back_url,
     }
     
     return render(request, 'sms/action_detail.html', context)

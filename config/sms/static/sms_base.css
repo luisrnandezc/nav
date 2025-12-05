@@ -47,6 +47,8 @@ body {
   height: auto !important;
   line-height: 1 !important;
   box-sizing: border-box !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
 }
 
 .back-button .button:hover {

@@ -8,6 +8,7 @@
 		<title>NAV | Detalle de RVP con MMRs</title>
 		<link href="{% static 'sms_base.css' %}" rel="stylesheet" />
 		<link href="{% static 'report_with_mmrs_detail.css' %}" rel="stylesheet" />
+		<script src="{% static 'js/report_with_mmrs_detail_dynamics.js' %}"></script>
 	</head>
 
 	<body>
@@ -48,22 +49,22 @@
 						<span class="info-value">{{ report.get_role_display|default:"No especificado" }}</span>
 					</div>
 					<div class="info-item">
-						<span class="info-label">Nombre del Reportante</span>
+						<span class="info-label">Reportante</span>
 						<span class="info-value">
 							{% if report.is_anonymous == 'YES' %}
 								Anónimo
 							{% else %}
-								{{ report.first_name|default:"No especificado" }}
+								{{ report.first_name|default:"No especificado" }} {{ report.last_name|default:"" }}
 							{% endif %}
 						</span>
 					</div>
 					<div class="info-item">
-						<span class="info-label">Apellido del Reportante</span>
+						<span class="info-label">Estatus</span>
 						<span class="info-value">
-							{% if report.is_anonymous == 'YES' %}
-								Anónimo
+							{% if report.is_resolved %}
+								<span class="status-badge status-aceptable">RESUELTO</span>
 							{% else %}
-								{{ report.last_name|default:"No especificado" }}
+								<span class="status-badge status-intolerable">NO RESUELTO</span>
 							{% endif %}
 						</span>
 					</div>

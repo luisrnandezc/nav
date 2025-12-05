@@ -63,7 +63,7 @@
 			<!-- Voluntary Hazard Reports Section -->
 			<div class="cards-container">
 				<div class="cards-container-header">
-					<h2>Reportes Voluntarios de Peligro (RVP)</h2>
+					<h2>RVP activos</h2>
 				</div>
 				
 				<div class="reports-list-container">
@@ -84,8 +84,8 @@
 									<div class="report-content">
 										<div class="report-data-section">
 											<div class="report-data">
-												<span class="report-label">Fecha de creación:</span>
-												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
+												<span class="report-label">Código:</span>
+												<span class="report-value">{{ report.code|default:"No registrado" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Reportante:</span>
@@ -104,8 +104,8 @@
 												<span class="report-value">{{ report.analysis_email_sent|yesno:"Sí,No" }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Hora de creación:</span>
-												<span class="report-value">{{ report.time|date:"H:i" }}</span>
+												<span class="report-label">Fecha:</span>
+												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Área del peligro:</span>
@@ -151,12 +151,10 @@
 					<!-- Unmitigated Risks -->
 					{% if unmitigated_risks %}
 						{% for risk in unmitigated_risks %}
-							<a href="{% url 'sms:risk_detail' risk.id %}" class="report-card-link">
-								<div class="report-card">
+							<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">Riesgo ID: {{ risk.id }}</span>
-											<span class="report-time">Creado: {{ risk.created_at|date:"d/m/Y" }}</span>
 										</div>
 										{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
 											<div class="report-status-badge status-critical">
@@ -185,12 +183,24 @@
 												<span class="report-value">{{ risk.pre_evaluation }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Estado:</span>
-												<span class="report-value">{{ risk.get_status_display }}</span>
+												<span class="report-label">Condición:</span>
+												{% if risk.condition == 'UNMITIGATED' %}
+													<span class="report-value">SIN MITIGAR</span>
+												{% else %}
+													<span class="report-value">MITIGADO</span>
+												{% endif %}
 											</div>
 											<div class="report-data">
-												<span class="report-label">Condición:</span>
-												<span class="report-value">{{ risk.get_condition_display }}</span>
+												<span class="report-label">Creado:</span>
+												<span class="report-value">{{ risk.created_at|date:"d/m/Y" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Post-evaluación:</span>
+												<span class="report-value">{{ risk.post_evaluation }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Estatus:</span>
+												<span class="report-value">{{ risk.get_status_display }}</span>
 											</div>
 										</div>
 										
@@ -200,19 +210,16 @@
 										</div>
 									</div>
 								</div>
-							</a>
 						{% endfor %}
 					{% endif %}
 
 					<!-- Mitigated Risks -->
 					{% if mitigated_risks %}
 						{% for risk in mitigated_risks %}
-							<a href="{% url 'sms:risk_detail' risk.id %}" class="report-card-link">
-								<div class="report-card">
+							<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">Riesgo ID: {{ risk.id }}</span>
-											<span class="report-time">Creado: {{ risk.created_at|date:"d/m/Y" }}</span>
 										</div>
 										<div class="report-status-badge status-mitigated">
 											MITIGADO
@@ -230,12 +237,24 @@
 												<span class="report-value">{{ risk.pre_evaluation }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Estado:</span>
-												<span class="report-value">{{ risk.get_status_display }}</span>
+												<span class="report-label">Condición:</span>
+												{% if risk.condition == 'UNMITIGATED' %}
+													<span class="report-value">SIN MITIGAR</span>
+												{% else %}
+													<span class="report-value">MITIGADO</span>
+												{% endif %}
 											</div>
 											<div class="report-data">
-												<span class="report-label">Condición:</span>
-												<span class="report-value">{{ risk.get_condition_display }}</span>
+												<span class="report-label">Creado:</span>
+												<span class="report-value">{{ risk.created_at|date:"d/m/Y" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Post-evaluación:</span>
+												<span class="report-value">{{ risk.post_evaluation }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Estatus:</span>
+												<span class="report-value">{{ risk.get_status_display }}</span>
 											</div>
 										</div>
 										
@@ -245,7 +264,6 @@
 										</div>
 									</div>
 								</div>
-							</a>
 						{% endfor %}
 					{% endif %}
 
@@ -267,12 +285,10 @@
 					<!-- Pending Actions -->
 					{% if pending_actions %}
 						{% for action in pending_actions %}
-							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
-								<div class="report-card">
+							<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
-											<span class="report-time">Vence: {{ action.due_date|date:"d/m/Y" }}</span>
 										</div>
 										<div class="report-status-badge status-pending">
 											{{ action.get_status_display }}
@@ -282,20 +298,25 @@
 									<div class="report-content">
 										<div class="report-data-section">
 											<div class="report-data">
-												<span class="report-label">Riesgo:</span>
+												<span class="report-label">Reporte:</span>
 												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Vence el:</span>
+												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
+											</div>
+
+											<div class="report-data">
+												<span class="report-label">Creada:</span>
+												<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Riesgo ID:</span>
 												<span class="report-value">{{ action.risk.id }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Estado:</span>
+												<span class="report-label">Estatus:</span>
 												<span class="report-value">{{ action.get_status_display }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Fecha límite:</span>
-												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
 											</div>
 										</div>
 										
@@ -305,19 +326,16 @@
 										</div>
 									</div>
 								</div>
-							</a>
 						{% endfor %}
 					{% endif %}
 
 					<!-- Completed Actions -->
 					{% if completed_actions %}
 						{% for action in completed_actions %}
-							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
-								<div class="report-card">
+							<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
-											<span class="report-time">Vence: {{ action.due_date|date:"d/m/Y" }}</span>
 										</div>
 										<div class="report-status-badge status-completed">
 											{{ action.get_status_display }}
@@ -331,16 +349,21 @@
 												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
 											</div>
 											<div class="report-data">
+												<span class="report-label">Vence el:</span>
+												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
+											</div>
+
+											<div class="report-data">
+												<span class="report-label">Creada:</span>
+												<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
+											</div>
+											<div class="report-data">
 												<span class="report-label">Riesgo ID:</span>
 												<span class="report-value">{{ action.risk.id }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Estado:</span>
+												<span class="report-label">Estatus:</span>
 												<span class="report-value">{{ action.get_status_display }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Fecha límite:</span>
-												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
 											</div>
 										</div>
 										
@@ -350,19 +373,16 @@
 										</div>
 									</div>
 								</div>
-							</a>
 						{% endfor %}
 					{% endif %}
 
 					<!-- Expired Actions -->
 					{% if expired_actions %}
 						{% for action in expired_actions %}
-							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
-								<div class="report-card">
+							<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
-											<span class="report-time">Vence: {{ action.due_date|date:"d/m/Y" }}</span>
 										</div>
 										<div class="report-status-badge status-expired">
 											{{ action.get_status_display }}
@@ -376,16 +396,21 @@
 												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
 											</div>
 											<div class="report-data">
+												<span class="report-label">Vence el:</span>
+												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
+											</div>
+
+											<div class="report-data">
+												<span class="report-label">Creada:</span>
+												<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
+											</div>
+											<div class="report-data">
 												<span class="report-label">Riesgo ID:</span>
 												<span class="report-value">{{ action.risk.id }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Estado:</span>
+												<span class="report-label">Estatus:</span>
 												<span class="report-value">{{ action.get_status_display }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Fecha límite:</span>
-												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
 											</div>
 										</div>
 										
@@ -395,7 +420,6 @@
 										</div>
 									</div>
 								</div>
-							</a>
 						{% endfor %}
 					{% endif %}
 

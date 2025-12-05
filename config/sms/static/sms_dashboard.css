@@ -181,10 +181,14 @@
   border-radius: 8px;
   padding: 20px;
   transition: all 0.3s ease;
+}
+
+/* Only make cards clickable/hoverable when inside a link */
+.report-card-link .report-card {
   cursor: pointer;
 }
 
-.report-card:hover {
+.report-card-link:hover .report-card {
   background: rgba(218, 225, 255, 0.1);
   border-color: #dae1ff;
 }

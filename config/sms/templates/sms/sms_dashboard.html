@@ -42,7 +42,7 @@
 					<h2>Estatus SMS</h2>
 				</div>
 				<div class="sms-school-status-content">
-					<span class="sms-status-badge {% if sms_school_status == 'NO CALCULADO' %}status-no-calculado{% elif sms_school_status == 'INTOLERABLE' %}status-intolerable{% elif sms_school_status == 'TOLERABLE' %}status-tolerable{% elif sms_school_status == 'ACEPTABLE' %}status-aceptable{% endif %}">{{ sms_school_status }}</span>
+					<span class="sms-status-badge badge {% if sms_school_status == 'NO CALCULADO' %}badge-gray{% elif sms_school_status == 'INTOLERABLE' %}badge-red{% elif sms_school_status == 'TOLERABLE' %}badge-orange{% elif sms_school_status == 'ACEPTABLE' %}badge-green{% endif %}">{{ sms_school_status }}</span>
 				</div>
 				<div class="sms-status-stats">
 					<div class="sms-stat-item">
@@ -77,11 +77,11 @@
 								<div class="report-card">
 									<div class="status-container">
 										{% if report.is_resolved %}
-											<span class="report-resolved-badge status-resolved-yes">Resuelto</span>
+											<span class="badge badge-green badge-medium">Resuelto</span>
 										{% else %}
-											<span class="report-resolved-badge status-resolved-no">No resuelto</span>
+											<span class="badge badge-yellow badge-medium">No resuelto</span>
 										{% endif %}
-										<div class="report-status-badge status-{{ report.ai_analysis_status|lower }}">
+										<div class="badge badge-medium {% if report.ai_analysis_status == 'PENDING' %}badge-yellow{% elif report.ai_analysis_status == 'PROCESSING' %}badge-blue{% elif report.ai_analysis_status == 'COMPLETED' %}badge-green{% elif report.ai_analysis_status == 'FAILED' %}badge-red{% endif %}">
 											{{ report.get_ai_analysis_status_display }}
 										</div>
 									</div>
@@ -123,9 +123,9 @@
 
 										<div class="report-area">
 											{% if report.is_valid %}
-												<span class="report-value report-validity status-valid">VÁLIDO</span>
+												<span class="badge badge-green badge-medium">VÁLIDO</span>
 											{% else %}
-												<span class="report-value report-validity status-invalid">INVÁLIDO</span>
+												<span class="badge badge-red badge-medium">INVÁLIDO</span>
 											{% endif %}
 										</div>
 										
@@ -161,11 +161,11 @@
 											<span class="report-date">Riesgo ID: {{ risk.id }}</span>
 										</div>
 										{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
-											<div class="report-status-badge status-critical">
+											<div class="badge badge-red badge-medium">
 												SIN MITIGAR
 											</div>
 										{% else %}
-											<div class="report-status-badge status-unmitigated">
+											<div class="badge badge-orange badge-medium">
 												SIN MITIGAR
 											</div>
 										{% endif %}
@@ -225,7 +225,7 @@
 										<div class="report-date-time">
 											<span class="report-date">Riesgo ID: {{ risk.id }}</span>
 										</div>
-										<div class="report-status-badge status-mitigated">
+										<div class="badge badge-green badge-medium">
 											MITIGADO
 										</div>
 									</div>
@@ -294,7 +294,7 @@
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
-										<div class="report-status-badge status-pending">
+										<div class="badge badge-yellow badge-medium">
 											{{ action.get_status_display }}
 										</div>
 									</div>
@@ -341,7 +341,7 @@
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
-										<div class="report-status-badge status-completed">
+										<div class="badge badge-green badge-medium">
 											{{ action.get_status_display }}
 										</div>
 									</div>
@@ -388,7 +388,7 @@
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
-										<div class="report-status-badge status-expired">
+										<div class="badge badge-red badge-medium">
 											{{ action.get_status_display }}
 										</div>
 									</div>

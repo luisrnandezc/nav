@@ -34,13 +34,13 @@
 						<span class="info-label">Estatus</span>
 						<span class="info-value">
 							{% if risk.status == 'INTOLERABLE' %}
-								<span class="status-badge status-intolerable">{{ risk.get_status_display }}</span>
+								<span class="badge badge-red badge-medium">{{ risk.get_status_display }}</span>
 							{% elif risk.status == 'TOLERABLE' %}
-								<span class="status-badge status-tolerable">{{ risk.get_status_display }}</span>
+								<span class="badge badge-orange badge-medium">{{ risk.get_status_display }}</span>
 							{% elif risk.status == 'ACCEPTABLE' %}
-								<span class="status-badge status-aceptable">{{ risk.get_status_display }}</span>
+								<span class="badge badge-green badge-medium">{{ risk.get_status_display }}</span>
 							{% else %}
-								<span class="status-badge status-not-evaluated">{{ risk.get_status_display }}</span>
+								<span class="badge badge-gray badge-medium">{{ risk.get_status_display }}</span>
 							{% endif %}
 						</span>
 					</div>
@@ -48,9 +48,9 @@
 						<span class="info-label">Condición</span>
 						<span class="info-value">
 							{% if risk.condition == 'MITIGATED' %}
-								<span class="status-badge status-mitigated">{{ risk.get_condition_display }}</span>
+								<span class="badge badge-green badge-medium">{{ risk.get_condition_display }}</span>
 							{% else %}
-								<span class="status-badge status-unmitigated">{{ risk.get_condition_display }}</span>
+								<span class="badge badge-orange badge-medium">{{ risk.get_condition_display }}</span>
 							{% endif %}
 						</span>
 					</div>
@@ -110,7 +110,7 @@
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
-										<div class="report-status-badge status-pending">
+										<div class="badge badge-yellow badge-medium">
 											{{ action.get_status_display }}
 										</div>
 									</div>
@@ -159,7 +159,7 @@
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
-										<div class="report-status-badge status-completed">
+										<div class="badge badge-green badge-medium">
 											{{ action.get_status_display }}
 										</div>
 									</div>
@@ -208,7 +208,7 @@
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
-										<div class="report-status-badge status-expired">
+										<div class="badge badge-red badge-medium">
 											{{ action.get_status_display }}
 										</div>
 									</div>

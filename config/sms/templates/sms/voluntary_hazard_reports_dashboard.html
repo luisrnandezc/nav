@@ -50,8 +50,8 @@
 									<div class="report-content">
 										<div class="report-data-section">
 											<div class="report-data">
-												<span class="report-label">Fecha de creación:</span>
-												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
+												<span class="report-label">Código:</span>
+												<span class="report-value">{{ report.code|default:"No registrado" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Reportante:</span>
@@ -70,8 +70,8 @@
 												<span class="report-value">{{ report.analysis_email_sent|yesno:"Sí,No" }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Hora de creación:</span>
-												<span class="report-value">{{ report.time|date:"H:i" }}</span>
+												<span class="report-label">Fecha:</span>
+												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Área del peligro:</span>

@@ -6,17 +6,17 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>NAV | RVP Dashboard</title>
+		<link href="{% static 'sms_base.css' %}" rel="stylesheet" />
 		<link href="{% static 'sms_dashboard.css' %}" rel="stylesheet" />
-		<link href="{% static 'shared_components.css' %}" rel="stylesheet" />
 	</head>
 
 	<body>
-		<div class="sms-container">
+		<div class="main-container">
 			<div class="back-button">
 				<a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
 			</div>
 
-			<div class="sms-header">
+			<div class="main-header">
 				<h1>RVP Dashboard</h1>
 			</div>
 
@@ -27,8 +27,8 @@
 			</div>
 
 			<!-- Voluntary Hazard Reports Container -->
-			<div class="reports-section-container">
-				<div class="section-header header-centered">
+			<div class="cards-container">
+				<div class="cards-container-header">
 					<h2>Reportes Voluntarios de Peligro (RVP)</h2>
 				</div>
 				
@@ -108,8 +108,8 @@
 			</div>
 
 			<!-- Mandatory Event Reports Container -->
-			<div class="reports-section-container">
-				<div class="section-header header-centered">
+			<div class="cards-container">
+				<div class="cards-container-header">
 					<h2>Reportes Obligatorios de Suceso (ROS)</h2>
 				</div>
 				

@@ -6,17 +6,17 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>NAV | SARA Dashboard</title>
+		<link href="{% static 'sms_base.css' %}" rel="stylesheet" />
 		<link href="{% static 'sms_dashboard.css' %}" rel="stylesheet" />
-		<link href="{% static 'shared_components.css' %}" rel="stylesheet" />
 	</head>
 
 	<body>
-		<div class="sms-container">
+		<div class="main-container">
 			<div class="back-button">
 				<a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
 			</div>
 
-			<div class="sms-header">
+			<div class="main-header">
 				<h1>SARA Dashboard</h1>
 				<p>Sistema de Gestión de Seguridad Operacional</p>
 			</div>
@@ -37,8 +37,8 @@
 			</div>
 
 			<!-- SMS School Status Section -->
-			<div class="reports-section-container">
-				<div class="section-header header-centered">
+			<div class="cards-container">
+				<div class="cards-container-header no-margin-bottom">
 					<h2>Estatus SMS</h2>
 				</div>
 				<div class="sms-school-status-content">
@@ -61,8 +61,8 @@
 			</div>
 
 			<!-- Voluntary Hazard Reports Section -->
-			<div class="reports-section-container">
-				<div class="section-header header-centered">
+			<div class="cards-container">
+				<div class="cards-container-header">
 					<h2>Reportes Voluntarios de Peligro (RVP)</h2>
 				</div>
 				
@@ -142,8 +142,8 @@
 			</div>
 
 			<!-- Risks Section -->
-			<div class="reports-section-container">
-				<div class="section-header header-centered">
+			<div class="cards-container">
+				<div class="cards-container-header">
 					<h2>Riesgos</h2>
 				</div>
 				
@@ -258,9 +258,9 @@
 			</div>
 
 			<!-- Actions Section -->
-			<div class="reports-section-container">
-				<div class="section-header header-centered">
-					<h2>Acciones de Mitigación (MMR)</h2>
+			<div class="cards-container">
+				<div class="cards-container-header">
+					<h2>Medidas de Mitigación de Riesgo (MMR)</h2>
 				</div>
 				
 				<div class="reports-list-container">

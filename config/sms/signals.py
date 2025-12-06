@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.conf import settings
-from .models import VoluntaryHazardReport
+from .models import VoluntaryHazardReport, MitigationAction, Risk
 import logging
 
 logger = logging.getLogger('sms.signals')
@@ -76,3 +76,71 @@ def send_rvp_analysis_email(instance, created, **kwargs):
         logger.info(f"RVP analysis email sent to recipients: {recipients}")
     except Exception as e:
         logger.error(f"Failed to send RVP analysis email to recipients: {recipients}. Error: {e}")
+
+
+def check_and_update_report_resolved_status(report):
+    """
+    Helper function to check if all risks are mitigated and update report.is_resolved.
+    """
+    # Get all risks for this report
+    all_risks = report.risks.all()
+    
+    # Check if there are any risks at all
+    if not all_risks.exists():
+        # No risks means report cannot be resolved
+        if report.is_resolved:
+            report.is_resolved = False
+            report.save(update_fields=['is_resolved'])
+        return
+    
+    # Check if all risks are MITIGATED
+    all_mitigated = all(risk.condition == 'MITIGATED' for risk in all_risks)
+    
+    # Update is_resolved field
+    if all_mitigated:
+        if not report.is_resolved:
+            report.is_resolved = True
+            report.save(update_fields=['is_resolved'])
+            logger.info(f"Report {report.id} marked as resolved - all risks mitigated")
+    else:
+        # If not all risks are mitigated, make sure is_resolved is False
+        if report.is_resolved:
+            report.is_resolved = False
+            report.save(update_fields=['is_resolved'])
+            logger.info(f"Report {report.id} marked as unresolved - not all risks mitigated")
+
+
+@receiver(post_save, sender=MitigationAction)
+def update_report_resolved_status_on_mmr_change(instance, created, **kwargs):
+    """
+    Update the report's is_resolved field when MMR status changes.
+    This triggers a check to see if all risks are now mitigated.
+    """
+    # Only check if status field was updated (to avoid unnecessary queries)
+    update_fields = kwargs.get('update_fields')
+    if update_fields and 'status' not in update_fields:
+        return
+    
+    # Get the report through the risk
+    report = instance.risk.report
+    
+    # Check and update resolved status
+    check_and_update_report_resolved_status(report)
+
+
+@receiver(post_save, sender=Risk)
+def update_report_resolved_status_on_risk_change(instance, created, **kwargs):
+    """
+    Update the report's is_resolved field when risk condition changes.
+    Sets is_resolved=True when all risks for a report are MITIGATED.
+    """
+    # Only check if condition field was updated (to avoid unnecessary queries)
+    update_fields = kwargs.get('update_fields')
+    if update_fields and 'condition' not in update_fields:
+        return
+    
+    # Get the report
+    report = instance.report
+    
+    # Check and update resolved status
+    check_and_update_report_resolved_status(report)

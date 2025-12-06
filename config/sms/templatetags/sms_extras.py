@@ -15,9 +15,9 @@ def risk_color(evaluation):
     eval_str = str(evaluation).upper().strip()
 
     if eval_str in RED_SET:
-        return 'risk-badge-red'
+        return 'badge-red'
     if eval_str in ORANGE_SET:
-        return 'risk-badge-orange'
+        return 'badge-orange'
     if eval_str in GREEN_SET:
-        return 'risk-badge-green'
+        return 'badge-green'
     return ''  # default styling

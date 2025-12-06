@@ -5,143 +5,83 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>NAV | SARA Dashboard</title>
+		<title>NAV | Detalle de RVP con MMRs</title>
 		<link href="{% static 'sms_base.css' %}" rel="stylesheet" />
-		<link href="{% static 'sms_dashboard.css' %}" rel="stylesheet" />
+		<link href="{% static 'report_with_mmrs_detail.css' %}" rel="stylesheet" />
+		<script src="{% static 'js/report_with_mmrs_detail_dynamics.js' %}"></script>
 	</head>
 
 	<body>
 		<div class="main-container">
 			<div class="back-button">
-				<a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+				<a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
 			</div>
-
 			<div class="main-header">
-				<h1>SARA Dashboard</h1>
-				<p>Sistema de Gestión de Seguridad Operacional</p>
+				<h1>Detalle del RVP</h1>
 			</div>
 
-			<div class="buttons-container">
-				<div class="main-button">
-					<a href="{% url 'sms:voluntary_hazard_reports_dashboard' %}" class="button">Ver RVP</a>
-				</div>
-				<div class="main-button">
-					<a href="" class="button">Ver ROS</a>
-				</div>
-				<div class="main-button">
-					<a href="" class="button">Ver KSPI</a>
-				</div>
-				<div class="main-button">
-					<a href="" class="button">Chat SARA</a>
-				</div>
-			</div>
-
-			<!-- SMS School Status Section -->
-			<div class="cards-container">
-				<div class="cards-container-header no-margin-bottom">
-					<h2>Estatus SMS</h2>
-				</div>
-				<div class="sms-school-status-content">
-					<span class="sms-status-badge badge {% if sms_school_status == 'NO CALCULADO' %}badge-gray{% elif sms_school_status == 'INTOLERABLE' %}badge-red{% elif sms_school_status == 'TOLERABLE' %}badge-orange{% elif sms_school_status == 'ACEPTABLE' %}badge-green{% endif %}">{{ sms_school_status }}</span>
-				</div>
-				<div class="sms-status-stats">
-					<div class="sms-stat-item">
-						<span class="sms-stat-value">{{ non_resolved_voluntary_reports_count }}</span>
-						<span class="sms-stat-label">RVP no resueltos</span>
-					</div>
-					<div class="sms-stat-item">
-						<span class="sms-stat-value">{{ unmitigated_risks_count }}</span>
-						<span class="sms-stat-label">Riesgos no mitigados</span>
-					</div>
-					<div class="sms-stat-item">
-						<span class="sms-stat-value">{{ pending_actions_count }}</span>
-						<span class="sms-stat-label">MMR pendientes</span>
-					</div>
-					<div class="sms-stat-item">
-						<span class="sms-stat-value">{{ expired_actions_count }}</span>
-						<span class="sms-stat-label">MMR vencidas</span>
-					</div>
-				</div>
-			</div>
-
-			<!-- Voluntary Hazard Reports Section -->
+			<!-- Report Information Section -->
 			<div class="cards-container">
 				<div class="cards-container-header">
-					<h2>RVP activos</h2>
+					<h2>Datos del RVP</h2>
 				</div>
-				
-				<div class="reports-list-container">
-					{% if voluntary_reports %}
-						{% for report in voluntary_reports %}
-							<a href="{% url 'sms:report_with_mmrs_detail' report.id %}" class="report-card-link">
-								<div class="report-card">
-									<div class="status-container">
-										{% if report.is_resolved %}
-											<span class="badge badge-green badge-medium">Resuelto</span>
-										{% else %}
-											<span class="badge badge-yellow badge-medium">No resuelto</span>
-										{% endif %}
-										<div class="badge badge-medium {% if report.ai_analysis_status == 'PENDING' %}badge-yellow{% elif report.ai_analysis_status == 'PROCESSING' %}badge-blue{% elif report.ai_analysis_status == 'COMPLETED' %}badge-green{% elif report.ai_analysis_status == 'FAILED' %}badge-red{% endif %}">
-											{{ report.get_ai_analysis_status_display }}
-										</div>
-									</div>
-									<div class="report-content">
-										<div class="report-data-section">
-											<div class="report-data">
-												<span class="report-label">Código:</span>
-												<span class="report-value">{{ report.code|default:"No registrado" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Reportante:</span>
-												<span class="report-value">
-													{% if report.is_anonymous == 'YES' %}
-														Anónimo
-													{% elif report.first_name or report.last_name %}
-														{{ report.first_name }} {{ report.last_name }}
-													{% else %}
-														No especificado
-													{% endif %}
-												</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Email enviado:</span>
-												<span class="report-value">{{ report.analysis_email_sent|yesno:"Sí,No" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Fecha:</span>
-												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Área del peligro:</span>
-												<span class="report-value">{{ report.get_area_display }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">MMR creadas:</span>
-												<span class="report-value">{{ report.mmrs_created|yesno:"Sí,No" }}</span>
-											</div>
-										</div>
-
-										<div class="report-area">
-											{% if report.is_valid %}
-												<span class="badge badge-green badge-medium">VÁLIDO</span>
-											{% else %}
-												<span class="badge badge-red badge-medium">INVÁLIDO</span>
-											{% endif %}
-										</div>
-										
-										<div class="report-description">
-											<span class="report-label">Descripción:</span>
-											<p class="report-description-text">{{ report.description|truncatewords:30 }}</p>
-										</div>
-									</div>
-								</div>
-							</a>
-						{% endfor %}
-					{% else %}
-						<div class="no-reports">
-							<p>No hay RVP con MMR creadas.</p>
-						</div>
-					{% endif %}
+				<div class="info-grid">
+					<div class="info-item">
+						<span class="info-label">Código de Registro</span>
+						<span class="info-value">{{ report.code|default:"No registrado" }}</span>
+					</div>
+					<div class="info-item">
+						<span class="info-label">Fecha</span>
+						<span class="info-value">{{ report.date|date:"d/m/Y" }}</span>
+					</div>
+					<div class="info-item">
+						<span class="info-label">Hora</span>
+						<span class="info-value">{{ report.time|time:"H:i" }}</span>
+					</div>
+					<div class="info-item">
+						<span class="info-label">Área</span>
+						<span class="info-value">{{ report.get_area_display }}</span>
+					</div>
+				</div>
+				<div class="info-grid">
+					<div class="info-item">
+						<span class="info-label">Rol del Reportante</span>
+						<span class="info-value">{{ report.get_role_display|default:"No especificado" }}</span>
+					</div>
+					<div class="info-item">
+						<span class="info-label">Reportante</span>
+						<span class="info-value">
+							{% if report.is_anonymous == 'YES' %}
+								Anónimo
+							{% else %}
+								{{ report.first_name|default:"No especificado" }} {{ report.last_name|default:"" }}
+							{% endif %}
+						</span>
+					</div>
+					<div class="info-item">
+						<span class="info-label">Estatus</span>
+						<span class="info-value">
+							{% if report.is_resolved %}
+								<span class="badge badge-green badge-medium">RESUELTO</span>
+							{% else %}
+								<span class="badge badge-red badge-medium">NO RESUELTO</span>
+							{% endif %}
+						</span>
+					</div>
+					<div class="info-item">
+						<span class="info-label">Validez</span>
+						<span class="info-value">
+							{% if report.is_valid %}
+								<span class="badge badge-green badge-medium">VÁLIDO</span>
+							{% else %}
+								<span class="badge badge-red badge-medium">INVÁLIDO</span>
+							{% endif %}
+						</span>
+					</div>
+				</div>
+				<div class="info-item">
+					<span class="info-label">Descripción del Peligro</span>
+					<div class="analysis-text">{{ report.description }}</div>
 				</div>
 			</div>
 
@@ -152,10 +92,10 @@
 				</div>
 				
 				<div class="reports-list-container">
-					<!-- Unmitigated Risks -->
-					{% if unmitigated_risks %}
-						{% for risk in unmitigated_risks %}
-							<div class="report-card">
+					{% if risks %}
+						{% for risk in risks %}
+							<a href="{% url 'sms:risk_detail' risk.id %}" class="report-card-link">
+								<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">Riesgo ID: {{ risk.id }}</span>
@@ -163,6 +103,10 @@
 										{% if risk.status == 'INTOLERABLE' and risk.condition == 'UNMITIGATED' %}
 											<div class="badge badge-red badge-medium">
 												SIN MITIGAR
+											</div>
+										{% elif risk.condition == 'MITIGATED' %}
+											<div class="badge badge-green badge-medium">
+												MITIGADO
 											</div>
 										{% else %}
 											<div class="badge badge-orange badge-medium">
@@ -214,66 +158,11 @@
 										</div>
 									</div>
 								</div>
+							</a>
 						{% endfor %}
-					{% endif %}
-
-					<!-- Mitigated Risks -->
-					{% if mitigated_risks %}
-						{% for risk in mitigated_risks %}
-							<div class="report-card">
-									<div class="report-header">
-										<div class="report-date-time">
-											<span class="report-date">Riesgo ID: {{ risk.id }}</span>
-										</div>
-										<div class="badge badge-green badge-medium">
-											MITIGADO
-										</div>
-									</div>
-									
-									<div class="report-content">
-										<div class="report-data-section">
-											<div class="report-data">
-												<span class="report-label">Reporte:</span>
-												<span class="report-value">{{ risk.report.code|default:"No registrado" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Pre-evaluación:</span>
-												<span class="report-value">{{ risk.pre_evaluation }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Condición:</span>
-												{% if risk.condition == 'UNMITIGATED' %}
-													<span class="report-value">SIN MITIGAR</span>
-												{% else %}
-													<span class="report-value">MITIGADO</span>
-												{% endif %}
-											</div>
-											<div class="report-data">
-												<span class="report-label">Creado:</span>
-												<span class="report-value">{{ risk.created_at|date:"d/m/Y" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Post-evaluación:</span>
-												<span class="report-value">{{ risk.post_evaluation }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Estatus:</span>
-												<span class="report-value">{{ risk.get_status_display }}</span>
-											</div>
-										</div>
-										
-										<div class="report-description">
-											<span class="report-label">Descripción:</span>
-											<p class="report-description-text">{{ risk.description|truncatewords:30 }}</p>
-										</div>
-									</div>
-								</div>
-						{% endfor %}
-					{% endif %}
-
-					{% if not unmitigated_risks and not mitigated_risks %}
+					{% else %}
 						<div class="no-reports">
-							<p>No hay riesgos registrados.</p>
+							<p>No hay riesgos registrados para este reporte.</p>
 						</div>
 					{% endif %}
 				</div>
@@ -289,7 +178,8 @@
 					<!-- Pending Actions -->
 					{% if pending_actions %}
 						{% for action in pending_actions %}
-							<div class="report-card">
+							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
+								<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
@@ -330,13 +220,15 @@
 										</div>
 									</div>
 								</div>
+							</a>
 						{% endfor %}
 					{% endif %}
 
 					<!-- Completed Actions -->
 					{% if completed_actions %}
 						{% for action in completed_actions %}
-							<div class="report-card">
+							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
+								<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
@@ -377,13 +269,15 @@
 										</div>
 									</div>
 								</div>
+							</a>
 						{% endfor %}
 					{% endif %}
 
 					<!-- Expired Actions -->
 					{% if expired_actions %}
 						{% for action in expired_actions %}
-							<div class="report-card">
+							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
+								<div class="report-card">
 									<div class="report-header">
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
@@ -424,12 +318,13 @@
 										</div>
 									</div>
 								</div>
+							</a>
 						{% endfor %}
 					{% endif %}
 
 					{% if not pending_actions and not completed_actions and not expired_actions %}
 						<div class="no-reports">
-							<p>No hay acciones de mitigación registradas.</p>
+							<p>No hay MMR registradas para este reporte.</p>
 						</div>
 					{% endif %}
 				</div>
@@ -437,3 +332,4 @@
 		</div>
 	</body>
 </html>
+

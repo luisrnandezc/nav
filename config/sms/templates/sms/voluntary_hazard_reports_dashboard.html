@@ -6,17 +6,17 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>NAV | RVP Dashboard</title>
+		<link href="{% static 'sms_base.css' %}" rel="stylesheet" />
 		<link href="{% static 'sms_dashboard.css' %}" rel="stylesheet" />
-		<link href="{% static 'shared_components.css' %}" rel="stylesheet" />
 	</head>
 
 	<body>
-		<div class="sms-container">
+		<div class="main-container">
 			<div class="back-button">
 				<a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
 			</div>
 
-			<div class="sms-header">
+			<div class="main-header">
 				<h1>RVP Dashboard</h1>
 			</div>
 
@@ -27,12 +27,9 @@
 			</div>
 
 			<!-- Voluntary Hazard Reports Container -->
-			<div class="reports-section-container">
-				<div class="section-header">
+			<div class="cards-container">
+				<div class="cards-container-header">
 					<h2>Reportes Voluntarios de Peligro (RVP)</h2>
-					<a href="{% url 'sms:voluntary_hazard_report' %}" class="add-button">
-						Agregar RVP
-					</a>
 				</div>
 				
 				<div class="reports-list-container">
@@ -40,21 +37,21 @@
 						{% for report in voluntary_reports %}
 							<a href="{% url 'sms:voluntary_hazard_report_detail' report.id %}" class="report-card-link">
 								<div class="report-card">
-									<div class="report-header">
-										<div class="report-date-time">
-											<span class="report-date">{{ report.date|date:"d/m/Y" }}</span>
-											<span class="report-time">{{ report.time|time:"H:i" }}</span>
-										</div>
-										<div class="report-status-badge status-{{ report.ai_analysis_status|lower }}">
+									<div class="status-container">
+										{% if report.is_resolved %}
+											<span class="badge badge-green badge-medium">Resuelto</span>
+										{% else %}
+											<span class="badge badge-yellow badge-medium">No resuelto</span>
+										{% endif %}
+										<div class="badge badge-medium {% if report.ai_analysis_status == 'PENDING' %}badge-yellow{% elif report.ai_analysis_status == 'PROCESSING' %}badge-blue{% elif report.ai_analysis_status == 'COMPLETED' %}badge-green{% elif report.ai_analysis_status == 'FAILED' %}badge-red{% endif %}">
 											{{ report.get_ai_analysis_status_display }}
 										</div>
 									</div>
-									
 									<div class="report-content">
 										<div class="report-data-section">
 											<div class="report-data">
-												<span class="report-label">Área del peligro:</span>
-												<span class="report-value">{{ report.get_area_display }}</span>
+												<span class="report-label">Código:</span>
+												<span class="report-value">{{ report.code|default:"No registrado" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Reportante:</span>
@@ -73,6 +70,14 @@
 												<span class="report-value">{{ report.analysis_email_sent|yesno:"Sí,No" }}</span>
 											</div>
 											<div class="report-data">
+												<span class="report-label">Fecha:</span>
+												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Área del peligro:</span>
+												<span class="report-value">{{ report.get_area_display }}</span>
+											</div>
+											<div class="report-data">
 												<span class="report-label">MMR creadas:</span>
 												<span class="report-value">{{ report.mmrs_created|yesno:"Sí,No" }}</span>
 											</div>
@@ -80,9 +85,9 @@
 
 										<div class="report-area">
 											{% if report.is_valid %}
-												<span class="report-value report-validity status-valid">VÁLIDO</span>
+												<span class="badge badge-green badge-medium">VÁLIDO</span>
 											{% else %}
-												<span class="report-value report-validity status-invalid">INVÁLIDO</span>
+												<span class="badge badge-red badge-medium">INVÁLIDO</span>
 											{% endif %}
 										</div>
 										
@@ -103,8 +108,8 @@
 			</div>
 
 			<!-- Mandatory Event Reports Container -->
-			<div class="reports-section-container">
-				<div class="section-header">
+			<div class="cards-container">
+				<div class="cards-container-header">
 					<h2>Reportes Obligatorios de Suceso (ROS)</h2>
 				</div>
 				

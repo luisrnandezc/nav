@@ -23,7 +23,7 @@
 			<!-- Action Information Section -->
 			<div class="cards-container">
 				<div class="cards-container-header">
-					<h2>Información de la MMR</h2>
+					<h2>Datos de la MMR</h2>
 				</div>
 				<div class="info-grid">
 					<div class="info-item">
@@ -31,42 +31,30 @@
 						<span class="info-value">{{ action.id }}</span>
 					</div>
 					<div class="info-item">
-						<span class="info-label">Estatus</span>
-						<span class="info-value">
-							{% if action.status == 'PENDING' %}
-								<span class="badge badge-yellow badge-medium">{{ action.get_status_display }}</span>
-							{% elif action.status == 'COMPLETED' %}
-								<span class="badge badge-green badge-medium">{{ action.get_status_display }}</span>
-							{% elif action.status == 'EXPIRED' %}
-								<span class="badge badge-red badge-medium">{{ action.get_status_display }}</span>
-							{% endif %}
-						</span>
+						<span class="info-label">Riesgo ID</span>
+						<span class="info-value">{{ action.risk.id }}</span>
+					</div>
+					<div class="info-item">
+						<span class="info-label">Estatus del Riesgo</span>
+						<span class="info-value">{{ action.risk.get_status_display }}</span>
 					</div>
 					<div class="info-item">
 						<span class="info-label">Fecha de creación</span>
 						<span class="info-value">{{ action.created_at|date:"d/m/Y" }}</span>
 					</div>
 					<div class="info-item">
-						<span class="info-label">Fecha límite</span>
-						<span class="info-value">{{ action.due_date|date:"d/m/Y" }}</span>
-					</div>
-				</div>
-				<div class="info-grid">
-					<div class="info-item">
 						<span class="info-label">Reporte</span>
 						<span class="info-value">{{ action.risk.report.code|default:"No registrado" }}</span>
 					</div>
 					<div class="info-item">
-						<span class="info-label">Riesgo ID</span>
-						<span class="info-value">{{ action.risk.id }}</span>
-					</div>
-					<div class="info-item">
-						<span class="info-label">Pre-evaluación del Riesgo</span>
-						<span class="info-value">{{ action.risk.pre_evaluation }}</span>
-					</div>
-					<div class="info-item">
-						<span class="info-label">Estado del Riesgo</span>
-						<span class="info-value">{{ action.risk.get_status_display }}</span>
+						<span class="info-label">Estatus</span>
+						<span class="info-value">
+							{% if action.status == 'COMPLETED' %}
+								<span class="badge badge-green badge-medium">{{ action.get_status_display }}</span>
+							{% else %}
+								<span class="badge badge-red badge-medium">{{ action.get_status_display }}</span>
+							{% endif %}
+						</span>
 					</div>
 				</div>
 				<div class="info-item">
@@ -113,40 +101,6 @@
 						<div class="analysis-text">{{ action.notes }}</div>
 					</div>
 				{% endif %}
-			{% endif %}
-
-			<!-- Update Due Date Section -->
-			{% if can_manage_sms %}
-				<div class="cards-container">
-					<div class="cards-container-header">
-						<h2>Fecha Límite</h2>
-					</div>
-					{% if action.status == 'COMPLETED' %}
-						<div class="info-item">
-							<span class="info-label">Fecha límite</span>
-							<span class="info-value">{{ action.due_date|date:"d/m/Y" }}</span>
-						</div>
-						<p class="readonly-notice">⚠️ Esta medida está completada. La fecha límite no puede ser modificada.</p>
-					{% else %}
-						<form method="post" action="{% url 'sms:update_action_due_date' action.id %}" class="due-date-form">
-							{% csrf_token %}
-							<div class="form-row">
-								<label for="due_date" class="form-label">Nueva fecha límite</label>
-								<input
-									type="date"
-									id="due_date"
-									name="due_date"
-									value="{{ action.due_date|date:'Y-m-d' }}"
-									class="date-input"
-									required
-								/>
-							</div>
-							<div class="form-row">
-								<button type="submit" class="update-button">Actualizar fecha límite</button>
-							</div>
-						</form>
-					{% endif %}
-				</div>
 			{% endif %}
 
 			<!-- Mark as Completed Section -->

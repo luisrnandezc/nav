@@ -111,7 +111,7 @@
 								<div class="risk-header">
 									<span class="badge badge-medium {{ risk_data.evaluation|risk_color }}">{{ risk_data.evaluation|default:"N/A" }}</span>
 									<span class="risk-key">{{ "Riesgo "|add:risk_key|cut:"risk" }}</span>
-									{% if can_manage_sms and not report.mmrs_created %}
+									{% if can_manage_sms and not report.is_processed %}
 										<form
 											method="post"
 											action="{% url 'sms:delete_risk' report.id risk_key %}"
@@ -129,7 +129,7 @@
 									{% endif %}
 								</div>
 								<div class="risk-text">{{ risk_data.description|default:"Sin descripción" }}</div>
-								{% if can_manage_sms and not report.mmrs_created %}
+								{% if can_manage_sms and not report.is_processed %}
 									{% with current_eval=risk_data.evaluation|default:"A1" %}
 										{% with current_severity=current_eval|slice:":1" current_probability=current_eval|slice:"1:2" %}
 											<form
@@ -182,7 +182,7 @@
 						<p class="no-risks-message">No hay riesgos registrados en el análisis actual.</p>
 					{% endif %}
 
-					{% if can_manage_sms and not report.mmrs_created %}
+					{% if can_manage_sms and not report.is_processed %}
 						<div class="risk-add-form">
 							<h3>Agregar nuevo riesgo</h3>
 							<form method="post" action="{% url 'sms:add_risk' report.id %}">
@@ -247,7 +247,7 @@
 											{% for action in risk_entry.actions %}
 												<li class="action-item">
 													<span class="action-text">{{ action }}</span>
-													{% if can_manage_sms and not report.mmrs_created %}
+													{% if can_manage_sms and not report.is_processed %}
 														<form
 															method="post"
 															action="{% url 'sms:delete_action' report.id risk_entry.key forloop.counter0 %}"
@@ -271,7 +271,7 @@
 											</li>
 										{% endif %}
 									</ul>
-									{% if can_manage_sms and not report.mmrs_created %}
+									{% if can_manage_sms and not report.is_processed %}
 										<form
 											method="post"
 											action="{% url 'sms:add_action' report.id risk_entry.key %}"
@@ -389,17 +389,17 @@
 				</div>
 			{% endif %}
 
-			<!-- PDF Download Section -->
+			<!-- Register Section -->
 			<div class="cards-container" id="register-section-container">
 				<div class="cards-container-header">
-					<h2>Descargar PDF</h2>
+					<h2>Registrar reporte</h2>
 				</div>
 				<div class="register-container">
 					<div class="register-text-container">
 						{% if report.code %}
 							<p id="register-warning-text">⚠️ Este reporte ya ha sido registrado con el código: {{ report.code }}</p>
 						{% else %}
-							<p>Al registrar el reporte, se generará el PDF y se le asignará el código único de registro para la base de datos.</p>
+							<p>Al registrar el reporte, se le asignará el código único de registro para la BD y se generará la planilla en formato PDF.</p>
 							<p id="register-warning-text">⚠️ IMPORTANTE: Esta acción no se puede deshacer.</p>
 						{% endif %}
 					</div>
@@ -409,7 +409,7 @@
 								<a 
 								href="{% url 'sms:register_rvp' report.id %}" 
 								class="register-button" 
-								onclick="return confirm('¿Está seguro que desea registrar este reporte? Esta acción generará el PDF Esta acción no se puede deshacer.');">
+								onclick="return confirm('⚠️ ¿Está seguro que desea registrar este reporte? Esta acción no se puede deshacer.');">
 									Registrar
 								</a>
 							{% else %}
@@ -429,28 +429,28 @@
 			<!-- MMRs Creation Section -->
 			<div class="cards-container" id="register-section-container">
 				<div class="cards-container-header">
-					<h2>Crear MMRs</h2>
+					<h2>Procesar reporte</h2>
 				</div>
 				<div class="register-container">
 					<div class="register-text-container">
-						{% if report.mmrs_created %}
-							<p id="register-warning-text">⚠️ Las MMRs para este reporte ya han sido creadas.</p>
+						{% if report.is_processed %}
+							<p id="register-warning-text">⚠️ El reporte ya ha sido procesado.</p>
 						{% else %}
-							<p>Al presionar el botón se crearán las MMRs para el reporte.</p>
+							<p>Al presionar el botón se crearán las MMRs definidas previamente.</p>
 							<p id="register-warning-text">⚠️ IMPORTANTE: Esta acción no se puede deshacer.</p>
 						{% endif %}
 					</div>
 					<div class="buttons-container">
 						<div class="button">
-							{% if report.human_validated and not report.mmrs_created %}
+							{% if report.is_registered and not report.is_processed %}
 								<a 
 								href="{% url 'sms:create_mmrs' report.id %}" 
 								class="register-button" 
-								onclick="return confirm('¿Está seguro que desea crear las MMRs para este reporte? Esta acción no se puede deshacer.');">
-									Crear MMRs
+								onclick="return confirm('⚠️ ¿Está seguro que desea procesar este reporte? Esta acción no se puede deshacer.');">
+									Procesar
 								</a>
 							{% else %}
-								<span class="register-button" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">MMRs creadas</span>
+								<span class="register-button" style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">Procesado</span>
 							{% endif %}
 						</div>
 					</div>

@@ -5,10 +5,10 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>NAV | Detalle de RVP con MMRs</title>
+		<title>NAV | Detalle de RVP procesado</title>
 		<link href="{% static 'sms_base.css' %}" rel="stylesheet" />
-		<link href="{% static 'report_with_mmrs_detail.css' %}" rel="stylesheet" />
-		<script src="{% static 'js/report_with_mmrs_detail_dynamics.js' %}"></script>
+		<link href="{% static 'processed_vhr_detail.css' %}" rel="stylesheet" />
+		<script src="{% static 'js/processed_vhr_detail_dynamics.js' %}"></script>
 	</head>
 
 	<body>
@@ -184,9 +184,15 @@
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
-										<div class="badge badge-yellow badge-medium">
-											{{ action.get_status_display }}
-										</div>
+										{% if action.risk.status == 'INTOLERABLE' %}
+											<div class="badge badge-red badge-medium">
+												{{ action.get_status_display }}
+											</div>
+										{% else %}
+											<div class="badge badge-yellow badge-medium">
+												{{ action.get_status_display }}
+											</div>
+										{% endif %}
 									</div>
 									
 									<div class="report-content">
@@ -196,21 +202,12 @@
 												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Vence el:</span>
-												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
-											</div>
-
-											<div class="report-data">
-												<span class="report-label">Creada:</span>
-												<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
-											</div>
-											<div class="report-data">
 												<span class="report-label">Riesgo ID:</span>
 												<span class="report-value">{{ action.risk.id }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Estatus:</span>
-												<span class="report-value">{{ action.get_status_display }}</span>
+												<span class="report-label">Estatus del Riesgo:</span>
+												<span class="report-value">{{ action.risk.get_status_display }}</span>
 											</div>
 										</div>
 										
@@ -234,55 +231,6 @@
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
 										<div class="badge badge-green badge-medium">
-											{{ action.get_status_display }}
-										</div>
-									</div>
-									
-									<div class="report-content">
-										<div class="report-data-section">
-											<div class="report-data">
-												<span class="report-label">Reporte:</span>
-												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Vence el:</span>
-												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
-											</div>
-
-											<div class="report-data">
-												<span class="report-label">Creada:</span>
-												<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Riesgo ID:</span>
-												<span class="report-value">{{ action.risk.id }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Estatus:</span>
-												<span class="report-value">{{ action.get_status_display }}</span>
-											</div>
-										</div>
-										
-										<div class="report-description">
-											<span class="report-label">Descripción:</span>
-											<p class="report-description-text">{{ action.description|truncatewords:30 }}</p>
-										</div>
-									</div>
-								</div>
-							</a>
-						{% endfor %}
-					{% endif %}
-
-					<!-- Expired Actions -->
-					{% if expired_actions %}
-						{% for action in expired_actions %}
-							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
-								<div class="report-card">
-									<div class="report-header">
-										<div class="report-date-time">
-											<span class="report-date">MMR ID: {{ action.id }}</span>
-										</div>
-										<div class="badge badge-red badge-medium">
 											{{ action.get_status_display }}
 										</div>
 									</div>

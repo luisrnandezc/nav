@@ -27,25 +27,22 @@ def sms_dashboard(request):
     A view to handle the SMS main page.
     """
 
-    # Get all voluntary hazard reports with MMRs created, ordered by most recent first
-    voluntary_reports = VoluntaryHazardReport.objects.filter(is_processed=True).order_by('-created_at')
+    # Get all the processed voluntary hazard reports, ordered by most recent first
+    processed_vhr = VoluntaryHazardReport.objects.filter(is_processed=True).order_by('-created_at')
 
     # Get all the non resolved voluntary hazard reports, ordered by most recent first
-    non_resolved_voluntary_reports = VoluntaryHazardReport.objects.filter(is_processed=True, is_resolved=False).order_by('-created_at')
+    non_resolved_voluntary_reports = processed_vhr.filter(is_resolved=False).order_by('-created_at')
     non_resolved_voluntary_reports_count = non_resolved_voluntary_reports.count()
 
     # Get all the risk data.
-    mitigated_risks = Risk.objects.filter(condition='MITIGATED').order_by('-created_at')[:10]
     unmitigated_risks = Risk.objects.filter(condition='UNMITIGATED')
     unmitigated_risks_count = unmitigated_risks.count()
     
     # Get all the action data.
-    completed_actions = MitigationAction.objects.filter(status='COMPLETED').order_by('-created_at')[:10]
     pending_actions = MitigationAction.objects.filter(status='PENDING')
     pending_actions_count = pending_actions.count()
 
     # Get all the evidence data.
-    completed_evidences = MitigationActionEvidence.objects.filter(status='COMPLETED').order_by('-created_at')[:10]
     pending_evidences = MitigationActionEvidence.objects.filter(status='PENDING')
     pending_evidences_count = pending_evidences.count()
     expired_evidences = MitigationActionEvidence.objects.filter(status='EXPIRED')
@@ -69,24 +66,22 @@ def sms_dashboard(request):
     if intolerable_risks_count > 0:
         sms_school_status = 'INTOLERABLE'
     elif tolerable_risks_count > 0:
-        if tolerable_risks_count >= 10:
+        if tolerable_risks_count > 4:
             sms_school_status = 'INTOLERABLE'
-        sms_school_status = 'TOLERABLE'
+        else:
+            sms_school_status = 'TOLERABLE'
     else:
         sms_school_status = 'ACEPTABLE'
     
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
-        'voluntary_reports': voluntary_reports,
+        'processed_vhr': processed_vhr,
         'non_resolved_voluntary_reports': non_resolved_voluntary_reports,
         'non_resolved_voluntary_reports_count': non_resolved_voluntary_reports_count,
-        'mitigated_risks': mitigated_risks,
         'unmitigated_risks': unmitigated_risks,
         'unmitigated_risks_count': unmitigated_risks_count,
-        'completed_actions': completed_actions,
         'pending_actions': pending_actions,
         'pending_actions_count': pending_actions_count,
-        'completed_evidences': completed_evidences,
         'pending_evidences': pending_evidences,
         'pending_evidences_count': pending_evidences_count,
         'expired_evidences': expired_evidences,
@@ -100,7 +95,7 @@ def sms_dashboard(request):
 @login_required
 def voluntary_hazard_reports_dashboard(request):
     """
-    A view to handle the RVP main page.
+    A view to handle the VHR main page.
     """
     # Get all voluntary hazard reports ordered by most recent first
     voluntary_reports = VoluntaryHazardReport.objects.all().order_by('-created_at')
@@ -172,10 +167,10 @@ def voluntary_hazard_report_detail(request, report_id):
         })
     
     # Check if PDF download should be triggered
-    should_download_pdf = request.session.get('download_rvp_pdf') == report_id
+    should_download_pdf = request.session.get('download_vhr_pdf') == report_id
     if should_download_pdf:
         # Clear the session flag
-        del request.session['download_rvp_pdf']
+        del request.session['download_vhr_pdf']
     
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
@@ -203,7 +198,7 @@ def voluntary_hazard_report_detail(request, report_id):
 
 
 @login_required
-def register_rvp(request, report_id):
+def register_vhr(request, report_id):
     """Register a specific voluntary hazard report.
     
     This will set the registration code and validate the report, then redirect to detail page.
@@ -234,7 +229,7 @@ def register_rvp(request, report_id):
             report.save(update_fields=['is_registered'])
             
             # Set session flag to trigger PDF download on detail page
-            request.session['download_rvp_pdf'] = report_id
+            request.session['download_vhr_pdf'] = report_id
             
             messages.success(request, f'El reporte ha sido registrado con el código {report.code}.')
             return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
@@ -245,7 +240,7 @@ def register_rvp(request, report_id):
 
 
 @login_required
-def download_rvp_pdf(request, report_id):
+def download_vhr_pdf(request, report_id):
     """Download PDF for a registered voluntary hazard report."""
     report = get_object_or_404(VoluntaryHazardReport, id=report_id)
     
@@ -267,7 +262,7 @@ def download_rvp_pdf(request, report_id):
             logo_uri = ''
 
         # Render the PDF template with report data and logo path
-        html_string = render_to_string('sms/pdf_rvp.html', {
+        html_string = render_to_string('sms/pdf_vhr.html', {
             'report': report,
             'logo_path': logo_uri,
             'user': request.user
@@ -277,9 +272,9 @@ def download_rvp_pdf(request, report_id):
         base_url = request.build_absolute_uri()
 
         # Find the CSS file path
-        css_path = find('pdf_rvp.css')
+        css_path = find('pdf_vhr.css')
         if not css_path:
-            messages.error(request, 'No se encontró el archivo CSS para generar el PDF del RVP.')
+            messages.error(request, 'No se encontró el archivo CSS para generar el PDF del VHR.')
             return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
         
         # Generate PDF using WeasyPrint with CSS
@@ -289,9 +284,9 @@ def download_rvp_pdf(request, report_id):
         # Create HTTP response with PDF content
         response = HttpResponse(pdf, content_type='application/pdf')
         if report.date:
-            response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
+            response['Content-Disposition'] = f'attachment; filename="vhr_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
         else:
-            response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}.pdf"'
+            response['Content-Disposition'] = f'attachment; filename="vhr_{report.id}.pdf"'
         
         return response
         
@@ -301,9 +296,9 @@ def download_rvp_pdf(request, report_id):
 
 
 @login_required
-def process_rvp(request, report_id):
+def process_vhr(request, report_id):
     """
-    Create the Risks, MMRs and Evidences for a specific RVP.
+    Create the Risks, MMRs and Evidences for a specific VHR.
     """
     report = get_object_or_404(VoluntaryHazardReport, id=report_id)
 
@@ -875,9 +870,9 @@ def run_ai_analysis_for_voluntary_hazard_report(report):
 
 
 @login_required
-def report_with_mmrs_detail(request, report_id):
+def processed_vhr_detail(request, report_id):
     """
-    A view to display the detail of a Voluntary Hazard Report with its risks and actions.
+    A view to display the detail of a processed Voluntary Hazard Report with its risks and actions.
     """
     report = get_object_or_404(VoluntaryHazardReport, id=report_id, is_processed=True)
     
@@ -899,7 +894,7 @@ def report_with_mmrs_detail(request, report_id):
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
     }
     
-    return render(request, 'sms/report_with_mmrs_detail.html', context)
+    return render(request, 'sms/processed_vhr_detail.html', context)
 
 
 @login_required
@@ -917,9 +912,9 @@ def risk_detail(request, risk_id):
     
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
-    if '/report_with_mmrs/' in referer:
-        # If coming from report_with_mmrs_detail page, go back to that report's detail page
-        back_url = reverse('sms:report_with_mmrs_detail', args=[risk.report.id])
+    if '/processed_vhr/' in referer:
+        # If coming from processed_vhr_detail page, go back to that report's detail page
+        back_url = reverse('sms:processed_vhr_detail', args=[risk.report.id])
     else:
         # Default to SMS dashboard
         back_url = reverse('sms:sms_dashboard')

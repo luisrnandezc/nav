@@ -126,14 +126,14 @@ class VoluntaryHazardReport(models.Model):
         blank=True,
         null=True
     )
-    is_registered = models.BooleanField(
-        default=False,
-        verbose_name="Registrado",
-    )
     analysis_email_sent = models.BooleanField(
         default=False,
         verbose_name="Email de análisis enviado",
         help_text="Indica si se ha enviado el email de notificación cuando el análisis fue completado",
+    )
+    is_registered = models.BooleanField(
+        default=False,
+        verbose_name="Registrado",
     )
     is_processed = models.BooleanField(
         default=False,
@@ -160,8 +160,8 @@ class VoluntaryHazardReport(models.Model):
     #endregion
 
     class Meta:
-        verbose_name = "RVP"
-        verbose_name_plural = "RVP"
+        verbose_name = "VHR"
+        verbose_name_plural = "VHR"
         
     def __str__(self):
         if self.code:
@@ -172,10 +172,6 @@ class VoluntaryHazardReport(models.Model):
     def has_ai_analysis(self):
         """Check if this report has a completed AI hazard analysis"""
         return self.ai_analysis_status == 'COMPLETED'
-
-    def is_validated_by_human(self):
-        """Check if this report is validated by a human"""
-        return self.is_registered
 
 
 class Risk(models.Model):

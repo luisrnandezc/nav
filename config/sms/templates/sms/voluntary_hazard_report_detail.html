@@ -407,14 +407,14 @@
 						<div class="button">
 							{% if not report.code %}
 								<a 
-								href="{% url 'sms:register_rvp' report.id %}" 
+								href="{% url 'sms:register_vhr' report.id %}" 
 								class="register-button" 
 								onclick="return confirm('⚠️ ¿Está seguro que desea registrar este reporte? Esta acción no se puede deshacer.');">
 									Registrar
 								</a>
 							{% else %}
 								<a 
-								href="{% url 'sms:register_rvp' report.id %}" 
+								href="{% url 'sms:register_vhr' report.id %}" 
 								class="register-button" 
 								style="opacity: 0.5; cursor: not-allowed; pointer-events: none;" 
 								title="Este reporte ya ha sido registrado">
@@ -444,7 +444,7 @@
 						<div class="button">
 							{% if report.is_registered and not report.is_processed %}
 								<a 
-								href="{% url 'sms:create_mmrs' report.id %}" 
+								href="{% url 'sms:process_vhr' report.id %}" 
 								class="register-button" 
 								onclick="return confirm('⚠️ ¿Está seguro que desea procesar este reporte? Esta acción no se puede deshacer.');">
 									Procesar
@@ -463,7 +463,7 @@
 			// Auto-trigger PDF download after page loads
 			window.addEventListener('load', function() {
 				setTimeout(function() {
-					window.location.href = "{% url 'sms:download_rvp_pdf' report.id %}";
+					window.location.href = "{% url 'sms:download_vhr_pdf' report.id %}";
 				}, 500); // Small delay to ensure page is fully loaded
 			});
 		</script>

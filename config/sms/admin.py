@@ -10,7 +10,7 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información del Reporte', {
-            'fields': ('code', 'date', 'time', 'area', 'description', 'is_valid', 'invalidity_reason', 'is_processed', 'is_resolved')
+            'fields': ('code', 'date', 'time', 'area', 'description', 'is_valid', 'invalidity_reason', 'is_registered', 'is_processed', 'is_resolved')
         }),
         ('Información del Reportante', {
             'fields': ('is_anonymous', 'first_name', 'last_name', 'role')

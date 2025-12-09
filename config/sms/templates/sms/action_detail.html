@@ -103,6 +103,79 @@
 				{% endif %}
 			{% endif %}
 
+			<!-- Update Due Date and Responsible Section -->
+			{% if can_manage_sms and action.status != 'COMPLETED' %}
+				<div class="cards-container">
+					<div class="cards-container-header">
+						<h2>Fecha Límite y Responsable</h2>
+					</div>
+					<div class="due-date-responsible-form">
+						<form method="post" action="{% url 'sms:update_action_due_date' action.id %}" class="due-date-form">
+							{% csrf_token %}
+							<div class="form-field-group">
+								<label for="due_date" class="form-label">Fecha Límite</label>
+								<input
+									type="date"
+									name="due_date"
+									id="due_date"
+									class="date-input"
+									value="{{ action.due_date|date:'Y-m-d' }}"
+									required
+								/>
+								<div class="form-row">
+									<button type="submit" class="update-button">Actualizar Fecha</button>
+								</div>
+							</div>
+						</form>
+						<form method="post" action="{% url 'sms:update_action_responsible' action.id %}" class="responsible-form">
+							{% csrf_token %}
+							<div class="form-field-group">
+								<label for="responsible" class="form-label">Responsable</label>
+								<select
+									name="responsible"
+									id="responsible"
+									class="date-input"
+									required
+								>
+									<option value="">Seleccione un responsable</option>
+									{% for user in available_users %}
+										<option value="{{ user.id }}" {% if action.responsible and action.responsible.id == user.id %}selected{% endif %}>
+											{{ user.first_name }} {{ user.last_name }} ({{ user.get_role_display }})
+										</option>
+									{% endfor %}
+								</select>
+								<div class="form-row">
+									<button type="submit" class="update-button">Actualizar Responsable</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			{% elif action.status == 'COMPLETED' %}
+				<div class="cards-container">
+					<div class="cards-container-header">
+						<h2>Fecha Límite y Responsable</h2>
+					</div>
+					<div class="info-grid">
+						<div class="info-item">
+							<span class="info-label">Fecha Límite</span>
+							<span class="info-value">{{ action.due_date|date:"d/m/Y" }}</span>
+						</div>
+						<div class="info-item">
+							<span class="info-label">Responsable</span>
+							<span class="info-value">
+								{% if action.responsible %}
+									{{ action.responsible.first_name }} {{ action.responsible.last_name }} ({{ action.responsible.get_role_display }})
+								{% else %}
+									No asignado
+								{% endif %}
+							</span>
+						</div>
+					</div>
+					<p class="readonly-notice">⚠️ Esta medida está completada. La fecha límite y el responsable no pueden ser modificados.</p>
+				</div>
+			{% endif %}
+
 			<!-- Mark as Completed Section -->
 			{% if can_manage_sms and action.status != 'COMPLETED' %}
 				<div class="cards-container">

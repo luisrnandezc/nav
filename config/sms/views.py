@@ -15,6 +15,7 @@ from django.contrib.staticfiles.finders import find
 from django.db import transaction
 from .models import VoluntaryHazardReport, Risk, MitigationAction, MitigationActionEvidence
 from django.conf import settings
+from accounts.models import User
 import logging
 import sys
 import weasyprint
@@ -41,12 +42,14 @@ def sms_dashboard(request):
     # Get all the action data.
     pending_actions = MitigationAction.objects.filter(status='PENDING')
     pending_actions_count = pending_actions.count()
+    completed_actions = MitigationAction.objects.filter(status='COMPLETED')
+    completed_actions_count = completed_actions.count()
+    expired_actions = MitigationAction.objects.filter(status='EXPIRED')
+    expired_actions_count = expired_actions.count()
 
-    # Get all the evidence data.
-    pending_evidences = MitigationActionEvidence.objects.filter(status='PENDING')
-    pending_evidences_count = pending_evidences.count()
-    expired_evidences = MitigationActionEvidence.objects.filter(status='EXPIRED')
-    expired_evidences_count = expired_evidences.count()
+    # Get all the evidence data (status field removed from MitigationActionEvidence)
+    all_evidences = MitigationActionEvidence.objects.all()
+    all_evidences_count = all_evidences.count()
 
     # Compute SMS school status.
     intolerable_risks_count = 0
@@ -82,10 +85,12 @@ def sms_dashboard(request):
         'unmitigated_risks_count': unmitigated_risks_count,
         'pending_actions': pending_actions,
         'pending_actions_count': pending_actions_count,
-        'pending_evidences': pending_evidences,
-        'pending_evidences_count': pending_evidences_count,
-        'expired_evidences': expired_evidences,
-        'expired_evidences_count': expired_evidences_count,
+        'completed_actions': completed_actions,
+        'completed_actions_count': completed_actions_count,
+        'expired_actions': expired_actions,
+        'expired_actions_count': expired_actions_count,
+        'all_evidences': all_evidences,
+        'all_evidences_count': all_evidences_count,
         'sms_school_status': sms_school_status,
     }
 
@@ -938,9 +943,16 @@ def action_detail(request, action_id):
     """
     action = get_object_or_404(MitigationAction, id=action_id)
     
+    # Get available users for responsible field (STAFF and INSTRUCTOR only)
+    available_users = User.objects.filter(
+        role__in=['STAFF', 'INSTRUCTOR'],
+        is_active=True
+    ).order_by('first_name', 'last_name')
+    
     context = {
         'action': action,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'available_users': available_users,
     }
     
     return render(request, 'sms/action_detail.html', context)
@@ -1005,6 +1017,41 @@ def update_action_due_date(request, action_id):
         messages.success(request, 'La fecha límite se actualizó correctamente.')
     except ValueError:
         messages.error(request, 'Formato de fecha inválido.')
+    
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def update_action_responsible(request, action_id):
+    """
+    Update the responsible user for a mitigation action.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se puede modificar el responsable de una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    responsible_id = request.POST.get('responsible', '').strip()
+    if not responsible_id:
+        messages.error(request, 'El responsable es obligatorio.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    try:
+        responsible = User.objects.get(id=responsible_id, role__in=['STAFF', 'INSTRUCTOR'], is_active=True)
+        action.responsible = responsible
+        action.updated_at = timezone.now().date()
+        action.save(update_fields=['responsible', 'updated_at'])
+        messages.success(request, 'El responsable se actualizó correctamente.')
+    except User.DoesNotExist:
+        messages.error(request, 'Usuario no válido o no tiene permisos para ser responsable.')
+    except Exception as e:
+        messages.error(request, f'Error al actualizar el responsable: {str(e)}')
     
     return redirect('sms:action_detail', action_id=action_id)
 

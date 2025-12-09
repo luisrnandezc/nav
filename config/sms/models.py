@@ -160,8 +160,8 @@ class VoluntaryHazardReport(models.Model):
     #endregion
 
     class Meta:
-        verbose_name = "VHR"
-        verbose_name_plural = "VHR"
+        verbose_name = "RVP"
+        verbose_name_plural = "RVP"
         
     def __str__(self):
         if self.code:
@@ -292,6 +292,7 @@ class MitigationAction(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente'),
         ('COMPLETED', 'Completado'),
+        ('EXPIRED', 'Expirado'),
     ]
     #endregion
 
@@ -310,6 +311,20 @@ class MitigationAction(models.Model):
         choices=STATUS_CHOICES,
         default='PENDING',
         verbose_name="Estatus",
+    )
+    responsible = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Responsable",
+        related_name="responsible_for_mitigation_actions",
+        limit_choices_to=Q(role='STAFF') | Q(role='INSTRUCTOR'),
+        blank=True,
+        null=True,
+        help_text="Solo usuarios con rol de Staff o Instructor pueden ser asignados como responsables"
+    )
+    due_date = models.DateField(
+        default=default_due_date,
+        verbose_name="Fecha límite"
     )
     notes = models.TextField(
         verbose_name="Notas",
@@ -342,14 +357,6 @@ class MitigationActionEvidence(models.Model):
     
     This Evidence instances will serve to close a specific Mitigation Action"""
 
-        #region Choices
-    STATUS_CHOICES = [
-        ('PENDING', 'Pendiente'),
-        ('COMPLETED', 'Completado'),
-        ('EXPIRED', 'Expirado'),
-    ]
-    #endregion
-
     #region Fields
     mitigation_action = models.ForeignKey(
         MitigationAction, 
@@ -359,24 +366,6 @@ class MitigationActionEvidence(models.Model):
     )
     description = models.TextField(
         verbose_name="Descripción",
-    )
-    status=models.CharField(
-        max_length=9,
-        choices=STATUS_CHOICES,
-        default='PENDING',
-        verbose_name="Estatus",
-    )
-    responsible = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name="Responsable",
-        related_name="responsible_for_evidences",
-        limit_choices_to=Q(role='STAFF') | Q(role='INSTRUCTOR'),
-        help_text="Solo usuarios con rol de Staff o Instructor pueden ser asignados como responsables"
-    )
-    due_date = models.DateField(
-        default=default_due_date,
-        verbose_name="Fecha límite"
     )
     notes = models.TextField(
         verbose_name="Notas",
@@ -397,21 +386,8 @@ class MitigationActionEvidence(models.Model):
         verbose_name = "Evidencia MMR"
         verbose_name_plural = "Evidencias MMR"
         
-    def clean(self):
-        """Validate that the responsible user has STAFF or INSTRUCTOR role"""
-        super().clean()
-        if self.responsible and self.responsible.role not in ['STAFF', 'INSTRUCTOR']:
-            raise ValidationError({
-                'responsible': 'Solo usuarios con rol de Staff o Instructor pueden ser asignados como responsables.'
-            })
-    
-    def save(self, *args, **kwargs):
-        """Override save to call clean validation"""
-        self.full_clean()
-        super().save(*args, **kwargs)
-        
     def __str__(self):
         if self.mitigation_action.risk.report.code:
-            return "{} - {}".format(self.mitigation_action.risk.report.code, self.status)
+            return "{} - Evidencia {}".format(self.mitigation_action.risk.report.code, self.id)
         else:
-            return "NO REGISTRADO - {}".format(self.mitigation_action.status)
+            return "REPORTE NO REGISTRADO - Evidencia {}".format(self.id)

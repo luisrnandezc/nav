@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VoluntaryHazardReport, Risk, MitigationAction
+from .models import VoluntaryHazardReport, Risk, MitigationAction, MitigationActionEvidence
 
 
 @admin.register(VoluntaryHazardReport)
@@ -10,7 +10,7 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información del Reporte', {
-            'fields': ('code', 'date', 'time', 'area', 'description', 'is_valid', 'invalidity_reason', 'mmrs_created', 'is_resolved')
+            'fields': ('code', 'date', 'time', 'area', 'description', 'is_valid', 'invalidity_reason', 'is_registered', 'is_processed', 'is_resolved')
         }),
         ('Información del Reportante', {
             'fields': ('is_anonymous', 'first_name', 'last_name', 'role')
@@ -50,19 +50,33 @@ class RiskAdmin(admin.ModelAdmin):
 
 @admin.register(MitigationAction)
 class MitigationActionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'risk', 'status', 'due_date', 'created_at')
-    list_filter = ('status', 'due_date', 'created_at')
-    search_fields = ('description', 'risk__description', 'notes')
+    list_display = ('id', 'risk', 'status', 'responsible', 'due_date')
+    list_filter = ('status', 'responsible', 'due_date')
+    search_fields = ('description', 'risk__description', 'responsible__first_name', 'responsible__last_name')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información de la Acción', {
-            'fields': ('risk', 'description')
-        }),
-        ('Estado y Fechas', {
-            'fields': ('status', 'due_date')
+            'fields': ('risk', 'description', 'status', 'responsible', 'due_date')
         }),
         ('Notas', {
             'fields': ('notes',)
+        }),
+        ('Metadatos', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(MitigationActionEvidence)
+class MitigationActionEvidenceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'mitigation_action', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('description', 'mitigation_action__description')
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        ('Información de la Evidencia', {
+            'fields': ('mitigation_action', 'description')
         }),
         ('Metadatos', {
             'fields': ('created_at', 'updated_at'),

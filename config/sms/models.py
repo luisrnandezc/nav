@@ -1,5 +1,7 @@
 from django.db import models
+from django.db.models import Q
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
 from datetime import timedelta, date
@@ -124,18 +126,18 @@ class VoluntaryHazardReport(models.Model):
         blank=True,
         null=True
     )
-    human_validated = models.BooleanField(
-        default=False,
-        verbose_name="Validado",
-    )
     analysis_email_sent = models.BooleanField(
         default=False,
         verbose_name="Email de análisis enviado",
         help_text="Indica si se ha enviado el email de notificación cuando el análisis fue completado",
     )
-    mmrs_created = models.BooleanField(
+    is_registered = models.BooleanField(
         default=False,
-        verbose_name="MMRs creadas",
+        verbose_name="Registrado",
+    )
+    is_processed = models.BooleanField(
+        default=False,
+        verbose_name="Procesado",
         help_text="Indica si se han creado las MMRs para el reporte",
     )
     is_resolved = models.BooleanField(
@@ -170,10 +172,6 @@ class VoluntaryHazardReport(models.Model):
     def has_ai_analysis(self):
         """Check if this report has a completed AI hazard analysis"""
         return self.ai_analysis_status == 'COMPLETED'
-
-    def is_validated_by_human(self):
-        """Check if this report is validated by a human"""
-        return self.human_validated
 
 
 class Risk(models.Model):
@@ -292,9 +290,9 @@ class MitigationAction(models.Model):
 
     #region Choices
     STATUS_CHOICES = [
-        ('PENDING', 'Sin completar'),
-        ('COMPLETED', 'Completada'),
-        ('EXPIRED', 'Vencida'),
+        ('PENDING', 'Pendiente'),
+        ('COMPLETED', 'Completado'),
+        ('EXPIRED', 'Expirado'),
     ]
     #endregion
 
@@ -313,6 +311,16 @@ class MitigationAction(models.Model):
         choices=STATUS_CHOICES,
         default='PENDING',
         verbose_name="Estatus",
+    )
+    responsible = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Responsable",
+        related_name="responsible_for_mitigation_actions",
+        limit_choices_to=Q(role='STAFF') | Q(role='INSTRUCTOR'),
+        blank=True,
+        null=True,
+        help_text="Solo usuarios con rol de Staff o Instructor pueden ser asignados como responsables"
     )
     due_date = models.DateField(
         default=default_due_date,
@@ -342,3 +350,39 @@ class MitigationAction(models.Model):
             return "{} - {}".format(self.risk.report.code, self.status)
         else:
             return "NO REGISTRADO - {}".format(self.status)
+
+
+class MitigationActionEvidence(models.Model):
+    """Mitigation Action Evidence Model for Safety Management System (SMS)
+    
+    This Evidence instances will serve to close a specific Mitigation Action"""
+
+    #region Fields
+    mitigation_action = models.ForeignKey(
+        MitigationAction, 
+        on_delete=models.CASCADE, 
+        verbose_name="MMR",
+        related_name="evidences"
+    )
+    description = models.TextField(
+        verbose_name="Descripción",
+    )
+    created_at = models.DateField(
+        default=timezone.now,
+        verbose_name="Fecha de creación"
+    )
+    updated_at = models.DateField(
+        default=timezone.now,
+        verbose_name="Fecha de actualización"
+    )
+    #endregion
+
+    class Meta:
+        verbose_name = "Evidencia MMR"
+        verbose_name_plural = "Evidencias MMR"
+        
+    def __str__(self):
+        if self.mitigation_action.risk.report.code:
+            return "{} - Evidencia {}".format(self.mitigation_action.risk.report.code, self.id)
+        else:
+            return "REPORTE NO REGISTRADO - Evidencia {}".format(self.id)

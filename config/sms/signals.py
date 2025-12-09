@@ -26,9 +26,9 @@ SARA
 """
 
 @receiver(post_save, sender=VoluntaryHazardReport)
-def send_rvp_analysis_email(instance, created, **kwargs):
+def send_vhr_analysis_email(instance, created, **kwargs):
     """
-    Send an email notification when the RVP AI analysis is completed.
+    Send an email notification when the VHR AI analysis is completed.
     Only sends email once per report when status becomes 'COMPLETED'.
     """
     # Don't send on creation or if status is not COMPLETED
@@ -73,9 +73,9 @@ def send_rvp_analysis_email(instance, created, **kwargs):
         instance.analysis_email_sent = True
         instance.save(update_fields=['analysis_email_sent'])
         
-        logger.info(f"RVP analysis email sent to recipients: {recipients}")
+        logger.info(f"VHR analysis email sent to recipients: {recipients}")
     except Exception as e:
-        logger.error(f"Failed to send RVP analysis email to recipients: {recipients}. Error: {e}")
+        logger.error(f"Failed to send VHR analysis email to recipients: {recipients}. Error: {e}")
 
 
 def check_and_update_report_resolved_status(report):

@@ -74,7 +74,7 @@
 
 .sms-status-stats {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 30px;
   padding: 20px;
   border-top: 1px solid rgba(218, 225, 255, 0.3);
@@ -216,8 +216,6 @@
   opacity: 0.8;
 }
 
-/* Badge styles moved to sms_base.css - using standardized badge classes */
-
 .critical-risk-warning {
   background: rgba(244, 67, 54, 0.2);
   border: 2px solid #f44336;
@@ -247,6 +245,10 @@
   gap: 12px;
 }
 
+.actions-data-section {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
 .report-data {
   display: flex;
   align-items: center;
@@ -271,8 +273,6 @@
   color: #ffffff;
   font-size: 0.95rem;
 }
-
-/* Badge styles moved to sms_base.css - using standardized badge classes */
 
 .report-description {
   margin-top: 10px;

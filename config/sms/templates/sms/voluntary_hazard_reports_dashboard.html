@@ -26,15 +26,15 @@
 				</div>
 			</div>
 
-			<!-- Voluntary Hazard Reports Container -->
+			<!-- Non Processed VHRs Container -->
 			<div class="cards-container">
 				<div class="cards-container-header">
-					<h2>Reportes Voluntarios de Peligro (RVP)</h2>
+					<h2>RVP no procesados</h2>
 				</div>
 				
 				<div class="reports-list-container">
-					{% if voluntary_reports %}
-						{% for report in voluntary_reports %}
+					{% if non_processed_voluntary_reports %}
+						{% for report in non_processed_voluntary_reports %}
 							<a href="{% url 'sms:voluntary_hazard_report_detail' report.id %}" class="report-card-link">
 								<div class="report-card">
 									<div class="status-container">
@@ -79,7 +79,7 @@
 											</div>
 											<div class="report-data">
 												<span class="report-label">MMR creadas:</span>
-												<span class="report-value">{{ report.mmrs_created|yesno:"Sí,No" }}</span>
+												<span class="report-value">{{ report.is_processed|yesno:"Sí,No" }}</span>
 											</div>
 										</div>
 
@@ -107,16 +107,165 @@
 				</div>
 			</div>
 
-			<!-- Mandatory Event Reports Container -->
+			<!-- Processed VHRs Container -->
 			<div class="cards-container">
 				<div class="cards-container-header">
-					<h2>Reportes Obligatorios de Suceso (ROS)</h2>
+					<h2>RVP procesados</h2>
 				</div>
 				
 				<div class="reports-list-container">
-					<div class="no-reports">
-						<p>No hay reportes obligatorios de suceso registrados.</p>
-					</div>
+					{% if processed_voluntary_reports %}
+						{% for report in processed_voluntary_reports %}
+							<a href="{% url 'sms:processed_vhr_detail' report.id %}" class="report-card-link">
+								<div class="report-card">
+									<div class="status-container">
+										{% if report.is_resolved %}
+											<span class="badge badge-green badge-medium">Resuelto</span>
+										{% else %}
+											<span class="badge badge-yellow badge-medium">No resuelto</span>
+										{% endif %}
+										<div class="badge badge-medium {% if report.ai_analysis_status == 'PENDING' %}badge-yellow{% elif report.ai_analysis_status == 'PROCESSING' %}badge-blue{% elif report.ai_analysis_status == 'COMPLETED' %}badge-green{% elif report.ai_analysis_status == 'FAILED' %}badge-red{% endif %}">
+											{{ report.get_ai_analysis_status_display }}
+										</div>
+									</div>
+									<div class="report-content">
+										<div class="report-data-section">
+											<div class="report-data">
+												<span class="report-label">Código:</span>
+												<span class="report-value">{{ report.code|default:"No registrado" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Reportante:</span>
+												<span class="report-value">
+													{% if report.is_anonymous == 'YES' %}
+														Anónimo
+													{% elif report.first_name or report.last_name %}
+														{{ report.first_name }} {{ report.last_name }}
+													{% else %}
+														No especificado
+													{% endif %}
+												</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Email enviado:</span>
+												<span class="report-value">{{ report.analysis_email_sent|yesno:"Sí,No" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Fecha:</span>
+												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Área del peligro:</span>
+												<span class="report-value">{{ report.get_area_display }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">MMR creadas:</span>
+												<span class="report-value">{{ report.is_processed|yesno:"Sí,No" }}</span>
+											</div>
+										</div>
+
+										<div class="report-area">
+											{% if report.is_valid %}
+												<span class="badge badge-green badge-medium">VÁLIDO</span>
+											{% else %}
+												<span class="badge badge-red badge-medium">INVÁLIDO</span>
+											{% endif %}
+										</div>
+										
+										<div class="report-description">
+											<span class="report-label">Descripción:</span>
+											<p class="report-description-text">{{ report.description|truncatewords:30 }}</p>
+										</div>
+									</div>
+								</div>
+							</a>
+						{% endfor %}
+					{% else %}
+						<div class="no-reports">
+							<p>No hay reportes voluntarios de peligro registrados.</p>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+
+			<!-- Processed VHRs Details Container (readonly) -->
+			<div class="cards-container">
+				<div class="cards-container-header">
+					<h2>Detalle de RVP (solo lectura)</h2>
+				</div>
+				
+				<div class="reports-list-container">
+					{% if processed_voluntary_reports %}
+						{% for report in processed_voluntary_reports %}
+							<a href="{% url 'sms:voluntary_hazard_report_detail' report.id %}" class="report-card-link">
+								<div class="report-card">
+									<div class="status-container">
+										{% if report.is_resolved %}
+											<span class="badge badge-green badge-medium">Resuelto</span>
+										{% else %}
+											<span class="badge badge-yellow badge-medium">No resuelto</span>
+										{% endif %}
+										<div class="badge badge-medium {% if report.ai_analysis_status == 'PENDING' %}badge-yellow{% elif report.ai_analysis_status == 'PROCESSING' %}badge-blue{% elif report.ai_analysis_status == 'COMPLETED' %}badge-green{% elif report.ai_analysis_status == 'FAILED' %}badge-red{% endif %}">
+											{{ report.get_ai_analysis_status_display }}
+										</div>
+									</div>
+									<div class="report-content">
+										<div class="report-data-section">
+											<div class="report-data">
+												<span class="report-label">Código:</span>
+												<span class="report-value">{{ report.code|default:"No registrado" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Reportante:</span>
+												<span class="report-value">
+													{% if report.is_anonymous == 'YES' %}
+														Anónimo
+													{% elif report.first_name or report.last_name %}
+														{{ report.first_name }} {{ report.last_name }}
+													{% else %}
+														No especificado
+													{% endif %}
+												</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Email enviado:</span>
+												<span class="report-value">{{ report.analysis_email_sent|yesno:"Sí,No" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Fecha:</span>
+												<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Área del peligro:</span>
+												<span class="report-value">{{ report.get_area_display }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">MMR creadas:</span>
+												<span class="report-value">{{ report.is_processed|yesno:"Sí,No" }}</span>
+											</div>
+										</div>
+
+										<div class="report-area">
+											{% if report.is_valid %}
+												<span class="badge badge-green badge-medium">VÁLIDO</span>
+											{% else %}
+												<span class="badge badge-red badge-medium">INVÁLIDO</span>
+											{% endif %}
+										</div>
+										
+										<div class="report-description">
+											<span class="report-label">Descripción:</span>
+											<p class="report-description-text">{{ report.description|truncatewords:30 }}</p>
+										</div>
+									</div>
+								</div>
+							</a>
+						{% endfor %}
+					{% else %}
+						<div class="no-reports">
+							<p>No hay reportes voluntarios de peligro registrados.</p>
+						</div>
+					{% endif %}
 				</div>
 			</div>
 		</div>

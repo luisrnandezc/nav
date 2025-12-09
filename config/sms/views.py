@@ -47,10 +47,6 @@ def sms_dashboard(request):
     expired_actions = MitigationAction.objects.filter(status='EXPIRED')
     expired_actions_count = expired_actions.count()
 
-    # Get all the evidence data (status field removed from MitigationActionEvidence)
-    all_evidences = MitigationActionEvidence.objects.all()
-    all_evidences_count = all_evidences.count()
-
     # Compute SMS school status.
     intolerable_risks_count = 0
     tolerable_risks_count = 0
@@ -89,8 +85,6 @@ def sms_dashboard(request):
         'completed_actions_count': completed_actions_count,
         'expired_actions': expired_actions,
         'expired_actions_count': expired_actions_count,
-        'all_evidences': all_evidences,
-        'all_evidences_count': all_evidences_count,
         'sms_school_status': sms_school_status,
     }
 
@@ -102,10 +96,16 @@ def voluntary_hazard_reports_dashboard(request):
     """
     A view to handle the VHR main page.
     """
-    # Get all voluntary hazard reports ordered by most recent first
-    voluntary_reports = VoluntaryHazardReport.objects.all().order_by('-created_at')
+    # Get all non processed voluntary hazard reports ordered by most recent first
+    non_processed_voluntary_reports = VoluntaryHazardReport.objects.filter(is_processed=False).order_by('-created_at')
+    
+    # Get all processed voluntary hazard reports ordered by most recent first
+    processed_voluntary_reports = VoluntaryHazardReport.objects.filter(is_processed=True).order_by('-created_at')
+
     context = {
-        'voluntary_reports': voluntary_reports,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'non_processed_voluntary_reports': non_processed_voluntary_reports,
+        'processed_voluntary_reports': processed_voluntary_reports,
     }
     return render(request, 'sms/voluntary_hazard_reports_dashboard.html', context)
 
@@ -413,7 +413,7 @@ def process_vhr(request, report_id):
     except Exception as e:
         messages.error(request, f'Error al crear las MMRs: {str(e)}')
     
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:voluntary_hazard_reports_dashboard')
 
 
 @login_required
@@ -890,6 +890,15 @@ def processed_vhr_detail(request, report_id):
     completed_actions = all_actions.filter(status='COMPLETED')
     expired_actions = all_actions.filter(status='EXPIRED')
     
+    # Determine the back URL based on the referrer
+    referer = request.META.get('HTTP_REFERER', '')
+    if '/voluntary_hazard_reports_dashboard/' in referer:
+        back_url = reverse('sms:voluntary_hazard_reports_dashboard')
+    elif '/sms_dashboard/' in referer or '/sms/' in referer:
+        back_url = reverse('sms:sms_dashboard')
+    else:
+        back_url = reverse('sms:sms_dashboard')
+    
     context = {
         'report': report,
         'risks': all_risks,
@@ -897,6 +906,7 @@ def processed_vhr_detail(request, report_id):
         'completed_actions': completed_actions,
         'expired_actions': expired_actions,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'back_url': back_url,
     }
     
     return render(request, 'sms/processed_vhr_detail.html', context)
@@ -949,10 +959,14 @@ def action_detail(request, action_id):
         is_active=True
     ).order_by('first_name', 'last_name')
     
+    # Get all evidences for this action
+    evidences = action.evidences.all().order_by('-created_at')
+    
     context = {
         'action': action,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
         'available_users': available_users,
+        'evidences': evidences,
     }
     
     return render(request, 'sms/action_detail.html', context)
@@ -1086,4 +1100,68 @@ def mark_action_completed(request, action_id):
         risk.condition = 'UNMITIGATED'
     risk.save(update_fields=['condition'])
 
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_evidence(request, action_id):
+    """
+    Create a new MitigationActionEvidence for a mitigation action.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se pueden agregar evidencias a una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    description = (request.POST.get('description') or '').strip()
+    if not description:
+        messages.error(request, 'La descripción de la evidencia es obligatoria.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if len(description) < 10:
+        messages.error(request, 'La descripción debe tener al menos 10 caracteres.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    try:
+        MitigationActionEvidence.objects.create(
+            mitigation_action=action,
+            description=description
+        )
+        messages.success(request, 'Se agregó una nueva evidencia.')
+    except Exception as e:
+        messages.error(request, f'Error al crear la evidencia: {str(e)}')
+    
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def delete_evidence(request, action_id, evidence_id):
+    """
+    Delete a MitigationActionEvidence.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se pueden eliminar evidencias de una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    evidence = get_object_or_404(MitigationActionEvidence, id=evidence_id, mitigation_action=action)
+    
+    try:
+        evidence.delete()
+        messages.success(request, 'Se eliminó la evidencia.')
+    except Exception as e:
+        messages.error(request, f'Error al eliminar la evidencia: {str(e)}')
+    
     return redirect('sms:action_detail', action_id=action_id)

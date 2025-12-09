@@ -103,6 +103,65 @@
 				{% endif %}
 			{% endif %}
 
+			<!-- Evidences Section -->
+			<div class="cards-container">
+				<div class="cards-container-header">
+					<h2>Evidencias de la MMR</h2>
+				</div>
+				{% if evidences %}
+					<ul class="action-list">
+						{% for evidence in evidences %}
+							<li class="action-item">
+								<span class="action-text">{{ evidence.description }}</span>
+								{% if can_manage_sms and action.status != 'COMPLETED' %}
+									<form
+										method="post"
+										action="{% url 'sms:delete_evidence' action.id evidence.id %}"
+										class="action-delete-form"
+									>
+										{% csrf_token %}
+										<button
+											type="submit"
+											class="action-delete-button"
+											onclick="return confirm('¿Eliminar esta evidencia?');"
+										>
+											X
+										</button>
+									</form>
+								{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<ul class="action-list">
+						<li class="action-item action-item-empty">
+							<span class="action-text">No hay evidencias registradas.</span>
+						</li>
+					</ul>
+				{% endif %}
+				{% if can_manage_sms and action.status != 'COMPLETED' %}
+					<form
+						method="post"
+						action="{% url 'sms:add_evidence' action.id %}"
+						class="action-add-form"
+					>
+						{% csrf_token %}
+						<label class="action-form-label" for="evidence-description">Nueva evidencia</label>
+						<textarea
+							id="evidence-description"
+							name="description"
+							rows="2"
+							class="action-form-textarea"
+							required
+							placeholder="Describe la evidencia...(mínimo 10 caracteres)"
+						></textarea>
+						<div class="form-row">
+							<button type="submit" class="action-add-button">Agregar evidencia</button>
+						</div>
+					</form>
+				{% endif %}
+			</div>
+
 			<!-- Update Due Date and Responsible Section -->
 			{% if can_manage_sms and action.status != 'COMPLETED' %}
 				<div class="cards-container">
@@ -178,27 +237,36 @@
 
 			<!-- Mark as Completed Section -->
 			{% if can_manage_sms and action.status != 'COMPLETED' %}
-				<div class="cards-container">
-					<div class="cards-container-header">
-						<h2>Marcar como Completada</h2>
-					</div>
-					<div class="warning-box">
-						<p class="warning-text">⚠️ <strong>IMPORTANTE:</strong> Al marcar esta MMR como completada:</p>
-						<ul class="warning-list">
-							<li>El estado cambiará permanentemente a "Completada"</li>
-							<li>Las notas y la fecha límite <strong>NO podrán ser modificadas</strong> después de esta acción</li>
-							<li>Esta acción <strong>NO puede ser revertida</strong></li>
-						</ul>
-					</div>
-					<form method="post" action="{% url 'sms:mark_action_completed' action.id %}" class="complete-form">
-						{% csrf_token %}
-						<div class="form-row">
-							<button type="submit" class="complete-button" onclick="return confirm('⚠️ ADVERTENCIA: Al marcar esta MMR como completada, las notas y la fecha límite no podrán ser modificadas y esta acción no puede ser revertida.\n\n¿Está seguro que desea continuar?');">
-								Marcar como completada
-							</button>
+				{% if evidences %}
+					<div class="cards-container">
+						<div class="cards-container-header">
+							<h2>Marcar como Completada</h2>
 						</div>
-					</form>
-				</div>
+						<div class="warning-box">
+							<p class="warning-text">⚠️ <strong>IMPORTANTE:</strong> Al marcar esta MMR como completada:</p>
+							<ul class="warning-list">
+								<li>El estado cambiará permanentemente a "Completada"</li>
+								<li>Las notas y la fecha límite <strong>NO podrán ser modificadas</strong> después de esta acción</li>
+								<li>Esta acción <strong>NO puede ser revertida</strong></li>
+							</ul>
+						</div>
+						<form method="post" action="{% url 'sms:mark_action_completed' action.id %}" class="complete-form">
+							{% csrf_token %}
+							<div class="form-row">
+								<button type="submit" class="complete-button" onclick="return confirm('⚠️ ADVERTENCIA: Al marcar esta MMR como completada, las notas y la fecha límite no podrán ser modificadas y esta acción no puede ser revertida.\n\n¿Está seguro que desea continuar?');">
+									Marcar como completada
+								</button>
+							</div>
+						</form>
+					</div>
+				{% else %}
+					<div class="cards-container">
+						<div class="cards-container-header">
+							<h2>Marcar como Completada</h2>
+						</div>
+						<p class="warning-text">⚠️ <strong>IMPORTANTE:</strong> No hay evidencias registradas para esta MMR.</p>
+					</div>
+				{% endif %}
 			{% endif %}
 		</div>
 	</body>

@@ -72,14 +72,11 @@ class MitigationActionAdmin(admin.ModelAdmin):
 class MitigationActionEvidenceAdmin(admin.ModelAdmin):
     list_display = ('id', 'mitigation_action', 'created_at')
     list_filter = ('created_at',)
-    search_fields = ('description', 'mitigation_action__description', 'notes')
+    search_fields = ('description', 'mitigation_action__description')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información de la Evidencia', {
             'fields': ('mitigation_action', 'description')
-        }),
-        ('Notas', {
-            'fields': ('notes',)
         }),
         ('Metadatos', {
             'fields': ('created_at', 'updated_at'),

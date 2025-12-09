@@ -27,6 +27,7 @@
       
       <form class="form-container" method="post"  action="{% url 'sms:voluntary_hazard_report' %}">
         {% csrf_token %}
+        <input type="hidden" name="user_role" value="{{ user_role }}">
         <h1 class="subsection-header" id="section-1-header">Sección 1: Datos del reportante (Opcional)</h1>
         <div class="fixed-fields-container">
             <div class="left-column">

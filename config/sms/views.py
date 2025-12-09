@@ -13,8 +13,9 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
 from django.db import transaction
-from .models import VoluntaryHazardReport, Risk, MitigationAction
+from .models import VoluntaryHazardReport, Risk, MitigationAction, MitigationActionEvidence
 from django.conf import settings
+from accounts.models import User
 import logging
 import sys
 import weasyprint
@@ -27,24 +28,24 @@ def sms_dashboard(request):
     A view to handle the SMS main page.
     """
 
+    # Get all the processed voluntary hazard reports, ordered by most recent first
+    processed_vhr = VoluntaryHazardReport.objects.filter(is_processed=True).order_by('-created_at')
+
     # Get all the non resolved voluntary hazard reports, ordered by most recent first
-    non_resolved_voluntary_reports = VoluntaryHazardReport.objects.filter(mmrs_created=True, is_resolved=False).order_by('-created_at')
+    non_resolved_voluntary_reports = processed_vhr.filter(is_resolved=False).order_by('-created_at')
     non_resolved_voluntary_reports_count = non_resolved_voluntary_reports.count()
 
     # Get all the risk data.
-    mitigated_risks = Risk.objects.filter(condition='MITIGATED').order_by('-created_at')[:10]
     unmitigated_risks = Risk.objects.filter(condition='UNMITIGATED')
     unmitigated_risks_count = unmitigated_risks.count()
     
     # Get all the action data.
-    completed_actions = MitigationAction.objects.filter(status='COMPLETED').order_by('-created_at')[:10]
     pending_actions = MitigationAction.objects.filter(status='PENDING')
     pending_actions_count = pending_actions.count()
+    completed_actions = MitigationAction.objects.filter(status='COMPLETED')
+    completed_actions_count = completed_actions.count()
     expired_actions = MitigationAction.objects.filter(status='EXPIRED')
     expired_actions_count = expired_actions.count()
-
-    # Get all voluntary hazard reports with MMRs created, ordered by most recent first
-    voluntary_reports = VoluntaryHazardReport.objects.filter(mmrs_created=True).order_by('-created_at')
 
     # Compute SMS school status.
     intolerable_risks_count = 0
@@ -64,39 +65,47 @@ def sms_dashboard(request):
     if intolerable_risks_count > 0:
         sms_school_status = 'INTOLERABLE'
     elif tolerable_risks_count > 0:
-        if tolerable_risks_count >= 10:
+        if tolerable_risks_count > 4:
             sms_school_status = 'INTOLERABLE'
-        sms_school_status = 'TOLERABLE'
+        else:
+            sms_school_status = 'TOLERABLE'
     else:
         sms_school_status = 'ACEPTABLE'
     
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
-        'mitigated_risks': mitigated_risks,
+        'processed_vhr': processed_vhr,
+        'non_resolved_voluntary_reports': non_resolved_voluntary_reports,
+        'non_resolved_voluntary_reports_count': non_resolved_voluntary_reports_count,
         'unmitigated_risks': unmitigated_risks,
         'unmitigated_risks_count': unmitigated_risks_count,
-        'completed_actions': completed_actions,
         'pending_actions': pending_actions,
         'pending_actions_count': pending_actions_count,
+        'completed_actions': completed_actions,
+        'completed_actions_count': completed_actions_count,
         'expired_actions': expired_actions,
         'expired_actions_count': expired_actions_count,
         'sms_school_status': sms_school_status,
-        'voluntary_reports': voluntary_reports,
-        'non_resolved_voluntary_reports': non_resolved_voluntary_reports,
-        'non_resolved_voluntary_reports_count': non_resolved_voluntary_reports_count,
     }
+
     return render(request, 'sms/sms_dashboard.html', context)
 
 
 @login_required
 def voluntary_hazard_reports_dashboard(request):
     """
-    A view to handle the RVP main page.
+    A view to handle the VHR main page.
     """
-    # Get all voluntary hazard reports ordered by most recent first
-    voluntary_reports = VoluntaryHazardReport.objects.all().order_by('-created_at')
+    # Get all non processed voluntary hazard reports ordered by most recent first
+    non_processed_voluntary_reports = VoluntaryHazardReport.objects.filter(is_processed=False).order_by('-created_at')
+    
+    # Get all processed voluntary hazard reports ordered by most recent first
+    processed_voluntary_reports = VoluntaryHazardReport.objects.filter(is_processed=True).order_by('-created_at')
+
     context = {
-        'voluntary_reports': voluntary_reports,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'non_processed_voluntary_reports': non_processed_voluntary_reports,
+        'processed_voluntary_reports': processed_voluntary_reports,
     }
     return render(request, 'sms/voluntary_hazard_reports_dashboard.html', context)
 
@@ -163,10 +172,10 @@ def voluntary_hazard_report_detail(request, report_id):
         })
     
     # Check if PDF download should be triggered
-    should_download_pdf = request.session.get('download_rvp_pdf') == report_id
+    should_download_pdf = request.session.get('download_vhr_pdf') == report_id
     if should_download_pdf:
         # Clear the session flag
-        del request.session['download_rvp_pdf']
+        del request.session['download_vhr_pdf']
     
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
@@ -194,7 +203,7 @@ def voluntary_hazard_report_detail(request, report_id):
 
 
 @login_required
-def register_rvp(request, report_id):
+def register_vhr(request, report_id):
     """Register a specific voluntary hazard report.
     
     This will set the registration code and validate the report, then redirect to detail page.
@@ -221,11 +230,11 @@ def register_rvp(request, report_id):
             report.save(update_fields=['code'])
 
             # Human validate the report
-            report.human_validated = True
-            report.save(update_fields=['human_validated'])
+            report.is_registered = True
+            report.save(update_fields=['is_registered'])
             
             # Set session flag to trigger PDF download on detail page
-            request.session['download_rvp_pdf'] = report_id
+            request.session['download_vhr_pdf'] = report_id
             
             messages.success(request, f'El reporte ha sido registrado con el código {report.code}.')
             return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
@@ -236,7 +245,7 @@ def register_rvp(request, report_id):
 
 
 @login_required
-def download_rvp_pdf(request, report_id):
+def download_vhr_pdf(request, report_id):
     """Download PDF for a registered voluntary hazard report."""
     report = get_object_or_404(VoluntaryHazardReport, id=report_id)
     
@@ -258,7 +267,7 @@ def download_rvp_pdf(request, report_id):
             logo_uri = ''
 
         # Render the PDF template with report data and logo path
-        html_string = render_to_string('sms/pdf_rvp.html', {
+        html_string = render_to_string('sms/pdf_vhr.html', {
             'report': report,
             'logo_path': logo_uri,
             'user': request.user
@@ -268,9 +277,9 @@ def download_rvp_pdf(request, report_id):
         base_url = request.build_absolute_uri()
 
         # Find the CSS file path
-        css_path = find('pdf_rvp.css')
+        css_path = find('pdf_vhr.css')
         if not css_path:
-            messages.error(request, 'No se encontró el archivo CSS para generar el PDF del RVP.')
+            messages.error(request, 'No se encontró el archivo CSS para generar el PDF del VHR.')
             return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
         
         # Generate PDF using WeasyPrint with CSS
@@ -280,9 +289,9 @@ def download_rvp_pdf(request, report_id):
         # Create HTTP response with PDF content
         response = HttpResponse(pdf, content_type='application/pdf')
         if report.date:
-            response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
+            response['Content-Disposition'] = f'attachment; filename="vhr_{report.id}_{report.date.strftime("%Y%m%d")}.pdf"'
         else:
-            response['Content-Disposition'] = f'attachment; filename="rvp_{report.id}.pdf"'
+            response['Content-Disposition'] = f'attachment; filename="vhr_{report.id}.pdf"'
         
         return response
         
@@ -292,9 +301,9 @@ def download_rvp_pdf(request, report_id):
 
 
 @login_required
-def create_mmrs(request, report_id):
+def process_vhr(request, report_id):
     """
-    Create the MMRs (risks and actions) for a specific voluntary hazard report.
+    Create the Risks, MMRs and Evidences for a specific VHR.
     """
     report = get_object_or_404(VoluntaryHazardReport, id=report_id)
 
@@ -302,11 +311,11 @@ def create_mmrs(request, report_id):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
         return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
     
-    if not report.human_validated:
+    if not report.is_registered:
         messages.error(request, 'El reporte debe estar validado antes de crear las MMRs.')
         return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
     
-    if report.mmrs_created:
+    if report.is_processed:
         messages.error(request, 'Las MMRs para este reporte ya han sido creadas previamente.')
         return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
     
@@ -389,9 +398,9 @@ def create_mmrs(request, report_id):
                         actions_created += 1
 
             if risks_created > 0:
-                # Set mmrs_created flag
-                report.mmrs_created = True
-                report.save(update_fields=['mmrs_created'])
+                # Set is_processed flag
+                report.is_processed = True
+                report.save(update_fields=['is_processed'])
                 
                 message = f'Se crearon {risks_created} riesgo(s)'
                 if actions_created > 0:
@@ -404,7 +413,7 @@ def create_mmrs(request, report_id):
     except Exception as e:
         messages.error(request, f'Error al crear las MMRs: {str(e)}')
     
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:voluntary_hazard_reports_dashboard')
 
 
 @login_required
@@ -691,6 +700,12 @@ def voluntary_hazard_report(request):
 
     if request.method == 'POST':
         is_anonymous = request.POST.get('is_anonymous') == 'YES'
+        
+        # Get user_role from POST data, or fallback to session/user.role
+        user_role = request.POST.get('user_role')
+        if not user_role:
+            selected_role = request.session.get('selected_role', None)
+            user_role = selected_role if selected_role else (request.user.role if request.user.is_authenticated else None)
 
         if is_anonymous or not request.user.is_authenticated:
             form = SMSVoluntaryHazardReportForm(request.POST)
@@ -700,7 +715,10 @@ def voluntary_hazard_report(request):
         if form.is_valid():
             try:
                 form.save()
-                return redirect('sms:voluntary_hazard_reports_dashboard')
+                if user_role == 'STAFF':
+                    return redirect('sms:voluntary_hazard_reports_dashboard')
+                else:
+                    return redirect('dashboard:dashboard')
             except Exception as e:
                 messages.error(request, f'Error al guardar el reporte: {str(e)}')
         else:
@@ -710,9 +728,10 @@ def voluntary_hazard_report(request):
             form = SMSVoluntaryHazardReportForm(user=request.user)
         else:
             form = SMSVoluntaryHazardReportForm()
-    
-    selected_role = request.session.get('selected_role', None)
-    user_role = selected_role if selected_role else request.user.role
+        
+        # Get user_role for GET requests
+        selected_role = request.session.get('selected_role', None)
+        user_role = selected_role if selected_role else (request.user.role if request.user.is_authenticated else None)
 
     context = {
         'form': form,
@@ -856,11 +875,11 @@ def run_ai_analysis_for_voluntary_hazard_report(report):
 
 
 @login_required
-def report_with_mmrs_detail(request, report_id):
+def processed_vhr_detail(request, report_id):
     """
-    A view to display the detail of a Voluntary Hazard Report with its risks and actions.
+    A view to display the detail of a processed Voluntary Hazard Report with its risks and actions.
     """
-    report = get_object_or_404(VoluntaryHazardReport, id=report_id, mmrs_created=True)
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id, is_processed=True)
     
     # Get all risks related to this report
     all_risks = report.risks.all()
@@ -871,6 +890,15 @@ def report_with_mmrs_detail(request, report_id):
     completed_actions = all_actions.filter(status='COMPLETED')
     expired_actions = all_actions.filter(status='EXPIRED')
     
+    # Determine the back URL based on the referrer
+    referer = request.META.get('HTTP_REFERER', '')
+    if '/voluntary_hazard_reports_dashboard/' in referer:
+        back_url = reverse('sms:voluntary_hazard_reports_dashboard')
+    elif '/sms_dashboard/' in referer or '/sms/' in referer:
+        back_url = reverse('sms:sms_dashboard')
+    else:
+        back_url = reverse('sms:sms_dashboard')
+    
     context = {
         'report': report,
         'risks': all_risks,
@@ -878,9 +906,10 @@ def report_with_mmrs_detail(request, report_id):
         'completed_actions': completed_actions,
         'expired_actions': expired_actions,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'back_url': back_url,
     }
     
-    return render(request, 'sms/report_with_mmrs_detail.html', context)
+    return render(request, 'sms/processed_vhr_detail.html', context)
 
 
 @login_required
@@ -898,9 +927,9 @@ def risk_detail(request, risk_id):
     
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
-    if '/report_with_mmrs/' in referer:
-        # If coming from report_with_mmrs_detail page, go back to that report's detail page
-        back_url = reverse('sms:report_with_mmrs_detail', args=[risk.report.id])
+    if '/processed_vhr/' in referer:
+        # If coming from processed_vhr_detail page, go back to that report's detail page
+        back_url = reverse('sms:processed_vhr_detail', args=[risk.report.id])
     else:
         # Default to SMS dashboard
         back_url = reverse('sms:sms_dashboard')
@@ -924,9 +953,20 @@ def action_detail(request, action_id):
     """
     action = get_object_or_404(MitigationAction, id=action_id)
     
+    # Get available users for responsible field (STAFF and INSTRUCTOR only)
+    available_users = User.objects.filter(
+        role__in=['STAFF', 'INSTRUCTOR'],
+        is_active=True
+    ).order_by('first_name', 'last_name')
+    
+    # Get all evidences for this action
+    evidences = action.evidences.all().order_by('-created_at')
+    
     context = {
         'action': action,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'available_users': available_users,
+        'evidences': evidences,
     }
     
     return render(request, 'sms/action_detail.html', context)
@@ -997,6 +1037,41 @@ def update_action_due_date(request, action_id):
 
 @login_required
 @require_http_methods(["POST"])
+def update_action_responsible(request, action_id):
+    """
+    Update the responsible user for a mitigation action.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se puede modificar el responsable de una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    responsible_id = request.POST.get('responsible', '').strip()
+    if not responsible_id:
+        messages.error(request, 'El responsable es obligatorio.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    try:
+        responsible = User.objects.get(id=responsible_id, role__in=['STAFF', 'INSTRUCTOR'], is_active=True)
+        action.responsible = responsible
+        action.updated_at = timezone.now().date()
+        action.save(update_fields=['responsible', 'updated_at'])
+        messages.success(request, 'El responsable se actualizó correctamente.')
+    except User.DoesNotExist:
+        messages.error(request, 'Usuario no válido o no tiene permisos para ser responsable.')
+    except Exception as e:
+        messages.error(request, f'Error al actualizar el responsable: {str(e)}')
+    
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
 def mark_action_completed(request, action_id):
     """
     Mark a mitigation action as completed.
@@ -1025,4 +1100,68 @@ def mark_action_completed(request, action_id):
         risk.condition = 'UNMITIGATED'
     risk.save(update_fields=['condition'])
 
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_evidence(request, action_id):
+    """
+    Create a new MitigationActionEvidence for a mitigation action.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se pueden agregar evidencias a una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    description = (request.POST.get('description') or '').strip()
+    if not description:
+        messages.error(request, 'La descripción de la evidencia es obligatoria.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if len(description) < 10:
+        messages.error(request, 'La descripción debe tener al menos 10 caracteres.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    try:
+        MitigationActionEvidence.objects.create(
+            mitigation_action=action,
+            description=description
+        )
+        messages.success(request, 'Se agregó una nueva evidencia.')
+    except Exception as e:
+        messages.error(request, f'Error al crear la evidencia: {str(e)}')
+    
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def delete_evidence(request, action_id, evidence_id):
+    """
+    Delete a MitigationActionEvidence.
+    """
+    action = get_object_or_404(MitigationAction, id=action_id)
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se pueden eliminar evidencias de una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    evidence = get_object_or_404(MitigationActionEvidence, id=evidence_id, mitigation_action=action)
+    
+    try:
+        evidence.delete()
+        messages.success(request, 'Se eliminó la evidencia.')
+    except Exception as e:
+        messages.error(request, f'Error al eliminar la evidencia: {str(e)}')
+    
     return redirect('sms:action_detail', action_id=action_id)

@@ -14,7 +14,7 @@
 	<body>
 		<div class="main-container">
 			<div class="back-button">
-				<a href="{% url 'sms:report_with_mmrs_detail' risk.report.id %}" class="button">&larr; Volver</a>
+				<a href="{% url 'sms:processed_vhr_detail' risk.report.id %}" class="button">&larr; Volver</a>
 			</div>
 			<div class="main-header">
 				<h1>Detalle del Riesgo</h1>
@@ -101,6 +101,60 @@
 				</div>
 				
 				<div class="reports-list-container">
+					<!-- Expired Actions -->
+					{% if expired_actions %}
+						{% for action in expired_actions %}
+							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
+								<div class="report-card">
+									<div class="report-header">
+										<div class="report-date-time">
+											<span class="report-date">MMR ID: {{ action.id }}</span>
+										</div>
+										{% if action.risk.status == 'INTOLERABLE' %}
+											<div class="badge badge-red badge-medium">
+												{{ action.get_status_display }}
+											</div>
+										{% else %}
+											<div class="badge badge-yellow badge-medium">
+												{{ action.get_status_display }}
+											</div>
+										{% endif %}
+									</div>
+									
+									<div class="report-content">
+										<div class="report-data-section actions-data-section">
+											<div class="report-data">
+												<span class="report-label">Reporte:</span>
+												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Riesgo ID:</span>
+												<span class="report-value">{{ action.risk.id }}</span>
+											</div>
+											<div class="report-data">
+												<span class="report-label">Responsable:</span>
+												{% if action.responsible %}
+													<span class="report-value">{{ action.responsible.first_name }} {{ action.responsible.last_name }}</span>
+												{% else %}
+													<span class="report-value">No asignado</span>
+												{% endif %}
+											</div>
+											<div class="report-data">
+												<span class="report-label">Fecha límite:</span>
+												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
+											</div>
+										</div>
+										
+										<div class="report-description">
+											<span class="report-label">Descripción:</span>
+											<p class="report-description-text">{{ action.description|truncatewords:30 }}</p>
+										</div>
+									</div>
+								</div>
+							</a>
+						{% endfor %}
+					{% endif %}
+
 					<!-- Pending Actions -->
 					{% if pending_actions %}
 						{% for action in pending_actions %}
@@ -110,33 +164,38 @@
 										<div class="report-date-time">
 											<span class="report-date">MMR ID: {{ action.id }}</span>
 										</div>
-										<div class="badge badge-yellow badge-medium">
-											{{ action.get_status_display }}
-										</div>
+										{% if action.risk.status == 'INTOLERABLE' %}
+											<div class="badge badge-red badge-medium">
+												{{ action.get_status_display }}
+											</div>
+										{% else %}
+											<div class="badge badge-yellow badge-medium">
+												{{ action.get_status_display }}
+											</div>
+										{% endif %}
 									</div>
 									
 									<div class="report-content">
-										<div class="report-data-section">
+										<div class="report-data-section actions-data-section">
 											<div class="report-data">
 												<span class="report-label">Reporte:</span>
 												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Vence el:</span>
-												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
-											</div>
-
-											<div class="report-data">
-												<span class="report-label">Creada:</span>
-												<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Riesgo ID:</span>
 												<span class="report-value">{{ action.risk.id }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Estatus:</span>
-												<span class="report-value">{{ action.get_status_display }}</span>
+												<span class="report-label">Responsable:</span>
+												{% if action.responsible %}
+													<span class="report-value">{{ action.responsible.first_name }} {{ action.responsible.last_name }}</span>
+												{% else %}
+													<span class="report-value">No asignado</span>
+												{% endif %}
+											</div>
+											<div class="report-data">
+												<span class="report-label">Fecha límite:</span>
+												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
 											</div>
 										</div>
 										
@@ -165,27 +224,26 @@
 									</div>
 									
 									<div class="report-content">
-										<div class="report-data-section">
+										<div class="report-data-section actions-data-section">
 											<div class="report-data">
 												<span class="report-label">Reporte:</span>
 												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Vence el:</span>
-												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
-											</div>
-
-											<div class="report-data">
-												<span class="report-label">Creada:</span>
-												<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
 											</div>
 											<div class="report-data">
 												<span class="report-label">Riesgo ID:</span>
 												<span class="report-value">{{ action.risk.id }}</span>
 											</div>
 											<div class="report-data">
-												<span class="report-label">Estatus:</span>
-												<span class="report-value">{{ action.get_status_display }}</span>
+												<span class="report-label">Responsable:</span>
+												{% if action.responsible %}
+													<span class="report-value">{{ action.responsible.first_name }} {{ action.responsible.last_name }}</span>
+												{% else %}
+													<span class="report-value">No asignado</span>
+												{% endif %}
+											</div>
+											<div class="report-data">
+												<span class="report-label">Fecha límite:</span>
+												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
 											</div>
 										</div>
 										
@@ -199,58 +257,9 @@
 						{% endfor %}
 					{% endif %}
 
-					<!-- Expired Actions -->
-					{% if expired_actions %}
-						{% for action in expired_actions %}
-							<a href="{% url 'sms:action_detail' action.id %}" class="report-card-link">
-								<div class="report-card">
-									<div class="report-header">
-										<div class="report-date-time">
-											<span class="report-date">MMR ID: {{ action.id }}</span>
-										</div>
-										<div class="badge badge-red badge-medium">
-											{{ action.get_status_display }}
-										</div>
-									</div>
-									
-									<div class="report-content">
-										<div class="report-data-section">
-											<div class="report-data">
-												<span class="report-label">Reporte:</span>
-												<span class="report-value">{{ action.risk.report.code|default:"No registrado" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Vence el:</span>
-												<span class="report-value">{{ action.due_date|date:"d/m/Y" }}</span>
-											</div>
-
-											<div class="report-data">
-												<span class="report-label">Creada:</span>
-												<span class="report-value">{{ action.created_at|date:"d/m/Y" }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Riesgo ID:</span>
-												<span class="report-value">{{ action.risk.id }}</span>
-											</div>
-											<div class="report-data">
-												<span class="report-label">Estatus:</span>
-												<span class="report-value">{{ action.get_status_display }}</span>
-											</div>
-										</div>
-										
-										<div class="report-description">
-											<span class="report-label">Descripción:</span>
-											<p class="report-description-text">{{ action.description|truncatewords:30 }}</p>
-										</div>
-									</div>
-								</div>
-							</a>
-						{% endfor %}
-					{% endif %}
-
-					{% if not pending_actions and not completed_actions and not expired_actions %}
+					{% if not pending_actions and not completed_actions %}
 						<div class="no-reports">
-							<p>No hay acciones de mitigación registradas para este riesgo.</p>
+							<p>No hay MMR pendientes o completadas para este riesgo.</p>
 						</div>
 					{% endif %}
 				</div>

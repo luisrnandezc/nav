@@ -1,6 +1,6 @@
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 20px;
 }
@@ -55,8 +55,6 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Badge styles moved to sms_base.css - using standardized badge classes */
-
 /* Forms */
 .notes-form,
 .due-date-form,
@@ -67,11 +65,61 @@
   margin-top: 15px;
 }
 
-.form-row {
+.due-date-responsible-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 15px;
+  justify-items: center;
+  align-items: start;
+}
+
+.due-date-responsible-form > * {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.due-date-form,
+.responsible-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: start;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  vertical-align: top;
+}
+
+.due-date-form .form-field-group:first-child,
+.responsible-form .form-field-group:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.due-date-form > input[type="hidden"],
+.responsible-form > input[type="hidden"] {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  line-height: 0 !important;
+}
+
+.form-field-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
   align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0;
 }
 
 .form-label {
@@ -79,8 +127,24 @@
   color: #b0b0b0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  margin: 0 0 6px 0;
+  padding: 0;
+  width: 100%;
+  text-align: center;
+  min-height: 1.2rem;
+  height: auto;
+  line-height: 1.2rem;
+  display: block;
 }
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
 
 .notes-textarea {
   width: 100%;
@@ -98,7 +162,7 @@
 
 .date-input {
   width: 100%;
-  max-width: 300px;
+  max-width: 100%;
   background: #0000004d;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
@@ -107,11 +171,29 @@
   font-size: 0.95rem;
   text-transform: none;
   font-family: 'Renogare-Regular', 'Arial', sans-serif;
+  margin: 0;
+  box-sizing: border-box;
+  height: auto;
+  min-height: 40px;
 }
 
 .date-input::-webkit-calendar-picker-indicator {
   filter: invert(1);
   cursor: pointer;
+}
+
+select.date-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23dae1ff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 35px;
+}
+
+select.date-input option {
+  background: #1a1a2e;
+  color: #dae1ff;
 }
 
 .update-button {
@@ -126,6 +208,8 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
+  width: 100%;
+  max-width: 250px;
 }
 
 .update-button:hover {
@@ -207,12 +291,31 @@
   text-transform: none;
 }
 
+/* Tablet Responsiveness */
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
 
   .info-grid {
     grid-template-columns: 1fr;
     gap: 15px;
+  }
+
+  .due-date-responsible-form {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    justify-items: center;
+  }
+
+  .due-date-form,
+  .responsible-form {
+    max-width: 100%;
   }
 
   .analysis-text {
@@ -263,15 +366,115 @@
     font-size: 1rem;
   }
 
-  /* Badge styles moved to sms_base.css */
-    font-size: 0.8rem;
-    padding: 5px 12px;
-  }
-
   .update-button,
   .complete-button {
     font-size: 0.8rem;
     padding: 10px 16px;
   }
+}
+
+/* Evidence/Action List Styles */
+.action-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action-item {
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border-left: 3px solid #4CAF50;
+  color: #dae1ff;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-transform: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.action-item-empty {
+  border-left-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
+
+.action-text {
+  flex: 1;
+}
+
+.action-delete-form {
+  margin: 0;
+}
+
+.action-delete-button {
+  background-color: #e84728;
+  color: #dae1ff;
+  border: 0px;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-delete-button:hover {
+  background-color: transparent;
+  border: 1px solid #dae1ff;
+}
+
+.action-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.action-form-label {
+  font-size: 0.85rem;
+  color: #b0b0b0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+.action-form-textarea {
+  width: 100%;
+  background: #0000004d;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 10px;
+  color: #dae1ff;
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 80px;
+  text-transform: none;
+  font-family: 'Renogare-Regular', 'Arial', sans-serif;
+}
+
+.action-add-button {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  align-self: center;
+}
+
+.action-add-button:hover {
+  background-color: transparent;
+  border: 1px solid #dae1ff;
+  color: #dae1ff;
 }
 

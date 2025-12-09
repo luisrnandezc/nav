@@ -50,13 +50,13 @@ class RiskAdmin(admin.ModelAdmin):
 
 @admin.register(MitigationAction)
 class MitigationActionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'risk', 'status', 'created_at')
-    list_filter = ('status', 'created_at')
-    search_fields = ('description', 'risk__description', 'notes')
+    list_display = ('id', 'risk', 'status', 'responsible', 'due_date')
+    list_filter = ('status', 'responsible', 'due_date')
+    search_fields = ('description', 'risk__description', 'responsible__first_name', 'responsible__last_name')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información de la Acción', {
-            'fields': ('risk', 'description', 'status')
+            'fields': ('risk', 'description', 'status', 'responsible', 'due_date')
         }),
         ('Notas', {
             'fields': ('notes',)
@@ -70,16 +70,13 @@ class MitigationActionAdmin(admin.ModelAdmin):
 
 @admin.register(MitigationActionEvidence)
 class MitigationActionEvidenceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'mitigation_action', 'status', 'responsible', 'due_date', 'created_at')
-    list_filter = ('status', 'responsible', 'due_date', 'created_at')
+    list_display = ('id', 'mitigation_action', 'created_at')
+    list_filter = ('created_at',)
     search_fields = ('description', 'mitigation_action__description', 'notes')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información de la Evidencia', {
-            'fields': ('mitigation_action', 'description', 'responsible')
-        }),
-        ('Estatus', {
-            'fields': ('status', 'due_date')
+            'fields': ('mitigation_action', 'description')
         }),
         ('Notas', {
             'fields': ('notes',)

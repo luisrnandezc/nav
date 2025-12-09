@@ -65,11 +65,61 @@
   margin-top: 15px;
 }
 
-.form-row {
+.due-date-responsible-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 15px;
+  justify-items: center;
+  align-items: start;
+}
+
+.due-date-responsible-form > * {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.due-date-form,
+.responsible-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: start;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  vertical-align: top;
+}
+
+.due-date-form .form-field-group:first-child,
+.responsible-form .form-field-group:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.due-date-form > input[type="hidden"],
+.responsible-form > input[type="hidden"] {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  line-height: 0 !important;
+}
+
+.form-field-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
   align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0;
 }
 
 .form-label {
@@ -77,8 +127,24 @@
   color: #b0b0b0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  margin: 0 0 6px 0;
+  padding: 0;
+  width: 100%;
+  text-align: center;
+  min-height: 1.2rem;
+  height: auto;
+  line-height: 1.2rem;
+  display: block;
 }
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
 
 .notes-textarea {
   width: 100%;
@@ -96,7 +162,7 @@
 
 .date-input {
   width: 100%;
-  max-width: 300px;
+  max-width: 100%;
   background: #0000004d;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
@@ -105,11 +171,29 @@
   font-size: 0.95rem;
   text-transform: none;
   font-family: 'Renogare-Regular', 'Arial', sans-serif;
+  margin: 0;
+  box-sizing: border-box;
+  height: auto;
+  min-height: 40px;
 }
 
 .date-input::-webkit-calendar-picker-indicator {
   filter: invert(1);
   cursor: pointer;
+}
+
+select.date-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23dae1ff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 35px;
+}
+
+select.date-input option {
+  background: #1a1a2e;
+  color: #dae1ff;
 }
 
 .update-button {
@@ -124,6 +208,8 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
+  width: 100%;
+  max-width: 250px;
 }
 
 .update-button:hover {
@@ -219,6 +305,17 @@
   .info-grid {
     grid-template-columns: 1fr;
     gap: 15px;
+  }
+
+  .due-date-responsible-form {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    justify-items: center;
+  }
+
+  .due-date-form,
+  .responsible-form {
+    max-width: 100%;
   }
 
   .analysis-text {

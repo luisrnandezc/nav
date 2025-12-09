@@ -147,6 +147,10 @@
   gap: 12px;
 }
 
+.actions-data-section {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
 .report-data {
   display: flex;
   align-items: center;
@@ -266,11 +270,6 @@
     font-size: 0.95rem;
   }
 
-  /* Badge styles moved to sms_base.css */
-    font-size: 0.75rem;
-    padding: 5px 10px;
-  }
-
   .analysis-text {
     font-size: 0.85rem;
     padding: 12px;
@@ -296,11 +295,6 @@
 
   .report-time {
     font-size: 0.8rem;
-  }
-
-  /* Badge styles moved to sms_base.css */
-    font-size: 0.7rem;
-    padding: 5px 10px;
   }
 
   .report-data-section {

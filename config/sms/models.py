@@ -367,11 +367,6 @@ class MitigationActionEvidence(models.Model):
     description = models.TextField(
         verbose_name="Descripción",
     )
-    notes = models.TextField(
-        verbose_name="Notas",
-        blank=True,
-        null=True
-    )
     created_at = models.DateField(
         default=timezone.now,
         verbose_name="Fecha de creación"

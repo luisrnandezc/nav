@@ -14,11 +14,46 @@
 	<body>
 		<div class="main-container">
 			<div class="back-button">
-				<a href="{% url 'sms:processed_vhr_detail' risk.report.id %}" class="button">&larr; Volver</a>
+				<a href="{% url 'sms:vhr_processed_panel' risk.report.id %}" class="button">&larr; Volver</a>
 			</div>
 			<div class="main-header">
 				<h1>Detalle del Riesgo</h1>
 			</div>
+
+			<!-- Messages Block -->
+			{% if messages %}
+				<div class="messages-container">
+					{% for message in messages %}
+						<div class="message-card message-card-{{ message.tags }}">
+							<div class="message-icon">
+								{% if message.tags == 'success' %}
+									✓
+								{% elif message.tags == 'error' %}
+									✕
+								{% elif message.tags == 'warning' %}
+									⚠
+								{% else %}
+									ℹ
+								{% endif %}
+							</div>
+							<div class="message-content">
+								<div class="message-title">
+									{% if message.tags == 'success' %}
+										Éxito
+									{% elif message.tags == 'error' %}
+										Error
+									{% elif message.tags == 'warning' %}
+										Advertencia
+									{% else %}
+										Información
+									{% endif %}
+								</div>
+								<div class="message-text">{{ message }}</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
 
 			<!-- Risk Information Section -->
 			<div class="cards-container">

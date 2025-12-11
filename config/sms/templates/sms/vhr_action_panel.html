@@ -8,7 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>NAV | Detalle del RVP</title>
 		<link href="{% static 'sms_base.css' %}" rel="stylesheet" />
-		<link href="{% static 'voluntary_hazard_report_detail.css' %}" rel="stylesheet" />
+		<link href="{% static 'vhr_action_panel.css' %}" rel="stylesheet" />
 	</head>
 
 	<body>
@@ -19,6 +19,41 @@
 			<div class="main-header">
 				<h1>Detalle del RVP</h1>
 			</div>
+
+			<!-- Messages Block -->
+			{% if messages %}
+				<div class="messages-container">
+					{% for message in messages %}
+						<div class="message-card message-card-{{ message.tags }}">
+							<div class="message-icon">
+								{% if message.tags == 'success' %}
+									✓
+								{% elif message.tags == 'error' %}
+									✕
+								{% elif message.tags == 'warning' %}
+									⚠
+								{% else %}
+									ℹ
+								{% endif %}
+							</div>
+							<div class="message-content">
+								<div class="message-title">
+									{% if message.tags == 'success' %}
+										Éxito
+									{% elif message.tags == 'error' %}
+										Error
+									{% elif message.tags == 'warning' %}
+										Advertencia
+									{% else %}
+										Información
+									{% endif %}
+								</div>
+								<div class="message-text">{{ message }}</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
 
 			<!-- Report Information Section -->
 			<div class="cards-container">

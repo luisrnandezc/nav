@@ -238,7 +238,7 @@ def sms_dashboard(request):
 
 
 @login_required
-def voluntary_hazard_reports_dashboard(request):
+def vhr_dashboard(request):
     """
     A view to handle the VHR main page.
     """
@@ -254,7 +254,7 @@ def voluntary_hazard_reports_dashboard(request):
         'processed_voluntary_reports': processed_voluntary_reports,
     }
 
-    return render(request, 'sms/voluntary_hazard_reports_dashboard.html', context)
+    return render(request, 'sms/vhr_dashboard.html', context)
 
 ########################################################################################
 #endregion Dashboard Views
@@ -287,7 +287,7 @@ def vhr_form(request):
             try:
                 form.save()
                 if user_role == 'STAFF':
-                    return redirect('sms:voluntary_hazard_reports_dashboard')
+                    return redirect('sms:vhr_dashboard')
                 else:
                     return redirect('dashboard:dashboard')
             except Exception as e:
@@ -312,9 +312,9 @@ def vhr_form(request):
     return render(request, 'sms/vhr_form.html', context)
 
 @login_required
-def voluntary_hazard_report_detail(request, report_id):
+def vhr_action_panel(request, report_id):
     """
-    A view to display the detail of a Voluntary Hazard Report.
+    A view to display the action panel of a Voluntary Hazard Report.
     """
     report = get_object_or_404(VoluntaryHazardReport, id=report_id)
     
@@ -344,10 +344,10 @@ def voluntary_hazard_report_detail(request, report_id):
     
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
-    if '/voluntary_hazard_reports_dashboard/' in referer:
-        back_url = reverse('sms:voluntary_hazard_reports_dashboard')
-    elif '/report_with_mmrs/' in referer:
-        back_url = reverse('sms:report_with_mmrs_detail', args=[report.id])
+    if '/vhr_dashboard/' in referer:
+        back_url = reverse('sms:vhr_dashboard')
+    elif '/vhr_processed_panel/' in referer:
+        back_url = reverse('sms:vhr_processed_panel', args=[report.id])
     else:
         back_url = reverse('sms:sms_dashboard')
     
@@ -364,7 +364,7 @@ def voluntary_hazard_report_detail(request, report_id):
         'back_url': back_url,
     }
 
-    response = render(request, 'sms/voluntary_hazard_report_detail.html', context)
+    response = render(request, 'sms/vhr_action_panel.html', context)
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
@@ -373,9 +373,9 @@ def voluntary_hazard_report_detail(request, report_id):
 
 
 @login_required
-def processed_vhr_detail(request, report_id):
+def vhr_processed_panel(request, report_id):
     """
-    A view to display the detail of a processed Voluntary Hazard Report with its risks and actions.
+    A view to display the panel of a processed Voluntary Hazard Report with its risks and actions.
     """
     report = get_object_or_404(VoluntaryHazardReport, id=report_id, is_processed=True)
     
@@ -390,8 +390,8 @@ def processed_vhr_detail(request, report_id):
     
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
-    if '/voluntary_hazard_reports_dashboard/' in referer:
-        back_url = reverse('sms:voluntary_hazard_reports_dashboard')
+    if '/vhr_dashboard/' in referer:
+        back_url = reverse('sms:vhr_dashboard')
     elif '/sms_dashboard/' in referer or '/sms/' in referer:
         back_url = reverse('sms:sms_dashboard')
     else:
@@ -408,7 +408,7 @@ def processed_vhr_detail(request, report_id):
     }
 
     # Disable caching for the response to force refresh when coming back from action detail.
-    response = render(request, 'sms/processed_vhr_detail.html', context)
+    response = render(request, 'sms/vhr_processed_panel.html', context)
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
@@ -431,7 +431,7 @@ def register_vhr(request, report_id):
     """
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para registrar reportes.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
     
     try:
         with transaction.atomic():
@@ -439,12 +439,12 @@ def register_vhr(request, report_id):
 
             if not report.date or not report.description:
                 messages.error(request, 'No se puede registrar el reporte sin fecha o descripción del peligro.')
-                return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+                return redirect('sms:vhr_action_panel', report_id=report_id)
 
             # Check if report is already registered
             if report.code:
                 messages.warning(request, f'Este reporte ya ha sido registrado anteriormente. Código de registro: {report.code}')
-                return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+                return redirect('sms:vhr_action_panel', report_id=report_id)
 
             # Create the unique code for the report
             report.code = f"SMS-RVP-{report_id}"
@@ -458,11 +458,11 @@ def register_vhr(request, report_id):
             request.session['download_vhr_pdf'] = report_id
             
             messages.success(request, f'El reporte ha sido registrado con el código {report.code}.')
-            return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+            return redirect('sms:vhr_action_panel', report_id=report_id)
         
     except Exception as e:
         messages.error(request, 'Ocurrió un error al registrar el reporte. Por favor, contacte al administrador.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
 
 @login_required
@@ -472,11 +472,11 @@ def download_vhr_pdf(request, report_id):
     
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para descargar reportes.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
     
     if not report.code:
         messages.error(request, 'El reporte debe estar registrado para generar el PDF.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
     
     try:
         # Find the static image path (logo)
@@ -501,7 +501,7 @@ def download_vhr_pdf(request, report_id):
         css_path = find('pdf_vhr.css')
         if not css_path:
             messages.error(request, 'No se encontró el archivo CSS para generar el PDF del VHR.')
-            return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+            return redirect('sms:vhr_action_panel', report_id=report_id)
         
         # Generate PDF using WeasyPrint with CSS
         html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
@@ -518,7 +518,7 @@ def download_vhr_pdf(request, report_id):
         
     except Exception as e:
         messages.error(request, f'Error al generar el PDF: {str(e)}')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
 
 @login_required
@@ -530,15 +530,15 @@ def process_vhr(request, report_id):
 
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
     
     if not report.is_registered:
         messages.error(request, 'El reporte debe estar validado antes de crear las MMRs.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
     
     if report.is_processed:
         messages.error(request, 'Las MMRs para este reporte ya han sido creadas previamente.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
     
     # Check if SMS analysis exists
     ai_analysis = report.ai_analysis_result or {}
@@ -547,13 +547,13 @@ def process_vhr(request, report_id):
     
     if not risks_data:
         messages.error(request, 'No hay riesgos en el análisis SMS para crear.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
     
     # Check if risks already exist in the database
     existing_risks = Risk.objects.filter(report=report)
     if existing_risks.exists():
         messages.warning(request, 'Ya existen riesgos en la base de datos para este reporte. No se crearán riesgos duplicados.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     try:
         with transaction.atomic():
@@ -634,7 +634,7 @@ def process_vhr(request, report_id):
     except Exception as e:
         messages.error(request, f'Error al crear las MMRs: {str(e)}')
     
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:vhr_action_panel', report_id=report_id)
 
 ########################################################################################
 #endregion VHR operations
@@ -656,11 +656,11 @@ def update_validity(request, report_id):
 
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     if report.is_processed:
         messages.error(request, 'No se puede modificar la validez de un reporte procesado.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     ai_analysis = report.ai_analysis_result or {}
     current_validity = report.is_valid
@@ -670,7 +670,7 @@ def update_validity(request, report_id):
 
     if new_validity not in ['True', 'False']:
         messages.error(request, 'Validez inválida.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     # Convert string to boolean for comparison
     new_validity = new_validity == 'True'
@@ -678,14 +678,14 @@ def update_validity(request, report_id):
     # If validity is not changing, do nothing
     if current_validity == new_validity:
         messages.info(request, 'La validez no ha cambiado.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     # Changing from False to True: requires at least one risk
     if not current_validity and new_validity:
         risks = ai_analysis.get('risks', {}) or {}
         if not risks:
             messages.error(request, 'No se puede validar el reporte sin al menos un riesgo registrado.')
-            return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+            return redirect('sms:vhr_action_panel', report_id=report_id)
         
         ai_analysis['is_valid'] = 'True'
         ai_analysis['invalidity_reason'] = ""
@@ -697,7 +697,7 @@ def update_validity(request, report_id):
     elif current_validity and not new_validity:
         if not reason:
             messages.error(request, 'Debe proporcionar una justificación para invalidar el reporte.')
-            return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+            return redirect('sms:vhr_action_panel', report_id=report_id)
         
         # Delete all risks and actions
         ai_analysis['risks'] = {}
@@ -713,7 +713,7 @@ def update_validity(request, report_id):
     report.save(update_fields=['ai_analysis_result', 'is_valid', 'invalidity_reason', 'is_resolved', 'updated_at'])
 
     messages.success(request, f'Se actualizó la validez del reporte.')
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:vhr_action_panel', report_id=report_id)
 
 ########################################################################################
 #endregion VHR validity management
@@ -769,7 +769,7 @@ def add_risk(request, report_id):
 
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     description = (request.POST.get('description') or '').strip()
     severity = (request.POST.get('severity') or '').strip().upper()
@@ -777,15 +777,15 @@ def add_risk(request, report_id):
 
     if not description:
         messages.error(request, 'La descripción del riesgo es obligatoria.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     if severity not in ['A', 'B', 'C', 'D', 'E']:
         messages.error(request, 'Seleccione un nivel de severidad válido.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     if probability not in ['1', '2', '3', '4', '5']:
         messages.error(request, 'Seleccione un nivel de probabilidad válido.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     ai_analysis = report.ai_analysis_result or {}
     risks = ai_analysis.get('risks', {}) or {}
@@ -811,7 +811,7 @@ def add_risk(request, report_id):
     report.save(update_fields=['ai_analysis_result', 'updated_at'])
 
     messages.success(request, 'Se agregó un nuevo riesgo al análisis.')
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:vhr_action_panel', report_id=report_id)
 
 
 @login_required
@@ -825,7 +825,7 @@ def delete_risk(request, report_id, risk_key):
 
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     ai_analysis = report.ai_analysis_result or {}
     risks = ai_analysis.get('risks', {}) or {}
@@ -833,7 +833,7 @@ def delete_risk(request, report_id, risk_key):
 
     if risk_key not in risks:
         messages.warning(request, 'El riesgo solicitado no existe.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     # Delete the risk and its actions
     risks.pop(risk_key, None)
@@ -848,7 +848,7 @@ def delete_risk(request, report_id, risk_key):
     report.save(update_fields=['ai_analysis_result', 'updated_at'])
 
     messages.success(request, f'Se eliminó el {risk_key} y sus acciones asociadas.')
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:vhr_action_panel', report_id=report_id)
 
 
 @login_required
@@ -861,29 +861,29 @@ def update_risk_evaluation(request, report_id, risk_key):
 
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     severity = request.POST.get('severity', '').strip().upper()
     probability = request.POST.get('probability', '').strip()
 
     if not severity or not probability:
         messages.error(request, 'Severidad y probabilidad son requeridos.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     if severity not in ['A', 'B', 'C', 'D', 'E']:
         messages.error(request, 'Severidad inválida. Debe ser A, B, C, D o E.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     if probability not in ['1', '2', '3', '4', '5']:
         messages.error(request, 'Probabilidad inválida. Debe ser 1, 2, 3, 4 o 5.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     ai_analysis = report.ai_analysis_result or {}
     risks = ai_analysis.get('risks', {}) or {}
 
     if risk_key not in risks:
         messages.warning(request, 'El riesgo solicitado no existe.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     risks[risk_key]['evaluation'] = f'{severity}{probability}'
     ai_analysis['risks'] = risks
@@ -891,7 +891,7 @@ def update_risk_evaluation(request, report_id, risk_key):
     report.save(update_fields=['ai_analysis_result', 'updated_at'])
 
     messages.success(request, f'Se actualizó la evaluación del {risk_key} a {severity}{probability}.')
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:vhr_action_panel', report_id=report_id)
 
 
 @login_required
@@ -909,9 +909,9 @@ def risk_detail(request, risk_id):
     
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
-    if '/processed_vhr/' in referer:
-        # If coming from processed_vhr_detail page, go back to that report's detail page
-        back_url = reverse('sms:processed_vhr_detail', args=[risk.report.id])
+    if '/vhr_processed_panel/' in referer:
+        # If coming from vhr_processed_panel page, go back to that report's detail page
+        back_url = reverse('sms:vhr_processed_panel', args=[risk.report.id])
     else:
         # Default to SMS dashboard
         back_url = reverse('sms:sms_dashboard')
@@ -951,12 +951,12 @@ def add_action(request, report_id, risk_key):
 
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     description = (request.POST.get('description') or '').strip()
     if not description:
         messages.error(request, 'La descripción de la acción es obligatoria.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     ai_analysis = report.ai_analysis_result or {}
     risks = ai_analysis.get('risks', {}) or {}
@@ -964,7 +964,7 @@ def add_action(request, report_id, risk_key):
 
     if risk_key not in risks:
         messages.error(request, 'El riesgo seleccionado no existe.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     action_list = actions.get(risk_key, []) or []
     action_list.append(description)
@@ -975,7 +975,7 @@ def add_action(request, report_id, risk_key):
     report.save(update_fields=['ai_analysis_result', 'updated_at'])
 
     messages.success(request, 'Se agregó una nueva acción de mitigación.')
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:vhr_action_panel', report_id=report_id)
 
 
 @login_required
@@ -988,14 +988,14 @@ def delete_action(request, report_id, risk_key, action_index):
 
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     ai_analysis = report.ai_analysis_result or {}
     actions = ai_analysis.get('actions', {}) or {}
 
     if risk_key not in actions:
         messages.warning(request, 'Las acciones para este riesgo no existen.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     action_list = actions.get(risk_key) or []
 
@@ -1003,7 +1003,7 @@ def delete_action(request, report_id, risk_key, action_index):
         action_list.pop(int(action_index))
     except (IndexError, ValueError, TypeError):
         messages.warning(request, 'La acción solicitada no existe.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+        return redirect('sms:vhr_action_panel', report_id=report_id)
 
     if action_list:
         actions[risk_key] = action_list
@@ -1015,7 +1015,7 @@ def delete_action(request, report_id, risk_key, action_index):
     report.save(update_fields=['ai_analysis_result', 'updated_at'])
 
     messages.success(request, 'Se eliminó la acción seleccionada.')
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+    return redirect('sms:vhr_action_panel', report_id=report_id)
 
 
 @login_required

@@ -35,7 +35,7 @@
 				<div class="reports-list-container">
 					{% if non_processed_voluntary_reports %}
 						{% for report in non_processed_voluntary_reports %}
-							<a href="{% url 'sms:voluntary_hazard_report_detail' report.id %}" class="report-card-link">
+							<a href="{% url 'sms:vhr_action_panel' report.id %}" class="report-card-link">
 								<div class="report-card">
 									<div class="status-container">
 										{% if report.is_resolved %}
@@ -116,7 +116,7 @@
 				<div class="reports-list-container">
 					{% if processed_voluntary_reports %}
 						{% for report in processed_voluntary_reports %}
-							<a href="{% url 'sms:processed_vhr_detail' report.id %}" class="report-card-link">
+							<a href="{% url 'sms:vhr_processed_panel' report.id %}" class="report-card-link">
 								<div class="report-card">
 									<div class="status-container">
 										{% if report.is_resolved %}
@@ -197,7 +197,7 @@
 				<div class="reports-list-container">
 					{% if processed_voluntary_reports %}
 						{% for report in processed_voluntary_reports %}
-							<a href="{% url 'sms:voluntary_hazard_report_detail' report.id %}" class="report-card-link">
+							<a href="{% url 'sms:vhr_action_panel' report.id %}" class="report-card-link">
 								<div class="report-card">
 									<div class="status-container">
 										{% if report.is_resolved %}

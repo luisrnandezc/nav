@@ -1,3 +1,122 @@
+/* Messages Container */
+.messages-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 15px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border-left: 4px solid;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-card-success {
+  border-left-color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.message-card-error {
+  border-left-color: #f44336;
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.message-card-warning {
+  border-left-color: #ff9800;
+  background: rgba(255, 152, 0, 0.1);
+}
+
+.message-card-info {
+  border-left-color: #2196F3;
+  background: rgba(33, 150, 243, 0.1);
+}
+
+.message-icon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.message-card-success .message-icon {
+  color: #4caf50;
+}
+
+.message-card-error .message-icon {
+  color: #f44336;
+}
+
+.message-card-warning .message-icon {
+  color: #ff9800;
+}
+
+.message-card-info .message-icon {
+  color: #2196F3;
+}
+
+.message-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.message-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.message-card-success .message-title {
+  color: #4caf50;
+}
+
+.message-card-error .message-title {
+  color: #f44336;
+}
+
+.message-card-warning .message-title {
+  color: #ff9800;
+}
+
+.message-card-info .message-title {
+  color: #2196F3;
+}
+
+.message-text {
+  font-size: 0.95rem;
+  color: #dae1ff;
+  text-transform: none;
+  line-height: 1.5;
+}
+
 .info-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -667,5 +786,24 @@ option {
 
   .info-value {
     font-size: 1rem;
+  }
+
+  .message-card {
+    padding: 12px 15px;
+    gap: 12px;
+  }
+
+  .message-icon {
+    font-size: 1.2rem;
+    width: 25px;
+    height: 25px;
+  }
+
+  .message-title {
+    font-size: 0.85rem;
+  }
+
+  .message-text {
+    font-size: 0.9rem;
   }
 }

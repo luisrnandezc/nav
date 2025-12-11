@@ -29,6 +29,10 @@ def user_login(request):
             else:
                 messages.error(request, 'Credenciales inválidas.')
     else:
+        # Clear all messages from previous sessions/apps when displaying login page
+        # This ensures only login-related messages are shown
+        # Iterating through messages marks them as consumed
+        list(messages.get_messages(request))
         form = LoginForm()
     return render(request, 'accounts/login.html', {'form': form})
 
@@ -147,6 +151,10 @@ def user_logout(request):
     # Clear the selected role from session
     if 'selected_role' in request.session:
         del request.session['selected_role']
+    
+    # Clear all messages before logout to prevent them from appearing on login page
+    # Iterating through messages marks them as consumed
+    list(messages.get_messages(request))
     
     logout(request)
     return render(request, 'accounts/logout.html')

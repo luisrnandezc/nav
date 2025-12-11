@@ -222,7 +222,7 @@ def register_vhr(request, report_id):
 
             # Check if report is already registered
             if report.code:
-                messages.warning(request, 'Este reporte ya ha sido registrado anteriormente. Código de registro: {report.code}')
+                messages.warning(request, f'Este reporte ya ha sido registrado anteriormente. Código de registro: {report.code}')
                 return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
             # Create the unique code for the report

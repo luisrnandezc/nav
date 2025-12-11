@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Reporte Voluntario de Peligro (RVP)</title>
     <link href="{% static 'sms_base.css' %}" rel="stylesheet" />
-    <link href="{% static 'voluntary_hazard_report.css' %}" rel="stylesheet" />
+    <link href="{% static 'vhr_form.css' %}" rel="stylesheet" />
   </head>
 
   <body>
@@ -25,7 +25,42 @@
 
       <h1 class="main-header">Reporte voluntario de peligro (RVP)</h1>
       
-      <form class="form-container" method="post"  action="{% url 'sms:voluntary_hazard_report' %}">
+      <!-- Messages Block -->
+      {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+            <div class="message-card message-card-{{ message.tags }}">
+              <div class="message-icon">
+                {% if message.tags == 'success' %}
+                  ✓
+                {% elif message.tags == 'error' %}
+                  ✕
+                {% elif message.tags == 'warning' %}
+                  ⚠
+                {% else %}
+                  ℹ
+                {% endif %}
+              </div>
+              <div class="message-content">
+                <div class="message-title">
+                  {% if message.tags == 'success' %}
+                    Éxito
+                  {% elif message.tags == 'error' %}
+                    Error
+                  {% elif message.tags == 'warning' %}
+                    Advertencia
+                  {% else %}
+                    Información
+                  {% endif %}
+                </div>
+                <div class="message-text">{{ message }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      <form class="form-container" method="post"  action="{% url 'sms:vhr_form' %}">
         {% csrf_token %}
         <input type="hidden" name="user_role" value="{{ user_role }}">
         <h1 class="subsection-header" id="section-1-header">Sección 1: Datos del reportante (Opcional)</h1>

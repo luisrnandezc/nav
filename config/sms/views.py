@@ -22,6 +22,152 @@ import weasyprint
 from pathlib import Path
 from django.utils import timezone
 
+
+########################################################################################
+#region VHR AI analysis
+########################################################################################
+
+def voluntary_hazard_report_ai_analysis_logger():
+    """
+    A function to set up the logger for the AI analysis of the SMS Voluntary Hazard Report (VHR).
+    """
+    # Set up logging to both file and console
+    log_file_path = os.path.join(settings.BASE_DIR, 'sms/logs/voluntary_hazard_report_ai_analysis.log')
+    
+    # Create logger
+    logger = logging.getLogger('voluntary_hazard_report_ai_analysis')
+    logger.setLevel(logging.DEBUG)
+    
+    # Remove existing handlers to avoid duplicates
+    logger.handlers = []
+    
+    # File handler
+    file_handler = logging.FileHandler(log_file_path)
+    file_handler.setLevel(logging.DEBUG)
+    file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(file_formatter)
+    logger.addHandler(file_handler)
+    
+    # Console handler (for PythonAnywhere Always-On Task)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.DEBUG)
+    console_formatter = logging.Formatter('[LOG] %(asctime)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_formatter)
+    logger.addHandler(console_handler)
+    
+    return logger
+
+def run_ai_analysis_for_voluntary_hazard_report(report):
+    """
+    A function to run the AI analysis for the SMS Voluntary Hazard Report (VHR).
+    
+    Args:
+        report (VoluntaryHazardReport): The Voluntary Hazard Report (VHR) to analyze
+    """
+
+    logger = voluntary_hazard_report_ai_analysis_logger()
+
+    logger.info("=" * 80)
+    logger.info("Starting run_ai_analysis_for_voluntary_hazard_report for VHR ID: {}".format(report.id))
+
+    # Set AI analysis prompt
+    base_prompt = settings.SARA_HAZARD_ANALYSIS_PROMPT
+    logger.info("AI analysis prompt loaded, length: {} characters".format(len(base_prompt)))
+
+    # Create a SimpleNamespace object to support {report.date} syntax in the prompt
+    report_ns = SimpleNamespace(
+        date=getattr(report, "date", "") or "",
+        time=getattr(report, "time", "") or "",
+        area=getattr(report, "area", "") or "",
+        description=getattr(report, "description", "") or ""
+    )
+    logger.info("Report namespace created - date: {}, time: {}, area: {}, description length: {}".format(
+        report_ns.date, report_ns.time, report_ns.area, len(report_ns.description)
+    ))
+
+    rendered_prompt = base_prompt.format(report=report_ns)
+    logger.info("Rendered prompt length: {} characters".format(len(rendered_prompt)))
+
+    # Retrieve the API key from environment variables
+    logger.info("Retrieving OPENAI_API_KEY from environment variables")
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        error_msg = "Error: OpenAI API key not found in environment variables."
+        logger.error(error_msg)
+        print("[ERROR] {}".format(error_msg))
+        return error_msg
+    
+    logger.info("API key retrieved successfully (length: {} characters)".format(len(api_key) if api_key else 0))
+
+    try:
+        logger.info("Attempting to initialize OpenAI client")
+        
+        # Initialize the OpenAI client with the retrieved key
+        client = OpenAI(api_key=api_key)
+        
+        logger.info("OpenAI client initialized successfully")
+
+        # Make a request to the responses endpoint
+        logger.info("Making API request to OpenAI responses endpoint")
+
+        model = "gpt-5.1"
+        tools = [{"type": "web_search"}]
+        reasoning = {"effort": "medium"}
+        text = {"verbosity": "medium"}
+
+        logger.info("Model: {}, reasoning: {}, text verbosity: {}, tools: {}".format(model, reasoning["effort"], text["verbosity"], tools))
+        
+        response = client.responses.create(
+            model=model,
+            tools=tools,
+            reasoning = reasoning,
+            text = text,
+            instructions = base_prompt,
+            input=rendered_prompt,
+        )
+        
+        logger.info("API request completed successfully")
+        
+        # Extract the content from the response
+        content = response.output_text
+        logger.info("Response content extracted, length: {} characters".format(len(content) if content else 0))
+        
+        logger.info("=" * 80)
+        return content
+        
+    except TypeError as e:
+        error_msg = "TypeError during OpenAI operation: {}".format(str(e))
+        logger.error(error_msg, exc_info=True)
+        print("[ERROR] {}".format(error_msg))
+        import traceback
+        logger.error("Full traceback: {}".format(traceback.format_exc()))
+        logger.info("=" * 80)
+        return "API key validation failed. Error: {}".format(e)
+    except AttributeError as e:
+        error_msg = "AttributeError during OpenAI operation: {}".format(str(e))
+        logger.error(error_msg, exc_info=True)
+        print("[ERROR] {}".format(error_msg))
+        import traceback
+        logger.error("Full traceback: {}".format(traceback.format_exc()))
+        logger.info("=" * 80)
+        return "API key validation failed. Error: {}".format(e)
+    except Exception as e:
+        error_msg = "Exception during OpenAI operation: {} (Type: {})".format(str(e), type(e).__name__)
+        logger.error(error_msg, exc_info=True)
+        print("[ERROR] {}".format(error_msg))
+        import traceback
+        logger.error("Full traceback: {}".format(traceback.format_exc()))
+        logger.info("=" * 80)
+        return "API key validation failed. Error: {}".format(e)
+
+########################################################################################
+#endregion VHR AI analysis
+########################################################################################
+
+########################################################################################
+#region Dashboard Views
+########################################################################################
+
 @login_required
 def sms_dashboard(request):
     """
@@ -107,44 +253,63 @@ def voluntary_hazard_reports_dashboard(request):
         'non_processed_voluntary_reports': non_processed_voluntary_reports,
         'processed_voluntary_reports': processed_voluntary_reports,
     }
+
     return render(request, 'sms/voluntary_hazard_reports_dashboard.html', context)
 
+########################################################################################
+#endregion Dashboard Views
+########################################################################################
 
-def renumber_risks(risks, actions):
+########################################################################################
+#region VHR Views
+########################################################################################
+
+def vhr_form(request):
     """
-    Renumber risks sequentially starting from 1.
-    
-    Args:
-        risks: Dictionary of risks with keys like 'risk1', 'risk2', etc.
-        actions: Dictionary of actions with keys matching risk keys
+    A view to handle the SMS voluntary hazard report form.
+    """
+
+    if request.method == 'POST':
+        is_anonymous = request.POST.get('is_anonymous') == 'YES'
         
-    Returns:
-        Tuple of (renumbered_risks, renumbered_actions) dictionaries
-    """
-    if not risks:
-        return risks, actions
-    
-    # Extract and sort risk keys by their numeric value
-    def get_risk_number(key):
-        try:
-            return int(key.replace('risk', ''))
-        except (ValueError, AttributeError):
-            return 0
-    
-    sorted_keys = sorted(risks.keys(), key=get_risk_number)
-    
-    # Create new dictionaries with sequential numbering
-    new_risks = {}
-    new_actions = {}
-    
-    for index, old_key in enumerate(sorted_keys, start=1):
-        new_key = f'risk{index}'
-        new_risks[new_key] = risks[old_key]
-        if old_key in actions:
-            new_actions[new_key] = actions[old_key]
-    
-    return new_risks, new_actions
+        # Get user_role from POST data, or fallback to session/user.role
+        user_role = request.POST.get('user_role')
+        if not user_role:
+            selected_role = request.session.get('selected_role', None)
+            user_role = selected_role if selected_role else (request.user.role if request.user.is_authenticated else None)
 
+        if is_anonymous or not request.user.is_authenticated:
+            form = SMSVoluntaryHazardReportForm(request.POST)
+        else:
+            form = SMSVoluntaryHazardReportForm(request.POST, user=request.user)
+
+        if form.is_valid():
+            try:
+                form.save()
+                if user_role == 'STAFF':
+                    return redirect('sms:voluntary_hazard_reports_dashboard')
+                else:
+                    return redirect('dashboard:dashboard')
+            except Exception as e:
+                messages.error(request, f'Error al guardar el reporte: {str(e)}')
+        else:
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
+    else:
+        if request.user.is_authenticated:
+            form = SMSVoluntaryHazardReportForm(user=request.user)
+        else:
+            form = SMSVoluntaryHazardReportForm()
+        
+        # Get user_role for GET requests
+        selected_role = request.session.get('selected_role', None)
+        user_role = selected_role if selected_role else (request.user.role if request.user.is_authenticated else None)
+
+    context = {
+        'form': form,
+        'user_role': user_role,
+    }
+
+    return render(request, 'sms/vhr_form.html', context)
 
 @login_required
 def voluntary_hazard_report_detail(request, report_id):
@@ -199,8 +364,64 @@ def voluntary_hazard_report_detail(request, report_id):
         'back_url': back_url,
     }
 
-    return render(request, 'sms/voluntary_hazard_report_detail.html', context)
+    response = render(request, 'sms/voluntary_hazard_report_detail.html', context)
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
 
+    return response
+
+
+@login_required
+def processed_vhr_detail(request, report_id):
+    """
+    A view to display the detail of a processed Voluntary Hazard Report with its risks and actions.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id, is_processed=True)
+    
+    # Get all risks related to this report
+    all_risks = report.risks.all()
+    
+    # Get all actions related to this report (through risks)
+    all_actions = MitigationAction.objects.filter(risk__report=report)
+    pending_actions = all_actions.filter(status='PENDING')
+    completed_actions = all_actions.filter(status='COMPLETED')
+    expired_actions = all_actions.filter(status='EXPIRED')
+    
+    # Determine the back URL based on the referrer
+    referer = request.META.get('HTTP_REFERER', '')
+    if '/voluntary_hazard_reports_dashboard/' in referer:
+        back_url = reverse('sms:voluntary_hazard_reports_dashboard')
+    elif '/sms_dashboard/' in referer or '/sms/' in referer:
+        back_url = reverse('sms:sms_dashboard')
+    else:
+        back_url = reverse('sms:sms_dashboard')
+    
+    context = {
+        'report': report,
+        'risks': all_risks,
+        'pending_actions': pending_actions,
+        'completed_actions': completed_actions,
+        'expired_actions': expired_actions,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'back_url': back_url,
+    }
+
+    # Disable caching for the response to force refresh when coming back from action detail.
+    response = render(request, 'sms/processed_vhr_detail.html', context)
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+
+    return response
+
+########################################################################################
+#endregion VHR Views
+########################################################################################
+
+########################################################################################
+#region VHR operations
+########################################################################################
 
 @login_required
 def register_vhr(request, report_id):
@@ -413,8 +634,15 @@ def process_vhr(request, report_id):
     except Exception as e:
         messages.error(request, f'Error al crear las MMRs: {str(e)}')
     
-    return redirect('sms:voluntary_hazard_reports_dashboard')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
+########################################################################################
+#endregion VHR operations
+########################################################################################
+
+########################################################################################
+#region VHR validity management
+########################################################################################
 
 @login_required
 @require_http_methods(["POST"])
@@ -428,6 +656,10 @@ def update_validity(request, report_id):
 
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if report.is_processed:
+        messages.error(request, 'No se puede modificar la validez de un reporte procesado.')
         return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
     ai_analysis = report.ai_analysis_result or {}
@@ -459,6 +691,7 @@ def update_validity(request, report_id):
         ai_analysis['invalidity_reason'] = ""
         report.is_valid = True
         report.invalidity_reason = None  # Clear invalidity reason if it exists
+        report.updated_at = timezone.now()
 
     # Changing from True to False: delete all risks/actions and require reason
     elif current_validity and not new_validity:
@@ -474,11 +707,110 @@ def update_validity(request, report_id):
         report.is_valid = False
         report.invalidity_reason = reason
         report.is_resolved = True  # Mark as resolved when invalidated
+        report.updated_at = timezone.now()
 
     report.ai_analysis_result = ai_analysis
     report.save(update_fields=['ai_analysis_result', 'is_valid', 'invalidity_reason', 'is_resolved', 'updated_at'])
 
     messages.success(request, f'Se actualizó la validez del reporte.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+########################################################################################
+#endregion VHR validity management
+########################################################################################
+
+########################################################################################
+#region VHR risk management
+########################################################################################
+
+def renumber_risks(risks, actions):
+    """
+    Renumber risks sequentially starting from 1.
+    
+    Args:
+        risks: Dictionary of risks with keys like 'risk1', 'risk2', etc.
+        actions: Dictionary of actions with keys matching risk keys
+        
+    Returns:
+        Tuple of (renumbered_risks, renumbered_actions) dictionaries
+    """
+    if not risks:
+        return risks, actions
+    
+    # Extract and sort risk keys by their numeric value
+    def get_risk_number(key):
+        try:
+            return int(key.replace('risk', ''))
+        except (ValueError, AttributeError):
+            return 0
+    
+    sorted_keys = sorted(risks.keys(), key=get_risk_number)
+    
+    # Create new dictionaries with sequential numbering
+    new_risks = {}
+    new_actions = {}
+    
+    for index, old_key in enumerate(sorted_keys, start=1):
+        new_key = f'risk{index}'
+        new_risks[new_key] = risks[old_key]
+        if old_key in actions:
+            new_actions[new_key] = actions[old_key]
+    
+    return new_risks, new_actions
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_risk(request, report_id):
+    """
+    Append a new risk (with evaluation and description) to the AI analysis payload.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    description = (request.POST.get('description') or '').strip()
+    severity = (request.POST.get('severity') or '').strip().upper()
+    probability = (request.POST.get('probability') or '').strip()
+
+    if not description:
+        messages.error(request, 'La descripción del riesgo es obligatoria.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if severity not in ['A', 'B', 'C', 'D', 'E']:
+        messages.error(request, 'Seleccione un nivel de severidad válido.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    if probability not in ['1', '2', '3', '4', '5']:
+        messages.error(request, 'Seleccione un nivel de probabilidad válido.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+
+    next_index = 1
+    if risks:
+        existing_indexes = []
+        for key in risks.keys():
+            if key.startswith('risk'):
+                suffix = key.replace('risk', '')
+                if suffix.isdigit():
+                    existing_indexes.append(int(suffix))
+        next_index = max(existing_indexes, default=0) + 1
+
+    new_risk_key = f"risk{next_index}"
+    risks[new_risk_key] = {
+        'description': description,
+        'evaluation': f'{severity}{probability}',
+    }
+
+    ai_analysis['risks'] = risks
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, 'Se agregó un nuevo riesgo al análisis.')
     return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
 
 
@@ -563,6 +895,90 @@ def update_risk_evaluation(request, report_id, risk_key):
 
 
 @login_required
+def risk_detail(request, risk_id):
+    """
+    A view to display the detail of a Risk and its related actions.
+    """
+    risk = get_object_or_404(Risk, id=risk_id)
+    
+    # Get all actions related to this risk
+    all_actions = risk.mitigation_actions.all()
+    pending_actions = all_actions.filter(status='PENDING')
+    completed_actions = all_actions.filter(status='COMPLETED')
+    expired_actions = all_actions.filter(status='EXPIRED')
+    
+    # Determine the back URL based on the referrer
+    referer = request.META.get('HTTP_REFERER', '')
+    if '/processed_vhr/' in referer:
+        # If coming from processed_vhr_detail page, go back to that report's detail page
+        back_url = reverse('sms:processed_vhr_detail', args=[risk.report.id])
+    else:
+        # Default to SMS dashboard
+        back_url = reverse('sms:sms_dashboard')
+    
+    context = {
+        'risk': risk,
+        'pending_actions': pending_actions,
+        'completed_actions': completed_actions,
+        'expired_actions': expired_actions,
+        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
+        'back_url': back_url,
+    }
+
+    # Disable caching for the response to force refresh when coming back from action detail.
+    response = render(request, 'sms/risk_detail.html', context)
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+
+    return response
+
+########################################################################################
+#endregion VHR risk management
+########################################################################################
+
+########################################################################################
+#region VHR action management
+########################################################################################
+
+@login_required
+@require_http_methods(["POST"])
+def add_action(request, report_id, risk_key):
+    """
+    Append a new mitigation action to the specified risk.
+    """
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar este reporte.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    description = (request.POST.get('description') or '').strip()
+    if not description:
+        messages.error(request, 'La descripción de la acción es obligatoria.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    ai_analysis = report.ai_analysis_result or {}
+    risks = ai_analysis.get('risks', {}) or {}
+    actions = ai_analysis.get('actions', {}) or {}
+
+    if risk_key not in risks:
+        messages.error(request, 'El riesgo seleccionado no existe.')
+        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+    action_list = actions.get(risk_key, []) or []
+    action_list.append(description)
+    actions[risk_key] = action_list
+
+    ai_analysis['actions'] = actions
+    report.ai_analysis_result = ai_analysis
+    report.save(update_fields=['ai_analysis_result', 'updated_at'])
+
+    messages.success(request, 'Se agregó una nueva acción de mitigación.')
+    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
+
+
+@login_required
 @require_http_methods(["POST"])
 def delete_action(request, report_id, risk_key, action_index):
     """
@@ -603,350 +1019,6 @@ def delete_action(request, report_id, risk_key, action_index):
 
 
 @login_required
-@require_http_methods(["POST"])
-def add_risk(request, report_id):
-    """
-    Append a new risk (with evaluation and description) to the AI analysis payload.
-    """
-    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
-
-    if not request.user.has_perm('accounts.can_manage_sms'):
-        messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-    description = (request.POST.get('description') or '').strip()
-    severity = (request.POST.get('severity') or '').strip().upper()
-    probability = (request.POST.get('probability') or '').strip()
-
-    if not description:
-        messages.error(request, 'La descripción del riesgo es obligatoria.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-    if severity not in ['A', 'B', 'C', 'D', 'E']:
-        messages.error(request, 'Seleccione un nivel de severidad válido.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-    if probability not in ['1', '2', '3', '4', '5']:
-        messages.error(request, 'Seleccione un nivel de probabilidad válido.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-    ai_analysis = report.ai_analysis_result or {}
-    risks = ai_analysis.get('risks', {}) or {}
-
-    next_index = 1
-    if risks:
-        existing_indexes = []
-        for key in risks.keys():
-            if key.startswith('risk'):
-                suffix = key.replace('risk', '')
-                if suffix.isdigit():
-                    existing_indexes.append(int(suffix))
-        next_index = max(existing_indexes, default=0) + 1
-
-    new_risk_key = f"risk{next_index}"
-    risks[new_risk_key] = {
-        'description': description,
-        'evaluation': f'{severity}{probability}',
-    }
-
-    ai_analysis['risks'] = risks
-    report.ai_analysis_result = ai_analysis
-    report.save(update_fields=['ai_analysis_result', 'updated_at'])
-
-    messages.success(request, 'Se agregó un nuevo riesgo al análisis.')
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-
-@login_required
-@require_http_methods(["POST"])
-def add_action(request, report_id, risk_key):
-    """
-    Append a new mitigation action to the specified risk.
-    """
-    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
-
-    if not request.user.has_perm('accounts.can_manage_sms'):
-        messages.error(request, 'No tiene permisos para modificar este reporte.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-    description = (request.POST.get('description') or '').strip()
-    if not description:
-        messages.error(request, 'La descripción de la acción es obligatoria.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-    ai_analysis = report.ai_analysis_result or {}
-    risks = ai_analysis.get('risks', {}) or {}
-    actions = ai_analysis.get('actions', {}) or {}
-
-    if risk_key not in risks:
-        messages.error(request, 'El riesgo seleccionado no existe.')
-        return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-    action_list = actions.get(risk_key, []) or []
-    action_list.append(description)
-    actions[risk_key] = action_list
-
-    ai_analysis['actions'] = actions
-    report.ai_analysis_result = ai_analysis
-    report.save(update_fields=['ai_analysis_result', 'updated_at'])
-
-    messages.success(request, 'Se agregó una nueva acción de mitigación.')
-    return redirect('sms:voluntary_hazard_report_detail', report_id=report_id)
-
-def voluntary_hazard_report(request):
-    """
-    A view to handle the SMS voluntary hazard report.
-    """
-
-    if request.method == 'POST':
-        is_anonymous = request.POST.get('is_anonymous') == 'YES'
-        
-        # Get user_role from POST data, or fallback to session/user.role
-        user_role = request.POST.get('user_role')
-        if not user_role:
-            selected_role = request.session.get('selected_role', None)
-            user_role = selected_role if selected_role else (request.user.role if request.user.is_authenticated else None)
-
-        if is_anonymous or not request.user.is_authenticated:
-            form = SMSVoluntaryHazardReportForm(request.POST)
-        else:
-            form = SMSVoluntaryHazardReportForm(request.POST, user=request.user)
-
-        if form.is_valid():
-            try:
-                form.save()
-                if user_role == 'STAFF':
-                    return redirect('sms:voluntary_hazard_reports_dashboard')
-                else:
-                    return redirect('dashboard:dashboard')
-            except Exception as e:
-                messages.error(request, f'Error al guardar el reporte: {str(e)}')
-        else:
-            messages.error(request, 'Por favor corrija los errores en el formulario.')
-    else:
-        if request.user.is_authenticated:
-            form = SMSVoluntaryHazardReportForm(user=request.user)
-        else:
-            form = SMSVoluntaryHazardReportForm()
-        
-        # Get user_role for GET requests
-        selected_role = request.session.get('selected_role', None)
-        user_role = selected_role if selected_role else (request.user.role if request.user.is_authenticated else None)
-
-    context = {
-        'form': form,
-        'user_role': user_role,
-    }
-
-    return render(request, 'sms/voluntary_hazard_report.html', context)
-
-def voluntary_hazard_report_ai_analysis_logger():
-    """
-    A function to set up the logger for the AI analysis of the SMS Voluntary Hazard Report (VHR).
-    """
-    # Set up logging to both file and console
-    log_file_path = os.path.join(settings.BASE_DIR, 'sms/logs/voluntary_hazard_report_ai_analysis.log')
-    
-    # Create logger
-    logger = logging.getLogger('voluntary_hazard_report_ai_analysis')
-    logger.setLevel(logging.DEBUG)
-    
-    # Remove existing handlers to avoid duplicates
-    logger.handlers = []
-    
-    # File handler
-    file_handler = logging.FileHandler(log_file_path)
-    file_handler.setLevel(logging.DEBUG)
-    file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    file_handler.setFormatter(file_formatter)
-    logger.addHandler(file_handler)
-    
-    # Console handler (for PythonAnywhere Always-On Task)
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.DEBUG)
-    console_formatter = logging.Formatter('[LOG] %(asctime)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(console_formatter)
-    logger.addHandler(console_handler)
-    
-    return logger
-
-def run_ai_analysis_for_voluntary_hazard_report(report):
-    """
-    A function to run the AI analysis for the SMS Voluntary Hazard Report (VHR).
-    
-    Args:
-        report (VoluntaryHazardReport): The Voluntary Hazard Report (VHR) to analyze
-    """
-
-    logger = voluntary_hazard_report_ai_analysis_logger()
-
-    logger.info("=" * 80)
-    logger.info("Starting run_ai_analysis_for_voluntary_hazard_report for VHR ID: {}".format(report.id))
-
-    # Set AI analysis prompt
-    base_prompt = settings.SARA_HAZARD_ANALYSIS_PROMPT
-    logger.info("AI analysis prompt loaded, length: {} characters".format(len(base_prompt)))
-
-    # Create a SimpleNamespace object to support {report.date} syntax in the prompt
-    report_ns = SimpleNamespace(
-        date=getattr(report, "date", "") or "",
-        time=getattr(report, "time", "") or "",
-        area=getattr(report, "area", "") or "",
-        description=getattr(report, "description", "") or ""
-    )
-    logger.info("Report namespace created - date: {}, time: {}, area: {}, description length: {}".format(
-        report_ns.date, report_ns.time, report_ns.area, len(report_ns.description)
-    ))
-
-    rendered_prompt = base_prompt.format(report=report_ns)
-    logger.info("Rendered prompt length: {} characters".format(len(rendered_prompt)))
-
-    # Retrieve the API key from environment variables
-    logger.info("Retrieving OPENAI_API_KEY from environment variables")
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        error_msg = "Error: OpenAI API key not found in environment variables."
-        logger.error(error_msg)
-        print("[ERROR] {}".format(error_msg))
-        return error_msg
-    
-    logger.info("API key retrieved successfully (length: {} characters)".format(len(api_key) if api_key else 0))
-
-    try:
-        logger.info("Attempting to initialize OpenAI client")
-        
-        # Initialize the OpenAI client with the retrieved key
-        client = OpenAI(api_key=api_key)
-        
-        logger.info("OpenAI client initialized successfully")
-
-        # Make a request to the responses endpoint
-        logger.info("Making API request to OpenAI responses endpoint")
-
-        model = "gpt-5.1"
-        tools = [{"type": "web_search"}]
-        reasoning = {"effort": "medium"}
-        text = {"verbosity": "medium"}
-
-        logger.info("Model: {}, reasoning: {}, text verbosity: {}, tools: {}".format(model, reasoning["effort"], text["verbosity"], tools))
-        
-        response = client.responses.create(
-            model=model,
-            tools=tools,
-            reasoning = reasoning,
-            text = text,
-            instructions = base_prompt,
-            input=rendered_prompt,
-        )
-        
-        logger.info("API request completed successfully")
-        
-        # Extract the content from the response
-        content = response.output_text
-        logger.info("Response content extracted, length: {} characters".format(len(content) if content else 0))
-        
-        logger.info("=" * 80)
-        return content
-        
-    except TypeError as e:
-        error_msg = "TypeError during OpenAI operation: {}".format(str(e))
-        logger.error(error_msg, exc_info=True)
-        print("[ERROR] {}".format(error_msg))
-        import traceback
-        logger.error("Full traceback: {}".format(traceback.format_exc()))
-        logger.info("=" * 80)
-        return "API key validation failed. Error: {}".format(e)
-    except AttributeError as e:
-        error_msg = "AttributeError during OpenAI operation: {}".format(str(e))
-        logger.error(error_msg, exc_info=True)
-        print("[ERROR] {}".format(error_msg))
-        import traceback
-        logger.error("Full traceback: {}".format(traceback.format_exc()))
-        logger.info("=" * 80)
-        return "API key validation failed. Error: {}".format(e)
-    except Exception as e:
-        error_msg = "Exception during OpenAI operation: {} (Type: {})".format(str(e), type(e).__name__)
-        logger.error(error_msg, exc_info=True)
-        print("[ERROR] {}".format(error_msg))
-        import traceback
-        logger.error("Full traceback: {}".format(traceback.format_exc()))
-        logger.info("=" * 80)
-        return "API key validation failed. Error: {}".format(e)
-
-
-@login_required
-def processed_vhr_detail(request, report_id):
-    """
-    A view to display the detail of a processed Voluntary Hazard Report with its risks and actions.
-    """
-    report = get_object_or_404(VoluntaryHazardReport, id=report_id, is_processed=True)
-    
-    # Get all risks related to this report
-    all_risks = report.risks.all()
-    
-    # Get all actions related to this report (through risks)
-    all_actions = MitigationAction.objects.filter(risk__report=report)
-    pending_actions = all_actions.filter(status='PENDING')
-    completed_actions = all_actions.filter(status='COMPLETED')
-    expired_actions = all_actions.filter(status='EXPIRED')
-    
-    # Determine the back URL based on the referrer
-    referer = request.META.get('HTTP_REFERER', '')
-    if '/voluntary_hazard_reports_dashboard/' in referer:
-        back_url = reverse('sms:voluntary_hazard_reports_dashboard')
-    elif '/sms_dashboard/' in referer or '/sms/' in referer:
-        back_url = reverse('sms:sms_dashboard')
-    else:
-        back_url = reverse('sms:sms_dashboard')
-    
-    context = {
-        'report': report,
-        'risks': all_risks,
-        'pending_actions': pending_actions,
-        'completed_actions': completed_actions,
-        'expired_actions': expired_actions,
-        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
-        'back_url': back_url,
-    }
-    
-    return render(request, 'sms/processed_vhr_detail.html', context)
-
-
-@login_required
-def risk_detail(request, risk_id):
-    """
-    A view to display the detail of a Risk and its related actions.
-    """
-    risk = get_object_or_404(Risk, id=risk_id)
-    
-    # Get all actions related to this risk
-    all_actions = risk.mitigation_actions.all()
-    pending_actions = all_actions.filter(status='PENDING')
-    completed_actions = all_actions.filter(status='COMPLETED')
-    expired_actions = all_actions.filter(status='EXPIRED')
-    
-    # Determine the back URL based on the referrer
-    referer = request.META.get('HTTP_REFERER', '')
-    if '/processed_vhr/' in referer:
-        # If coming from processed_vhr_detail page, go back to that report's detail page
-        back_url = reverse('sms:processed_vhr_detail', args=[risk.report.id])
-    else:
-        # Default to SMS dashboard
-        back_url = reverse('sms:sms_dashboard')
-    
-    context = {
-        'risk': risk,
-        'pending_actions': pending_actions,
-        'completed_actions': completed_actions,
-        'expired_actions': expired_actions,
-        'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
-        'back_url': back_url,
-    }
-    
-    return render(request, 'sms/risk_detail.html', context)
-
-
-@login_required
 def action_detail(request, action_id):
     """
     A view to display the detail of a MitigationAction.
@@ -969,7 +1041,12 @@ def action_detail(request, action_id):
         'evidences': evidences,
     }
     
-    return render(request, 'sms/action_detail.html', context)
+    response = render(request, 'sms/action_detail.html', context)
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+
+    return response
 
 
 @login_required
@@ -1078,9 +1155,16 @@ def mark_action_completed(request, action_id):
     """
     action = get_object_or_404(MitigationAction, id=action_id)
 
-    
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+
+    if not action.evidences.all():
+        messages.error(request, 'No se puede marcar como completada una acción sin evidencias.')
+        return redirect('sms:action_detail', action_id=action_id)
+
+    if not action.responsible:
+        messages.error(request, 'No se puede marcar como completada una acción sin responsable.')
         return redirect('sms:action_detail', action_id=action_id)
     
     action.status = 'COMPLETED'
@@ -1102,6 +1186,13 @@ def mark_action_completed(request, action_id):
 
     return redirect('sms:action_detail', action_id=action_id)
 
+########################################################################################
+#endregion VHR action management
+########################################################################################
+
+########################################################################################
+#region VHR evidence management
+########################################################################################
 
 @login_required
 @require_http_methods(["POST"])

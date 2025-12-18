@@ -74,13 +74,13 @@
         <section id="enroll">
             <h2 class="section-h2" id="enroll-h2">Detalles del curso & como inscribirse</h2>
             <div id="details">
-                <div class="detail">📅 Inicio: <span id="start-date">Sábado, 1 de marzo</span></div>
+                <div class="detail">📅 Inicio: <span id="start-date">{{ cpa_start_date }}</span></div>
                 <div class="detail">⌚ Duración: 6 días, 9:00 am - 12:30 pm (sabatino)</div>
                 <div class="detail">📍 Ubicación: presencial en las instalaciones de nuestra academia</div>
                 <div class="detail">📚 Incluye: material teórico, chaqueta y 2 sesionesde simulador</div>
                 <div class="detail">💸 Precio: contáctanos al 0412.226.32.40</div>
             </div>
-            <a href="#contact" class="cta-button" id="enroll-button" onclick="window.open('https://wa.me/584242360119', '_blank')">Reserva tu asiento</a>
+            <a href="#contact" class="cta-button" id="enroll-button" data-whatsapp="{{ staff_whatsapp }}">Reserva tu asiento</a>
         </section>
         <div class="slider-divisor"></div>
         <section id="final">
@@ -92,5 +92,6 @@
         {% include 'website/footer.html' %}
         <!--Javascript-->
         <script src="{% static 'js/navbar_dynamics.js' %}"></script>
+        <script src="{% static 'js/cpa_dynamics.js' %}"></script>
     </body>
 </html>

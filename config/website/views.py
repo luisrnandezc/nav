@@ -18,6 +18,7 @@ def courses(request):
 def cpa(request):
     context = {
         'staff_whatsapp': settings.STAFF_WHATSAPP,
+        'cpa_start_date': settings.CPA_START_DATE,
     }
     return render(request, "website/cpa.html", context)
 

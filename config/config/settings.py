@@ -215,6 +215,7 @@ STAFF_WHATSAPP = os.getenv('STAFF_WHATSAPP', '')
 # CPA course start date
 # python-dotenv should handle UTF-8 automatically, but ensure it's a string
 CPA_START_DATE = str(os.getenv('CPA_START_DATE', 'No definido'))
+CPA_DURATION = str(os.getenv('CPA_DURATION', 'No definido'))
 
 # SARA Hazard Analysis Prompt
 SARA_HAZARD_ANALYSIS_PROMPT_PATH = os.getenv('SARA_HAZARD_ANALYSIS_PROMPT_PATH')

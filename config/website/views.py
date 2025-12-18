@@ -19,6 +19,7 @@ def cpa(request):
     context = {
         'staff_whatsapp': settings.STAFF_WHATSAPP,
         'cpa_start_date': settings.CPA_START_DATE,
+        'cpa_duration': settings.CPA_DURATION,
     }
     return render(request, "website/cpa.html", context)
 

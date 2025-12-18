@@ -212,6 +212,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # WhatsApp contact number
 STAFF_WHATSAPP = os.getenv('STAFF_WHATSAPP', '')
 
+# CPA course start date
+CPA_START_DATE = os.getenv('CPA_START_DATE', 'No definido')
+
 # SARA Hazard Analysis Prompt
 SARA_HAZARD_ANALYSIS_PROMPT_PATH = os.getenv('SARA_HAZARD_ANALYSIS_PROMPT_PATH')
 

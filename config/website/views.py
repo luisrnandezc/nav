@@ -4,15 +4,24 @@ from django.conf import settings
 
 
 def index(request):
-    return render(request, "website/index.html")
+    context = {
+        'google_analytics_id': settings.GOOGLE_ANALYTICS_ID,
+    }
+    return render(request, "website/index.html", context)
 
 
 def about(request):
-    return render(request, "website/about.html")
+    context = {
+        'google_analytics_id': settings.GOOGLE_ANALYTICS_ID,
+    }
+    return render(request, "website/about.html", context)
 
 
 def courses(request):
-    return render(request, "website/courses.html")
+    context = {
+        'google_analytics_id': settings.GOOGLE_ANALYTICS_ID,
+    }
+    return render(request, "website/courses.html", context)
 
 
 def cpa(request):
@@ -20,11 +29,18 @@ def cpa(request):
         'staff_whatsapp': settings.STAFF_WHATSAPP,
         'cpa_start_date': settings.CPA_START_DATE,
         'cpa_duration': settings.CPA_DURATION,
+        'google_analytics_id': settings.GOOGLE_ANALYTICS_ID,
     }
     return render(request, "website/cpa.html", context)
 
 def sim(request):
-    return render(request, "website/sim.html")
+    context = {
+        'google_analytics_id': settings.GOOGLE_ANALYTICS_ID,
+    }
+    return render(request, "website/sim.html", context)
 
 def privacy(request):
-    return render(request, "website/privacy.html")
+    context = {
+        'google_analytics_id': settings.GOOGLE_ANALYTICS_ID,
+    }
+    return render(request, "website/privacy.html", context)

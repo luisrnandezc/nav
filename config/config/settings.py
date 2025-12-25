@@ -227,3 +227,6 @@ if SARA_HAZARD_ANALYSIS_PROMPT_PATH:
         SARA_HAZARD_ANALYSIS_PROMPT = f.read()
 else:
     raise RuntimeError("SARA_HAZARD_ANALYSIS_PROMPT_PATH is not set in the .env file")
+
+# Google Analytics ID
+GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID')

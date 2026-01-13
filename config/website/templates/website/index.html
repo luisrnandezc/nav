@@ -5,7 +5,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>NAV | Aviation Academy</title>
+        <title>Escuela de Pilotos en Caracas, Venezuela | NAV Aviation Academy</title>
+        <meta name="description" content="Escuela de pilotos en Caracas, Venezuela. NAV Aviation Academy ofrece formación aeronáutica y entrenamiento de pilotos con estándares modernos.">
         <link href="{% static 'navbar.css' %}" rel="stylesheet"> 
         <link href="{% static 'index.css' %}" rel="stylesheet">
         <link href="{% static 'footer.css' %}" rel="stylesheet">
@@ -32,14 +33,15 @@
         <div class="slides" id="first">
             <div class="info-container">
                 <h1 class="main-header"><span class="main-header" style="color: rgb(232, 71, 40);">NAV </span>Aviation Academy</h1>
-                <p class="sub-header">Más alto, más lejos</p>
+                <h2 class="sub-header" id="index-sub-header">Escuela de pilotos en Caracas, Venezuela</h2>
+                <p class="sub-header" id="index-sub-header-p">Formación aeronáutica y entrenamiento de pilotos en Venezuela con estándares modernos.</p>
                 <button class="button" onclick=window.location.href="{% url 'about' %}">Conócenos</button>
             </div>
         </div>
         <div class="slider-divisor"></div>
         <div class="slides" id="second">
             <div class="info-container">
-                <h1 class="main-header">Cursos</h1>
+                <h2 class="main-header">Cursos</h2>
                 <div class="sub-header">
                     <button class="inline-button" id="b1" onclick=window.location.href="{% url 'courses' %}#pp-slide">PP</button>
                     <div class="inline-separator"></div>
@@ -55,7 +57,7 @@
         <div class="slider-divisor" id="hidden-divisor"></div>
         <div class="slides" id="third">
             <div class="info-container">
-                <h1 class="main-header">Simuladores</h1>
+                <h2 class="main-header">Simuladores</h2>
                 <div class="sub-header">
                     <button class="inline-button" id="b1" onclick=window.location.href="{% url 'sim' %}#sim1">FSTD Nivel III</button>
                     <div class="inline-separator"></div>
@@ -67,7 +69,7 @@
         <div class="slider-divisor"></div>
         <div class="slides" id="fourth">
             <div class="info-container">
-                <h1 class="main-header">Cursos especiales</h1>
+                <h2 class="main-header">Cursos especiales</h2>
                 <div class="sub-header">
                     <button class="inline-button" id="b5" onclick=window.location.href="{% url 'courses' %}#specials">PBN</button>
                     <div class="inline-separator"></div>
@@ -81,7 +83,7 @@
         <div class="slider-divisor"></div>
         <div class="slides" id="fifth">
             <div class="info-container">
-                <h1 class="main-header">CPA</h1>
+                <h2 class="main-header">CPA</h2>
                 <p class="sub-header" id="cpa-sub-header">Curso Propedéutico Aeronáutico</p>
                 <button class="button" onclick=window.location.href="{% url 'cpa' %}">Saber más</button>              
             </div>

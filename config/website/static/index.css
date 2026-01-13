@@ -97,6 +97,18 @@ html, body {
     margin: 40px 0px 40px 0px;
 }
 
+#index-sub-header {
+    letter-spacing: 4px;
+    font-size: 2.0rem;
+}
+
+#index-sub-header-p {
+    letter-spacing: 1px;
+    font-size: 1.25rem;
+    color: #e84728;
+    opacity: 0.85;
+}
+
 button {
     font-size: 2.0rem;
     display: block;
@@ -192,6 +204,10 @@ button {
         background-repeat: no-repeat;
         background-position: center;
         background-attachment: fixed;
+    }
+
+    #index-sub-header-p {
+        display: none;
     }
 
     .slides {

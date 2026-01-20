@@ -4,7 +4,7 @@ from types import SimpleNamespace
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from openai import OpenAI
-from .forms import SMSVoluntaryHazardReportForm
+from .forms import SMSVoluntaryHazardReportForm, RiskEvaluationReportForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
@@ -387,7 +387,14 @@ def vhr_processed_panel(request, report_id):
     pending_actions = all_actions.filter(status='PENDING')
     completed_actions = all_actions.filter(status='COMPLETED')
     expired_actions = all_actions.filter(status='EXPIRED')
-    
+
+    # Check if all actions have a responsible individual assigned
+    can_be_registered = True
+    for action in all_actions:
+        if not action.responsible or not action.due_date:
+            can_be_registered = False
+            break
+
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
     if '/vhr_dashboard/' in referer:
@@ -405,6 +412,7 @@ def vhr_processed_panel(request, report_id):
         'expired_actions': expired_actions,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
         'back_url': back_url,
+        'can_be_registered': can_be_registered
     }
 
     # Disable caching for the response to force refresh when coming back from action detail.
@@ -1256,3 +1264,39 @@ def delete_evidence(request, action_id, evidence_id):
         messages.error(request, f'Error al eliminar la evidencia: {str(e)}')
     
     return redirect('sms:action_detail', action_id=action_id)
+
+########################################################################################
+#endregion VHR evidence management
+########################################################################################
+
+########################################################################################
+#region Risk Evaluation Registration (RER)
+########################################################################################
+
+@login_required
+def rer_form(request, report_id):
+    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
+    
+    if request.method == 'POST':
+        form = RiskEvaluationReportForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                # TODO: here comes the SARA Analysis and RER PDF generation
+            except Exception as e:
+                messages.error(request, f'Error al guardar la forma: {str(e)}')
+        else:
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
+    else:
+        if request.user.is_authenticated:
+            form = RiskEvaluationReportForm(user=request.user, report=report)
+        else:
+            form = RiskEvaluationReportForm(report=report)
+
+    context={'report': report, 'form': form}    
+
+    return render(request, 'sms/rer_form.html', context)
+
+@login_required
+def generate_rer_pdf(request, report_id):
+    return None

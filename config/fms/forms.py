@@ -321,17 +321,10 @@ class SimEvaluationForm(forms.ModelForm):
             if student_id and session_sim_hours:
                 student_profile = StudentProfile.objects.get(user__national_id=student_id)
                 student_profile.sim_hours += session_sim_hours
+                student_profile.save()
 
                 # Get the simulator object directly from cleaned_data (it's already a Simulator instance)
                 sim = self.cleaned_data.get('simulator')
-                session_type = self.cleaned_data.get('session_type')
-                if session_type == 'Simple':
-                    student_profile.balance -= round(session_sim_hours*sim.hourly_rate_single, 2)
-                elif session_type == 'Dual':
-                    student_profile.balance -= round(session_sim_hours*sim.hourly_rate_dual, 2)
-                else:
-                    student_profile.balance -= round(session_sim_hours*sim.hourly_rate_single, 2)
-                student_profile.save()
 
                 # Add session hours to simulator's total hours
                 sim.total_hours += session_sim_hours
@@ -575,7 +568,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):

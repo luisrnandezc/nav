@@ -26,4 +26,6 @@ urlpatterns = [
     path('action/<int:action_id>/mark_completed/', views.mark_action_completed, name='mark_action_completed'),
     path('action/<int:action_id>/evidence/add/', views.add_evidence, name='add_evidence'),
     path('action/<int:action_id>/evidence/<int:evidence_id>/delete/', views.delete_evidence, name='delete_evidence'),
+    path('rer_form/<int:report_id>/', views.rer_form, name='rer_form'),
+    path('rer/<int:report_id>/generate_rer_pdf/', views.generate_rer_pdf, name='generate_rer_pdf'),
 ]

@@ -338,6 +338,43 @@
 					{% endif %}
 				</div>
 			</div>
+
+			<!-- Risk Evaluation Registry Section -->
+			{% if can_manage_sms %}
+				<div class="cards-container" id="register-section-container">
+					<div class="cards-container-header">
+						<h2>Registro de Evaluación de Riesgos (RER)</h2>
+					</div>
+					<div class="register-container">
+						<div class="register-text-container">
+							{% if can_be_registered %}
+								<p id="register-info-text">✅ Listo para generar el Registro de Evaluación de Riesgos.</p>
+							{% else %}
+								<p id="register-info-text">⚠️ Todas las MMR deben tener un responsable y fecha límite asignada.</p>
+							{% endif %}
+						</div>
+						<div class="buttons-container">
+							<div class="button">
+								{% if can_be_registered %}
+									<a 
+									href="{% url 'sms:rer_form' report.id %}" 
+									class="register-button" 
+									onclick="return confirm('⚠️ Esto enviará la solicitud del RER a SARA con toda la.');">
+										+Generar RER
+									</a>
+								{% else %}
+									<a 
+									href="{% url 'sms:rer_form' report.id %}" 
+									class="register-button" 
+									style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
+										+Generar RER
+									</a>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endif %}
 		</div>
 	</body>
 </html>

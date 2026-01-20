@@ -1,0 +1,113 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Registro de Evaluación de Riesgo (RER)</title>
+    <link href="{% static 'sms_base.css' %}" rel="stylesheet" />
+    <link href="{% static 'vhr_form.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="main-container">
+
+      <div class="back-button">
+        {% if user_role == 'STAFF' %}
+          <a href="{% url 'sms:vhr_dashboard' %}" class="button">&larr; Volver</a>
+        {% elif user_role == 'INSTRUCTOR' %}
+          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+        {% else %}
+          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+        {% endif %}
+      </div>
+
+      <h1 class="main-header">Registro de Evaluación de Riesgo (RER)</h1>
+      
+      <!-- Messages Block -->
+      {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+            <div class="message-card message-card-{{ message.tags }}">
+              <div class="message-icon">
+                {% if message.tags == 'success' %}
+                  ✓
+                {% elif message.tags == 'error' %}
+                  ✕
+                {% elif message.tags == 'warning' %}
+                  ⚠
+                {% else %}
+                  ℹ
+                {% endif %}
+              </div>
+              <div class="message-content">
+                <div class="message-title">
+                  {% if message.tags == 'success' %}
+                    Éxito
+                  {% elif message.tags == 'error' %}
+                    Error
+                  {% elif message.tags == 'warning' %}
+                    Advertencia
+                  {% else %}
+                    Información
+                  {% endif %}
+                </div>
+                <div class="message-text">{{ message }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      <form class="form-container" method="post"  action="{% url 'sms:rer_form' report_id=report.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="user_role" value="{{ user_role }}">
+        <h1 class="subsection-header" id="section-1-header">Sección 1: Datos generales</h1>
+        <div class="fixed-fields-container">
+            <div class="left-column">
+                <div class="form-row">
+                    {{ form.report_code.label_tag }}
+                    {{ form.report_code }}
+                </div>
+                <div class="form-row">
+                    {{ form.report_date.label_tag }}
+                    {{ form.report_date }}
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="form-row">
+                    {{ form.sms_user_fullname.label_tag }}
+                    {{ form.sms_user_fullname }}
+                </div>
+                <div class="form-row">
+                    {{ form.dir_user_fullname.label_tag }}
+                    {{ form.dir_user_fullname }}
+                </div>
+            </div>
+        </div>
+        <h1 class="subsection-header">Sección 2: Identificación del peligro</h1>
+        <div class="form-row comments-row" id="hazard_description">
+            {{ form.hazard_description }}
+        </div>
+
+        {% if form.errors %}
+          <ul>
+            {% for field, errors in form.errors.items %}
+              <li>{{ field }}: {{ errors }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <div class="submit-button-container">
+          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>
+        </div>
+      </form>
+    </div>
+    <script>
+        function confirmSubmission() {
+            return confirm('¿Está seguro que desea generar el RER? Esta acción no se puede deshacer.');
+        }
+    </script>
+  </body>
+</html>

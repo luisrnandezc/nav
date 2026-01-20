@@ -50,3 +50,44 @@ class SMSVoluntaryHazardReportForm(forms.ModelForm):
             cleaned_data['role'] = 'OTHER'
 
         return cleaned_data
+    
+
+class RiskEvaluationReportForm(forms.Form):
+    
+    report_code = forms.CharField(
+        label='Código del RVP',
+        widget=forms.TextInput(attrs={'class': 'form-field', 'readonly': 'readonly'})
+    )
+    report_date = forms.DateField(
+        label='Fecha del reporte',
+        widget=forms.DateInput(attrs={'class': 'form-field', 'readonly': 'readonly'})
+    )
+    sms_user_fullname = forms.CharField(
+        label='Gerente de SMS',
+        widget=forms.TextInput(attrs={'class': 'form-field'})
+    )
+    dir_user_fullname = forms.CharField(
+        label='Director',
+        widget=forms.TextInput(attrs={'class': 'form-field'})
+    )
+    hazard_description = forms.CharField(
+        label='Descripción del peligro',
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Máximo 1000 caracteres'})
+    )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        report = kwargs.pop('report', None)
+        super().__init__(*args, **kwargs)
+        
+        if user:
+            self.fields['sms_user_fullname'].initial = user.first_name + ' ' + user.last_name
+            self.fields['dir_user_fullname'].initial = 'Elías Detto'
+        
+        if report:
+            self.fields['report_code'].initial = report.id
+            self.fields['report_date'].initial = report.date
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return cleaned_data

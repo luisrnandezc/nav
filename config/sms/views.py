@@ -1292,8 +1292,18 @@ def rer_form(request, report_id):
             form = RiskEvaluationReportForm(user=request.user, report=report)
         else:
             form = RiskEvaluationReportForm(report=report)
+    
+    risks = []
+    for risk in report.risks.all():
+        risks.append({
+            'description': risk.description,
+            'pre_evaluation_severity': risk.pre_evaluation_severity,
+            'pre_evaluation_probability': risk.pre_evaluation_probability,
+            'status': risk.status,
+            'mitigation_actions': risk.mitigation_actions.all(),
+        })
 
-    context={'report': report, 'form': form}    
+    context={'report': report, 'form': form, 'risks': risks}    
 
     return render(request, 'sms/rer_form.html', context)
 

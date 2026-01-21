@@ -63,7 +63,7 @@ class RiskEvaluationReportForm(forms.Form):
         widget=forms.DateInput(attrs={'class': 'form-field', 'readonly': 'readonly'})
     )
     sms_user_fullname = forms.CharField(
-        label='Gerente de SMS',
+        label='Coordinador de SMS',
         widget=forms.TextInput(attrs={'class': 'form-field'})
     )
     dir_user_fullname = forms.CharField(
@@ -72,8 +72,78 @@ class RiskEvaluationReportForm(forms.Form):
     )
     hazard_description = forms.CharField(
         label='Descripción del peligro',
-        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Máximo 1000 caracteres'})
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Descripción del peligro (máximo 300 caracteres)'}),
+        max_length=300
     )
+    hazard_source = forms.ChoiceField(
+        label='Fuente del peligro',
+        choices=[
+            ('VHR', 'Reporte de Voluntario de Peligro'),
+            ('ROS', 'Reporte Obligatorio de Suceso'),
+            ('INT_AUD', 'Auditoría Interna'),
+            ('EXT_AUD', 'Auditoría Externa')
+        ],
+        widget=forms.Select(attrs={'class': 'form-field'})
+    )
+    hazard_type = forms.ChoiceField(
+        label='Tipo de peligro',
+        choices=[
+            ('ENV', 'Ambiental'),
+            ('TEC', 'Técnico'),
+            ('ORG', 'Organizacional'),
+            ('HUM', 'Humano')
+        ],
+        widget=forms.Select(attrs={'class': 'form-field'})
+    )
+    hazard_area = forms.ChoiceField(
+        label='Área del peligro',
+        choices=[
+            ('ADMIN', 'Sede administrativa'),
+            ('PLATFORM', 'Plataforma'),
+            ('AIRPORT_OFFICE', 'Ofic. Aeropuerto'),
+            ('OPERATIONS', 'Operaciones'),
+            ('OTHER', 'Otro'),
+        ],
+        widget=forms.Select(attrs={'class': 'form-field'})
+    )
+    selected_risk = forms.ModelChoiceField(
+        queryset=None,
+        widget=forms.RadioSelect(attrs={'class': 'risk-radio-input'}),
+        empty_label=None
+    )
+    hazard_causes = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Causas posibles (máximo 1000 caracteres)'}),
+        max_length=1000
+    )
+    defenses = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Máximo 500 caracteres'}),
+        max_length=500
+    )
+    post_evaluation_severity = forms.ChoiceField(
+        label='Severidad residual',
+        choices=[
+            ('0', '-'),
+            ('A', 'A - Catastrófico'),
+            ('B', 'B - Peligroso'),
+            ('C', 'C - Grave'),
+            ('D', 'D - Leve'),
+            ('E', 'E - Insignificante'),
+        ],
+        widget=forms.Select(attrs={'class': 'form-field'})
+    )
+    post_evaluation_probability = forms.ChoiceField(
+        label='Probabilidad residual',
+        choices=[
+            ('0', '-'),
+            ('1', '1 - Sumamente improbable'),
+            ('2', '2 - Improbable'),
+            ('3', '3 - Remota'),
+            ('4', '4 - Ocasional'),
+            ('5', '5 - Frecuente'),
+        ],
+        widget=forms.Select(attrs={'class': 'form-field'})
+    )
+
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -87,6 +157,10 @@ class RiskEvaluationReportForm(forms.Form):
         if report:
             self.fields['report_code'].initial = report.id
             self.fields['report_date'].initial = report.date
+            # Populate the queryset for the risks
+            self.fields['selected_risk'].queryset = report.risks.all()
+            # This tells Django to use the 'description' field as the label
+            self.fields['selected_risk'].label_from_instance = lambda obj: f"({obj.pre_evaluation_severity}{obj.pre_evaluation_probability}) {obj.description}"
 
     def clean(self):
         cleaned_data = super().clean()

@@ -8,19 +8,14 @@
     <title>NAV | Registro de Evaluación de Riesgo (RER)</title>
     <link href="{% static 'sms_base.css' %}" rel="stylesheet" />
     <link href="{% static 'vhr_form.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/rer_form_dynamics.js' %}"></script>
   </head>
 
   <body>
     <div class="main-container">
 
       <div class="back-button">
-        {% if user_role == 'STAFF' %}
-          <a href="{% url 'sms:vhr_dashboard' %}" class="button">&larr; Volver</a>
-        {% elif user_role == 'INSTRUCTOR' %}
-          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-        {% else %}
-          <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
-        {% endif %}
+        <a href="{% url 'sms:vhr_processed_panel' report.id %}" class="button">&larr; Volver</a>
       </div>
 
       <h1 class="main-header">Registro de Evaluación de Riesgo (RER)</h1>
@@ -87,8 +82,82 @@
             </div>
         </div>
         <h1 class="subsection-header">Sección 2: Identificación del peligro</h1>
-        <div class="form-row comments-row" id="hazard_description">
+        <div class="form-row comments-row" id="text_description">
             {{ form.hazard_description }}
+        </div>
+        <div class="fixed-fields-container">
+          <div class="left-column">
+              <div class="form-row">
+                  {{ form.hazard_source.label_tag }}
+                  {{ form.hazard_source }}
+              </div>
+              <div class="form-row">
+                  {{ form.hazard_type.label_tag }}
+                  {{ form.hazard_type }}
+              </div>
+          </div>
+          <div class="right-column">
+              <div class="form-row">
+                  {{ form.hazard_area.label_tag }}
+                  {{ form.hazard_area }}
+              </div>
+          </div>
+        </div>
+        <h1 class="subsection-header">Sección 3: Evaluación y mitigación de Riesgos</h1>
+        <div class="risk-selection-container">
+          <div id="risk-selection-label">
+            <p>Seleccione el riesgo a evaluar:</p>
+          </div>
+          <div class="risk-options-list">
+              {% for radio in form.selected_risk %}
+                  <label class="risk-option-card" for="{{ radio.id_for_label }}">
+                      <div class="radio-wrapper">
+                          {{ radio.tag }}
+                      </div>
+                      <div class="description-text">
+                          {{ radio.choice_label }}
+                      </div>
+                  </label>
+              {% endfor %}
+          </div>
+        </div>
+        <div class="form-row comments-row" id="hazard_causes">
+            {{ form.hazard_causes }}
+        </div>
+        <h1 class="subsection-header">Sección 4: Riesgo residual</h1>
+        <div class="form-row" id="risk-mitigation-container">
+            {% for risk in risks %}
+              <div class="cards-container">
+                <div class="cards-container-header">
+                  <h2>MMR para el riesgo {{ forloop.counter }}</h2>
+                </div>
+                {% for action in risk.mitigation_actions %}
+                  <div class="mitigation-action-text">
+                    <p> > {{ action.description }}</p>
+                  </div>
+                {% endfor %}
+              </div>  
+            {% endfor %}
+        </div>
+        <div class="fixed-fields-container">
+          <div class="left-column">
+              <div class="form-row">
+                  {{ form.post_evaluation_severity.label_tag }}
+                  {{ form.post_evaluation_severity }}
+              </div>
+          </div>
+          <div class="right-column">
+              <div class="form-row">
+                  {{ form.post_evaluation_probability.label_tag }}
+                  {{ form.post_evaluation_probability }}
+              </div>
+          </div>
+        </div>
+        <h1 class="subsection-header">Sección 5: Defensas existentes</h1>
+        <div class="risk-selection-container">
+          <div class="form-row comments-row" id="text_description">
+              {{ form.defenses }}
+          </div>
         </div>
 
         {% if form.errors %}
@@ -104,10 +173,5 @@
         </div>
       </form>
     </div>
-    <script>
-        function confirmSubmission() {
-            return confirm('¿Está seguro que desea generar el RER? Esta acción no se puede deshacer.');
-        }
-    </script>
   </body>
 </html>

@@ -1,0 +1,119 @@
+{% load static %}
+{% load dict_extras %}
+{% load scheduler_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Períodos de Vuelo</title>
+    <link rel="stylesheet" href="{% static 'flight_periods_panel.css' %}">
+    <link rel="stylesheet" href="{% static 'shared_components.css' %}">
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+    </script>
+    <script src="{% static 'js/student_flight_periods_panel_dynamics.js' %}"></script>
+</head>
+
+<body>
+    <div class="main-container">
+
+        <div class="back-button">
+            <a href="{% url 'scheduler:instructor_flight_requests_dashboard' %}" class="button">&larr; Volver</a>
+        </div>
+
+        <h1 class="main-header">Períodos de Vuelo</h1>
+
+        <div class="buttons-container">
+            <div class="main-button">
+                <a href="{% url 'scheduler:create_instructor_flight_period_grids' %}" class="button">🔄 Actualizar</a>
+            </div>
+        </div>
+
+        <div class="flight-periods-list-container">
+            {% if aircraft_grids %}
+                {% for aircraft_data in aircraft_grids %}
+                    <div class="aircraft-section" data-aircraft="{{ aircraft_data.aircraft.registration }}">
+                        <div class="aircraft-header">
+                            <h2>{{ aircraft_data.aircraft.registration }}</h2>
+                            <span class="aircraft-type">{{ aircraft_data.aircraft.model }}</span>
+                        </div>
+                        
+                        <div class="periods-container">
+                            {% for period_data in aircraft_data.periods %}
+                                <div class="flight-periods-section">
+                                    <div class="section-header">
+                                        <h3>{{ period_data.period }}</h3>
+                                        <p>
+                                            <strong>Estado:</strong> 
+                                            {% if period_data.period.is_active %}
+                                                <span class="status-active">Activo</span>
+                                            {% else %}
+                                                <span class="status-inactive">Inactivo</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="grid-container">
+                                        <!-- Create grid sections for every 7 dates (complete weeks) -->
+                                        {% for date_chunk in period_data.dates|chunk_list:7 %}
+                                            <div class="grid-section">
+                                                <!-- Header row with dates -->
+                                                <div class="grid-header">
+                                                    <div class="block-label-header"></div>
+                                                    {% for date in date_chunk %}
+                                                        <div class="date-label">
+                                                            <div class="day-abbrev">
+                                                                {% if date.weekday == 0 %}L{% elif date.weekday == 1 %}M{% elif date.weekday == 2 %}X{% elif date.weekday == 3 %}J{% elif date.weekday == 4 %}V{% elif date.weekday == 5 %}S{% elif date.weekday == 6 %}D{% endif %}
+                                                            </div>
+                                                            <div class="date-number">{{ date|date:"d" }}</div>
+                                                            <div class="month-abbrev">{{ date|date:"M" }}</div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                                
+                                                <!-- Block rows -->
+                                                {% for block in period_data.blocks %}
+                                                <div class="grid-row">
+                                                    <div class="block-label">{{ block }}</div>
+                                                    {% for date in date_chunk %}
+                                                        {% with slot=period_data.grid|getitem:date|getitem:block %}
+                                                            <div class="slot-empty" 
+                                                                 {% if slot and slot.status == 'reserved' %}
+                                                                    data-has-instructor="{% if slot.instructor %}true{% else %}false{% endif %}"
+                                                                 {% endif %}>
+                                                                {% if slot %}
+                                                                    <div class="slot-content">
+                                                                        {% if slot.instructor == user %}
+                                                                            <div class="status-info">{{ slot.get_status_display }}</div>
+                                                                            <div class="instructor-info">{{ slot.instructor.username }}</div>
+                                                                            <div class="instructor-info">{{ slot.student.username }}</div>
+                                                                        {% else %}
+                                                                            <div class="status-info"></div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                {% else %}
+                                                                    —
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endwith %}
+                                                    {% endfor %}
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="no-periods">No hay períodos disponibles para esta aeronave.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-periods">No hay períodos de entrenamiento disponibles.</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

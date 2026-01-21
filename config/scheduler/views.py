@@ -37,6 +37,14 @@ def student_required(view_func):
         return view_func(request, *args, **kwargs)
     return wrapper
 
+def instructor_required(view_func):
+    """Decorator to check if the user is an instructor."""
+    def wrapper(request, *args, **kwargs):
+        if request.user.role != 'INSTRUCTOR':
+            return JsonResponse({'error': 'Acceso denegado'}, status=403)
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
 @login_required
 @staff_required
 def staff_flight_requests_dashboard(request): 
@@ -460,6 +468,27 @@ def student_flight_requests_dashboard(request):
     pending_flight_requests = base_qs.filter(status='pending')[:20]
     cancelled_flight_requests = base_qs.filter(status='cancelled')[:20]
     return render(request, 'scheduler/student_flight_requests_dashboard.html', {
+        'has_active_periods': has_active_periods,
+        'approved_flight_requests': approved_flight_requests,
+        'pending_flight_requests': pending_flight_requests,
+        'cancelled_flight_requests': cancelled_flight_requests,
+        'user': user,
+    })
+
+@login_required
+@instructor_required
+def instructor_flight_requests_dashboard(request):
+    """Display the instructor scheduler dashboard."""
+    has_active_periods = FlightPeriod.objects.filter(is_active=True).exists()
+    user = request.user
+    base_qs = (FlightRequest.objects
+               .filter(slot__instructor=user)
+               .select_related('slot', 'slot__aircraft', 'slot__instructor')
+               .order_by('requested_at'))
+    approved_flight_requests = base_qs.filter(status='approved')[:20]
+    pending_flight_requests = base_qs.filter(status='pending')[:20]
+    cancelled_flight_requests = base_qs.filter(status='cancelled')[:20]
+    return render(request, 'scheduler/instructor_flight_requests_dashboard.html', {
         'has_active_periods': has_active_periods,
         'approved_flight_requests': approved_flight_requests,
         'pending_flight_requests': pending_flight_requests,

@@ -106,8 +106,10 @@ label {
 }
 
 #id_description,
-#id_hazard_description {
-  width: 500px;
+#id_hazard_description,
+#id_hazard_causes,
+#id_defenses {
+  width: 750px;
 }
 
 .submit-button-container {
@@ -134,6 +136,64 @@ label {
   border: 0px solid #ffffff;
   border-radius: 3px;
   cursor: pointer;
+}
+
+/* Risk selection radio buttons */
+.risk-options-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0px;
+  padding: 0px;
+}
+
+#risk-selection-label {
+  text-align: center;
+}
+
+#risk-selection-label > p {
+  color: #dae1ff;
+}
+
+.risk-option-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  width: 750px;
+}
+
+.risk-option-card:hover {
+  background: #f0f4f8;
+}
+
+.radio-wrapper {
+  margin-right: 15px;
+}
+
+.description-text {
+  text-align: justify;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #333;
+}
+
+#risk-mitigation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mitigation-action-text > p {
+  color: #dae1ff;
+  font-size: 0.75rem;
 }
 
 @media (max-width: 1150px) {
@@ -183,7 +243,13 @@ label {
   }
 
   #id_description,
-  #id_hazard_description {
+  #id_hazard_description,
+  #id_hazard_causes,
+  #id_defenses {
+    width: 90%;
+  }
+
+  .risk-option-card {
     width: 90%;
   }
 }

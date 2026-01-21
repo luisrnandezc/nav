@@ -1,0 +1,121 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NAV | Agenda tu vuelo</title>
+        <link href="{% static 'student_flight_requests_dashboard.css' %}" rel="stylesheet" />
+        <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+        <script>
+            window.csrfToken = '{{ csrf_token }}';
+        </script>
+        <script src="{% static 'js/flight_request_dashboard_dynamics.js' %}"></script>
+    </head>
+
+    <body>
+        <div class="main-container">
+
+            <div class="back-button">
+                <a href="{% url 'fms:instructor_flightlog' %}" class="button">&larr; Volver</a>
+            </div>
+
+            <h1 class="main-header">Programación de vuelo</h1>
+
+            <div class="buttons-container">
+                <div class="main-button">
+                    {% if has_active_periods %}
+                        <a 
+                            href="{% url 'scheduler:create_instructor_flight_period_grids' %}" 
+                            class="button">Ver calendario
+                        </a>
+                    {% else %}
+                        <a 
+                            href="#" 
+                            class="button" style="opacity:.6; cursor:not-allowed; pointer-events:none;">No Disponible
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flight-requests-list-container">
+                <div class="flight-requests-section" id="approved-flight-requests-section">
+                    <h2>Sesiones aprobadas</h2>
+                    <div class="flight-requests-list">
+                        {% for request in approved_flight_requests %}
+                            <div class="request-card status-approved">
+                                <div class="request-top">
+                                    <div class="request-left">
+                                        <div class="request-line"><span class="request-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="request-line"><span class="request-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="request-center">
+                                        <div class="request-line"><span class="request-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="request-line"><span class="request-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
+                                    </div>
+                                    <div class="request-right">
+                                        <div class="request-line"><span class="request-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.username }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="request-badge">Status: <span class="badge badge-confirmed">{{ request.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay sesiones aprobadas</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="flight-requests-section" id="pending-flight-requests-section">
+                    <h2>Sesiones pendientes</h2>
+                    <div class="flight-requests-list">
+                        {% for request in pending_flight_requests %}
+                            <div class="request-card status-pending">
+                                <div class="request-top">
+                                    <div class="request-left">
+                                        <div class="request-line"><span class="request-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="request-line"><span class="request-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="request-center">
+                                        <div class="request-line"><span class="request-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="request-line"><span class="request-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
+                                    </div>
+                                    <div class="request-right">
+                                        <div class="request-line"><span class="request-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.username }}{% else %}Por asignar{% endif %}</div>
+                                        <div class="request-badge">Status: <span class="badge badge-pending">{{ request.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay sesiones pendientes</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="flight-requests-section" id="cancelled-flight-requests-section">
+                    <h2>Últimas 20 sesiones canceladas</h2>
+                    <div class="flight-requests-list">
+                        {% for request in cancelled_flight_requests %}
+                            <div class="request-card" style="opacity:.8;">
+                                <div class="request-top">
+                                    <div class="request-left">
+                                        <div class="request-line"><span class="request-label">Fecha:</span> {{ request.slot.date|date:"d/m/Y" }}</div>
+                                        <div class="request-line"><span class="request-label">Bloque:</span> {{ request.slot.get_block_display }}</div>
+                                    </div>
+                                    <div class="request-center">
+                                        <div class="request-line"><span class="request-label">Aeronave:</span> {{ request.slot.aircraft.registration }}</div>
+                                        <div class="request-line"><span class="request-label">Modelo:</span> {{ request.slot.aircraft.model }}</div>
+                                    </div>
+                                    <div class="request-right">
+                                        <div class="request-line"><span class="request-label">Instructor:</span> {% if request.slot.instructor %}{{ request.slot.instructor.username }}{% else %}N/A{% endif %}</div>
+                                        <div class="request-badge">Status: <span class="badge badge-cancelled">{{ request.get_status_display }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="no-transactions">No hay sesiones canceladas</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

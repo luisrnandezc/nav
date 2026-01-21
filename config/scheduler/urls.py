@@ -9,6 +9,7 @@ urlpatterns = [
     path('student_flight_requests_dashboard/', views.student_flight_requests_dashboard, name='student_flight_requests_dashboard'),
     path('instructor_flight_requests_dashboard/', views.instructor_flight_requests_dashboard, name='instructor_flight_requests_dashboard'),
     path('student_periods_panel/', views.create_student_flight_period_grids, name='create_student_flight_period_grids'),
+    path('instructor_periods_panel/', views.create_instructor_flight_period_grids, name='create_instructor_flight_period_grids'),
     path('staff_periods_panel/', views.create_staff_flight_period_grids, name='create_staff_flight_period_grids'),
     path('flight-request/create/<int:slot_id>/', views.create_flight_request, name='create_flight_request'),
     path('flight-request/approve/<int:request_id>/', views.approve_flight_request, name='approve_flight_request'),

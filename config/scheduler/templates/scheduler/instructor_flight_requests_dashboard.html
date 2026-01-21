@@ -27,7 +27,7 @@
                 <div class="main-button">
                     {% if has_active_periods %}
                         <a 
-                            href="" 
+                            href="{% url 'scheduler:create_instructor_flight_period_grids' %}" 
                             class="button">Ver calendario
                         </a>
                     {% else %}

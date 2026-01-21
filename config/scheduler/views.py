@@ -174,6 +174,23 @@ def create_student_flight_period_grids(request):
     return render(request, 'scheduler/student_flight_periods_panel.html', context)
 
 @login_required
+@instructor_required
+def create_instructor_flight_period_grids(request):
+    """Generate a grid of slots for active flight periods."""
+    active_periods = FlightPeriod.objects.filter(is_active=True)
+    if not active_periods.exists():
+        messages.info(request, 'No hay períodos de vuelo activos en este momento.')
+        return redirect('scheduler:instructor_flight_requests_dashboard')
+
+    aircraft_grids = create_period_grids(active_periods)
+
+    context = {
+        'aircraft_grids': aircraft_grids,
+        'user': request.user,
+    }
+    return render(request, 'scheduler/instructor_flight_periods_panel.html', context)
+
+@login_required
 @staff_required
 def create_staff_flight_period_grids(request):
     """Generate a grid of slots for active and inactive flight periods."""

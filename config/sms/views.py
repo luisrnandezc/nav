@@ -209,14 +209,14 @@ def sms_dashboard(request):
     
     sms_school_status = 'NO CALCULADO'
     if intolerable_risks_count > 0:
-        sms_school_status = 'INTOLERABLE'
+        sms_school_status = 'CRÍTICO'
     elif tolerable_risks_count > 0:
         if tolerable_risks_count > 4:
-            sms_school_status = 'INTOLERABLE'
+            sms_school_status = 'CRÍTICO'
         else:
-            sms_school_status = 'TOLERABLE'
+            sms_school_status = 'PRECAUCIÓN'
     else:
-        sms_school_status = 'ACEPTABLE'
+        sms_school_status = 'SEGURO'
     
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),

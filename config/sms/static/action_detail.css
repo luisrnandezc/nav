@@ -67,7 +67,7 @@
 
 .due-date-responsible-form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 30px;
   margin-top: 15px;
   justify-items: center;
@@ -80,6 +80,7 @@
 }
 
 .due-date-form,
+.follow-date-form,
 .responsible-form {
   display: flex;
   flex-direction: column;
@@ -96,13 +97,15 @@
 }
 
 .due-date-form .form-field-group:first-child,
+.follow-date-form .form-field-group:first-child,
 .responsible-form .form-field-group:first-child {
   margin-top: 0;
   padding-top: 0;
 }
 
-.due-date-form > input[type="hidden"],
-.responsible-form > input[type="hidden"] {
+.due-date-form > input[type='hidden'],
+.follow-date-form > input[type='hidden'],
+.responsible-form > input[type='hidden'] {
   display: none !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -144,7 +147,6 @@
   align-items: center;
   width: 100%;
 }
-
 
 .notes-textarea {
   width: 100%;
@@ -219,7 +221,7 @@ select.date-input option {
 }
 
 .complete-button {
-  background-color: #2196F3;
+  background-color: #2196f3;
   color: #ffffff;
   border: 1px solid transparent;
   border-radius: 6px;
@@ -301,7 +303,6 @@ select.date-input option {
 
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
-
   .info-grid {
     grid-template-columns: 1fr;
     gap: 15px;
@@ -314,6 +315,7 @@ select.date-input option {
   }
 
   .due-date-form,
+  .follow-date-form,
   .responsible-form {
     max-width: 100%;
   }
@@ -357,7 +359,6 @@ select.date-input option {
 }
 
 @media screen and (max-width: 500px) {
-
   .info-label {
     font-size: 0.85rem;
   }
@@ -387,7 +388,7 @@ select.date-input option {
   padding: 10px 12px;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 6px;
-  border-left: 3px solid #4CAF50;
+  border-left: 3px solid #4caf50;
   color: #dae1ff;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -477,4 +478,3 @@ select.date-input option {
   border: 1px solid #dae1ff;
   color: #dae1ff;
 }
-

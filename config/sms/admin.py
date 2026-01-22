@@ -50,13 +50,13 @@ class RiskAdmin(admin.ModelAdmin):
 
 @admin.register(MitigationAction)
 class MitigationActionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'risk', 'status', 'responsible', 'due_date')
-    list_filter = ('status', 'responsible', 'due_date')
+    list_display = ('id', 'risk', 'status', 'responsible', 'due_date', 'follow_date')
+    list_filter = ('status', 'responsible', 'due_date', 'follow_date')
     search_fields = ('description', 'risk__description', 'responsible__first_name', 'responsible__last_name')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Información de la Acción', {
-            'fields': ('risk', 'description', 'status', 'responsible', 'due_date')
+            'fields': ('risk', 'description', 'status', 'responsible', 'due_date', 'follow_date')
         }),
         ('Notas', {
             'fields': ('notes',)

@@ -1039,14 +1039,14 @@ def action_detail(request, action_id):
         is_active=True
     ).order_by('first_name', 'last_name')
     
-    # Get all evidences for this action
-    evidences = action.evidences.all().order_by('-created_at')
+    # Get the evidence for this action
+    evidence = getattr(action, 'evidence', None)
     
     context = {
         'action': action,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
         'available_users': available_users,
-        'evidences': evidences,
+        'evidence': evidence,
     }
     
     response = render(request, 'sms/action_detail.html', context)
@@ -1114,6 +1114,53 @@ def update_action_due_date(request, action_id):
         action.updated_at = timezone.now().date()
         action.save(update_fields=['due_date', 'updated_at', 'status'])
         messages.success(request, 'La fecha límite se actualizó correctamente.')
+    except ValueError:
+        messages.error(request, 'Formato de fecha inválido.')
+    
+    return redirect('sms:action_detail', action_id=action_id)
+
+
+@login_required
+@require_http_methods(["POST"])
+def update_action_follow_date(request, action_id):
+    """
+    Update the follow-up date for a mitigation action.
+    """
+
+    from datetime import datetime
+
+    action = get_object_or_404(MitigationAction, id=action_id)
+    due_date = action.due_date
+    
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para modificar esta acción.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    if action.status == 'COMPLETED':
+        messages.error(request, 'No se puede modificar la fecha límite de una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    follow_date_str = request.POST.get('follow_date', '').strip()
+    if not follow_date_str:
+        messages.error(request, 'La fecha de seguimiento es obligatoria.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    formatted_follow_date = datetime.strptime(follow_date_str, '%Y-%m-%d').date()
+    
+    if due_date:
+        try:
+            if formatted_follow_date >= due_date:
+                messages.error(request, 'La fecha de seguimiento no puede ser posterior o igual a la fecha límite.')
+                return redirect('sms:action_detail', action_id=action_id)
+        except ValueError:
+            messages.error(request, 'Formato de fecha inválido.')
+            return redirect('sms:action_detail', action_id=action_id)
+    
+    try:
+        action.follow_date = formatted_follow_date
+        action.updated_at = timezone.now().date()
+        action.save(update_fields=['follow_date', 'updated_at'])
+        messages.success(request, 'La fecha de seguimiento se actualizó correctamente.')
     except ValueError:
         messages.error(request, 'Formato de fecha inválido.')
     
@@ -1252,7 +1299,7 @@ def delete_evidence(request, action_id, evidence_id):
         return redirect('sms:action_detail', action_id=action_id)
     
     if action.status == 'COMPLETED':
-        messages.error(request, 'No se pueden eliminar evidencias de una acción completada.')
+        messages.error(request, 'No se puede eliminar una evidencia de una acción completada.')
         return redirect('sms:action_detail', action_id=action_id)
     
     evidence = get_object_or_404(MitigationActionEvidence, id=evidence_id, mitigation_action=action)

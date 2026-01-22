@@ -57,7 +57,7 @@
 
 /* Forms */
 .notes-form,
-.due-date-form,
+.mmr-data-form,
 .complete-form {
   display: flex;
   flex-direction: column;
@@ -65,21 +65,21 @@
   margin-top: 15px;
 }
 
-.due-date-responsible-form {
+.mmr-data-form-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
   gap: 30px;
   margin-top: 15px;
   justify-items: center;
   align-items: start;
 }
 
-.due-date-responsible-form > * {
+.mmr-data-form-container > * {
   margin-top: 0;
   padding-top: 0;
 }
 
-.due-date-form,
+.mmr-data-form,
 .follow-date-form,
 .responsible-form {
   display: flex;
@@ -96,14 +96,14 @@
   vertical-align: top;
 }
 
-.due-date-form .form-field-group:first-child,
+.mmr-data-form .form-field-group:first-child,
 .follow-date-form .form-field-group:first-child,
 .responsible-form .form-field-group:first-child {
   margin-top: 0;
   padding-top: 0;
 }
 
-.due-date-form > input[type='hidden'],
+.mmr-data-form > input[type='hidden'],
 .follow-date-form > input[type='hidden'],
 .responsible-form > input[type='hidden'] {
   display: none !important;
@@ -198,28 +198,6 @@ select.date-input option {
   color: #dae1ff;
 }
 
-.update-button {
-  background-color: #4caf50;
-  color: #ffffff;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 10px 18px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-  width: 100%;
-  max-width: 250px;
-}
-
-.update-button:hover {
-  background-color: transparent;
-  border: 1px solid #dae1ff;
-  color: #dae1ff;
-}
-
 .complete-button {
   background-color: #2196f3;
   color: #ffffff;
@@ -308,13 +286,13 @@ select.date-input option {
     gap: 15px;
   }
 
-  .due-date-responsible-form {
+  .mmr-data-form-container {
     grid-template-columns: 1fr;
     gap: 20px;
     justify-items: center;
   }
 
-  .due-date-form,
+  .mmr-data-form,
   .follow-date-form,
   .responsible-form {
     max-width: 100%;
@@ -336,7 +314,6 @@ select.date-input option {
     font-size: 0.9rem;
   }
 
-  .update-button,
   .complete-button {
     width: 100%;
     align-self: stretch;
@@ -367,7 +344,6 @@ select.date-input option {
     font-size: 1rem;
   }
 
-  .update-button,
   .complete-button {
     font-size: 0.8rem;
     padding: 10px 16px;

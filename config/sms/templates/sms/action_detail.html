@@ -122,7 +122,7 @@
 								placeholder="Agregar notas sobre esta medida de mitigación..."
 							>{{ action.notes|default:"" }}</textarea>
 							<div class="form-row">
-								<button type="submit" class="update-button">Guardar notas</button>
+								<button type="submit" class="action-add-button">Guardar notas</button>
 							</div>
 						</form>
 					{% endif %}
@@ -201,8 +201,8 @@
 					<div class="cards-container-header">
 						<h2>Fecha Límite y Responsable</h2>
 					</div>
-					<div class="due-date-responsible-form">
-						<form method="post" action="{% url 'sms:update_action_due_date' action.id %}" class="due-date-form">
+					<div class="mmr-data-form-container">
+						<form method="post" action="{% url 'sms:update_action_all' action.id %}" class="mmr-data-form">
 							{% csrf_token %}
 							<div class="form-field-group">
 								<label for="due_date" class="form-label">Fecha Límite</label>
@@ -214,13 +214,7 @@
 									value="{{ action.due_date|date:'Y-m-d' }}"
 									required
 								/>
-								<div class="form-row">
-									<button type="submit" class="update-button">Actualizar Fecha</button>
-								</div>
 							</div>
-						</form>
-						<form method="post" action="{% url 'sms:update_action_follow_date' action.id %}" class="follow-date-form">
-							{% csrf_token %}
 							<div class="form-field-group">
 								<label for="follow_date" class="form-label">Fecha de Seguimiento</label>
 								<input
@@ -231,13 +225,7 @@
 									value="{{ action.follow_date|date:'Y-m-d' }}"
 									required
 								/>
-								<div class="form-row">
-									<button type="submit" class="update-button">Actualizar Fecha</button>
-								</div>
 							</div>
-						</form>
-						<form method="post" action="{% url 'sms:update_action_responsible' action.id %}" class="responsible-form">
-							{% csrf_token %}
 							<div class="form-field-group">
 								<label for="responsible" class="form-label">Responsable</label>
 								<select
@@ -253,9 +241,9 @@
 										</option>
 									{% endfor %}
 								</select>
-								<div class="form-row">
-									<button type="submit" class="update-button">Actualizar Responsable</button>
-								</div>
+							</div>
+							<div class="form-row">
+								<button type="submit" class="action-add-button">Actualizar Datos</button>
 							</div>
 						</form>
 					</div>

@@ -22,6 +22,7 @@ urlpatterns = [
     path('action/<int:action_id>/', views.action_detail, name='action_detail'),
     path('action/<int:action_id>/update_notes/', views.update_action_notes, name='update_action_notes'),
     path('action/<int:action_id>/update_due_date/', views.update_action_due_date, name='update_action_due_date'),
+    path('action/<int:action_id>/update_follow_date/', views.update_action_follow_date, name='update_action_follow_date'),
     path('action/<int:action_id>/update_responsible/', views.update_action_responsible, name='update_action_responsible'),
     path('action/<int:action_id>/mark_completed/', views.mark_action_completed, name='mark_action_completed'),
     path('action/<int:action_id>/evidence/add/', views.add_evidence, name='add_evidence'),

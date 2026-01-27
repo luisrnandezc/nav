@@ -12,6 +12,10 @@ def default_due_date():
     """Return a date 15 days from today."""
     return timezone.now().date() + timedelta(days=15)
 
+def default_follow_date():
+    """Return a date 7 days from today."""
+    return timezone.now().date() + timedelta(days=7)
+
 
 class VoluntaryHazardReport(models.Model):
     """
@@ -322,6 +326,10 @@ class MitigationAction(models.Model):
         null=True,
         help_text="Solo usuarios con rol de Staff o Instructor pueden ser asignados como responsables"
     )
+    follow_date = models.DateField(
+        default=default_follow_date,
+        verbose_name="Fecha de seguimiento"
+    )
     due_date = models.DateField(
         default=default_due_date,
         verbose_name="Fecha límite"
@@ -355,14 +363,15 @@ class MitigationAction(models.Model):
 class MitigationActionEvidence(models.Model):
     """Mitigation Action Evidence Model for Safety Management System (SMS)
     
-    This Evidence instances will serve to close a specific Mitigation Action"""
+    This Evidence instances will serve to close a specific Mitigation Action.
+    Each MitigationAction can have only ONE evidence."""
 
     #region Fields
-    mitigation_action = models.ForeignKey(
+    mitigation_action = models.OneToOneField(
         MitigationAction, 
         on_delete=models.CASCADE, 
         verbose_name="MMR",
-        related_name="evidences"
+        related_name="evidence"
     )
     description = models.TextField(
         verbose_name="Descripción",

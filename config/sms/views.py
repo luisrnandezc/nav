@@ -209,14 +209,14 @@ def sms_dashboard(request):
     
     sms_school_status = 'NO CALCULADO'
     if intolerable_risks_count > 0:
-        sms_school_status = 'INTOLERABLE'
+        sms_school_status = 'CRÍTICO'
     elif tolerable_risks_count > 0:
         if tolerable_risks_count > 4:
-            sms_school_status = 'INTOLERABLE'
+            sms_school_status = 'CRÍTICO'
         else:
-            sms_school_status = 'TOLERABLE'
+            sms_school_status = 'PRECAUCIÓN'
     else:
-        sms_school_status = 'ACEPTABLE'
+        sms_school_status = 'SEGURO'
     
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
@@ -1039,14 +1039,14 @@ def action_detail(request, action_id):
         is_active=True
     ).order_by('first_name', 'last_name')
     
-    # Get all evidences for this action
-    evidences = action.evidences.all().order_by('-created_at')
+    # Get the evidence for this action
+    evidence = getattr(action, 'evidence', None)
     
     context = {
         'action': action,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
         'available_users': available_users,
-        'evidences': evidences,
+        'evidence': evidence,
     }
     
     response = render(request, 'sms/action_detail.html', context)
@@ -1084,73 +1084,61 @@ def update_action_notes(request, action_id):
 
 @login_required
 @require_http_methods(["POST"])
-def update_action_due_date(request, action_id):
+def update_action_all(request, action_id):
     """
-    Update the due date for a mitigation action.
+    Update due date, follow date and responsible for a mitigation action.
     """
+
     action = get_object_or_404(MitigationAction, id=action_id)
     
+    # Permission check
     if not request.user.has_perm('accounts.can_manage_sms'):
         messages.error(request, 'No tiene permisos para modificar esta acción.')
         return redirect('sms:action_detail', action_id=action_id)
     
+    # Status check
     if action.status == 'COMPLETED':
-        messages.error(request, 'No se puede modificar la fecha límite de una acción completada.')
-        return redirect('sms:action_detail', action_id=action_id)
-    
-    due_date_str = request.POST.get('due_date', '').strip()
-    if not due_date_str:
-        messages.error(request, 'La fecha límite es obligatoria.')
+        messages.error(request, 'No se puede modificar una acción completada.')
         return redirect('sms:action_detail', action_id=action_id)
     
     try:
+        # Get and validate all fields
+        due_date_str = request.POST.get('due_date', '').strip()
+        follow_date_str = request.POST.get('follow_date', '').strip()
+        responsible_id = request.POST.get('responsible', '').strip()
+        
+        if not all([due_date_str, follow_date_str, responsible_id]):
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('sms:action_detail', action_id=action_id)
+        
+        # Parse dates
         from datetime import datetime
         due_date = datetime.strptime(due_date_str, '%Y-%m-%d').date()
-        if due_date < timezone.now().date():
-            action.status = 'EXPIRED'
-        else:
-            action.status = 'PENDING'
-        action.due_date = due_date
-        action.updated_at = timezone.now().date()
-        action.save(update_fields=['due_date', 'updated_at', 'status'])
-        messages.success(request, 'La fecha límite se actualizó correctamente.')
-    except ValueError:
-        messages.error(request, 'Formato de fecha inválido.')
-    
-    return redirect('sms:action_detail', action_id=action_id)
-
-
-@login_required
-@require_http_methods(["POST"])
-def update_action_responsible(request, action_id):
-    """
-    Update the responsible user for a mitigation action.
-    """
-    action = get_object_or_404(MitigationAction, id=action_id)
-    
-    if not request.user.has_perm('accounts.can_manage_sms'):
-        messages.error(request, 'No tiene permisos para modificar esta acción.')
-        return redirect('sms:action_detail', action_id=action_id)
-    
-    if action.status == 'COMPLETED':
-        messages.error(request, 'No se puede modificar el responsable de una acción completada.')
-        return redirect('sms:action_detail', action_id=action_id)
-    
-    responsible_id = request.POST.get('responsible', '').strip()
-    if not responsible_id:
-        messages.error(request, 'El responsable es obligatorio.')
-        return redirect('sms:action_detail', action_id=action_id)
-    
-    try:
+        follow_date = datetime.strptime(follow_date_str, '%Y-%m-%d').date()
+        
+        # Validate follow_date < due_date
+        if follow_date >= due_date:
+            messages.error(request, 'La fecha de seguimiento debe ser anterior a la fecha límite.')
+            return redirect('sms:action_detail', action_id=action_id)
+        
+        # Validate responsible
         responsible = User.objects.get(id=responsible_id, role__in=['STAFF', 'INSTRUCTOR'], is_active=True)
+        
+        # Update all fields atomically
+        action.due_date = due_date
+        action.follow_date = follow_date
         action.responsible = responsible
         action.updated_at = timezone.now().date()
-        action.save(update_fields=['responsible', 'updated_at'])
-        messages.success(request, 'El responsable se actualizó correctamente.')
+        action.save(update_fields=['due_date', 'follow_date', 'responsible', 'updated_at'])
+        
+        messages.success(request, 'Todos los datos se actualizaron correctamente.')
+        
+    except ValueError:
+        messages.error(request, 'Formato de fecha inválido.')
     except User.DoesNotExist:
         messages.error(request, 'Usuario no válido o no tiene permisos para ser responsable.')
     except Exception as e:
-        messages.error(request, f'Error al actualizar el responsable: {str(e)}')
+        messages.error(request, f'Error al actualizar: {str(e)}')
     
     return redirect('sms:action_detail', action_id=action_id)
 
@@ -1252,7 +1240,7 @@ def delete_evidence(request, action_id, evidence_id):
         return redirect('sms:action_detail', action_id=action_id)
     
     if action.status == 'COMPLETED':
-        messages.error(request, 'No se pueden eliminar evidencias de una acción completada.')
+        messages.error(request, 'No se puede eliminar una evidencia de una acción completada.')
         return redirect('sms:action_detail', action_id=action_id)
     
     evidence = get_object_or_404(MitigationActionEvidence, id=evidence_id, mitigation_action=action)

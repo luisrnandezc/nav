@@ -776,13 +776,6 @@ class SimEvaluation(models.Model):
         try:
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.sim_hours -= self.session_sim_hours
-            session_type = self.session_type
-            if session_type == 'Simple':
-                student_profile.balance += round(self.session_sim_hours*self.simulator.hourly_rate_single, 2)
-            elif session_type == 'Dual':
-                student_profile.balance += round(self.session_sim_hours*self.simulator.hourly_rate_dual, 2)
-            else:
-                student_profile.balance += round(self.session_sim_hours*self.simulator.hourly_rate_single, 2)
             # Ensure hours don't go negative
             if student_profile.sim_hours < 0:
                 student_profile.sim_hours = 0

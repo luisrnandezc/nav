@@ -122,7 +122,7 @@
 								placeholder="Agregar notas sobre esta medida de mitigación..."
 							>{{ action.notes|default:"" }}</textarea>
 							<div class="form-row">
-								<button type="submit" class="update-button">Guardar notas</button>
+								<button type="submit" class="action-add-button">Guardar notas</button>
 							</div>
 						</form>
 					{% endif %}
@@ -138,43 +138,41 @@
 				{% endif %}
 			{% endif %}
 
-			<!-- Evidences Section -->
+			<!-- Evidence Section -->
 			<div class="cards-container">
 				<div class="cards-container-header">
 					<h2>Evidencias de la MMR</h2>
 				</div>
-				{% if evidences %}
+				{% if evidence %}
 					<ul class="action-list">
-						{% for evidence in evidences %}
-							<li class="action-item">
-								<span class="action-text">{{ evidence.description }}</span>
-								{% if can_manage_sms and action.status != 'COMPLETED' %}
-									<form
-										method="post"
-										action="{% url 'sms:delete_evidence' action.id evidence.id %}"
-										class="action-delete-form"
+						<li class="action-item">
+							<span class="action-text">{{ evidence.description }}</span>
+							{% if can_manage_sms and action.status != 'COMPLETED' %}
+								<form
+									method="post"
+									action="{% url 'sms:delete_evidence' action.id evidence.id %}"
+									class="action-delete-form"
+								>
+									{% csrf_token %}
+									<button
+										type="submit"
+										class="action-delete-button"
+										onclick="return confirm('¿Eliminar esta evidencia?');"
 									>
-										{% csrf_token %}
-										<button
-											type="submit"
-											class="action-delete-button"
-											onclick="return confirm('¿Eliminar esta evidencia?');"
-										>
-											X
-										</button>
-									</form>
-								{% endif %}
-							</li>
-						{% endfor %}
+										X
+									</button>
+								</form>
+							{% endif %}
+						</li>
 					</ul>
 				{% else %}
 					<ul class="action-list">
 						<li class="action-item action-item-empty">
-							<span class="action-text">No hay evidencias registradas.</span>
+							<span class="action-text">No se ha registrado una evidencia.</span>
 						</li>
 					</ul>
 				{% endif %}
-				{% if can_manage_sms and action.status != 'COMPLETED' %}
+				{% if can_manage_sms and not evidence and action.status != 'COMPLETED' %}
 					<form
 						method="post"
 						action="{% url 'sms:add_evidence' action.id %}"
@@ -203,8 +201,8 @@
 					<div class="cards-container-header">
 						<h2>Fecha Límite y Responsable</h2>
 					</div>
-					<div class="due-date-responsible-form">
-						<form method="post" action="{% url 'sms:update_action_due_date' action.id %}" class="due-date-form">
+					<div class="mmr-data-form-container">
+						<form method="post" action="{% url 'sms:update_action_all' action.id %}" class="mmr-data-form">
 							{% csrf_token %}
 							<div class="form-field-group">
 								<label for="due_date" class="form-label">Fecha Límite</label>
@@ -216,13 +214,18 @@
 									value="{{ action.due_date|date:'Y-m-d' }}"
 									required
 								/>
-								<div class="form-row">
-									<button type="submit" class="update-button">Actualizar Fecha</button>
-								</div>
 							</div>
-						</form>
-						<form method="post" action="{% url 'sms:update_action_responsible' action.id %}" class="responsible-form">
-							{% csrf_token %}
+							<div class="form-field-group">
+								<label for="follow_date" class="form-label">Fecha de Seguimiento</label>
+								<input
+									type="date"
+									name="follow_date"
+									id="follow_date"
+									class="date-input"
+									value="{{ action.follow_date|date:'Y-m-d' }}"
+									required
+								/>
+							</div>
 							<div class="form-field-group">
 								<label for="responsible" class="form-label">Responsable</label>
 								<select
@@ -238,9 +241,9 @@
 										</option>
 									{% endfor %}
 								</select>
-								<div class="form-row">
-									<button type="submit" class="update-button">Actualizar Responsable</button>
-								</div>
+							</div>
+							<div class="form-row">
+								<button type="submit" class="action-add-button">Actualizar Datos</button>
 							</div>
 						</form>
 					</div>
@@ -272,7 +275,7 @@
 
 			<!-- Mark as Completed Section -->
 			{% if can_manage_sms and action.status != 'COMPLETED' %}
-				{% if evidences %}
+				{% if evidence %}
 					<div class="cards-container">
 						<div class="cards-container-header">
 							<h2>Marcar como Completada</h2>
@@ -299,7 +302,7 @@
 						<div class="cards-container-header">
 							<h2>Marcar como Completada</h2>
 						</div>
-						<p class="warning-text">⚠️ <strong>IMPORTANTE:</strong> No hay evidencias registradas para esta MMR.</p>
+						<p class="warning-text">⚠️ <strong>IMPORTANTE:</strong> No hay evidencia registrada para esta MMR.</p>
 					</div>
 				{% endif %}
 			{% endif %}

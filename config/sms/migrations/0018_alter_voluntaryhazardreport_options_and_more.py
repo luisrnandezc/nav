@@ -34,6 +34,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mitigationaction',
             name='responsible',
-            field=models.ForeignKey(default=None, help_text='Solo usuarios con rol de Staff o Instructor pueden ser asignados como responsables', limit_choices_to=models.Q(('role', 'STAFF'), ('role', 'INSTRUCTOR'), _connector='OR'), on_delete=django.db.models.deletion.CASCADE, related_name='responsible_for_mitigation_actions', to=settings.AUTH_USER_MODEL, verbose_name='Responsable'),
+            field=models.ForeignKey(help_text='Solo usuarios con rol de Staff o Instructor pueden ser asignados como responsables', limit_choices_to=models.Q(('role', 'STAFF'), ('role', 'INSTRUCTOR'), _connector='OR'), on_delete=django.db.models.deletion.CASCADE, related_name='responsible_for_mitigation_actions', to=settings.AUTH_USER_MODEL, verbose_name='Responsable'),
         ),
     ]

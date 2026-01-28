@@ -139,6 +139,12 @@ class StudentProfile(models.Model):
         default=LICENSE_NA,
         verbose_name='Tipo de licencia',
     )
+    license_exp_date = models.DateField(
+        verbose_name='Expiración de la licencia',
+        default=None,
+        null=True,
+        blank=True,
+    )
     sim_hours = models.DecimalField(
         max_digits=4,
         decimal_places=1,
@@ -287,6 +293,12 @@ class InstructorProfile(models.Model):
         choices=LICENSE_TYPES,
         default=LICENSE_PCA,
         verbose_name='Tipo de licencia',
+    )
+    license_exp_date = models.DateField(
+        verbose_name='Expiración de la licencia',
+        default=None,
+        null=True,
+        blank=True,
     )
     instructor_hourly_rate = models.DecimalField(
         max_digits=3,

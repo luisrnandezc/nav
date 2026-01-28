@@ -848,6 +848,7 @@ def student_stats_page(request, student_id=None):
     """Display statistics page for a student."""
     from fleet.models import Aircraft
     from accounts.models import StudentProfile
+    from transactions.models import StudentTransaction
     
     user = request.user
     
@@ -887,6 +888,12 @@ def student_stats_page(request, student_id=None):
         if not is_student:
             messages.error(request, 'Acceso no autorizado')
             return redirect('dashboard:dashboard')
+    
+    balance = student_profile.balance
+    total_paid = student_profile.transactions.filter(type=StudentTransaction.CREDIT).aggregate(total=Sum('amount'))['total'] or Decimal('0.0')
+        
+    # Take into the account all the extra debits of type FLIGHT.
+    debit_corrections = student_profile.transactions.filter(type=StudentTransaction.DEBIT, category=StudentTransaction.FLIGHT).aggregate(total=Sum('amount'))['total'] or Decimal('0.0')
 
     try:
         stats = calculate_user_stats(user_id, 'student', None, student_hourly_rate)
@@ -898,6 +905,8 @@ def student_stats_page(request, student_id=None):
 
     context = {
         'student': student,
+        'balance': balance,
+        'total_paid': round(total_paid, 2),
         'total_flight_hours_yv204e': round(stats['total_flight_hours_yv204e'], 1),
         'total_flight_hours_yv206e': round(stats['total_flight_hours_yv206e'], 1),
         'total_flight_hours': round(stats['total_flight_hours'], 1),
@@ -917,7 +926,7 @@ def student_stats_page(request, student_id=None):
         'fuel_rate_liters_yv206e': round(stats['fuel_rate_liters_yv206e'], 1),
         'fuel_rate_gallons_yv204e': round(stats['fuel_rate_gallons_yv204e'], 1),
         'fuel_rate_gallons_yv206e': round(stats['fuel_rate_gallons_yv206e'], 1),
-        'total_cost': round(stats['total_cost'], 1),
+        'total_cost': round(stats['total_cost'] + debit_corrections, 1),
         'flight_hour_cost_yv204e': round(stats['flight_hour_cost_yv204e'], 1),
         'flight_hour_cost_yv206e': round(stats['flight_hour_cost_yv206e'], 1),
     }

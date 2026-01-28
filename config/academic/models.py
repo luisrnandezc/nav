@@ -172,7 +172,7 @@ class CourseEdition(models.Model):
     )
     students = models.ManyToManyField(
         'accounts.User',
-        limit_choices_to={'role': 'STUDENT'},
+        limit_choices_to=Q(student_profile__isnull=False),
         related_name='enrolled_courses',
         blank=True
     )
@@ -263,7 +263,7 @@ class SubjectEdition(models.Model):
     )
     students = models.ManyToManyField(
         'accounts.User',
-        limit_choices_to={'role': 'STUDENT'},
+        limit_choices_to=Q(student_profile__isnull=False),
         related_name='enrolled_subjects',
         blank=True,
         verbose_name='Estudiantes'

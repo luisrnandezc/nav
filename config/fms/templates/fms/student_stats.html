@@ -21,7 +21,7 @@
                 {% endif %}
             </div>
 
-            <h1 class="main-header">Estadísticas del Estudiante</h1>
+            <h1 class="main-header">Estadísticas de {{ student.username }}</h1>
 
             <div class="sections-container">
                 <!-- Total Statistics -->
@@ -43,16 +43,24 @@
                             <span class="detail-value stat-value">{{ total_consumed_gallons }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo Total de Horas de Vuelo:</span>
+                            <span class="detail-label">Gasto Total de Horas de Vuelo:</span>
                             <span class="detail-value stat-value">${{ total_flight_hours_dollars }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo Total de Combustible:</span>
+                            <span class="detail-label">Gasto Total de Combustible:</span>
                             <span class="detail-value stat-value">${{ total_fuel_cost }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo Total:</span>
+                            <span class="detail-label">Gasto Total:</span>
                             <span class="detail-value stat-value">${{ total_cost }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Pagado total:</span>
+                            <span class="detail-value stat-value">${{ total_paid }}</span>
+                        </div>
+                        <div class="stat-detail-item">
+                            <span class="detail-label">Balance:</span>
+                            <span class="detail-value stat-value">${{ balance }}</span>
                         </div>
                     </div>
                 </div>
@@ -76,11 +84,11 @@
                             <span class="detail-value stat-value">{{ total_consumed_gallons_yv204e }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo de Horas de Vuelo:</span>
+                            <span class="detail-label">Gasto de Horas de Vuelo:</span>
                             <span class="detail-value stat-value">${{ total_flight_hours_dollars_yv204e }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo de Combustible:</span>
+                            <span class="detail-label">Gasto de Combustible:</span>
                             <span class="detail-value stat-value">${{ total_fuel_cost_yv204e }}</span>
                         </div>
                         <div class="stat-detail-item">
@@ -92,7 +100,7 @@
                             <span class="detail-value stat-value">{{ fuel_rate_gallons_yv204e }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo por Hora de Vuelo ($/h):</span>
+                            <span class="detail-label">Gasto por Hora de Vuelo ($/h):</span>
                             <span class="detail-value stat-value">${{ flight_hour_cost_yv204e }}</span>
                         </div>
                     </div>
@@ -117,11 +125,11 @@
                             <span class="detail-value stat-value">{{ total_consumed_gallons_yv206e }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo de Horas de Vuelo:</span>
+                            <span class="detail-label">Gasto de Horas de Vuelo:</span>
                             <span class="detail-value stat-value">${{ total_flight_hours_dollars_yv206e }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo de Combustible:</span>
+                            <span class="detail-label">Gasto de Combustible:</span>
                             <span class="detail-value stat-value">${{ total_fuel_cost_yv206e }}</span>
                         </div>
                         <div class="stat-detail-item">
@@ -133,7 +141,7 @@
                             <span class="detail-value stat-value">{{ fuel_rate_gallons_yv206e }}</span>
                         </div>
                         <div class="stat-detail-item">
-                            <span class="detail-label">Costo por Hora de Vuelo ($/h):</span>
+                            <span class="detail-label">Gasto por Hora de Vuelo ($/h):</span>
                             <span class="detail-value stat-value">${{ flight_hour_cost_yv206e }}</span>
                         </div>
                     </div>

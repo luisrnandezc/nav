@@ -165,6 +165,32 @@ def run_ai_analysis_for_voluntary_hazard_report(report):
 ########################################################################################
 
 ########################################################################################
+#region SMS school status helper (testable)
+########################################################################################
+
+def get_sms_school_status(unmitigated_risks):
+    """
+    Compute SMS school status from a queryset of unmitigated risks.
+    Returns: 'CRÍTICO' | 'PRECAUCIÓN' | 'SEGURO' | 'NO CALCULADO'
+    """
+    intolerable_count = 0
+    tolerable_count = 0
+    acceptable_count = 0
+    for risk in unmitigated_risks:
+        if risk.status == 'INTOLERABLE':
+            intolerable_count += 1
+        elif risk.status == 'TOLERABLE':
+            tolerable_count += 1
+        elif risk.status == 'ACCEPTABLE':
+            acceptable_count += 1
+    if intolerable_count > 0:
+        return 'CRÍTICO'
+    if tolerable_count > 0:
+        return 'CRÍTICO' if tolerable_count > 4 else 'PRECAUCIÓN'
+    return 'SEGURO'
+
+
+########################################################################################
 #region Dashboard Views
 ########################################################################################
 
@@ -193,30 +219,7 @@ def sms_dashboard(request):
     expired_actions = MitigationAction.objects.filter(status='EXPIRED')
     expired_actions_count = expired_actions.count()
 
-    # Compute SMS school status.
-    intolerable_risks_count = 0
-    tolerable_risks_count = 0
-    acceptable_risks_count = 0
-    for risk in unmitigated_risks:
-        if risk.status == 'INTOLERABLE':
-            intolerable_risks_count += 1
-        elif risk.status == 'TOLERABLE':
-            tolerable_risks_count += 1
-        elif risk.status == 'ACCEPTABLE':
-            acceptable_risks_count += 1
-        else:
-            continue
-    
-    sms_school_status = 'NO CALCULADO'
-    if intolerable_risks_count > 0:
-        sms_school_status = 'CRÍTICO'
-    elif tolerable_risks_count > 0:
-        if tolerable_risks_count > 4:
-            sms_school_status = 'CRÍTICO'
-        else:
-            sms_school_status = 'PRECAUCIÓN'
-    else:
-        sms_school_status = 'SEGURO'
+    sms_school_status = get_sms_school_status(unmitigated_risks)
     
     context = {
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),

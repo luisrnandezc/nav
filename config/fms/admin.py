@@ -103,8 +103,6 @@ class SimEvaluationAdmin(admin.ModelAdmin):
     )
     
     readonly_fields = [
-            'instructor_id', 'instructor_first_name', 'instructor_last_name',
-            'instructor_license_type', 'instructor_license_number',
             'student_id', 'student_first_name', 'student_last_name',
             'student_license_type', 'student_license_number', 
             'session_sim_hours', 'simulator', 'session_type',
@@ -266,8 +264,6 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
     readonly_fields = [
         'student_id', 'student_first_name', 'student_last_name', 
         'student_license_type', 'student_license_number',
-        'instructor_id', 'instructor_first_name', 'instructor_last_name',
-        'instructor_license_type', 'instructor_license_number',
         'session_flight_hours',
         'initial_hourmeter', 'final_hourmeter',
         'aircraft',
@@ -407,8 +403,6 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
     readonly_fields = [
         'student_id', 'student_first_name', 'student_last_name', 
         'student_license_type', 'student_license_number',
-        'instructor_id', 'instructor_first_name', 'instructor_last_name',
-        'instructor_license_type', 'instructor_license_number',
         'session_flight_hours',
         'initial_hourmeter', 'final_hourmeter',
         'aircraft',
@@ -535,8 +529,6 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
     readonly_fields = [
         'student_id', 'student_first_name', 'student_last_name', 
         'student_license_type', 'student_license_number',
-        'instructor_id', 'instructor_first_name', 'instructor_last_name',
-        'instructor_license_type', 'instructor_license_number',
         'session_flight_hours', 
         'initial_hourmeter', 'final_hourmeter',
         'aircraft',

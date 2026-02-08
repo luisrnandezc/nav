@@ -1042,9 +1042,12 @@ def action_detail(request, action_id):
         is_active=True
     ).order_by('first_name', 'last_name')
     
-    # Get the evidence for this action
-    evidence = getattr(action, 'evidence', None)
-    
+    # Get the single evidence for this action (OneToOne: one evidence per action)
+    try:
+        evidence = action.evidence
+    except MitigationActionEvidence.DoesNotExist:
+        evidence = None
+
     context = {
         'action': action,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
@@ -1158,8 +1161,11 @@ def mark_action_completed(request, action_id):
         messages.error(request, 'No tiene permisos para modificar esta acción.')
         return redirect('sms:action_detail', action_id=action_id)
 
-    if not action.evidences.all():
-        messages.error(request, 'No se puede marcar como completada una acción sin evidencias.')
+    # One evidence per action (OneToOne); reverse access raises if missing
+    try:
+        action.evidence
+    except MitigationActionEvidence.DoesNotExist:
+        messages.error(request, 'No se puede marcar como completada una acción sin evidencia.')
         return redirect('sms:action_detail', action_id=action_id)
 
     if not action.responsible:
@@ -1197,7 +1203,8 @@ def mark_action_completed(request, action_id):
 @require_http_methods(["POST"])
 def add_evidence(request, action_id):
     """
-    Create a new MitigationActionEvidence for a mitigation action.
+    Create the single MitigationActionEvidence for a mitigation action.
+    Each action can have only one evidence (OneToOne).
     """
     action = get_object_or_404(MitigationAction, id=action_id)
     
@@ -1207,6 +1214,11 @@ def add_evidence(request, action_id):
     
     if action.status == 'COMPLETED':
         messages.error(request, 'No se pueden agregar evidencias a una acción completada.')
+        return redirect('sms:action_detail', action_id=action_id)
+    
+    # Each action has at most one evidence
+    if MitigationActionEvidence.objects.filter(mitigation_action=action).exists():
+        messages.error(request, 'Esta acción ya tiene una evidencia. Solo se permite una por acción.')
         return redirect('sms:action_detail', action_id=action_id)
     
     description = (request.POST.get('description') or '').strip()
@@ -1223,7 +1235,7 @@ def add_evidence(request, action_id):
             mitigation_action=action,
             description=description
         )
-        messages.success(request, 'Se agregó una nueva evidencia.')
+        messages.success(request, 'Se agregó la evidencia.')
     except Exception as e:
         messages.error(request, f'Error al crear la evidencia: {str(e)}')
     

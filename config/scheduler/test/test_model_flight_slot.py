@@ -24,14 +24,14 @@ class FlightSlotModelTest(TestCase):
 
     def test_str_representation(self):
         """Test that the __str__ method returns the correct string."""
-        expected_str = f"{self.slot.date} - {self.aircraft.registration} (Disponible) - Bloque AM"
+        expected_str = f"{self.slot.date} - {self.aircraft.registration} (L) - Bloque AM"
         self.assertEqual(str(self.slot), expected_str)
 
     def test_str_representation_without_aircraft(self):
         """Test __str__ method when aircraft is None."""
         self.slot.aircraft = None
         self.slot.save()
-        expected_str = f"{self.slot.date} - Sin aeronave (Disponible) - Bloque AM"
+        expected_str = f"{self.slot.date} - Sin aeronave (L) - Bloque AM"
         self.assertEqual(str(self.slot), expected_str)
 
     def test_model_meta_ordering(self):
@@ -136,9 +136,10 @@ class FlightSlotModelTest(TestCase):
         
         expected_block_choices = [('AM', 'AM'), ('M', 'M'), ('PM', 'PM')]
         expected_status_choices = [
-            ('available', 'Disponible'),
-            ('reserved', 'Reservado'),
-            ('unavailable', 'No disponible')
+            ('available', 'L'),
+            ('pending', 'P'),
+            ('reserved', 'R'),
+            ('unavailable', 'NA'),
         ]
         
         self.assertEqual(block_field.choices, expected_block_choices)
@@ -445,13 +446,16 @@ class FlightSlotModelTest(TestCase):
     def test_get_status_display(self):
         """Test that get_status_display returns correct display value."""
         self.slot.status = 'available'
-        self.assertEqual(self.slot.get_status_display(), 'Disponible')
+        self.assertEqual(self.slot.get_status_display(), 'L')
+        
+        self.slot.status = 'pending'
+        self.assertEqual(self.slot.get_status_display(), 'P')
         
         self.slot.status = 'reserved'
-        self.assertEqual(self.slot.get_status_display(), 'Reservado')
+        self.assertEqual(self.slot.get_status_display(), 'R')
         
         self.slot.status = 'unavailable'
-        self.assertEqual(self.slot.get_status_display(), 'No disponible')
+        self.assertEqual(self.slot.get_status_display(), 'NA')
 
     # ===== LIMIT_CHOICES_TO TESTS =====
 
@@ -615,7 +619,7 @@ class FlightSlotModelTest(TestCase):
         self.assertIsNone(self.slot.aircraft)
         
         # String representation should handle None aircraft
-        expected_str = f"{self.slot.date} - Sin aeronave (Disponible) - Bloque AM"
+        expected_str = f"{self.slot.date} - Sin aeronave (L) - Bloque AM"
         self.assertEqual(str(self.slot), expected_str)
 
     def test_slot_without_instructor(self):

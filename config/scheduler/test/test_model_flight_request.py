@@ -87,7 +87,7 @@ class FlightRequestModelTest(TestCase):
         with self.assertRaises(ValidationError) as context:
             self.flight_request.approve()
         
-        self.assertIn("El slot ya está reservado", str(context.exception))
+        self.assertIn("Ya hay una solicitud de vuelo aprobada para este slot", str(context.exception))
 
     def test_approve_insufficient_balance(self):
         """Test that approving a request with insufficient balance raises InsufficientBalanceError."""
@@ -533,9 +533,9 @@ class FlightRequestModelTest(TestCase):
         self.assertEqual(flight_request.slot, new_slot)
         self.assertEqual(flight_request.status, 'pending')
         
-        # Verify slot was updated
+        # Verify slot was updated (pending request -> slot status 'pending')
         new_slot.refresh_from_db()
-        self.assertEqual(new_slot.status, 'unavailable')
+        self.assertEqual(new_slot.status, 'pending')
         self.assertEqual(new_slot.student, self.student)
 
     def test_create_request_inactive_period(self):

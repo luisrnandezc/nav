@@ -318,20 +318,20 @@ class FlightPeriodModelTest(TestCase):
         self.assertEqual(period.start_date, future_start)
         self.assertEqual(period.end_date, future_end)
 
-    def test_period_dates_past_validation(self):
-        """Test that periods cannot be created for past dates."""
+    def test_period_dates_past_allowed(self):
+        """Periods with past start_date are allowed (cleanup script deletes by end_date)."""
         past_start = date.today() - timedelta(days=30)
         past_end = past_start + timedelta(days=6)  # 7 days total
-        
-        with self.assertRaises(ValidationError) as context:
-            period = FlightPeriod(
-                start_date=past_start,
-                end_date=past_end,
-                aircraft=self.aircraft
-            )
-            period.full_clean()
-        
-        self.assertIn("La fecha de inicio no puede ser anterior a hoy", str(context.exception))
+
+        period = FlightPeriod(
+            start_date=past_start,
+            end_date=past_end,
+            aircraft=self.aircraft
+        )
+        period.full_clean()  # should not raise
+        period.save()
+        self.assertEqual(period.start_date, past_start)
+        self.assertEqual(period.end_date, past_end)
 
     def test_field_verbose_names(self):
         """Test that fields have correct verbose names."""

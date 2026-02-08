@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -180,6 +181,8 @@ class FlightRequestViewTest(TestCase):
 
         response = self.client.post(
             reverse('scheduler:cancel_flight_request', args=[flight_request.id]),
+            data=json.dumps({}),
+            content_type='application/json',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
 
@@ -206,6 +209,8 @@ class FlightRequestViewTest(TestCase):
 
         response = self.client.post(
             reverse('scheduler:cancel_flight_request', args=[flight_request.id]),
+            data=json.dumps({}),
+            content_type='application/json',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
 
@@ -233,6 +238,8 @@ class FlightRequestViewTest(TestCase):
         
         response = self.client.post(
             reverse('scheduler:cancel_flight_request', args=[flight_request.id]),
+            data=json.dumps({}),
+            content_type='application/json',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         

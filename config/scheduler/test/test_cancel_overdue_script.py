@@ -1,5 +1,5 @@
 """
-Tests for the cancel_overdue_requests script.
+Tests for the delete_due_flight_periods_data script.
 
 Verifies that:
 1. Flight periods with end_date < today are deleted (with their slots and requests).
@@ -16,9 +16,9 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 from scheduler.models import FlightPeriod, FlightSlot, FlightRequest
-from scheduler.scripts.cancel_overdue_requests import run_all
+from scheduler.scripts.delete_due_flight_periods_data import run_all
 from .factories import (
-    AircraftFactory,
+    AircraftFactory,    
     UserFactory,
     StudentProfileFactory,
     FlightPeriodFactory,
@@ -30,8 +30,8 @@ def localdate():
     return timezone.localdate()
 
 
-class CancelOverdueRequestsScriptTest(TestCase):
-    """Test the cancel_overdue_requests script cleanup and its impact on reservation logic."""
+class DeleteDueFlightPeriodsDataScriptTest(TestCase):
+    """Test the delete_due_flight_periods_data script cleanup and its impact on reservation logic."""
 
     def setUp(self):
         self.today = localdate()

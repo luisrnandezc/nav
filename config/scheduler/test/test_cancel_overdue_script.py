@@ -167,29 +167,25 @@ class CancelOverdueRequestsScriptTest(TestCase):
             req3.full_clean()
         self.assertIn("máximo", str(ctx.exception))
 
-    def test_after_script_credit_student_can_create_one_request(self):
-        """Student with balance < 500 but has_credit can create exactly 1 request."""
+    def test_after_script_credit_student_can_create_up_to_three_requests(self):
+        """Student with balance < 500 but has_credit can create up to 3 requests; 4th fails."""
         run_all(today=self.today)
-        slot = FlightSlot.objects.filter(
+        slots = list(FlightSlot.objects.filter(
             flight_period=self.period_b,
             date__gte=self.today,
             status='available',
-        ).first()
-        self.assertIsNotNone(slot)
-        req1 = FlightRequest(student=self.student_credit, slot=slot, status='pending')
-        req1.full_clean()
-        req1.save()
-        slot.status = 'pending'
-        slot.student = self.student_credit
-        slot.save()
-        # Second request should fail (max 1 with credit)
-        slot2 = FlightSlot.objects.filter(
-            flight_period=self.period_b,
-            date__gte=self.today,
-            status='available',
-        ).exclude(pk=slot.pk).first()
-        self.assertIsNotNone(slot2)
-        req2 = FlightRequest(student=self.student_credit, slot=slot2, status='pending')
+        ).order_by('date', 'block')[:4])
+        self.assertGreaterEqual(len(slots), 4, "Need at least 4 future available slots")
+        # First 3 requests: should succeed (max 3 for credit student)
+        for i in range(3):
+            req = FlightRequest(student=self.student_credit, slot=slots[i], status='pending')
+            req.full_clean()
+            req.save()
+            slots[i].status = 'pending'
+            slots[i].student = self.student_credit
+            slots[i].save()
+        # Fourth request should fail (max 3 with credit)
+        req4 = FlightRequest(student=self.student_credit, slot=slots[3], status='pending')
         with self.assertRaises(ValidationError) as ctx:
-            req2.full_clean()
+            req4.full_clean()
         self.assertIn("máximo", str(ctx.exception))

@@ -388,26 +388,25 @@ class FlightRequest(models.Model):
         transaction.on_commit(lambda: domain_signals.flight_request_cancelled.send(sender=FlightRequest, instance=self))
 
     def clean(self):
-        # Student balance must be at least $500
         try:
-            balance = self.student.student_profile.balance
+            profile = self.student.student_profile
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
-        if balance < 500.00:
-            if self.student.student_profile.has_credit or self.student.student_profile.has_temp_permission:
-                pass
-            else:
-                raise ValidationError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
-        
-        # Limit requests by balance
-        if  balance < 500.00 and (self.student.student_profile.has_credit or self.student.student_profile.has_temp_permission):
+        balance = profile.balance
+
+        if balance >= 500.00:
+            max_requests = int(balance // 500)
+        elif profile.has_credit:
+            max_requests = 3
+        elif profile.has_temp_permission:
             max_requests = 1
         else:
-            max_requests = balance // 500
-        existing_requests = FlightRequest.objects.filter(
+            raise ValidationError(f"Balance insuficiente (${balance:.2f}). Se requiere un mínimo de $500")
+
+        existing = FlightRequest.objects.filter(
             student=self.student, status__in=["pending", "approved"]
         ).exclude(pk=self.pk)
-        if existing_requests.count() >= max_requests:
+        if existing.count() >= max_requests:
             raise ValidationError(f"Ya tiene el máximo de {max_requests} solicitudes de vuelo aprobadas o pendientes")
         
     def delete(self, *args, **kwargs):

@@ -130,10 +130,10 @@ class FlightRequestAdmin(admin.ModelAdmin):
 class CancellationsFeeAdmin(admin.ModelAdmin):
     list_display = ('flight_request_id_display', 'student_display', 'amount', 'flight_date_display', 'date_added')
     list_filter = ('date_added', 'amount', 'flight_request__slot__date')
-    search_fields = ('flight_request__student__first_name', 'flight_request__student__last_name', 'flight_request__student__username', 'flight_request__slot__aircraft__registration')
+    search_fields = ('cancelled_by_name', 'flight_request__student__username', 'flight_request__slot__aircraft__registration')
     date_hierarchy = 'date_added'
     ordering = ('-date_added',)
-    readonly_fields = ('flight_request', 'amount', 'date_added')
+    readonly_fields = ('flight_request', 'cancelled_by_name', 'amount', 'date_added')
     actions = ['reimburse_selected_fees']
     
     # Prevent adding/editing since fees are created programmatically
@@ -145,7 +145,7 @@ class CancellationsFeeAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Información de la multa', {
-            'fields': ('flight_request', 'amount', 'date_added')
+            'fields': ('flight_request', 'cancelled_by_name', 'amount', 'date_added')
         }),
     )
     
@@ -158,10 +158,12 @@ class CancellationsFeeAdmin(admin.ModelAdmin):
     flight_request_id_display.admin_order_field = 'flight_request__id'
     
     def student_display(self, obj):
-        """Display student name and username."""
+        """Display student name (from request or stored cancelled_by_name)."""
         if obj.flight_request and obj.flight_request.student:
             student = obj.flight_request.student
             return f"{student.first_name} {student.last_name} ({student.username})"
+        if obj.cancelled_by_name:
+            return obj.cancelled_by_name
         return "N/A"
     student_display.short_description = "Estudiante"
     

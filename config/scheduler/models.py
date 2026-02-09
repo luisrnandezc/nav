@@ -444,6 +444,12 @@ class CancellationsFee(models.Model):
         null=True,
         blank=True,
     )
+    cancelled_by_name = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Cancelado por",
+        help_text="Nombre del estudiante que canceló (conservado si se elimina la solicitud)",
+    )
     amount = models.DecimalField(
         max_digits=4,
         decimal_places=1,
@@ -474,7 +480,8 @@ class CancellationsFee(models.Model):
         super().delete(*args, **kwargs)
     
     def __str__(self):
-        return f"Multa por cancelación extemporánea. Solicitud de vuelo: {self.flight_request} - Monto: {self.amount}"
+        who = self.cancelled_by_name or (self.flight_request.student.get_full_name() if self.flight_request and self.flight_request.student else "—")
+        return f"Multa por cancelación extemporánea. Cancelado por: {who} - Monto: {self.amount}"
     
     class Meta:
         verbose_name = "Multa por cancelación"

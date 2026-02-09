@@ -271,8 +271,11 @@ def cancel_flight_request(request, request_id):
         
         # Create cancellation fee record if fee should be applied
         if apply_fee:
+            student = flight_request.student
+            cancelled_by_name = f"{student.first_name or ''} {student.last_name or ''}".strip() or getattr(student, 'email', '') or str(student)
             CancellationsFee.objects.create(
                 flight_request=flight_request,
+                cancelled_by_name=cancelled_by_name,
                 amount=flight_request.slot.flight_period.aircraft.hourly_rate
             )
         

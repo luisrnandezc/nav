@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.shortcuts import redirect
 from .models import VoluntaryHazardReport, Risk, MitigationAction, MitigationActionEvidence
 
 
@@ -8,6 +9,7 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
     list_filter = ('ai_analysis_status', 'area', 'is_resolved', 'date', 'is_valid')
     search_fields = ('description', 'first_name', 'last_name', 'area', 'code', 'is_resolved')
     readonly_fields = ('created_at', 'updated_at')
+    actions = ['generate_pdf']
     fieldsets = (
         ('Información del Reporte', {
             'fields': ('code', 'date', 'time', 'area', 'description', 'is_valid', 'invalidity_reason', 'is_registered', 'is_processed', 'is_resolved')
@@ -23,6 +25,18 @@ class VoluntaryHazardReportAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+    def generate_pdf(self, request, queryset):
+        """Generate PDF for the selected VHR (single selection only)."""
+        if queryset.count() != 1:
+            self.message_user(request, 'Seleccione exactamente un reporte para generar el PDF.', level='WARNING')
+            return
+        report = queryset.first()
+        if not report.code:
+            self.message_user(request, 'El reporte debe estar registrado (tener código) para generar el PDF.', level='ERROR')
+            return
+        return redirect('sms:download_vhr_pdf', report_id=report.id)
+    generate_pdf.short_description = "Generar PDF del reporte seleccionado"
 
 
 @admin.register(Risk)

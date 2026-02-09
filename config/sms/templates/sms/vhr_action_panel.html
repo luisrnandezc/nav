@@ -382,7 +382,8 @@
 							<textarea
 								id="validity-reason"
 								name="reason"
-								rows="3"
+								rows="10"
+								maxlength="1000"
 								class="validity-form-textarea"
 								{% if not risks %}disabled{% endif %}
 								placeholder="Indique el motivo para validar el reporte..."
@@ -408,8 +409,8 @@
 							<textarea
 								id="validity-reason"
 								name="reason"
-								rows="3"
-								maxlength="200"
+								rows="10"
+								maxlength="1000"
 								class="validity-form-textarea"
 								{% if report.code %}disabled{% else %}required{% endif %}
 								placeholder="Indique el motivo para invalidar el reporte..."

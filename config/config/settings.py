@@ -186,21 +186,21 @@ if ON_PYTHONANYWHERE:
     EMAIL_USE_TLS = True
     EMAIL_USE_SSL = False
     TRANSACTIONS_NOTIFICATION_EMAIL = os.getenv('NAV_EMAIL_1')
-    SMS_NOTIFICATION_EMAIL_1= os.getenv('NAV_EMAIL_1')
-    SMS_NOTIFICATION_EMAIL_2= os.getenv('NAV_EMAIL_2')
-    SMS_NOTIFICATION_EMAIL_3= os.getenv('NAV_EMAIL_3')
-    SMS_NOTIFICATION_EMAIL_4= os.getenv('NAV_EMAIL_4')
-    OPS_NOTIFICATION_EMAIL= os.getenv('NAV_EMAIL_5')
+    SMS_NOTIFICATION_EMAIL_1 = os.getenv('NAV_EMAIL_1')
+    SMS_NOTIFICATION_EMAIL_2 = os.getenv('NAV_EMAIL_2')
+    SMS_NOTIFICATION_EMAIL_3 = os.getenv('NAV_EMAIL_3')
+    SMS_NOTIFICATION_EMAIL_4 = os.getenv('NAV_EMAIL_4')
+    OPS_NOTIFICATION_EMAIL = os.getenv('NAV_EMAIL_5')
 else:
     EMAIL_PORT = 465
     EMAIL_USE_TLS = False
     EMAIL_USE_SSL = True
     TRANSACTIONS_NOTIFICATION_EMAIL = os.getenv('DEV_EMAIL_1')
-    SMS_NOTIFICATION_EMAIL_1= os.getenv('DEV_EMAIL_1')
-    SMS_NOTIFICATION_EMAIL_2= os.getenv('DEV_EMAIL_2')  
-    SMS_NOTIFICATION_EMAIL_3= os.getenv('DEV_EMAIL_3')
-    SMS_NOTIFICATION_EMAIL_4= os.getenv('DEV_EMAIL_4')
-    OPS_NOTIFICATION_EMAIL= os.getenv('DEV_EMAIL_5')
+    SMS_NOTIFICATION_EMAIL_1 = os.getenv('DEV_EMAIL_1')
+    SMS_NOTIFICATION_EMAIL_2 = os.getenv('DEV_EMAIL_2')
+    SMS_NOTIFICATION_EMAIL_3 = os.getenv('DEV_EMAIL_3')
+    SMS_NOTIFICATION_EMAIL_4 = os.getenv('DEV_EMAIL_4')
+    OPS_NOTIFICATION_EMAIL = os.getenv('DEV_EMAIL_5')
     
 # Common email settings (used in both production and development)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -1,0 +1,145 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Evaluaciones por estudiante</title>
+    <link href="{% static 'fms_dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    <link href="{% static 'instructor_student_evaluations.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="main-container instructor-student-evals">
+
+      <div class="back-button">
+        <a href="{{ back_url }}" class="button">&larr; Volver</a>
+      </div>
+
+      <div class="page-top">
+        <h1 class="main-header">Evaluaciones por estudiante</h1>
+
+        <form method="get" action="{% url 'fms:instructor_student_evaluations' %}" class="search-form">
+          <input type="hidden" name="from" value="{{ back_url }}" />
+          <input type="text" name="q" id="id_q" value="{{ search_term }}" placeholder="Nombre, apellido o cédula" aria-label="Nombre, apellido o cédula del estudiante" />
+          <button type="submit" class="button">Buscar</button>
+        </form>
+
+        {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      {% if has_results %}
+        {% if multiple_matches %}
+          <div class="messages multiple-matches-message">
+            <p>Varios estudiantes coinciden con la búsqueda; se muestran todos a continuación.</p>
+          </div>
+        {% endif %}
+
+        <div class="sections-container">
+          <!-- Combined flight evaluations (0-100, 100-120, 120-170) -->
+          <div class="section">
+            <div class="section-header">
+              <h2>Evaluaciones de vuelo</h2>
+            </div>
+            <div class="flight-list">
+              {% if flight_sessions %}
+                {% for form_type, session in flight_sessions %}
+                  <a href="{% url 'fms:session_detail' form_type session.id %}?from={{ return_to_uri_encoded }}" class="flight-item">
+                    <div class="flight-info">
+                      <span class="session-grade {% if session.session_grade == 'S' or session.session_grade == 'SS' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                      <span class="detail-value" style="font-size: 0.85rem; opacity: 0.8;">
+                        {% if form_type == '0_100' %}0-100h{% elif form_type == '100_120' %}100-120h{% else %}120-170h{% endif %}
+                      </span>
+                    </div>
+                    <div class="flight-details">
+                      <div class="detail-item">
+                        <span class="detail-label">Fecha:</span>
+                        <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Sesión:</span>
+                        <span class="detail-value">{{ session.session_number }}{{ session.session_letter }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Estudiante:</span>
+                        <span class="detail-value">{{ session.student_first_name }} {{ session.student_last_name }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Aeronave:</span>
+                        <span class="detail-value">{{ session.aircraft.registration }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Instructor:</span>
+                        <span class="detail-value">{{ session.instructor_first_name }} {{ session.instructor_last_name }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">ID Estudiante:</span>
+                        <span class="detail-value">{{ session.student_id }}</span>
+                      </div>
+                    </div>
+                  </a>
+                {% endfor %}
+              {% else %}
+                <div class="no-flights">No hay evaluaciones de vuelo para este estudiante</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Simulator sessions -->
+          <div class="section">
+            <div class="section-header">
+              <h2>Sesiones de simulador</h2>
+            </div>
+            <div class="flight-list">
+              {% if sim_sessions %}
+                {% for session in sim_sessions %}
+                  <a href="{% url 'fms:session_detail' 'sim' session.id %}?from={{ return_to_uri_encoded }}" class="flight-item">
+                    <div class="flight-info">
+                      <span class="session-grade {% if session.session_grade == 'S' or session.session_grade == 'SS' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
+                    </div>
+                    <div class="flight-details">
+                      <div class="detail-item">
+                        <span class="detail-label">Fecha:</span>
+                        <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Sesión:</span>
+                        <span class="detail-value">{{ session.session_number }}{{ session.session_letter }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Estudiante:</span>
+                        <span class="detail-value">{{ session.student_first_name }} {{ session.student_last_name }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Instructor:</span>
+                        <span class="detail-value">{{ session.instructor_first_name }} {{ session.instructor_last_name }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">Horas:</span>
+                        <span class="detail-value">{{ session.session_sim_hours }}</span>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-label">ID Estudiante:</span>
+                        <span class="detail-value">{{ session.student_id }}</span>
+                      </div>
+                    </div>
+                  </a>
+                {% endfor %}
+              {% else %}
+                <div class="no-flights">No hay sesiones de simulador para este estudiante</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

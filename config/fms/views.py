@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
@@ -6,13 +7,38 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
 from django.contrib.auth.models import Group
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from decimal import Decimal
 from accounts.models import User, StudentProfile, InstructorProfile
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm, FlightReportForm
 from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport
 import weasyprint
 from pathlib import Path
+from urllib.parse import urlparse, quote
+
+
+def get_back_url(request, default_back):
+    """
+    Resolve the URL for a "back" / "Volver" button.
+    Prefers GET 'from' (same-origin, not current page), then HTTP Referer, else default_back.
+    """
+    base = request.build_absolute_uri('/')
+    my_path = request.path.rstrip('/')
+
+    from_param = request.GET.get('from', '').strip()
+    if from_param and from_param.startswith(base):
+        from_path = urlparse(from_param).path.rstrip('/')
+        if from_path != my_path:
+            return from_param
+
+    referer = request.META.get('HTTP_REFERER') or ''
+    if referer.startswith(base):
+        ref_path = urlparse(referer).path.rstrip('/')
+        if ref_path != my_path:
+            return referer
+
+    return default_back
+
 
 @login_required
 def student_flightlog(request):
@@ -179,6 +205,73 @@ def load_more_flights(request):
         'loaded_count': len(sessions),
         'total_count': total_count
     })
+
+@login_required
+def instructor_student_evaluations(request):
+    """
+    Page for instructors to search a student by name and view all their flight and sim evaluations.
+    Flight evaluations (0-100, 100-120, 120-170) are shown in one combined card; sim evaluations in another.
+    """
+    user = request.user
+    is_instructor = getattr(user, 'role', None) == 'INSTRUCTOR' or request.session.get('selected_role') == 'INSTRUCTOR'
+    has_instructor_profile = hasattr(user, 'instructor_profile') and user.instructor_profile
+    if not (is_instructor or has_instructor_profile or user.role == 'STAFF'):
+        messages.error(request, 'No tiene permisos para acceder a esta página.')
+        return redirect('fms:fms_dashboard')
+
+    search_term = (request.GET.get('q') or request.POST.get('student_name') or '').strip()
+    flight_sessions = []
+    sim_sessions = []
+    multiple_matches = False
+
+    if search_term:
+        # Purely numeric search = national_id; otherwise search by name
+        if search_term.isdigit():
+            try:
+                students = list(User.objects.filter(role='STUDENT', national_id=int(search_term)).order_by('last_name', 'first_name'))
+            except ValueError:
+                students = []
+        else:
+            students = list(User.objects.filter(role='STUDENT').filter(
+                Q(first_name__icontains=search_term) | Q(last_name__icontains=search_term)
+            ).order_by('last_name', 'first_name')[:10])
+
+        if not students:
+            messages.warning(request, 'No se encontró ningún estudiante.')
+        else:
+            multiple_matches = len(students) > 1
+            all_flight = []
+            all_sim = []
+            for student in students:
+                national_id = student.national_id
+                evals_0_100 = FlightEvaluation0_100.objects.filter(student_id=national_id).order_by('-session_date')
+                evals_100_120 = FlightEvaluation100_120.objects.filter(student_id=national_id).order_by('-session_date')
+                evals_120_170 = FlightEvaluation120_170.objects.filter(student_id=national_id).order_by('-session_date')
+                all_flight.extend([('0_100', e) for e in evals_0_100])
+                all_flight.extend([('100_120', e) for e in evals_100_120])
+                all_flight.extend([('120_170', e) for e in evals_120_170])
+                all_sim.extend(SimEvaluation.objects.filter(student_id=national_id).order_by('-session_date'))
+            all_flight.sort(key=lambda x: x[1].session_date, reverse=True)
+            all_sim.sort(key=lambda x: x.session_date, reverse=True)
+            flight_sessions = all_flight
+            sim_sessions = list(all_sim)
+
+    back_url = get_back_url(request, request.build_absolute_uri(reverse('fms:fms_dashboard')))
+
+    # Encoded current page URL for session_detail "from" param (so back from detail returns here)
+    return_to_uri_encoded = quote(request.build_absolute_uri(request.get_full_path()), safe='')
+
+    context = {
+        'flight_sessions': flight_sessions,
+        'sim_sessions': sim_sessions,
+        'search_term': search_term,
+        'multiple_matches': multiple_matches,
+        'has_results': bool(flight_sessions or sim_sessions),
+        'back_url': back_url,
+        'return_to_uri_encoded': return_to_uri_encoded,
+    }
+    return render(request, 'fms/instructor_student_evaluations.html', context)
+
 
 @login_required
 def fms_dashboard(request):
@@ -614,17 +707,16 @@ def session_detail(request, form_type, evaluation_id):
     try:
         evaluation, _ = get_evaluation_and_template(form_type, evaluation_id)
         
-        # Determine the return URL based on selected role in session, fallback to user role
         selected_role = request.session.get('selected_role', None)
         user_role = selected_role if selected_role else request.user.role
-        
         if user_role == 'STUDENT':
-            return_url = 'fms:student_flightlog'
+            default_back = request.build_absolute_uri(reverse('fms:student_flightlog'))
         elif user_role == 'INSTRUCTOR':
-            return_url = 'fms:instructor_flightlog'
-        elif user_role == 'STAFF':
-            return_url = 'fms:fms_dashboard'
-        
+            default_back = request.build_absolute_uri(reverse('fms:instructor_flightlog'))
+        else:
+            default_back = request.build_absolute_uri(reverse('fms:fms_dashboard'))
+        back_url = get_back_url(request, default_back)
+
         # Get organized field data
         field_data = get_evaluation_fields(form_type)
         
@@ -646,7 +738,7 @@ def session_detail(request, form_type, evaluation_id):
         context = {
             'evaluation': evaluation,
             'form_type': form_type,
-            'return_url': return_url,
+            'back_url': back_url,
             'field_data': field_data,
         }
         

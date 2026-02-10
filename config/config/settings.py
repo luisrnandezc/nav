@@ -43,7 +43,7 @@ if ON_PYTHONANYWHERE:
         'http://navaviation.org'       # Include HTTP as fallback
     ]
 else:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition

@@ -559,6 +559,23 @@ def process_vhr(request, report_id):
     if not risks_data:
         messages.error(request, 'No hay riesgos en el análisis SMS para crear.')
         return redirect('sms:vhr_action_panel', report_id=report_id)
+
+    # Require at least one non-empty mitigation action per risk (actions is dict keyed by risk key)
+    if not isinstance(actions_data, dict):
+        actions_data = {}
+    risks_without_actions = [
+        k for k in risks_data
+        if not (
+            isinstance(actions_data.get(k), list)
+            and any(a and isinstance(a, str) and a.strip() for a in actions_data.get(k))
+        )
+    ]
+    if risks_without_actions:
+        messages.error(
+            request,
+            'No se pueden crear las MMRs: cada riesgo debe tener al menos una acción de mitigación.'
+        )
+        return redirect('sms:vhr_action_panel', report_id=report_id)
     
     # Check if risks already exist in the database
     existing_risks = Risk.objects.filter(report=report)

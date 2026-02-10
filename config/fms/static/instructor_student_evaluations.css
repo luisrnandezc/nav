@@ -1,0 +1,80 @@
+.main-container.instructor-student-evals {
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.instructor-student-evals .page-top {
+  width: 100%;
+  max-width: 1200px;
+  flex-shrink: 0;
+  margin-bottom: 30px;
+}
+
+.instructor-student-evals .search-form {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.instructor-student-evals .search-form input {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #dae1ff;
+  background: rgba(255, 255, 255, 0.05);
+  color: #dae1ff;
+  min-width: 280px;
+}
+
+.instructor-student-evals .search-form button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: 1px solid #dae1ff;
+  background: rgba(218, 225, 255, 0.2);
+  color: #dae1ff;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.instructor-student-evals .search-form button:hover {
+  background-color: #d63e20;
+  border-color: #d63e20;
+}
+
+.instructor-student-evals .messages {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0 0;
+}
+
+.instructor-student-evals .messages li {
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: rgba(218, 225, 255, 0.15);
+  border: 1px solid #dae1ff;
+  color: #dae1ff;
+}
+
+.instructor-student-evals .messages li.warning {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.instructor-student-evals .multiple-matches-message {
+  margin: 0 0 20px 0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid #ffc107;
+  color: #ffc107;
+}
+
+.instructor-student-evals .multiple-matches-message p {
+  margin: 0;
+}

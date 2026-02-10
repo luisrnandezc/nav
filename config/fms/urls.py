@@ -4,7 +4,8 @@ from . import views
 app_name = 'fms'
 
 urlpatterns = [
-     path('', views.fms_dashboard, name='fms_dashboard'),
+    path('', views.fms_dashboard, name='fms_dashboard'),
+    path('instructor_student_evaluations/', views.instructor_student_evaluations, name='instructor_student_evaluations'),
     path('student_list/', views.student_list, name='student_list'),
     path('student_flightlog/', views.student_flightlog, name='student_flightlog'),
     path('student_stats/', views.student_stats_page, name='student_stats_page'),

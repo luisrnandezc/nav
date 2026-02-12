@@ -341,6 +341,7 @@ class StaffProfile(models.Model):
             ('can_confirm_transactions', 'Can confirm transactions'),
             ('can_manage_transactions', 'Can manage transactions'),
             ('can_manage_sms', 'Can manage SMS'),
+            ('can_view_user_stats', 'Can view user statistics'),
         ]
 
     def __str__(self):

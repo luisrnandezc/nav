@@ -25,16 +25,28 @@
           <a href="{% url 'fms:flight_report' %}" class="button">+ Reporte de Vuelo</a>
         </div>
         <div class="main-button">
+          {% if can_access_user_stats %}
           <a href="{% url 'fms:student_list' %}" class="button">Balance de Estudiantes</a>
+          {% else %}
+          <span class="button button-disabled" role="button" title="No tiene permisos para acceder a esta sección.">Balance de Estudiantes</span>
+          {% endif %}
         </div>
       </div>
 
       <div class="buttons-container">
         <div class="main-button">
+          {% if can_access_user_stats %}
           <a href="{% url 'fms:user_stats_page' %}" class="button">Estadísticas de Usuarios</a>
+          {% else %}
+          <span class="button button-disabled" role="button" title="No tiene permisos para acceder a esta sección.">Estadísticas de Usuarios</span>
+          {% endif %}
         </div>
         <div class="main-button">
+          {% if can_access_user_stats %}
           <a href="{% url 'fms:fleet_flights_page' %}" class="button">Estadísticas de la Flota</a>
+          {% else %}
+          <span class="button button-disabled" role="button" title="No tiene permisos para acceder a esta sección.">Estadísticas de la Flota</span>
+          {% endif %}
         </div>
       </div>
 

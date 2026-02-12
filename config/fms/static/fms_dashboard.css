@@ -67,6 +67,12 @@ body {
   border-color: #d63e20;
 }
 
+.main-button .button-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+
 .buttons-container.form-buttons-container {
   display: flex;
   flex-direction: column;

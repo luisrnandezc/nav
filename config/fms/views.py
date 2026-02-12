@@ -294,6 +294,7 @@ def fms_dashboard(request):
         'latest_flight_120_170': latest_flight_120_170,
         'latest_flight_reports': latest_flight_reports,
         'user_role': user_role,
+        'can_access_user_stats': request.user.has_perm('accounts.can_view_user_stats'),
     }
     
     return render(request, 'fms/fms_dashboard.html', context)
@@ -1113,10 +1114,13 @@ def instructor_stats_page(request, instructor_id=None):
 @login_required
 def user_stats_page(request):
     """Display a page listing all students and instructors with their stats."""
-    # Only allow staff
+    # Only allow staff with permission (assign via Django admin groups)
     if request.user.role != 'STAFF':
         messages.error(request, 'Acceso no autorizado')
         return redirect('dashboard:dashboard')
+    if not request.user.has_perm('accounts.can_view_user_stats'):
+        messages.error(request, 'No tiene permisos para ver estadísticas de usuarios.')
+        return redirect('fms:fms_dashboard')
     
     # Get all students and instructors
     students = StudentProfile.objects.select_related('user').order_by('user__last_name', 'user__first_name')

@@ -46,9 +46,15 @@
             </div>
             <div class="dashboard-square">
               <h1 class="square-header">SARA</h1>
+              {% if request.user.is_authenticated and can_manage_sms %}
                 <a class="image-link" href="{% url 'sms:sms_dashboard' %}">
                   <img class="logo-img" src="{% static 'img/shield.png' %}" alt="SMS">
                 </a>
+              {% else %}
+                <div class="image-link disabled">
+                  <img class="logo-img" src="{% static 'img/shield.png' %}" alt="SMS" title="No tiene permisos para acceder al panel de SMS.">
+                </div>
+              {% endif %}
             </div>
           </div>
           <div class="right-column">

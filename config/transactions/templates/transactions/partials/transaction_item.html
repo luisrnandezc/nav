@@ -1,0 +1,63 @@
+<div class="transaction-item" data-transaction-id="{{ transaction.id }}">
+  <a href="{% url 'transactions:transaction_detail' transaction.id %}" class="transaction-link">
+    <div class="transaction-info">
+      <span class="student-name">{{ transaction.get_student_full_name }} | Balance: ${{ transaction.student_profile.balance }}</span>
+      <span class="transaction-amount {% if transaction.type == 'CREDITO' %}amount-credit{% else %}amount-debit{% endif %}">
+        {% if transaction.type == 'DEBITO' %}-{% else %}+{% endif %}${{ transaction.amount }}
+      </span>
+    </div>
+  </a>
+  <div class="transaction-details">
+    <div class="detail-item">
+      <span class="detail-label">Tipo:</span>
+      <span class="detail-value">{{ transaction.get_type_display }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Fecha:</span>
+      <span class="detail-value">{{ transaction.date_added|date:"d/m/Y" }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Agregado por:</span>
+      <span class="detail-value">{{ transaction.added_by.first_name }} {{ transaction.added_by.last_name }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">Estado:</span>
+      <span class="detail-value">
+        {% if transaction.confirmed %}
+          <span class="status-confirmed">Confirmado</span>
+        {% else %}
+          <span class="status-pending">Pendiente</span>
+        {% endif %}
+      </span>
+    </div>
+  </div>
+  {% if transaction.confirmed %}
+    <div class="confirmation-transaction-info">
+      <div class="detail-item">
+        <span class="detail-label">Confirmado por:</span>
+        <span class="detail-value">{{ transaction.confirmed_by.first_name }} {{ transaction.confirmed_by.last_name }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Fecha confirmación:</span>
+        <span class="detail-value">{{ transaction.confirmation_date|date:"d/m/Y H:i" }}</span>
+      </div>
+    </div>
+    <div class="transaction-actions">
+      {% if can_confirm_transactions %}
+        <button class="unconfirm-button" data-transaction-id="{{ transaction.id }}">
+          Desconfirmar
+        </button>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="transaction-actions">
+      {% if can_confirm_transactions %}
+        <button class="confirm-button" data-transaction-id="{{ transaction.id }}">
+          Confirmar
+        </button>
+      {% else %}
+        <span class="no-permission">Sin permisos para confirmar</span>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>

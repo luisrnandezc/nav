@@ -70,6 +70,41 @@ body {
   border-color: #d63e20;
 }
 
+.transactions-search-form {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.transactions-search-form input {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #dae1ff;
+  background: rgba(255, 255, 255, 0.05);
+  color: #dae1ff;
+  min-width: 280px;
+}
+
+.transactions-search-form .search-submit {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: 1px solid #dae1ff;
+  background: rgba(218, 225, 255, 0.2);
+  color: #dae1ff;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.transactions-search-form .search-submit:hover {
+  background-color: #d63e20;
+  border-color: #d63e20;
+}
+
 .transactions-list-container {
   display: flex;
   flex-direction: column;

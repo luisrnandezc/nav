@@ -5,10 +5,11 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.core.cache import cache
+from django.db.models import Q
 from decimal import Decimal
 from .models import StudentTransaction
 from .forms import StudentTransactionForm, FuelTransactionSearchForm
-from accounts.models import StudentProfile
+from accounts.models import StudentProfile, User
 from fms.models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
 from fleet.models import Aircraft
 
@@ -16,20 +17,50 @@ from fleet.models import Aircraft
 @login_required
 @permission_required('accounts.can_manage_transactions')
 def transactions_dashboard(request):
-    """Transactions Dashboard view showing latest 50 transactions."""
-    latest_transactions = StudentTransaction.objects.select_related(
-        'student_profile__user', 
-        'added_by', 
-        'confirmed_by'
-    ).all().order_by('-date_added')[:50]
-    
+    """Transactions Dashboard view: unconfirmed and confirmed in separate lists.
+    Only shows transactions for students with student_phase=FLYING.
+    Optional GET 'q': filter by student name or national_id (same logic as FMS user search)."""
+    search_term = (request.GET.get('q') or '').strip()
+
+    base_qs = StudentTransaction.objects.select_related(
+        'student_profile__user',
+        'added_by',
+        'confirmed_by',
+    ).filter(student_profile__student_phase=StudentProfile.FLYING).order_by('-date_added')
+
+    if search_term:
+        if search_term.isdigit():
+            try:
+                matching_profiles = StudentProfile.objects.filter(
+                    student_phase=StudentProfile.FLYING,
+                    user__role='STUDENT',
+                    user__national_id=int(search_term),
+                )
+            except (ValueError, TypeError):
+                matching_profiles = StudentProfile.objects.none()
+        else:
+            matching_users = User.objects.filter(
+                role='STUDENT',
+            ).filter(
+                Q(first_name__icontains=search_term) | Q(last_name__icontains=search_term),
+            ).values_list('id', flat=True)[:20]
+            matching_profiles = StudentProfile.objects.filter(
+                student_phase=StudentProfile.FLYING,
+                user_id__in=matching_users,
+            )
+        base_qs = base_qs.filter(student_profile__in=matching_profiles)
+
+    unconfirmed_transactions = base_qs.filter(confirmed=False)[:50]
+    confirmed_transactions = base_qs.filter(confirmed=True)[:50]
+
     can_confirm_transactions = request.user.has_perm('accounts.can_confirm_transactions')
-    
+
     context = {
-        'latest_transactions': latest_transactions,
+        'unconfirmed_transactions': unconfirmed_transactions,
+        'confirmed_transactions': confirmed_transactions,
         'can_confirm_transactions': can_confirm_transactions,
+        'search_term': search_term,
     }
-    
     return render(request, 'transactions/transactions_dashboard.html', context)
 
 

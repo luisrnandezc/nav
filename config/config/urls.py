@@ -28,4 +28,5 @@ urlpatterns = [
     path('fleet/', include("fleet.urls", "fleet")),
     path('transactions/', include("transactions.urls")),
     path('sms/', include("sms.urls", "sms")),
+    path('aura/', include("aura.urls", "aura")),
 ]

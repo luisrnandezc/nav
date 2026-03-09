@@ -1,0 +1,143 @@
+/* AURA student global review – overrides on top of SMS base/dashboard */
+
+.aura-meta-grid {
+  margin-bottom: 15px;
+}
+
+.aura-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid rgba(218, 225, 255, 0.3);
+}
+
+.aura-back-btn {
+  background-color: rgba(218, 225, 255, 0.2);
+  border: 1px solid #dae1ff;
+  color: #dae1ff;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.aura-back-btn:hover {
+  background-color: rgba(218, 225, 255, 0.3);
+}
+
+.aura-form-inline {
+  display: inline-block;
+}
+
+.aura-submit-btn {
+  background-color: #e84728;
+  color: #ffffff;
+  border: none;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: inherit;
+}
+
+.aura-submit-btn:hover {
+  background-color: #d63e20;
+  box-shadow: 0 4px 8px rgba(232, 71, 40, 0.3);
+}
+
+.aura-messages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.aura-messages li {
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  background: rgba(218, 225, 255, 0.1);
+  border: 1px solid rgba(218, 225, 255, 0.3);
+  border-radius: 8px;
+  color: #dae1ff;
+}
+
+.aura-summary-block {
+  margin: 0;
+}
+
+.aura-summary-text {
+  white-space: pre-line;
+}
+
+.aura-two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.aura-inner-card {
+  margin: 0;
+}
+
+.aura-inner-card-title {
+  font-weight: 700;
+  color: #dae1ff;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.aura-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.aura-list li {
+  margin-bottom: 6px;
+}
+
+.aura-mix {
+  margin-top: 12px;
+  margin-bottom: 0;
+  color: #ffffff;
+  font-size: 0.95rem;
+}
+
+.aura-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.aura-tag {
+  font-size: 0.85rem;
+  padding: 4px 10px;
+}
+
+.aura-empty-text {
+  margin: 0;
+  color: #dae1ff;
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .aura-actions-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .aura-two-cols {
+    grid-template-columns: 1fr;
+  }
+}

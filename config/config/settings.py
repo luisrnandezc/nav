@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'fleet',
     'transactions',
     'sms',
+    'aura',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

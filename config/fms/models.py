@@ -762,7 +762,16 @@ class SimEvaluation(models.Model):
     )
     #endregion
 
-    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
+    comments = models.TextField(
+        blank=True,
+        verbose_name='Comentarios',
+        validators=[MinLengthValidator(75), MaxLengthValidator(1000)],
+    )
+    aura_processed = models.BooleanField(
+        default=False,
+        verbose_name='Procesado por AURA',
+        help_text='Indica si esta sesión de simulador ya fue procesada por AURA.',
+    )
 
     def total_sim_hours(self):
         """Return the sum of accumulated and session hours."""
@@ -1391,7 +1400,16 @@ class FlightEvaluation0_100(models.Model):
     )
     #endregion
 
-    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
+    comments = models.TextField(
+        blank=True,
+        verbose_name='Comentarios',
+        validators=[MinLengthValidator(75), MaxLengthValidator(1000)],
+    )
+    aura_processed = models.BooleanField(
+        default=False,
+        verbose_name='Procesado por AURA',
+        help_text='Indica si esta sesión de vuelo ya fue procesada por AURA.',
+    )
 
     @property
     def calculated_session_flight_hours(self):
@@ -2003,7 +2021,16 @@ class FlightEvaluation100_120(models.Model):
     )
     #endregion
 
-    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
+    comments = models.TextField(
+        blank=True,
+        verbose_name='Comentarios',
+        validators=[MinLengthValidator(75), MaxLengthValidator(1000)],
+    )
+    aura_processed = models.BooleanField(
+        default=False,
+        verbose_name='Procesado por AURA',
+        help_text='Indica si esta sesión de vuelo ya fue procesada por AURA.',
+    )
 
     @property
     def calculated_session_flight_hours(self):
@@ -2540,7 +2567,16 @@ class FlightEvaluation120_170(models.Model):
     )
     #endregion
 
-    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MinLengthValidator(75), MaxLengthValidator(1000)])
+    comments = models.TextField(
+        blank=True,
+        verbose_name='Comentarios',
+        validators=[MinLengthValidator(75), MaxLengthValidator(1000)],
+    )
+    aura_processed = models.BooleanField(
+        default=False,
+        verbose_name='Procesado por AURA',
+        help_text='Indica si esta sesión de vuelo ya fue procesada por AURA.',
+    )
 
     @property
     def calculated_session_flight_hours(self):

@@ -1,8 +1,6 @@
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
-from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
 
 
 class IndividualReview(models.Model):
@@ -29,6 +27,8 @@ class IndividualReview(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="aura_individual_reviews_as_student",
+        limit_choices_to=Q(student_profile__isnull=False),
+        help_text="Only users with a StudentProfile can be selected as students.",
     )
 
     instructor = models.ForeignKey(
@@ -37,20 +37,9 @@ class IndividualReview(models.Model):
         related_name="aura_individual_reviews_as_instructor",
         blank=True,
         null=True,
+        limit_choices_to=Q(instructor_profile__isnull=False),
+        help_text="Only users with an InstructorProfile can be selected as instructors.",
     )
-
-    # Optional generic relation to a sim/flight/session model
-    session_content_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    session_object_id = models.PositiveIntegerField(
-        blank=True,
-        null=True,
-    )
-    session = GenericForeignKey("session_content_type", "session_object_id")
 
     # Raw instructor comment(s) or debrief text that AURA will analyze
     source_comment_text = models.TextField()
@@ -153,6 +142,8 @@ class GlobalReview(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="aura_global_reviews",
+        limit_choices_to=Q(student_profile__isnull=False),
+        help_text="Only users with a StudentProfile can be selected as students.",
     )
 
     scope_type = models.CharField(

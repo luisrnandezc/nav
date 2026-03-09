@@ -1,0 +1,141 @@
+2026-03-09 12:36:04,227 - INFO - ================================================================================
+2026-03-09 12:36:04,227 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:36:04,229 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:37:04,240 - INFO - ================================================================================
+2026-03-09 12:37:04,240 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:37:04,241 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:38:00,701 - INFO - ================================================================================
+2026-03-09 12:38:00,701 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:38:00,701 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:39:00,709 - INFO - ================================================================================
+2026-03-09 12:39:00,709 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:39:00,710 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:42:35,835 - INFO - ================================================================================
+2026-03-09 12:42:35,836 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:42:35,836 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:42:35,837 - INFO - Rendered prompt length: 8480 characters
+2026-03-09 12:42:35,837 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:42:35,837 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:42:35,837 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:42:36,177 - INFO - OpenAI client initialized successfully
+2026-03-09 12:42:36,177 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:42:51,928 - INFO - API request completed successfully
+2026-03-09 12:42:51,928 - INFO - Response content extracted, length: 1414 characters
+2026-03-09 12:42:51,928 - INFO - ================================================================================
+2026-03-09 12:42:54,949 - INFO - ================================================================================
+2026-03-09 12:42:54,950 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:42:54,950 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:42:54,950 - INFO - Rendered prompt length: 8469 characters
+2026-03-09 12:42:54,950 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:42:54,951 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:42:54,951 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:42:55,245 - INFO - OpenAI client initialized successfully
+2026-03-09 12:42:55,246 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:43:21,022 - INFO - API request completed successfully
+2026-03-09 12:43:21,022 - INFO - Response content extracted, length: 2121 characters
+2026-03-09 12:43:21,022 - INFO - ================================================================================
+2026-03-09 12:43:24,044 - INFO - ================================================================================
+2026-03-09 12:43:24,044 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:43:24,044 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:43:24,044 - INFO - Rendered prompt length: 8542 characters
+2026-03-09 12:43:24,044 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:43:24,044 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:43:24,045 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:43:24,351 - INFO - OpenAI client initialized successfully
+2026-03-09 12:43:24,351 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:43:51,011 - INFO - API request completed successfully
+2026-03-09 12:43:51,012 - INFO - Response content extracted, length: 2395 characters
+2026-03-09 12:43:51,012 - INFO - ================================================================================
+2026-03-09 12:43:54,030 - INFO - ================================================================================
+2026-03-09 12:43:54,030 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:43:54,030 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:43:54,031 - INFO - Rendered prompt length: 8540 characters
+2026-03-09 12:43:54,031 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:43:54,031 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:43:54,032 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:43:54,321 - INFO - OpenAI client initialized successfully
+2026-03-09 12:43:54,321 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:44:11,557 - INFO - API request completed successfully
+2026-03-09 12:44:11,558 - INFO - Response content extracted, length: 2379 characters
+2026-03-09 12:44:11,558 - INFO - ================================================================================
+2026-03-09 12:44:14,575 - INFO - ================================================================================
+2026-03-09 12:44:14,576 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:44:14,576 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:44:14,576 - INFO - Rendered prompt length: 8474 characters
+2026-03-09 12:44:14,576 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:44:14,576 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:44:14,577 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:44:14,868 - INFO - OpenAI client initialized successfully
+2026-03-09 12:44:14,868 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:44:36,375 - INFO - API request completed successfully
+2026-03-09 12:44:36,375 - INFO - Response content extracted, length: 1824 characters
+2026-03-09 12:44:36,375 - INFO - ================================================================================
+2026-03-09 12:44:39,395 - INFO - ================================================================================
+2026-03-09 12:44:39,395 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:44:39,395 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:44:39,396 - INFO - Rendered prompt length: 8796 characters
+2026-03-09 12:44:39,396 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:44:39,396 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:44:39,396 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:44:39,688 - INFO - OpenAI client initialized successfully
+2026-03-09 12:44:39,689 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:45:16,802 - INFO - API request completed successfully
+2026-03-09 12:45:16,803 - INFO - Response content extracted, length: 3019 characters
+2026-03-09 12:45:16,803 - INFO - ================================================================================
+2026-03-09 12:45:19,823 - INFO - ================================================================================
+2026-03-09 12:45:19,823 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:45:19,823 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:45:19,824 - INFO - Rendered prompt length: 8790 characters
+2026-03-09 12:45:19,824 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:45:19,824 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:45:19,825 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:45:20,143 - INFO - OpenAI client initialized successfully
+2026-03-09 12:45:20,143 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:46:04,386 - INFO - API request completed successfully
+2026-03-09 12:46:04,386 - INFO - Response content extracted, length: 3035 characters
+2026-03-09 12:46:04,387 - INFO - ================================================================================
+2026-03-09 12:46:07,403 - INFO - ================================================================================
+2026-03-09 12:46:07,404 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:46:07,404 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:46:07,404 - INFO - Rendered prompt length: 8806 characters
+2026-03-09 12:46:07,404 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:46:07,405 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:46:07,405 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:46:07,690 - INFO - OpenAI client initialized successfully
+2026-03-09 12:46:07,691 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:47:03,294 - INFO - API request completed successfully
+2026-03-09 12:47:03,294 - INFO - Response content extracted, length: 4004 characters
+2026-03-09 12:47:03,294 - INFO - ================================================================================
+2026-03-09 12:47:06,311 - INFO - ================================================================================
+2026-03-09 12:47:06,311 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:47:06,312 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:47:06,312 - INFO - Rendered prompt length: 8942 characters
+2026-03-09 12:47:06,312 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:47:06,312 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:47:06,313 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:47:06,604 - INFO - OpenAI client initialized successfully
+2026-03-09 12:47:06,604 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:48:00,676 - INFO - API request completed successfully
+2026-03-09 12:48:00,676 - INFO - Response content extracted, length: 3686 characters
+2026-03-09 12:48:00,676 - INFO - ================================================================================
+2026-03-09 12:48:27,755 - INFO - ================================================================================
+2026-03-09 12:48:27,756 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:48:27,756 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:48:27,757 - INFO - Rendered prompt length: 8971 characters
+2026-03-09 12:48:27,757 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:48:27,757 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:48:27,757 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:48:28,057 - INFO - OpenAI client initialized successfully
+2026-03-09 12:48:28,058 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 12:49:03,884 - INFO - API request completed successfully
+2026-03-09 12:49:03,884 - INFO - Response content extracted, length: 2854 characters
+2026-03-09 12:49:03,884 - INFO - ================================================================================
+2026-03-09 12:49:15,933 - INFO - ================================================================================
+2026-03-09 12:49:15,933 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 12:49:15,933 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 12:49:15,933 - INFO - Rendered prompt length: 9051 characters
+2026-03-09 12:49:15,934 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 12:49:15,934 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 12:49:15,934 - INFO - Attempting to initialize OpenAI client
+2026-03-09 12:49:16,272 - INFO - OpenAI client initialized successfully
+2026-03-09 12:49:16,273 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)

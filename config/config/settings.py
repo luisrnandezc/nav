@@ -229,5 +229,16 @@ if SARA_HAZARD_ANALYSIS_PROMPT_PATH:
 else:
     raise RuntimeError("SARA_HAZARD_ANALYSIS_PROMPT_PATH is not set in the .env file")
 
+# AURA Individual Review Prompt
+AURA_INDIVIDUAL_REVIEW_PROMPT_PATH = os.getenv('AURA_INDIVIDUAL_REVIEW_PROMPT_PATH')
+
+AURA_INDIVIDUAL_REVIEW_PROMPT = ''
+if AURA_INDIVIDUAL_REVIEW_PROMPT_PATH:
+    aura_prompt_full_path = os.path.join(BASE_DIR, AURA_INDIVIDUAL_REVIEW_PROMPT_PATH)
+    with open(aura_prompt_full_path, 'r', encoding='utf-8') as f:
+        AURA_INDIVIDUAL_REVIEW_PROMPT = f.read()
+else:
+    raise RuntimeError("AURA_INDIVIDUAL_REVIEW_PROMPT_PATH is not set in the .env file")
+
 # Google Analytics ID
 GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID')

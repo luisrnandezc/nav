@@ -139,3 +139,1288 @@
 2026-03-09 12:49:15,934 - INFO - Attempting to initialize OpenAI client
 2026-03-09 12:49:16,272 - INFO - OpenAI client initialized successfully
 2026-03-09 12:49:16,273 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 14:50:08,510 - INFO - ================================================================================
+2026-03-09 14:50:08,511 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 14:50:08,511 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 14:50:08,511 - INFO - Rendered prompt length: 9051 characters
+2026-03-09 14:50:08,511 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 14:50:08,512 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 14:50:08,512 - INFO - Attempting to initialize OpenAI client
+2026-03-09 14:50:08,840 - INFO - OpenAI client initialized successfully
+2026-03-09 14:50:08,840 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 14:50:41,291 - INFO - API request completed successfully
+2026-03-09 14:50:41,291 - INFO - Response content extracted, length: 3604 characters
+2026-03-09 14:50:41,292 - INFO - ================================================================================
+2026-03-09 14:50:44,311 - INFO - ================================================================================
+2026-03-09 14:50:44,311 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 14:50:44,312 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 14:50:44,312 - INFO - Rendered prompt length: 8584 characters
+2026-03-09 14:50:44,312 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 14:50:44,312 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 14:50:44,313 - INFO - Attempting to initialize OpenAI client
+2026-03-09 14:50:44,600 - INFO - OpenAI client initialized successfully
+2026-03-09 14:50:44,601 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 14:51:10,105 - INFO - API request completed successfully
+2026-03-09 14:51:10,105 - INFO - Response content extracted, length: 2118 characters
+2026-03-09 14:51:10,105 - INFO - ================================================================================
+2026-03-09 14:51:13,124 - INFO - ================================================================================
+2026-03-09 14:51:13,124 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 14:51:13,124 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 14:51:13,124 - INFO - Rendered prompt length: 8762 characters
+2026-03-09 14:51:13,125 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 14:51:13,125 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 14:51:13,125 - INFO - Attempting to initialize OpenAI client
+2026-03-09 14:51:13,419 - INFO - OpenAI client initialized successfully
+2026-03-09 14:51:13,419 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 14:51:45,808 - INFO - API request completed successfully
+2026-03-09 14:51:45,808 - INFO - Response content extracted, length: 2282 characters
+2026-03-09 14:51:45,809 - INFO - ================================================================================
+2026-03-09 14:51:48,827 - INFO - ================================================================================
+2026-03-09 14:51:48,827 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 14:51:48,828 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 14:51:48,828 - INFO - Rendered prompt length: 8774 characters
+2026-03-09 14:51:48,828 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 14:51:48,828 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 14:51:48,828 - INFO - Attempting to initialize OpenAI client
+2026-03-09 14:51:49,144 - INFO - OpenAI client initialized successfully
+2026-03-09 14:51:49,144 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 14:52:46,326 - INFO - API request completed successfully
+2026-03-09 14:52:46,326 - INFO - Response content extracted, length: 4230 characters
+2026-03-09 14:52:46,326 - INFO - ================================================================================
+2026-03-09 14:52:52,353 - INFO - ================================================================================
+2026-03-09 14:52:52,353 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 14:52:52,353 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 14:52:52,353 - INFO - Rendered prompt length: 9217 characters
+2026-03-09 14:52:52,354 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 14:52:52,354 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 14:52:52,354 - INFO - Attempting to initialize OpenAI client
+2026-03-09 14:52:52,649 - INFO - OpenAI client initialized successfully
+2026-03-09 14:52:52,649 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 14:53:48,553 - INFO - API request completed successfully
+2026-03-09 14:53:48,553 - INFO - Response content extracted, length: 4037 characters
+2026-03-09 14:53:48,553 - INFO - ================================================================================
+2026-03-09 14:53:51,569 - INFO - ================================================================================
+2026-03-09 14:53:51,570 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 14:53:51,570 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 14:53:51,571 - INFO - Rendered prompt length: 9101 characters
+2026-03-09 14:53:51,571 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 14:53:51,572 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 14:53:51,572 - INFO - Attempting to initialize OpenAI client
+2026-03-09 14:53:51,898 - INFO - OpenAI client initialized successfully
+2026-03-09 14:53:51,899 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:07:22,816 - INFO - ================================================================================
+2026-03-09 16:07:22,817 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:07:22,817 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:07:22,817 - INFO - Rendered prompt length: 9101 characters
+2026-03-09 16:07:22,817 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:07:22,818 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:07:22,818 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:07:23,190 - INFO - OpenAI client initialized successfully
+2026-03-09 16:07:23,190 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:08:01,537 - INFO - API request completed successfully
+2026-03-09 16:08:01,538 - INFO - Response content extracted, length: 2952 characters
+2026-03-09 16:08:01,538 - INFO - ================================================================================
+2026-03-09 16:08:04,564 - INFO - ================================================================================
+2026-03-09 16:08:04,564 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:08:04,565 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:08:04,565 - INFO - Rendered prompt length: 8709 characters
+2026-03-09 16:08:04,565 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:08:04,565 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:08:04,566 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:08:04,890 - INFO - OpenAI client initialized successfully
+2026-03-09 16:08:04,891 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:08:35,750 - INFO - API request completed successfully
+2026-03-09 16:08:35,751 - INFO - Response content extracted, length: 2641 characters
+2026-03-09 16:08:35,751 - INFO - ================================================================================
+2026-03-09 16:08:38,769 - INFO - ================================================================================
+2026-03-09 16:08:38,769 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:08:38,769 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:08:38,770 - INFO - Rendered prompt length: 8739 characters
+2026-03-09 16:08:38,770 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:08:38,770 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:08:38,770 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:08:39,116 - INFO - OpenAI client initialized successfully
+2026-03-09 16:08:39,116 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:08:53,167 - INFO - API request completed successfully
+2026-03-09 16:08:53,167 - INFO - Response content extracted, length: 1487 characters
+2026-03-09 16:08:53,167 - INFO - ================================================================================
+2026-03-09 16:08:56,185 - INFO - ================================================================================
+2026-03-09 16:08:56,186 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:08:56,186 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:08:56,186 - INFO - Rendered prompt length: 8631 characters
+2026-03-09 16:08:56,186 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:08:56,186 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:08:56,187 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:08:56,501 - INFO - OpenAI client initialized successfully
+2026-03-09 16:08:56,502 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:09:17,901 - INFO - API request completed successfully
+2026-03-09 16:09:17,901 - INFO - Response content extracted, length: 2222 characters
+2026-03-09 16:09:17,901 - INFO - ================================================================================
+2026-03-09 16:09:20,920 - INFO - ================================================================================
+2026-03-09 16:09:20,920 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:09:20,920 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:09:20,922 - INFO - Rendered prompt length: 8627 characters
+2026-03-09 16:09:20,922 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:09:20,922 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:09:20,922 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:09:21,240 - INFO - OpenAI client initialized successfully
+2026-03-09 16:09:21,240 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:09:43,138 - INFO - API request completed successfully
+2026-03-09 16:09:43,138 - INFO - Response content extracted, length: 2262 characters
+2026-03-09 16:09:43,138 - INFO - ================================================================================
+2026-03-09 16:09:46,188 - INFO - ================================================================================
+2026-03-09 16:09:46,188 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:09:46,188 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:09:46,189 - INFO - Rendered prompt length: 8576 characters
+2026-03-09 16:09:46,189 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:09:46,189 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:09:46,189 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:09:46,585 - INFO - OpenAI client initialized successfully
+2026-03-09 16:09:46,585 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:10:07,372 - INFO - API request completed successfully
+2026-03-09 16:10:07,372 - INFO - Response content extracted, length: 2034 characters
+2026-03-09 16:10:07,373 - INFO - ================================================================================
+2026-03-09 16:10:10,383 - INFO - ================================================================================
+2026-03-09 16:10:10,383 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:10:10,383 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:10:10,383 - INFO - Rendered prompt length: 8689 characters
+2026-03-09 16:10:10,384 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:10:10,384 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:10:10,384 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:10:10,685 - INFO - OpenAI client initialized successfully
+2026-03-09 16:10:10,685 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:10:29,282 - ERROR - Error during OpenAI operation in AURA: Error code: 403 - {'error': {'code': 'unsupported_country_region_territory', 'message': 'Country, region, or territory not supported', 'param': None, 'type': 'request_forbidden'}} (Type: PermissionDeniedError)
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1047, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.PermissionDeniedError: Error code: 403 - {'error': {'code': 'unsupported_country_region_territory', 'message': 'Country, region, or territory not supported', 'param': None, 'type': 'request_forbidden'}}
+2026-03-09 16:10:29,286 - ERROR - Full traceback: Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1047, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.PermissionDeniedError: Error code: 403 - {'error': {'code': 'unsupported_country_region_territory', 'message': 'Country, region, or territory not supported', 'param': None, 'type': 'request_forbidden'}}
+
+2026-03-09 16:10:29,286 - INFO - ================================================================================
+2026-03-09 16:10:32,298 - INFO - ================================================================================
+2026-03-09 16:10:32,299 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:10:32,299 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:10:32,299 - INFO - Rendered prompt length: 8621 characters
+2026-03-09 16:10:32,299 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:10:32,299 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:10:32,299 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:10:32,652 - INFO - OpenAI client initialized successfully
+2026-03-09 16:10:32,652 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:10:32,887 - ERROR - Error during OpenAI operation in AURA: Error code: 403 - {'error': {'code': 'unsupported_country_region_territory', 'message': 'Country, region, or territory not supported', 'param': None, 'type': 'request_forbidden'}} (Type: PermissionDeniedError)
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1047, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.PermissionDeniedError: Error code: 403 - {'error': {'code': 'unsupported_country_region_territory', 'message': 'Country, region, or territory not supported', 'param': None, 'type': 'request_forbidden'}}
+2026-03-09 16:10:32,889 - ERROR - Full traceback: Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1047, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.PermissionDeniedError: Error code: 403 - {'error': {'code': 'unsupported_country_region_territory', 'message': 'Country, region, or territory not supported', 'param': None, 'type': 'request_forbidden'}}
+
+2026-03-09 16:10:32,896 - INFO - ================================================================================
+2026-03-09 16:10:35,916 - INFO - ================================================================================
+2026-03-09 16:10:35,916 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:10:35,917 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:10:35,917 - INFO - Rendered prompt length: 8777 characters
+2026-03-09 16:10:35,917 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:10:35,917 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:10:35,917 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:10:36,343 - INFO - OpenAI client initialized successfully
+2026-03-09 16:10:36,343 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:11:11,184 - INFO - API request completed successfully
+2026-03-09 16:11:11,184 - INFO - Response content extracted, length: 3939 characters
+2026-03-09 16:11:11,185 - INFO - ================================================================================
+2026-03-09 16:11:14,207 - INFO - ================================================================================
+2026-03-09 16:11:14,207 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:11:14,207 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:11:14,208 - INFO - Rendered prompt length: 8575 characters
+2026-03-09 16:11:14,208 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:11:14,208 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:11:14,209 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:11:14,537 - INFO - OpenAI client initialized successfully
+2026-03-09 16:11:14,539 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:11:45,782 - INFO - API request completed successfully
+2026-03-09 16:11:45,782 - INFO - Response content extracted, length: 2507 characters
+2026-03-09 16:11:45,783 - INFO - ================================================================================
+2026-03-09 16:11:48,793 - INFO - ================================================================================
+2026-03-09 16:11:48,793 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:11:48,793 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:11:48,794 - INFO - Rendered prompt length: 8783 characters
+2026-03-09 16:11:48,794 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:11:48,794 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:11:48,795 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:11:49,102 - INFO - OpenAI client initialized successfully
+2026-03-09 16:11:49,103 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:12:19,148 - INFO - API request completed successfully
+2026-03-09 16:12:19,148 - INFO - Response content extracted, length: 3298 characters
+2026-03-09 16:12:19,149 - INFO - ================================================================================
+2026-03-09 16:12:22,168 - INFO - ================================================================================
+2026-03-09 16:12:22,168 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:12:22,168 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:12:22,169 - INFO - Rendered prompt length: 8552 characters
+2026-03-09 16:12:22,169 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:12:22,169 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:12:22,169 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:12:22,466 - INFO - OpenAI client initialized successfully
+2026-03-09 16:12:22,467 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:12:40,914 - INFO - API request completed successfully
+2026-03-09 16:12:40,914 - INFO - Response content extracted, length: 2663 characters
+2026-03-09 16:12:40,915 - INFO - ================================================================================
+2026-03-09 16:12:43,924 - INFO - ================================================================================
+2026-03-09 16:12:43,925 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:12:43,925 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:12:43,925 - INFO - Rendered prompt length: 8871 characters
+2026-03-09 16:12:43,926 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:12:43,926 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:12:43,926 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:12:44,250 - INFO - OpenAI client initialized successfully
+2026-03-09 16:12:44,250 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:13:11,409 - INFO - API request completed successfully
+2026-03-09 16:13:11,409 - INFO - Response content extracted, length: 3290 characters
+2026-03-09 16:13:11,409 - INFO - ================================================================================
+2026-03-09 16:13:14,427 - INFO - ================================================================================
+2026-03-09 16:13:14,427 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:13:14,428 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:13:14,428 - INFO - Rendered prompt length: 8799 characters
+2026-03-09 16:13:14,428 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:13:14,428 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:13:14,428 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:13:14,777 - INFO - OpenAI client initialized successfully
+2026-03-09 16:13:14,777 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:13:47,332 - INFO - API request completed successfully
+2026-03-09 16:13:47,332 - INFO - Response content extracted, length: 3191 characters
+2026-03-09 16:13:47,332 - INFO - ================================================================================
+2026-03-09 16:13:50,358 - INFO - ================================================================================
+2026-03-09 16:13:50,358 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:13:50,359 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:13:50,359 - INFO - Rendered prompt length: 9095 characters
+2026-03-09 16:13:50,359 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:13:50,359 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:13:50,359 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:13:50,661 - INFO - OpenAI client initialized successfully
+2026-03-09 16:13:50,661 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:14:34,721 - INFO - API request completed successfully
+2026-03-09 16:14:34,722 - INFO - Response content extracted, length: 4002 characters
+2026-03-09 16:14:34,722 - INFO - ================================================================================
+2026-03-09 16:14:37,739 - INFO - ================================================================================
+2026-03-09 16:14:37,740 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:14:37,740 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:14:37,740 - INFO - Rendered prompt length: 8565 characters
+2026-03-09 16:14:37,740 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:14:37,741 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:14:37,741 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:14:38,082 - INFO - OpenAI client initialized successfully
+2026-03-09 16:14:38,083 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:14:57,373 - INFO - API request completed successfully
+2026-03-09 16:14:57,374 - INFO - Response content extracted, length: 1698 characters
+2026-03-09 16:14:57,374 - INFO - ================================================================================
+2026-03-09 16:15:00,394 - INFO - ================================================================================
+2026-03-09 16:15:00,394 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:15:00,395 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:15:00,395 - INFO - Rendered prompt length: 8557 characters
+2026-03-09 16:15:00,395 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:15:00,395 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:15:00,396 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:15:00,721 - INFO - OpenAI client initialized successfully
+2026-03-09 16:15:00,722 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:15:29,193 - INFO - API request completed successfully
+2026-03-09 16:15:29,194 - INFO - Response content extracted, length: 2154 characters
+2026-03-09 16:15:29,194 - INFO - ================================================================================
+2026-03-09 16:15:32,226 - INFO - ================================================================================
+2026-03-09 16:15:32,226 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:15:32,226 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:15:32,227 - INFO - Rendered prompt length: 8746 characters
+2026-03-09 16:15:32,227 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:15:32,227 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:15:32,227 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:15:32,578 - INFO - OpenAI client initialized successfully
+2026-03-09 16:15:32,578 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:15:48,932 - INFO - API request completed successfully
+2026-03-09 16:15:48,932 - INFO - Response content extracted, length: 2273 characters
+2026-03-09 16:15:48,932 - INFO - ================================================================================
+2026-03-09 16:15:51,943 - INFO - ================================================================================
+2026-03-09 16:15:51,944 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:15:51,944 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:15:51,944 - INFO - Rendered prompt length: 8673 characters
+2026-03-09 16:15:51,945 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:15:51,945 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:15:51,945 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:15:52,283 - INFO - OpenAI client initialized successfully
+2026-03-09 16:15:52,283 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:16:13,853 - INFO - API request completed successfully
+2026-03-09 16:16:13,853 - INFO - Response content extracted, length: 2793 characters
+2026-03-09 16:16:13,853 - INFO - ================================================================================
+2026-03-09 16:16:16,861 - INFO - ================================================================================
+2026-03-09 16:16:16,862 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:16:16,862 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:16:16,862 - INFO - Rendered prompt length: 9043 characters
+2026-03-09 16:16:16,862 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:16:16,862 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:16:16,863 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:16:17,192 - INFO - OpenAI client initialized successfully
+2026-03-09 16:16:17,192 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:16:55,418 - INFO - API request completed successfully
+2026-03-09 16:16:55,418 - INFO - Response content extracted, length: 3833 characters
+2026-03-09 16:16:55,418 - INFO - ================================================================================
+2026-03-09 16:16:58,436 - INFO - ================================================================================
+2026-03-09 16:16:58,437 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:16:58,437 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:16:58,437 - INFO - Rendered prompt length: 8587 characters
+2026-03-09 16:16:58,437 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:16:58,438 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:16:58,438 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:16:58,819 - INFO - OpenAI client initialized successfully
+2026-03-09 16:16:58,820 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:17:25,283 - INFO - API request completed successfully
+2026-03-09 16:17:25,283 - INFO - Response content extracted, length: 2399 characters
+2026-03-09 16:17:25,283 - INFO - ================================================================================
+2026-03-09 16:17:28,297 - INFO - ================================================================================
+2026-03-09 16:17:28,297 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:17:28,297 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:17:28,297 - INFO - Rendered prompt length: 8686 characters
+2026-03-09 16:17:28,298 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:17:28,298 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:17:28,298 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:17:28,677 - INFO - OpenAI client initialized successfully
+2026-03-09 16:17:28,677 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:17:52,232 - INFO - API request completed successfully
+2026-03-09 16:17:52,233 - INFO - Response content extracted, length: 2907 characters
+2026-03-09 16:17:52,233 - INFO - ================================================================================
+2026-03-09 16:17:55,249 - INFO - ================================================================================
+2026-03-09 16:17:55,250 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-09 16:17:55,250 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:17:55,251 - INFO - Rendered prompt length: 8781 characters
+2026-03-09 16:17:55,251 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:17:55,251 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:17:55,251 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:17:55,538 - INFO - OpenAI client initialized successfully
+2026-03-09 16:17:55,538 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:18:29,997 - INFO - API request completed successfully
+2026-03-09 16:18:29,997 - INFO - Response content extracted, length: 3327 characters
+2026-03-09 16:18:29,998 - INFO - ================================================================================
+2026-03-09 16:18:45,058 - INFO - ================================================================================
+2026-03-09 16:18:45,059 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:18:45,059 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:18:45,059 - INFO - Rendered prompt length: 8505 characters
+2026-03-09 16:18:45,059 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:18:45,060 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:18:45,060 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:18:45,351 - INFO - OpenAI client initialized successfully
+2026-03-09 16:18:45,351 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:19:09,026 - INFO - API request completed successfully
+2026-03-09 16:19:09,026 - INFO - Response content extracted, length: 2167 characters
+2026-03-09 16:19:09,026 - INFO - ================================================================================
+2026-03-09 16:19:15,053 - INFO - ================================================================================
+2026-03-09 16:19:15,053 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:19:15,053 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:19:15,054 - INFO - Rendered prompt length: 8578 characters
+2026-03-09 16:19:15,054 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:19:15,054 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:19:15,054 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:19:15,348 - INFO - OpenAI client initialized successfully
+2026-03-09 16:19:15,348 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:19:32,560 - INFO - API request completed successfully
+2026-03-09 16:19:32,560 - INFO - Response content extracted, length: 2284 characters
+2026-03-09 16:19:32,561 - INFO - ================================================================================
+2026-03-09 16:19:35,581 - INFO - ================================================================================
+2026-03-09 16:19:35,582 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:19:35,582 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:19:35,582 - INFO - Rendered prompt length: 8493 characters
+2026-03-09 16:19:35,582 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:19:35,583 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:19:35,583 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:19:35,898 - INFO - OpenAI client initialized successfully
+2026-03-09 16:19:35,898 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:19:51,272 - INFO - API request completed successfully
+2026-03-09 16:19:51,273 - INFO - Response content extracted, length: 2115 characters
+2026-03-09 16:19:51,273 - INFO - ================================================================================
+2026-03-09 16:20:09,337 - INFO - ================================================================================
+2026-03-09 16:20:09,337 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:20:09,338 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:20:09,338 - INFO - Rendered prompt length: 8580 characters
+2026-03-09 16:20:09,338 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:20:09,339 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:20:09,339 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:20:09,647 - INFO - OpenAI client initialized successfully
+2026-03-09 16:20:09,648 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:20:19,739 - INFO - API request completed successfully
+2026-03-09 16:20:19,739 - INFO - Response content extracted, length: 1129 characters
+2026-03-09 16:20:19,740 - INFO - ================================================================================
+2026-03-09 16:20:22,760 - INFO - ================================================================================
+2026-03-09 16:20:22,761 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:20:22,761 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:20:22,762 - INFO - Rendered prompt length: 8493 characters
+2026-03-09 16:20:22,762 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:20:22,762 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:20:22,762 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:20:23,129 - INFO - OpenAI client initialized successfully
+2026-03-09 16:20:23,129 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:20:42,395 - INFO - API request completed successfully
+2026-03-09 16:20:42,396 - INFO - Response content extracted, length: 2046 characters
+2026-03-09 16:20:42,396 - INFO - ================================================================================
+2026-03-09 16:20:45,417 - INFO - ================================================================================
+2026-03-09 16:20:45,417 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:20:45,417 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:20:45,417 - INFO - Rendered prompt length: 8525 characters
+2026-03-09 16:20:45,418 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:20:45,418 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:20:45,418 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:20:45,715 - INFO - OpenAI client initialized successfully
+2026-03-09 16:20:45,715 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:21:05,863 - INFO - API request completed successfully
+2026-03-09 16:21:05,863 - INFO - Response content extracted, length: 2423 characters
+2026-03-09 16:21:05,863 - INFO - ================================================================================
+2026-03-09 16:21:08,884 - INFO - ================================================================================
+2026-03-09 16:21:08,884 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:21:08,884 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:21:08,884 - INFO - Rendered prompt length: 8551 characters
+2026-03-09 16:21:08,884 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:21:08,885 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:21:08,885 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:21:09,228 - INFO - OpenAI client initialized successfully
+2026-03-09 16:21:09,228 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:21:40,305 - INFO - API request completed successfully
+2026-03-09 16:21:40,305 - INFO - Response content extracted, length: 2103 characters
+2026-03-09 16:21:40,305 - INFO - ================================================================================
+2026-03-09 16:21:43,320 - INFO - ================================================================================
+2026-03-09 16:21:43,321 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:21:43,321 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:21:43,321 - INFO - Rendered prompt length: 8512 characters
+2026-03-09 16:21:43,322 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:21:43,322 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:21:43,322 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:21:43,620 - INFO - OpenAI client initialized successfully
+2026-03-09 16:21:43,621 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:22:04,058 - INFO - API request completed successfully
+2026-03-09 16:22:04,058 - INFO - Response content extracted, length: 2213 characters
+2026-03-09 16:22:04,058 - INFO - ================================================================================
+2026-03-09 16:22:07,076 - INFO - ================================================================================
+2026-03-09 16:22:07,077 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:22:07,077 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:22:07,077 - INFO - Rendered prompt length: 8478 characters
+2026-03-09 16:22:07,077 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:22:07,078 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:22:07,078 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:22:07,380 - INFO - OpenAI client initialized successfully
+2026-03-09 16:22:07,380 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:22:26,173 - INFO - API request completed successfully
+2026-03-09 16:22:26,173 - INFO - Response content extracted, length: 1926 characters
+2026-03-09 16:22:26,174 - INFO - ================================================================================
+2026-03-09 16:22:29,190 - INFO - ================================================================================
+2026-03-09 16:22:29,191 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:22:29,191 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:22:29,191 - INFO - Rendered prompt length: 8495 characters
+2026-03-09 16:22:29,192 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:22:29,192 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:22:29,192 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:22:29,495 - INFO - OpenAI client initialized successfully
+2026-03-09 16:22:29,495 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:22:48,463 - INFO - API request completed successfully
+2026-03-09 16:22:48,463 - INFO - Response content extracted, length: 2578 characters
+2026-03-09 16:22:48,463 - INFO - ================================================================================
+2026-03-09 16:22:51,480 - INFO - ================================================================================
+2026-03-09 16:22:51,480 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:22:51,481 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:22:51,481 - INFO - Rendered prompt length: 8504 characters
+2026-03-09 16:22:51,481 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:22:51,481 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:22:51,481 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:22:51,779 - INFO - OpenAI client initialized successfully
+2026-03-09 16:22:51,779 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:23:10,018 - INFO - API request completed successfully
+2026-03-09 16:23:10,018 - INFO - Response content extracted, length: 2006 characters
+2026-03-09 16:23:10,019 - INFO - ================================================================================
+2026-03-09 16:23:13,039 - INFO - ================================================================================
+2026-03-09 16:23:13,039 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:23:13,039 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:23:13,039 - INFO - Rendered prompt length: 8493 characters
+2026-03-09 16:23:13,040 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:23:13,040 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:23:13,040 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:23:13,343 - INFO - OpenAI client initialized successfully
+2026-03-09 16:23:13,344 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:23:28,938 - INFO - API request completed successfully
+2026-03-09 16:23:28,938 - INFO - Response content extracted, length: 1678 characters
+2026-03-09 16:23:28,938 - INFO - ================================================================================
+2026-03-09 16:23:31,956 - INFO - ================================================================================
+2026-03-09 16:23:31,957 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:23:31,957 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:23:31,957 - INFO - Rendered prompt length: 8507 characters
+2026-03-09 16:23:31,958 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:23:31,958 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:23:31,958 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:23:32,271 - INFO - OpenAI client initialized successfully
+2026-03-09 16:23:32,272 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:23:52,504 - INFO - API request completed successfully
+2026-03-09 16:23:52,504 - INFO - Response content extracted, length: 2152 characters
+2026-03-09 16:23:52,505 - INFO - ================================================================================
+2026-03-09 16:23:55,521 - INFO - ================================================================================
+2026-03-09 16:23:55,522 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:23:55,522 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:23:55,523 - INFO - Rendered prompt length: 8679 characters
+2026-03-09 16:23:55,523 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:23:55,523 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:23:55,523 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:23:55,815 - INFO - OpenAI client initialized successfully
+2026-03-09 16:23:55,815 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:24:17,964 - INFO - API request completed successfully
+2026-03-09 16:24:17,964 - INFO - Response content extracted, length: 2351 characters
+2026-03-09 16:24:17,965 - INFO - ================================================================================
+2026-03-09 16:24:20,983 - INFO - ================================================================================
+2026-03-09 16:24:20,983 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:24:20,983 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:24:20,984 - INFO - Rendered prompt length: 8465 characters
+2026-03-09 16:24:20,984 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:24:20,984 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:24:20,984 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:24:21,279 - INFO - OpenAI client initialized successfully
+2026-03-09 16:24:21,279 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:24:44,172 - INFO - API request completed successfully
+2026-03-09 16:24:44,172 - INFO - Response content extracted, length: 2136 characters
+2026-03-09 16:24:44,172 - INFO - ================================================================================
+2026-03-09 16:24:47,190 - INFO - ================================================================================
+2026-03-09 16:24:47,191 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:24:47,191 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:24:47,191 - INFO - Rendered prompt length: 8615 characters
+2026-03-09 16:24:47,191 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:24:47,191 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:24:47,192 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:24:47,488 - INFO - OpenAI client initialized successfully
+2026-03-09 16:24:47,489 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:25:11,429 - INFO - API request completed successfully
+2026-03-09 16:25:11,429 - INFO - Response content extracted, length: 2712 characters
+2026-03-09 16:25:11,430 - INFO - ================================================================================
+2026-03-09 16:25:14,440 - INFO - ================================================================================
+2026-03-09 16:25:14,440 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:25:14,440 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:25:14,441 - INFO - Rendered prompt length: 8508 characters
+2026-03-09 16:25:14,441 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:25:14,441 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:25:14,442 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:25:14,735 - INFO - OpenAI client initialized successfully
+2026-03-09 16:25:14,735 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:25:27,613 - INFO - API request completed successfully
+2026-03-09 16:25:27,613 - INFO - Response content extracted, length: 1974 characters
+2026-03-09 16:25:27,614 - INFO - ================================================================================
+2026-03-09 16:25:30,635 - INFO - ================================================================================
+2026-03-09 16:25:30,636 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:25:30,636 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:25:30,637 - INFO - Rendered prompt length: 8486 characters
+2026-03-09 16:25:30,637 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:25:30,637 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:25:30,637 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:25:30,946 - INFO - OpenAI client initialized successfully
+2026-03-09 16:25:30,947 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:25:57,678 - INFO - API request completed successfully
+2026-03-09 16:25:57,678 - INFO - Response content extracted, length: 1778 characters
+2026-03-09 16:25:57,678 - INFO - ================================================================================
+2026-03-09 16:26:00,697 - INFO - ================================================================================
+2026-03-09 16:26:00,697 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:26:00,698 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:26:00,698 - INFO - Rendered prompt length: 8490 characters
+2026-03-09 16:26:00,698 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:26:00,699 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:26:00,699 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:26:00,999 - INFO - OpenAI client initialized successfully
+2026-03-09 16:26:01,000 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:26:31,091 - INFO - API request completed successfully
+2026-03-09 16:26:31,092 - INFO - Response content extracted, length: 2071 characters
+2026-03-09 16:26:31,092 - INFO - ================================================================================
+2026-03-09 16:26:34,110 - INFO - ================================================================================
+2026-03-09 16:26:34,111 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:26:34,111 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:26:34,111 - INFO - Rendered prompt length: 8490 characters
+2026-03-09 16:26:34,112 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:26:34,112 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:26:34,112 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:26:34,417 - INFO - OpenAI client initialized successfully
+2026-03-09 16:26:34,417 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:26:54,637 - INFO - API request completed successfully
+2026-03-09 16:26:54,638 - INFO - Response content extracted, length: 2465 characters
+2026-03-09 16:26:54,638 - INFO - ================================================================================
+2026-03-09 16:26:57,658 - INFO - ================================================================================
+2026-03-09 16:26:57,659 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:26:57,659 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:26:57,660 - INFO - Rendered prompt length: 8477 characters
+2026-03-09 16:26:57,660 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:26:57,660 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:26:57,660 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:26:57,973 - INFO - OpenAI client initialized successfully
+2026-03-09 16:26:57,973 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:27:18,367 - INFO - API request completed successfully
+2026-03-09 16:27:18,367 - INFO - Response content extracted, length: 1885 characters
+2026-03-09 16:27:18,368 - INFO - ================================================================================
+2026-03-09 16:27:21,387 - INFO - ================================================================================
+2026-03-09 16:27:21,387 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:27:21,387 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:27:21,388 - INFO - Rendered prompt length: 8749 characters
+2026-03-09 16:27:21,388 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:27:21,388 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:27:21,388 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:27:21,682 - INFO - OpenAI client initialized successfully
+2026-03-09 16:27:21,682 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:28:00,447 - INFO - API request completed successfully
+2026-03-09 16:28:00,448 - INFO - Response content extracted, length: 3078 characters
+2026-03-09 16:28:00,448 - INFO - ================================================================================
+2026-03-09 16:28:03,467 - INFO - ================================================================================
+2026-03-09 16:28:03,468 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:28:03,468 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:28:03,469 - INFO - Rendered prompt length: 8554 characters
+2026-03-09 16:28:03,469 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:28:03,469 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:28:03,469 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:28:03,758 - INFO - OpenAI client initialized successfully
+2026-03-09 16:28:03,759 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:28:34,383 - INFO - API request completed successfully
+2026-03-09 16:28:34,383 - INFO - Response content extracted, length: 2237 characters
+2026-03-09 16:28:34,384 - INFO - ================================================================================
+2026-03-09 16:28:37,394 - INFO - ================================================================================
+2026-03-09 16:28:37,394 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:28:37,394 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:28:37,394 - INFO - Rendered prompt length: 8544 characters
+2026-03-09 16:28:37,395 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:28:37,395 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:28:37,395 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:28:37,685 - INFO - OpenAI client initialized successfully
+2026-03-09 16:28:37,685 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:29:05,261 - INFO - API request completed successfully
+2026-03-09 16:29:05,261 - INFO - Response content extracted, length: 2607 characters
+2026-03-09 16:29:05,262 - INFO - ================================================================================
+2026-03-09 16:29:08,281 - INFO - ================================================================================
+2026-03-09 16:29:08,281 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:29:08,281 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:29:08,282 - INFO - Rendered prompt length: 8486 characters
+2026-03-09 16:29:08,282 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:29:08,282 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:29:08,282 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:29:08,572 - INFO - OpenAI client initialized successfully
+2026-03-09 16:29:08,572 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:29:23,801 - INFO - API request completed successfully
+2026-03-09 16:29:23,801 - INFO - Response content extracted, length: 2249 characters
+2026-03-09 16:29:23,802 - INFO - ================================================================================
+2026-03-09 16:29:38,852 - INFO - ================================================================================
+2026-03-09 16:29:38,852 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:29:38,853 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:29:38,853 - INFO - Rendered prompt length: 8489 characters
+2026-03-09 16:29:38,853 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:29:38,853 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:29:38,854 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:29:39,142 - INFO - OpenAI client initialized successfully
+2026-03-09 16:29:39,142 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:30:09,578 - INFO - API request completed successfully
+2026-03-09 16:30:09,578 - INFO - Response content extracted, length: 2782 characters
+2026-03-09 16:30:09,578 - INFO - ================================================================================
+2026-03-09 16:30:12,587 - INFO - ================================================================================
+2026-03-09 16:30:12,588 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:30:12,588 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:30:12,589 - INFO - Rendered prompt length: 8579 characters
+2026-03-09 16:30:12,589 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:30:12,589 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:30:12,590 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:30:12,882 - INFO - OpenAI client initialized successfully
+2026-03-09 16:30:12,882 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:30:39,208 - INFO - API request completed successfully
+2026-03-09 16:30:39,209 - INFO - Response content extracted, length: 2344 characters
+2026-03-09 16:30:39,209 - INFO - ================================================================================
+2026-03-09 16:30:42,228 - INFO - ================================================================================
+2026-03-09 16:30:42,229 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:30:42,229 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:30:42,229 - INFO - Rendered prompt length: 8554 characters
+2026-03-09 16:30:42,230 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:30:42,230 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:30:42,230 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:30:42,517 - INFO - OpenAI client initialized successfully
+2026-03-09 16:30:42,517 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:31:03,030 - INFO - API request completed successfully
+2026-03-09 16:31:03,030 - INFO - Response content extracted, length: 2181 characters
+2026-03-09 16:31:03,031 - INFO - ================================================================================
+2026-03-09 16:31:06,050 - INFO - ================================================================================
+2026-03-09 16:31:06,050 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:31:06,050 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:31:06,051 - INFO - Rendered prompt length: 8498 characters
+2026-03-09 16:31:06,051 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:31:06,051 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:31:06,051 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:31:06,341 - INFO - OpenAI client initialized successfully
+2026-03-09 16:31:06,342 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:31:25,353 - INFO - API request completed successfully
+2026-03-09 16:31:25,353 - INFO - Response content extracted, length: 2252 characters
+2026-03-09 16:31:25,353 - INFO - ================================================================================
+2026-03-09 16:31:28,371 - INFO - ================================================================================
+2026-03-09 16:31:28,372 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:31:28,372 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:31:28,372 - INFO - Rendered prompt length: 8503 characters
+2026-03-09 16:31:28,373 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:31:28,373 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:31:28,373 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:31:28,697 - INFO - OpenAI client initialized successfully
+2026-03-09 16:31:28,698 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:31:41,483 - INFO - API request completed successfully
+2026-03-09 16:31:41,483 - INFO - Response content extracted, length: 1955 characters
+2026-03-09 16:31:41,483 - INFO - ================================================================================
+2026-03-09 16:31:44,509 - INFO - ================================================================================
+2026-03-09 16:31:44,509 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:31:44,509 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:31:44,509 - INFO - Rendered prompt length: 8487 characters
+2026-03-09 16:31:44,510 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:31:44,510 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:31:44,510 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:31:44,800 - INFO - OpenAI client initialized successfully
+2026-03-09 16:31:44,800 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:32:00,756 - INFO - API request completed successfully
+2026-03-09 16:32:00,757 - INFO - Response content extracted, length: 1662 characters
+2026-03-09 16:32:00,757 - INFO - ================================================================================
+2026-03-09 16:32:03,773 - INFO - ================================================================================
+2026-03-09 16:32:03,773 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:32:03,774 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:32:03,774 - INFO - Rendered prompt length: 8600 characters
+2026-03-09 16:32:03,774 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:32:03,774 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:32:03,774 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:32:04,067 - INFO - OpenAI client initialized successfully
+2026-03-09 16:32:04,068 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:32:32,636 - INFO - API request completed successfully
+2026-03-09 16:32:32,636 - INFO - Response content extracted, length: 2686 characters
+2026-03-09 16:32:32,636 - INFO - ================================================================================
+2026-03-09 16:32:35,657 - INFO - ================================================================================
+2026-03-09 16:32:35,657 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:32:35,658 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:32:35,658 - INFO - Rendered prompt length: 8554 characters
+2026-03-09 16:32:35,658 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:32:35,659 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:32:35,659 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:32:35,949 - INFO - OpenAI client initialized successfully
+2026-03-09 16:32:35,949 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:32:53,994 - INFO - API request completed successfully
+2026-03-09 16:32:53,995 - INFO - Response content extracted, length: 2242 characters
+2026-03-09 16:32:53,995 - INFO - ================================================================================
+2026-03-09 16:32:57,012 - INFO - ================================================================================
+2026-03-09 16:32:57,013 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:32:57,013 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:32:57,013 - INFO - Rendered prompt length: 8485 characters
+2026-03-09 16:32:57,014 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:32:57,014 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:32:57,014 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:32:57,302 - INFO - OpenAI client initialized successfully
+2026-03-09 16:32:57,302 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:33:21,644 - INFO - API request completed successfully
+2026-03-09 16:33:21,645 - INFO - Response content extracted, length: 2273 characters
+2026-03-09 16:33:21,645 - INFO - ================================================================================
+2026-03-09 16:33:27,676 - INFO - ================================================================================
+2026-03-09 16:33:27,676 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:33:27,677 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:33:27,677 - INFO - Rendered prompt length: 8545 characters
+2026-03-09 16:33:27,677 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:33:27,677 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:33:27,677 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:33:27,987 - INFO - OpenAI client initialized successfully
+2026-03-09 16:33:27,987 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:33:55,713 - INFO - API request completed successfully
+2026-03-09 16:33:55,714 - INFO - Response content extracted, length: 2757 characters
+2026-03-09 16:33:55,714 - INFO - ================================================================================
+2026-03-09 16:33:58,735 - INFO - ================================================================================
+2026-03-09 16:33:58,736 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:33:58,736 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:33:58,736 - INFO - Rendered prompt length: 8617 characters
+2026-03-09 16:33:58,736 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:33:58,737 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:33:58,737 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:33:59,028 - INFO - OpenAI client initialized successfully
+2026-03-09 16:33:59,029 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:34:30,600 - ERROR - Error during OpenAI operation in AURA: Request timed out. (Type: APITimeoutError)
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1000, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+2026-03-09 16:34:30,615 - ERROR - Full traceback: Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1000, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+
+2026-03-09 16:34:30,616 - INFO - ================================================================================
+2026-03-09 16:34:33,625 - INFO - ================================================================================
+2026-03-09 16:34:33,626 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:34:33,626 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:34:33,626 - INFO - Rendered prompt length: 8484 characters
+2026-03-09 16:34:33,626 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:34:33,626 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:34:33,627 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:34:33,931 - INFO - OpenAI client initialized successfully
+2026-03-09 16:34:33,932 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:35:05,190 - ERROR - Error during OpenAI operation in AURA: Request timed out. (Type: APITimeoutError)
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1000, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+2026-03-09 16:35:05,195 - ERROR - Full traceback: Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1000, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+
+2026-03-09 16:35:05,196 - INFO - ================================================================================
+2026-03-09 16:35:11,213 - INFO - ================================================================================
+2026-03-09 16:35:11,214 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:35:11,214 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:35:11,214 - INFO - Rendered prompt length: 8628 characters
+2026-03-09 16:35:11,214 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:35:11,215 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:35:11,215 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:35:11,506 - INFO - OpenAI client initialized successfully
+2026-03-09 16:35:11,506 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:35:43,149 - ERROR - Error during OpenAI operation in AURA: Request timed out. (Type: APITimeoutError)
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1000, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+2026-03-09 16:35:43,153 - ERROR - Full traceback: Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\scripts\..\..\aura\views.py", line 103, in run_ai_analysis_for_individual_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1000, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+
+2026-03-09 16:35:43,154 - INFO - ================================================================================
+2026-03-09 16:35:46,165 - INFO - ================================================================================
+2026-03-09 16:35:46,165 - INFO - Starting run_ai_analysis_for_individual_review (session_type=FLIGHT)
+2026-03-09 16:35:46,165 - INFO - AURA prompt loaded, length: 8286 characters
+2026-03-09 16:35:46,165 - INFO - Rendered prompt length: 8513 characters
+2026-03-09 16:35:46,165 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-09 16:35:46,165 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 16:35:46,166 - INFO - Attempting to initialize OpenAI client
+2026-03-09 16:35:46,450 - INFO - OpenAI client initialized successfully
+2026-03-09 16:35:46,451 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 16:36:24,157 - INFO - API request completed successfully
+2026-03-09 16:36:24,158 - INFO - Response content extracted, length: 2452 characters
+2026-03-09 16:36:24,158 - INFO - ================================================================================

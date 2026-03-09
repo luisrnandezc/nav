@@ -8,7 +8,8 @@ class SimEvaluationAdmin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'simulator', 'session_number', 'session_sim_hours', 'session_type', 'session_grade'
+        'session_date', 'simulator', 'session_number', 'session_sim_hours', 'session_type', 'session_grade', 
+        'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'simulator', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -98,7 +99,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Sección 16: Comentarios', {
-            'fields': ('comments', 'aura_processed'),
+            'fields': ('comments', 'aura_processed', 'aura_review'),
         }),
     )
     
@@ -121,7 +122,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
             'app_9', 'app_10', 'app_11', 'app_12', 'app_13', 'app_14', 'app_15', 'app_16',
             'app_17', 'app_18', 'app_19', 'app_20', 'app_21', 'app_22', 'app_23', 'app_24',
             'go_1', 'go_2',
-            'comments', 'aura_processed'
+            'comments', 'aura_processed', 'aura_review'
     ]
     
     def has_add_permission(self, request):
@@ -172,7 +173,8 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade',
+        'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -257,7 +259,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Sección 11: Comentarios', {
-            'fields': ('comments', 'aura_processed')
+            'fields': ('comments', 'aura_processed', 'aura_review')
         }),
     )
     
@@ -274,7 +276,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'emer_3', 'emer_4', 'emer_5', 'emer_6', 'nav_1', 'nav_2', 'nav_3', 'nav_4', 'nav_5', 'nav_6',
         'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7', 'land_1', 'land_2', 'land_3',
         'land_4', 'land_5', 'land_6', 'land_7', 'land_8', 'land_9', 'land_10', 
-        'comments', 'aura_processed'
+        'comments', 'aura_processed', 'aura_review'
     ]
     
     def has_add_permission(self, request):
@@ -313,7 +315,8 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade',
+        'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -397,7 +400,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Sección 11: Comentarios', {
-            'fields': ('comments', 'aura_processed')
+            'fields': ('comments', 'aura_processed', 'aura_review')
         }),
     )
     
@@ -415,7 +418,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7', 'emer_1',
         'emer_2', 'emer_3', 'emer_4', 'emer_5', 'gen_1', 'gen_2', 'gen_3', 'gen_4',
         'gen_5', 'gen_6', 'gen_7', 
-        'comments', 'aura_processed'
+        'comments', 'aura_processed', 'aura_review'
     ]
     
     def has_add_permission(self, request):
@@ -447,7 +450,8 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade'
+        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade',
+        'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
     search_fields = ['student_first_name', 'student_last_name', 'instructor_first_name', 'instructor_last_name']
@@ -524,7 +528,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Sección 10: Comentarios', {
-            'fields': ('comments', 'aura_processed')
+            'fields': ('comments', 'aura_processed', 'aura_review')
         }),
     )
     
@@ -539,8 +543,8 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9',
         'inst_10', 'inst_11', 'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6',
         'land_7', 'emer_1', 'emer_2', 'emer_3', 'emer_4', 'gen_1', 'gen_2', 'gen_3',
-        'gen_4', 'gen_5', 'gen_6', 'gen_7', 
-        'comments', 'aura_processed'
+        'gen_4', 'gen_5', 'gen_6', 'gen_7',
+        'comments', 'aura_processed', 'aura_review'
     ]
     
     def has_add_permission(self, request):

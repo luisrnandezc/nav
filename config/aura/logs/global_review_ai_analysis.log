@@ -1,0 +1,486 @@
+2026-03-09 17:39:06,957 - INFO - ================================================================================
+2026-03-09 17:39:06,958 - INFO - Starting run_ai_analysis_for_global_review for student id=42
+2026-03-09 17:39:06,958 - INFO - AURA global prompt loaded, length: 7317 characters
+2026-03-09 17:39:06,960 - INFO - Student reviews JSON length: 17600 characters
+2026-03-09 17:39:06,960 - INFO - Rendered global prompt length: 42473 characters
+2026-03-09 17:39:06,960 - INFO - Retrieving OPENAI_API_KEY from environment variables for global review
+2026-03-09 17:39:06,960 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 17:39:06,961 - INFO - Attempting to initialize OpenAI client for global review
+2026-03-09 17:39:07,283 - INFO - OpenAI client initialized successfully for global review
+2026-03-09 17:39:07,284 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 17:42:18,943 - INFO - API request for global review completed successfully
+2026-03-09 17:42:18,943 - INFO - Global review response content length: 9738 characters
+2026-03-09 17:42:18,943 - INFO - ================================================================================
+2026-03-09 17:53:21,162 - INFO - ================================================================================
+2026-03-09 17:53:21,163 - INFO - Starting run_ai_analysis_for_global_review for student id=38
+2026-03-09 17:53:21,163 - INFO - AURA global prompt loaded, length: 7317 characters
+2026-03-09 17:53:21,166 - INFO - Student reviews JSON length: 38590 characters
+2026-03-09 17:53:21,166 - INFO - Rendered global prompt length: 84453 characters
+2026-03-09 17:53:21,167 - INFO - Retrieving OPENAI_API_KEY from environment variables for global review
+2026-03-09 17:53:21,167 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 17:53:21,167 - INFO - Attempting to initialize OpenAI client for global review
+2026-03-09 17:53:21,514 - INFO - OpenAI client initialized successfully for global review
+2026-03-09 17:53:21,514 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 17:56:24,395 - ERROR - Error during OpenAI operation in AURA global review: Connection error. (Type: APIConnectionError)
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 231, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\views.py", line 239, in run_ai_analysis_for_global_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1014, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+2026-03-09 17:56:24,409 - ERROR - Full traceback: Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 231, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\views.py", line 239, in run_ai_analysis_for_global_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1014, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+
+2026-03-09 17:56:24,411 - INFO - ================================================================================
+2026-03-09 17:56:52,422 - INFO - ================================================================================
+2026-03-09 17:56:52,422 - INFO - Starting run_ai_analysis_for_global_review for student id=38
+2026-03-09 17:56:52,423 - INFO - AURA global prompt loaded, length: 7317 characters
+2026-03-09 17:56:52,427 - INFO - Student reviews JSON length: 38590 characters
+2026-03-09 17:56:52,427 - INFO - Rendered global prompt length: 84453 characters
+2026-03-09 17:56:52,427 - INFO - Retrieving OPENAI_API_KEY from environment variables for global review
+2026-03-09 17:56:52,428 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 17:56:52,428 - INFO - Attempting to initialize OpenAI client for global review
+2026-03-09 17:56:52,782 - INFO - OpenAI client initialized successfully for global review
+2026-03-09 17:56:52,782 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 17:59:55,773 - ERROR - Error during OpenAI operation in AURA global review: Connection error. (Type: APIConnectionError)
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 231, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\views.py", line 239, in run_ai_analysis_for_global_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1014, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+2026-03-09 17:59:55,777 - ERROR - Full traceback: Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 231, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\views.py", line 239, in run_ai_analysis_for_global_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1014, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+
+2026-03-09 17:59:55,778 - INFO - ================================================================================
+2026-03-09 18:01:14,780 - INFO - ================================================================================
+2026-03-09 18:01:14,781 - INFO - Starting run_ai_analysis_for_global_review for student id=39
+2026-03-09 18:01:14,782 - INFO - AURA global prompt loaded, length: 7317 characters
+2026-03-09 18:01:14,786 - INFO - Student reviews JSON length: 33556 characters
+2026-03-09 18:01:14,786 - INFO - Rendered global prompt length: 74385 characters
+2026-03-09 18:01:14,787 - INFO - Retrieving OPENAI_API_KEY from environment variables for global review
+2026-03-09 18:01:14,787 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 18:01:14,788 - INFO - Attempting to initialize OpenAI client for global review
+2026-03-09 18:01:15,160 - INFO - OpenAI client initialized successfully for global review
+2026-03-09 18:01:15,161 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-09 18:04:18,528 - ERROR - Error during OpenAI operation in AURA global review: Connection error. (Type: APIConnectionError)
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 231, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\views.py", line 239, in run_ai_analysis_for_global_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1014, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+2026-03-09 18:04:18,550 - ERROR - Full traceback: Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 236, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpcore\_sync\http11.py", line 231, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 982, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 235, in handle_request
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\luish\projects\nav\config\aura\views.py", line 239, in run_ai_analysis_for_global_review
+    response = client.responses.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\resources\responses\responses.py", line 840, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1259, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luish\projects\nav\venv\Lib\site-packages\openai\_base_client.py", line 1014, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+
+2026-03-09 18:04:18,555 - INFO - ================================================================================
+2026-03-09 18:13:29,407 - INFO - ================================================================================
+2026-03-09 18:13:29,407 - INFO - Starting run_ai_analysis_for_global_review for student id=39
+2026-03-09 18:13:29,407 - INFO - AURA global prompt loaded, length: 7317 characters
+2026-03-09 18:13:29,410 - INFO - Student reviews JSON length: 33556 characters
+2026-03-09 18:13:29,411 - INFO - Rendered global prompt length: 74385 characters
+2026-03-09 18:13:29,411 - INFO - Retrieving OPENAI_API_KEY from environment variables for global review
+2026-03-09 18:13:29,411 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 18:13:29,411 - INFO - Attempting to initialize OpenAI client for global review
+2026-03-09 18:13:29,765 - INFO - OpenAI client initialized successfully for global review
+2026-03-09 18:13:29,765 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5-nano, effort=medium, verbosity=low)
+2026-03-09 18:16:33,286 - INFO - API request for global review completed successfully
+2026-03-09 18:16:33,286 - INFO - Global review response content length: 6224 characters
+2026-03-09 18:16:33,286 - INFO - ================================================================================
+2026-03-09 18:17:13,925 - INFO - ================================================================================
+2026-03-09 18:17:13,925 - INFO - Starting run_ai_analysis_for_global_review for student id=38
+2026-03-09 18:17:13,926 - INFO - AURA global prompt loaded, length: 7317 characters
+2026-03-09 18:17:13,929 - INFO - Student reviews JSON length: 38590 characters
+2026-03-09 18:17:13,930 - INFO - Rendered global prompt length: 84453 characters
+2026-03-09 18:17:13,930 - INFO - Retrieving OPENAI_API_KEY from environment variables for global review
+2026-03-09 18:17:13,930 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-09 18:17:13,931 - INFO - Attempting to initialize OpenAI client for global review
+2026-03-09 18:17:14,278 - INFO - OpenAI client initialized successfully for global review
+2026-03-09 18:17:14,279 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5-nano, effort=medium, verbosity=low)
+2026-03-09 18:20:12,323 - INFO - API request for global review completed successfully
+2026-03-09 18:20:12,324 - INFO - Global review response content length: 5961 characters
+2026-03-09 18:20:12,325 - INFO - ================================================================================

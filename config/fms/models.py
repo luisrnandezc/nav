@@ -772,6 +772,14 @@ class SimEvaluation(models.Model):
         verbose_name='Procesado por AURA',
         help_text='Indica si esta sesión de simulador ya fue procesada por AURA.',
     )
+    aura_review = models.OneToOneField(
+        'aura.IndividualReview',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='sim_evaluation',
+        verbose_name='Revisión AURA',
+    )
 
     def total_sim_hours(self):
         """Return the sum of accumulated and session hours."""
@@ -1410,6 +1418,14 @@ class FlightEvaluation0_100(models.Model):
         verbose_name='Procesado por AURA',
         help_text='Indica si esta sesión de vuelo ya fue procesada por AURA.',
     )
+    aura_review = models.OneToOneField(
+        'aura.IndividualReview',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='flight_eval_0_100',
+        verbose_name='Revisión AURA',
+    )
 
     @property
     def calculated_session_flight_hours(self):
@@ -2031,6 +2047,14 @@ class FlightEvaluation100_120(models.Model):
         verbose_name='Procesado por AURA',
         help_text='Indica si esta sesión de vuelo ya fue procesada por AURA.',
     )
+    aura_review = models.OneToOneField(
+        'aura.IndividualReview',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='flight_eval_100_120',
+        verbose_name='Revisión AURA',
+    )
 
     @property
     def calculated_session_flight_hours(self):
@@ -2576,6 +2600,14 @@ class FlightEvaluation120_170(models.Model):
         default=False,
         verbose_name='Procesado por AURA',
         help_text='Indica si esta sesión de vuelo ya fue procesada por AURA.',
+    )
+    aura_review = models.OneToOneField(
+        'aura.IndividualReview',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='flight_eval_120_170',
+        verbose_name='Revisión AURA',
     )
 
     @property

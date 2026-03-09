@@ -1,0 +1,43 @@
+/* AURA staff dashboard – overrides on top of SMS base/dashboard */
+
+.aura-student-data {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.aura-card-action {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: right;
+}
+
+.aura-card-action-text {
+  color: #dae1ff;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.report-card-link:hover .aura-card-action-text {
+  opacity: 1;
+}
+
+.aura-messages {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+}
+
+.aura-messages li {
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  background: rgba(218, 225, 255, 0.1);
+  border: 1px solid rgba(218, 225, 255, 0.3);
+  border-radius: 8px;
+  color: #dae1ff;
+}
+
+@media screen and (max-width: 768px) {
+  .aura-student-data {
+    grid-template-columns: 1fr;
+  }
+}

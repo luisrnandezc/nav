@@ -192,9 +192,13 @@ def process_single_session(session, session_type: str) -> bool:
         )
     )
 
-    # Mark session as processed
+    # Mark session as processed and link to the created review
     session.aura_processed = True
-    session.save(update_fields=["aura_processed"])
+    if hasattr(session, "aura_review"):
+        session.aura_review = individual_review
+        session.save(update_fields=["aura_processed", "aura_review"])
+    else:
+        session.save(update_fields=["aura_processed"])
 
     return True
 

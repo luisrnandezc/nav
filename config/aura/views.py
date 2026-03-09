@@ -2,9 +2,17 @@ import json
 import logging
 import os
 import sys
+from datetime import timedelta
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from openai import OpenAI
+
+from accounts.models import StudentProfile
+from .models import IndividualReview, GlobalReview
 
 
 def aura_individual_review_logger():
@@ -123,3 +131,273 @@ def run_ai_analysis_for_individual_review(session_comment: str, session_type: st
         logger.info("=" * 80)
         print("[ERROR] %s" % error_msg)
         return f"Error: {e}"
+
+
+def aura_global_review_logger():
+    """
+    Logger for AURA global review AI analysis.
+    """
+    log_dir = os.path.join(settings.BASE_DIR, "aura", "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    log_file_path = os.path.join(log_dir, "global_review_ai_analysis.log")
+
+    logger = logging.getLogger("aura_global_review_ai_analysis")
+    logger.setLevel(logging.DEBUG)
+
+    logger.handlers = []
+
+    file_handler = logging.FileHandler(log_file_path)
+    file_handler.setLevel(logging.DEBUG)
+    file_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    file_handler.setFormatter(file_formatter)
+    logger.addHandler(file_handler)
+
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.DEBUG)
+    console_formatter = logging.Formatter("[AURA-GLOBAL] %(asctime)s - %(levelname)s - %(message)s")
+    console_handler.setFormatter(console_formatter)
+    logger.addHandler(console_handler)
+
+    return logger
+
+
+def run_ai_analysis_for_global_review(student, reviews):
+    """
+    Run the AURA AI analysis to build a global review from multiple IndividualReview instances.
+
+    Args:
+        student: User instance (student).
+        reviews: iterable of IndividualReview instances (already filtered for this student).
+
+    Returns:
+        Raw text response from OpenAI (expected JSON), or string starting with 'Error:'.
+    """
+    logger = aura_global_review_logger()
+
+    logger.info("=" * 80)
+    logger.info("Starting run_ai_analysis_for_global_review for student id=%s", getattr(student, "id", None))
+
+    base_prompt = settings.AURA_GLOBAL_REVIEW_PROMPT
+    if not base_prompt:
+        error_msg = "Error: AURA_GLOBAL_REVIEW_PROMPT is empty or not loaded."
+        logger.error(error_msg)
+        return error_msg
+
+    logger.info("AURA global prompt loaded, length: %d characters", len(base_prompt))
+
+    # Build compact JSON input from individual reviews
+    payload = []
+    for review in reviews:
+        ai_result = review.ai_result or {}
+        session_metadata = ai_result.get("session_metadata", {}) or {}
+        entry = {
+            "created_at": review.created_at.isoformat(),
+            "session_type": session_metadata.get("session_type", "UNKNOWN"),
+            "ai_result": ai_result,
+        }
+        payload.append(entry)
+
+    if not payload:
+        error_msg = "Error: No individual reviews provided for global analysis."
+        logger.error(error_msg)
+        return error_msg
+
+    student_reviews_json = json.dumps(payload, ensure_ascii=False)
+    logger.info("Student reviews JSON length: %d characters", len(student_reviews_json))
+
+    # Replace placeholder safely without using str.format on the whole prompt
+    rendered_prompt = base_prompt.replace("{student_reviews_json}", student_reviews_json)
+    logger.info("Rendered global prompt length: %d characters", len(rendered_prompt))
+
+    logger.info("Retrieving OPENAI_API_KEY from environment variables for global review")
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        error_msg = "Error: OpenAI API key not found in environment variables."
+        logger.error(error_msg)
+        print("[ERROR] %s" % error_msg)
+        return error_msg
+
+    logger.info("API key retrieved successfully (length: %d characters)", len(api_key) if api_key else 0)
+
+    try:
+        logger.info("Attempting to initialize OpenAI client for global review")
+        client = OpenAI(api_key=api_key)
+        logger.info("OpenAI client initialized successfully for global review")
+
+        model = "gpt-5-nano"
+        tools = [{"type": "web_search"}]
+        reasoning = {"effort": "medium"}
+        text = {"verbosity": "low"}
+
+        logger.info(
+            "Making API request to OpenAI responses endpoint (GLOBAL) (model=%s, effort=%s, verbosity=%s)",
+            model,
+            reasoning["effort"],
+            text["verbosity"],
+        )
+
+        response = client.responses.create(
+            model=model,
+            tools=tools,
+            reasoning=reasoning,
+            text=text,
+            instructions=base_prompt,
+            input=rendered_prompt,
+        )
+
+        logger.info("API request for global review completed successfully")
+
+        content = response.output_text
+        logger.info("Global review response content length: %d characters", len(content) if content else 0)
+
+        logger.info("=" * 80)
+        return content
+
+    except Exception as e:
+        import traceback
+
+        error_msg = f"Error during OpenAI operation in AURA global review: {e} (Type: {type(e).__name__})"
+        logger.error(error_msg, exc_info=True)
+        logger.error("Full traceback: %s", traceback.format_exc())
+        logger.info("=" * 80)
+        print("[ERROR] %s" % error_msg)
+        return f"Error: {e}"
+
+
+def generate_global_review_for_student(
+    student,
+    start_date=None,
+    end_date=None,
+    scope_type=GlobalReview.SCOPE_OVERALL,
+    time_window=GlobalReview.WINDOW_CUSTOM,
+):
+    """
+    Generate a GlobalReview snapshot for a given student and optional date range.
+
+    This function can be called from the Django shell or future management commands.
+    """
+    qs = IndividualReview.objects.filter(student=student, ai_status=IndividualReview.STATUS_COMPLETED)
+
+    if start_date:
+        qs = qs.filter(created_at__gte=start_date)
+    if end_date:
+        qs = qs.filter(created_at__lte=end_date)
+
+    qs = qs.order_by("created_at")
+
+    if not qs.exists():
+        return None
+
+    response_text = run_ai_analysis_for_global_review(student, qs)
+    if not response_text or not isinstance(response_text, str) or response_text.startswith("Error:"):
+        return None
+
+    try:
+        parsed = json.loads(response_text)
+    except (json.JSONDecodeError, ValueError):
+        return None
+
+    first_review = qs.first()
+    last_review = qs.last()
+
+    now = timezone.now()
+    global_review = GlobalReview.objects.create(
+        student=student,
+        scope_type=scope_type,
+        time_window=time_window,
+        ai_status=GlobalReview.STATUS_COMPLETED,
+        ai_raw_response=response_text,
+        ai_result=parsed,
+        based_on_from=first_review.created_at,
+        based_on_to=last_review.created_at,
+    )
+
+    global_review.individual_reviews.set(qs)
+
+    # Update aggregation flags on individual reviews
+    qs_without_flag = qs.filter(has_been_included_in_global_review=False)
+    qs.update(has_been_included_in_global_review=True)
+    qs_without_flag.update(first_included_in_global_review_at=now)
+
+    return global_review
+
+
+@login_required
+def staff_aura_dashboard(request):
+    """
+    Staff-only view listing active (flying) students for AURA global review.
+    """
+    user = request.user
+    if getattr(user, "role", None) != "STAFF":
+        messages.error(request, "No tiene permisos para acceder a AURA.")
+        return redirect("dashboard:dashboard")
+
+    flying_students = (
+        StudentProfile.objects.select_related("user")
+        .filter(student_phase=StudentProfile.FLYING)
+        .order_by("user__last_name", "user__first_name")
+    )
+
+    context = {
+        "students": flying_students,
+    }
+    return render(request, "aura/staff_aura_dashboard.html", context)
+
+
+@login_required
+def staff_student_global_review(request, student_profile_id: int):
+    """
+    Staff-only view to generate and inspect a student's AURA global review.
+
+    For now, this always targets OVERALL + LAST_90_DAYS.
+    """
+    user = request.user
+    if getattr(user, "role", None) != "STAFF":
+        messages.error(request, "No tiene permisos para acceder a AURA.")
+        return redirect("dashboard:dashboard")
+
+    student_profile = get_object_or_404(
+        StudentProfile.objects.select_related("user"),
+        id=student_profile_id,
+        student_phase=StudentProfile.FLYING,
+    )
+    student_user = student_profile.user
+
+    # Latest existing global review for default scope/time window
+    latest_review = (
+        GlobalReview.objects.filter(
+            student=student_user,
+            scope_type=GlobalReview.SCOPE_OVERALL,
+            time_window=GlobalReview.WINDOW_LAST_90_DAYS,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    if request.method == "POST":
+        # Default: OVERALL + last 90 days
+        start_date = timezone.now() - timedelta(days=90)
+        new_review = generate_global_review_for_student(
+            student_user,
+            start_date=start_date,
+            end_date=None,
+            scope_type=GlobalReview.SCOPE_OVERALL,
+            time_window=GlobalReview.WINDOW_LAST_90_DAYS,
+        )
+        if new_review:
+            messages.success(
+                request,
+                "Se generó el perfil global AURA (últimos 90 días) para este alumno.",
+            )
+        else:
+            messages.error(
+                request,
+                "No se pudo generar el perfil global AURA. Verifique que existan revisiones individuales.",
+            )
+        return redirect("aura:staff_student_global_review", student_profile_id=student_profile.id)
+
+    context = {
+        "student_profile": student_profile,
+        "latest_review": latest_review,
+    }
+    return render(request, "aura/staff_student_global_review.html", context)

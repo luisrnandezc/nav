@@ -1,0 +1,77 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AURA | Panel de alumnos</title>
+    <link href="{% static 'sms_base.css' %}" rel="stylesheet" />
+    <link href="{% static 'sms_dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'aura_staff_dashboard.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="back-button">
+        <a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
+      </div>
+
+      <div class="main-header">
+        <h1>AURA</h1>
+        <p>Perfil global de alumnos (Línea de vuelo)</p>
+      </div>
+
+      <div class="cards-container">
+        <div class="cards-container-header">
+          <h2>Alumnos en línea de vuelo</h2>
+        </div>
+
+        {% if messages %}
+          <ul class="aura-messages">
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        {% if students %}
+          <div class="reports-list-container">
+            {% for sp in students %}
+              <a href="{% url 'aura:staff_student_global_review' sp.id %}" class="report-card-link">
+                <div class="report-card">
+                  <div class="report-content">
+                    <div class="report-data-section aura-student-data">
+                      <div class="report-data">
+                        <span class="report-label">Alumno:</span>
+                        <span class="report-value">{{ sp.user.first_name }} {{ sp.user.last_name }}</span>
+                      </div>
+                      <div class="report-data">
+                        <span class="report-label">Usuario:</span>
+                        <span class="report-value">{{ sp.user.username }}</span>
+                      </div>
+                      <div class="report-data">
+                        <span class="report-label">ID:</span>
+                        <span class="report-value">{{ sp.user.national_id }}</span>
+                      </div>
+                      <div class="report-data">
+                        <span class="report-label">Fase:</span>
+                        <span class="report-value">{{ sp.get_student_phase_display }}</span>
+                      </div>
+                    </div>
+                    <div class="aura-card-action">
+                      <span class="aura-card-action-text">Ver / generar perfil &rarr;</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="no-reports">
+            <p>No hay alumnos activos en línea de vuelo.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

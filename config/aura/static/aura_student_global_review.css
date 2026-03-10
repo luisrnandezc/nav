@@ -1,6 +1,12 @@
 /* AURA student global review – overrides on top of SMS base/dashboard */
 
+.aura-student-card .report-data-section {
+  grid-template-columns: 1fr 1fr;
+}
+
 .aura-meta-grid {
+  padding-top: 12px;
+  padding-bottom: 12px;
   margin-bottom: 15px;
 }
 
@@ -9,24 +15,9 @@
   flex-wrap: wrap;
   gap: 15px;
   align-items: center;
+  justify-content: center;
   padding-top: 15px;
   border-top: 1px solid rgba(218, 225, 255, 0.3);
-}
-
-.aura-back-btn {
-  background-color: rgba(218, 225, 255, 0.2);
-  border: 1px solid #dae1ff;
-  color: #dae1ff;
-  font-size: 1rem;
-  padding: 10px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.3s ease;
-}
-
-.aura-back-btn:hover {
-  background-color: rgba(218, 225, 255, 0.3);
 }
 
 .aura-form-inline {
@@ -34,22 +25,24 @@
 }
 
 .aura-submit-btn {
-  background-color: #e84728;
+  background-color: #2196f3;
   color: #ffffff;
-  border: none;
-  font-size: 1rem;
-  padding: 10px 20px;
-  border-radius: 5px;
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-family: inherit;
 }
 
 .aura-submit-btn:hover {
-  background-color: #d63e20;
-  box-shadow: 0 4px 8px rgba(232, 71, 40, 0.3);
+  background-color: transparent;
+  border: 1px solid #dae1ff;
+  color: #dae1ff;
 }
 
 .aura-messages {
@@ -113,17 +106,6 @@
   font-size: 0.95rem;
 }
 
-.aura-tags-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.aura-tag {
-  font-size: 0.85rem;
-  padding: 4px 10px;
-}
-
 .aura-empty-text {
   margin: 0;
   color: #dae1ff;
@@ -133,11 +115,14 @@
 
 @media screen and (max-width: 768px) {
   .aura-actions-row {
-    flex-direction: column;
-    align-items: flex-start;
+    justify-content: center;
   }
 
   .aura-two-cols {
+    grid-template-columns: 1fr;
+  }
+
+  .aura-student-card .report-data-section {
     grid-template-columns: 1fr;
   }
 }

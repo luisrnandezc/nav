@@ -178,11 +178,6 @@ Devuelve SIEMPRE un JSON con esta estructura EXACTA (todas las claves presentes)
   ],
   "recommendations_for_instructor": [
     "recomendación 1"
-  ],
-  "keywords": [
-    "circuitos",
-    "aterrizaje",
-    "CRM"
   ]
 }
 

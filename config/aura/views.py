@@ -161,6 +161,85 @@ def aura_global_review_logger():
     return logger
 
 
+def _build_global_review_payload(reviews):
+    payload = []
+    for review in reviews:
+        ai_result = review.ai_result or {}
+        session_metadata = ai_result.get("session_metadata", {}) or {}
+        payload.append(
+            {
+                "created_at": review.created_at.isoformat(),
+                "session_type": session_metadata.get("session_type", "UNKNOWN"),
+                "ai_result": ai_result,
+            }
+        )
+    return payload
+
+
+def _run_global_review_completion(base_prompt: str, rendered_prompt: str, request_label: str) -> str:
+    logger = aura_global_review_logger()
+    logger.info("Retrieving OPENAI_API_KEY from environment variables for %s", request_label)
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        error_msg = "Error: OpenAI API key not found in environment variables."
+        logger.error(error_msg)
+        print("[ERROR] %s" % error_msg)
+        return error_msg
+
+    logger.info("API key retrieved successfully (length: %d characters)", len(api_key) if api_key else 0)
+
+    try:
+        logger.info("Attempting to initialize OpenAI client for %s", request_label)
+        client = OpenAI(api_key=api_key)
+        logger.info("OpenAI client initialized successfully for %s", request_label)
+
+        model = "gpt-5-nano"
+        tools = [{"type": "web_search"}]
+        reasoning = {"effort": "medium"}
+        text = {"verbosity": "low"}
+
+        logger.info(
+            "Making API request to OpenAI responses endpoint (%s) (model=%s, effort=%s, verbosity=%s)",
+            request_label,
+            model,
+            reasoning["effort"],
+            text["verbosity"],
+        )
+
+        response = client.responses.create(
+            model=model,
+            tools=tools,
+            reasoning=reasoning,
+            text=text,
+            instructions=base_prompt,
+            input=rendered_prompt,
+        )
+
+        logger.info("API request for %s completed successfully", request_label)
+
+        content = response.output_text
+        logger.info(
+            "%s response content length: %d characters",
+            request_label,
+            len(content) if content else 0,
+        )
+        logger.info("=" * 80)
+        return content
+
+    except Exception as e:
+        import traceback
+
+        error_msg = (
+            f"Error during OpenAI operation in AURA {request_label.lower()}: {e} "
+            f"(Type: {type(e).__name__})"
+        )
+        logger.error(error_msg, exc_info=True)
+        logger.error("Full traceback: %s", traceback.format_exc())
+        logger.info("=" * 80)
+        print("[ERROR] %s" % error_msg)
+        return f"Error: {e}"
+
+
 def run_ai_analysis_for_global_review(student, reviews):
     """
     Run the AURA AI analysis to build a global review from multiple IndividualReview instances.
@@ -185,18 +264,7 @@ def run_ai_analysis_for_global_review(student, reviews):
 
     logger.info("AURA global prompt loaded, length: %d characters", len(base_prompt))
 
-    # Build compact JSON input from individual reviews
-    payload = []
-    for review in reviews:
-        ai_result = review.ai_result or {}
-        session_metadata = ai_result.get("session_metadata", {}) or {}
-        entry = {
-            "created_at": review.created_at.isoformat(),
-            "session_type": session_metadata.get("session_type", "UNKNOWN"),
-            "ai_result": ai_result,
-        }
-        payload.append(entry)
-
+    payload = _build_global_review_payload(reviews)
     if not payload:
         error_msg = "Error: No individual reviews provided for global analysis."
         logger.error(error_msg)
@@ -209,59 +277,110 @@ def run_ai_analysis_for_global_review(student, reviews):
     rendered_prompt = base_prompt.replace("{student_reviews_json}", student_reviews_json)
     logger.info("Rendered global prompt length: %d characters", len(rendered_prompt))
 
-    logger.info("Retrieving OPENAI_API_KEY from environment variables for global review")
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        error_msg = "Error: OpenAI API key not found in environment variables."
+    return _run_global_review_completion(base_prompt, rendered_prompt, request_label="GLOBAL")
+
+
+def run_ai_analysis_for_incremental_global_review(student, previous_global_review, new_review):
+    """
+    Update an existing global review snapshot by integrating one new completed individual review.
+    """
+    logger = aura_global_review_logger()
+
+    logger.info("=" * 80)
+    logger.info(
+        "Starting run_ai_analysis_for_incremental_global_review for student id=%s, previous_global_review_id=%s, new_review_id=%s",
+        getattr(student, "id", None),
+        getattr(previous_global_review, "id", None),
+        getattr(new_review, "id", None),
+    )
+
+    base_prompt = settings.AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT
+    if not base_prompt:
+        error_msg = "Error: AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT is empty or not loaded."
         logger.error(error_msg)
-        print("[ERROR] %s" % error_msg)
         return error_msg
 
-    logger.info("API key retrieved successfully (length: %d characters)", len(api_key) if api_key else 0)
+    logger.info("AURA incremental global prompt loaded, length: %d characters", len(base_prompt))
 
-    try:
-        logger.info("Attempting to initialize OpenAI client for global review")
-        client = OpenAI(api_key=api_key)
-        logger.info("OpenAI client initialized successfully for global review")
+    previous_global_review_json = json.dumps(previous_global_review.ai_result or {}, ensure_ascii=False)
+    new_review_payload = _build_global_review_payload([new_review])[0]
+    new_individual_review_json = json.dumps(new_review_payload, ensure_ascii=False)
 
-        model = "gpt-5-nano"
-        tools = [{"type": "web_search"}]
-        reasoning = {"effort": "medium"}
-        text = {"verbosity": "low"}
+    logger.info("Previous global review JSON length: %d characters", len(previous_global_review_json))
+    logger.info("New individual review JSON length: %d characters", len(new_individual_review_json))
 
-        logger.info(
-            "Making API request to OpenAI responses endpoint (GLOBAL) (model=%s, effort=%s, verbosity=%s)",
-            model,
-            reasoning["effort"],
-            text["verbosity"],
-        )
+    rendered_prompt = base_prompt.replace(
+        "{previous_global_review_json}",
+        previous_global_review_json,
+    ).replace(
+        "{new_individual_review_json}",
+        new_individual_review_json,
+    )
+    logger.info("Rendered incremental global prompt length: %d characters", len(rendered_prompt))
 
-        response = client.responses.create(
-            model=model,
-            tools=tools,
-            reasoning=reasoning,
-            text=text,
-            instructions=base_prompt,
-            input=rendered_prompt,
-        )
+    return _run_global_review_completion(base_prompt, rendered_prompt, request_label="GLOBAL_INCREMENTAL")
 
-        logger.info("API request for global review completed successfully")
 
-        content = response.output_text
-        logger.info("Global review response content length: %d characters", len(content) if content else 0)
+def _get_completed_individual_reviews(student, start_date=None, end_date=None):
+    qs = IndividualReview.objects.filter(student=student, ai_status=IndividualReview.STATUS_COMPLETED)
 
-        logger.info("=" * 80)
-        return content
+    if start_date:
+        qs = qs.filter(created_at__gte=start_date)
+    if end_date:
+        qs = qs.filter(created_at__lte=end_date)
 
-    except Exception as e:
-        import traceback
+    return qs.order_by("created_at")
 
-        error_msg = f"Error during OpenAI operation in AURA global review: {e} (Type: {type(e).__name__})"
-        logger.error(error_msg, exc_info=True)
-        logger.error("Full traceback: %s", traceback.format_exc())
-        logger.info("=" * 80)
-        print("[ERROR] %s" % error_msg)
-        return f"Error: {e}"
+
+def _create_global_review_snapshot(
+    *,
+    student,
+    reviews_qs,
+    response_text,
+    parsed_response,
+    scope_type,
+    time_window,
+    generation_mode,
+    previous_global_review=None,
+):
+    first_review = reviews_qs.first()
+    last_review = reviews_qs.last()
+    now = timezone.now()
+
+    global_review = GlobalReview.objects.create(
+        student=student,
+        scope_type=scope_type,
+        time_window=time_window,
+        generation_mode=generation_mode,
+        previous_global_review=previous_global_review,
+        ai_status=GlobalReview.STATUS_COMPLETED,
+        ai_raw_response=response_text,
+        ai_result=parsed_response,
+        based_on_from=first_review.created_at if first_review else None,
+        based_on_to=last_review.created_at if last_review else None,
+    )
+
+    global_review.individual_reviews.set(reviews_qs)
+
+    qs_without_flag = reviews_qs.filter(has_been_included_in_global_review=False)
+    reviews_qs.update(has_been_included_in_global_review=True)
+    qs_without_flag.update(first_included_in_global_review_at=now)
+
+    return global_review
+
+
+def _is_incremental_global_review_usable(global_review):
+    if not global_review or not isinstance(global_review.ai_result, dict):
+        return False
+
+    required_keys = {
+        "summary_text",
+        "global_strengths",
+        "global_weaknesses",
+        "domains",
+        "next_session_awareness",
+    }
+    return required_keys.issubset(global_review.ai_result.keys())
 
 
 def generate_global_review_for_student(
@@ -276,14 +395,7 @@ def generate_global_review_for_student(
 
     This function can be called from the Django shell or future management commands.
     """
-    qs = IndividualReview.objects.filter(student=student, ai_status=IndividualReview.STATUS_COMPLETED)
-
-    if start_date:
-        qs = qs.filter(created_at__gte=start_date)
-    if end_date:
-        qs = qs.filter(created_at__lte=end_date)
-
-    qs = qs.order_by("created_at")
+    qs = _get_completed_individual_reviews(student, start_date=start_date, end_date=end_date)
 
     if not qs.exists():
         return None
@@ -297,29 +409,77 @@ def generate_global_review_for_student(
     except (json.JSONDecodeError, ValueError):
         return None
 
-    first_review = qs.first()
-    last_review = qs.last()
-
-    now = timezone.now()
-    global_review = GlobalReview.objects.create(
+    return _create_global_review_snapshot(
         student=student,
+        reviews_qs=qs,
+        response_text=response_text,
+        parsed_response=parsed,
         scope_type=scope_type,
         time_window=time_window,
-        ai_status=GlobalReview.STATUS_COMPLETED,
-        ai_raw_response=response_text,
-        ai_result=parsed,
-        based_on_from=first_review.created_at,
-        based_on_to=last_review.created_at,
+        generation_mode=GlobalReview.GENERATION_FULL_REBUILD,
+        previous_global_review=None,
     )
 
-    global_review.individual_reviews.set(qs)
+def generate_incremental_global_review_for_student(
+    student,
+    new_review,
+    start_date=None,
+    end_date=None,
+    scope_type=GlobalReview.SCOPE_OVERALL,
+    time_window=GlobalReview.WINDOW_CUSTOM,
+):
+    """
+    Generate a new GlobalReview snapshot by updating the latest existing snapshot
+    with one newly completed IndividualReview. Falls back to full rebuild when
+    there is no suitable baseline snapshot.
+    """
+    qs = _get_completed_individual_reviews(student, start_date=start_date, end_date=end_date)
 
-    # Update aggregation flags on individual reviews
-    qs_without_flag = qs.filter(has_been_included_in_global_review=False)
-    qs.update(has_been_included_in_global_review=True)
-    qs_without_flag.update(first_included_in_global_review_at=now)
+    if not qs.exists() or not qs.filter(id=new_review.id).exists():
+        return None
 
-    return global_review
+    previous_global_review = (
+        GlobalReview.objects.filter(
+            student=student,
+            scope_type=scope_type,
+            time_window=time_window,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    if not _is_incremental_global_review_usable(previous_global_review):
+        return generate_global_review_for_student(
+            student,
+            start_date=start_date,
+            end_date=end_date,
+            scope_type=scope_type,
+            time_window=time_window,
+        )
+
+    response_text = run_ai_analysis_for_incremental_global_review(
+        student,
+        previous_global_review,
+        new_review,
+    )
+    if not response_text or not isinstance(response_text, str) or response_text.startswith("Error:"):
+        return None
+
+    try:
+        parsed = json.loads(response_text)
+    except (json.JSONDecodeError, ValueError):
+        return None
+
+    return _create_global_review_snapshot(
+        student=student,
+        reviews_qs=qs,
+        response_text=response_text,
+        parsed_response=parsed,
+        scope_type=scope_type,
+        time_window=time_window,
+        generation_mode=GlobalReview.GENERATION_INCREMENTAL_UPDATE,
+        previous_global_review=previous_global_review,
+    )
 
 
 @login_required

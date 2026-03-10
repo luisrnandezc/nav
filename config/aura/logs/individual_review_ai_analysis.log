@@ -1424,3 +1424,15 @@ openai.APITimeoutError: Request timed out.
 2026-03-09 16:36:24,157 - INFO - API request completed successfully
 2026-03-09 16:36:24,158 - INFO - Response content extracted, length: 2452 characters
 2026-03-09 16:36:24,158 - INFO - ================================================================================
+2026-03-10 17:39:33,430 - INFO - ================================================================================
+2026-03-10 17:39:33,430 - INFO - Starting run_ai_analysis_for_individual_review (session_type=SIM)
+2026-03-10 17:39:33,431 - INFO - AURA prompt loaded, length: 8220 characters
+2026-03-10 17:39:33,431 - INFO - Rendered prompt length: 8483 characters
+2026-03-10 17:39:33,431 - INFO - Retrieving OPENAI_API_KEY from environment variables
+2026-03-10 17:39:33,431 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-10 17:39:33,431 - INFO - Attempting to initialize OpenAI client
+2026-03-10 17:39:33,768 - INFO - OpenAI client initialized successfully
+2026-03-10 17:39:33,769 - INFO - Making API request to OpenAI responses endpoint (model=gpt-5.1, effort=medium, verbosity=medium)
+2026-03-10 17:39:56,193 - INFO - API request completed successfully
+2026-03-10 17:39:56,193 - INFO - Response content extracted, length: 2011 characters
+2026-03-10 17:39:56,194 - INFO - ================================================================================

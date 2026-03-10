@@ -251,5 +251,22 @@ if AURA_GLOBAL_REVIEW_PROMPT_PATH:
 else:
     raise RuntimeError("AURA_GLOBAL_REVIEW_PROMPT_PATH is not set in the .env file")
 
+# AURA Incremental Global Review Prompt
+AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT_PATH = os.getenv(
+    'AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT_PATH',
+    'aura/prompts/aura_incremental_global_prompt.txt',
+)
+
+AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT = ''
+if AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT_PATH:
+    aura_incremental_global_prompt_full_path = os.path.join(
+        BASE_DIR,
+        AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT_PATH,
+    )
+    with open(aura_incremental_global_prompt_full_path, 'r', encoding='utf-8') as f:
+        AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT = f.read()
+else:
+    raise RuntimeError("AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT_PATH is not set in the .env file")
+
 # Google Analytics ID
 GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID')

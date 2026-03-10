@@ -45,6 +45,26 @@
   color: #dae1ff;
 }
 
+.aura-pdf-btn {
+  background-color: rgba(218, 225, 255, 0.2);
+  color: #dae1ff;
+  border: 1px solid #dae1ff;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.aura-pdf-btn:hover {
+  background-color: #dae1ff;
+  color: #0f172a;
+}
+
 .aura-messages {
   list-style: none;
   padding: 0;

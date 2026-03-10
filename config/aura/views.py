@@ -3,13 +3,18 @@ import logging
 import os
 import sys
 from datetime import timedelta
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.staticfiles.finders import find
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from openai import OpenAI
+import weasyprint
 
 from accounts.models import StudentProfile
 from .models import IndividualReview, GlobalReview
@@ -561,3 +566,73 @@ def staff_student_global_review(request, student_profile_id: int):
         "latest_review": latest_review,
     }
     return render(request, "aura/staff_student_global_review.html", context)
+
+
+@login_required
+def download_global_review_pdf(request, student_profile_id: int):
+    """
+    Download a concise PDF for the student's latest AURA global review.
+    """
+    user = request.user
+    if getattr(user, "role", None) != "STAFF":
+        messages.error(request, "No tiene permisos para descargar reportes AURA.")
+        return redirect("dashboard:dashboard")
+
+    student_profile = get_object_or_404(
+        StudentProfile.objects.select_related("user"),
+        id=student_profile_id,
+        student_phase=StudentProfile.FLYING,
+    )
+    student_user = student_profile.user
+
+    latest_review = (
+        GlobalReview.objects.filter(
+            student=student_user,
+            scope_type=GlobalReview.SCOPE_OVERALL,
+            time_window=GlobalReview.WINDOW_LAST_90_DAYS,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    if not latest_review:
+        messages.error(request, "No existe un perfil global AURA para generar el PDF.")
+        return redirect("aura:staff_student_global_review", student_profile_id=student_profile.id)
+
+    try:
+        raw_logo_path = find("img/evaluation_logo.png")
+        if raw_logo_path:
+            logo_path = Path(raw_logo_path).as_posix()
+            logo_uri = f"file:///{logo_path}"
+        else:
+            logo_uri = ""
+
+        html_string = render_to_string(
+            "aura/pdf_global_review.html",
+            {
+                "student_profile": student_profile,
+                "latest_review": latest_review,
+                "data": latest_review.ai_result or {},
+                "logo_path": logo_uri,
+                "generated_at": timezone.now(),
+            },
+        )
+
+        base_url = request.build_absolute_uri()
+        css_path = find("aura_pdf_global_review.css")
+        if not css_path:
+            messages.error(request, "No se encontró el archivo CSS para generar el PDF AURA.")
+            return redirect("aura:staff_student_global_review", student_profile_id=student_profile.id)
+
+        html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
+        pdf = html_doc.write_pdf(stylesheets=[weasyprint.CSS(filename=css_path)])
+
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = (
+            f'attachment; filename="aura_global_review_{student_user.username}_{latest_review.created_at.strftime("%Y%m%d")}.pdf"'
+        )
+        return response
+
+    except Exception as e:
+        messages.error(request, f"Error al generar el PDF AURA: {str(e)}")
+        return redirect("aura:staff_student_global_review", student_profile_id=student_profile.id)

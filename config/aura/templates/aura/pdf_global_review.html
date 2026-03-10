@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NAV | AURA Perfil Global</title>
+    <link href="{% static 'aura_pdf_global_review.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <section class="main-container">
+      <section class="header-container">
+        <img class="logo" id="logo" src="{{ logo_path }}" alt="Logo NAV">
+        <div id="title-container">
+          <h1 id="title">PERFIL GLOBAL DEL ALUMNO</h1>
+          <p id="subtitle">SISTEMA AURA</p>
+        </div>
+        <div id="meta-code">
+          <p class="meta-text">{{ generated_at|date:"d/m/Y" }}</p>
+          <p class="meta-text">AURA-PDF-01</p>
+        </div>
+      </section>
+
+      <section class="section-container stretch-section compact-section">
+        <h1 class="section-title">1. DATOS DEL ALUMNO</h1>
+        <table class="data-table">
+          <tbody>
+            <tr>
+              <td class="cell-title">Alumno</td>
+              <td class="cell-title">ID</td>
+            </tr>
+            <tr>
+              <td class="cell-data">{{ student_profile.user.first_name }} {{ student_profile.user.last_name }}</td>
+              <td class="cell-data">{{ student_profile.user.national_id }}</td>
+            </tr>
+            <tr>
+              <td class="cell-title">Usuario</td>
+              <td class="cell-title">Fase</td>
+            </tr>
+            <tr>
+              <td class="cell-data">{{ student_profile.user.username }}</td>
+              <td class="cell-data">{{ student_profile.get_student_phase_display }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section-container stretch-section">
+        <h1 class="section-title">2. RESUMEN</h1>
+        <div class="text-block">
+          {{ data.summary_text|default:"Sin resumen disponible." }}
+        </div>
+      </section>
+
+      <section class="section-container stretch-section">
+        <h1 class="section-title">3. FORTALEZAS Y DEBILIDADES</h1>
+        <div class="two-column-section">
+          <div class="half-width half-width-left">
+            <h2 class="column-title">Fortalezas clave</h2>
+            <ul class="bullet-list">
+              {% for s in data.global_strengths %}
+                <li>{{ s }}</li>
+              {% empty %}
+                <li>No hay fortalezas registradas.</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="half-width half-width-right">
+            <h2 class="column-title">Debilidades clave</h2>
+            <ul class="bullet-list">
+              {% for w in data.global_weaknesses %}
+                <li>{{ w }}</li>
+              {% empty %}
+                <li>No hay debilidades registradas.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-container stretch-section">
+        <h1 class="section-title">4. ATENCIÓN PARA LA PRÓXIMA SESIÓN</h1>
+        <div class="text-block awareness-block">
+          {{ data.next_session_awareness|default:"No hay observaciones específicas registradas para la próxima sesión." }}
+        </div>
+      </section>
+    </section>
+  </body>
+</html>

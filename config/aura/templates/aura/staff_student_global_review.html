@@ -49,6 +49,14 @@
             {% csrf_token %}
             <button type="submit" class="aura-submit-btn">Generar / actualizar</button>
           </form>
+          {% if latest_review %}
+            <a
+              href="{% url 'aura:download_global_review_pdf' student_profile.id %}"
+              class="aura-pdf-btn"
+            >
+              Generar PDF
+            </a>
+          {% endif %}
         </div>
       </div>
 

@@ -11,5 +11,10 @@ urlpatterns = [
         views.staff_student_global_review,
         name="staff_student_global_review",
     ),
+    path(
+        "staff/student/<int:student_profile_id>/download_pdf/",
+        views.download_global_review_pdf,
+        name="download_global_review_pdf",
+    ),
 ]
 

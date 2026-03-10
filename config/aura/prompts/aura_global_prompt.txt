@@ -98,8 +98,7 @@ con la siguiente estructura (YA PARSEADA por el sistema, no la repitas):
       "focus_areas": { ... },
       "domains": { ... },
       "recommendations_for_student": [ ... ],
-      "recommendations_for_instructor": [ ... ],
-      "keywords": [ ... ]
+      "recommendations_for_instructor": [ ... ]
     }
   },
   ...
@@ -176,11 +175,7 @@ Devuelve SIEMPRE un JSON con esta estructura EXACTA (todas las claves presentes)
     "enfoque 1",
     "enfoque 2"
   ],
-  "recommended_training_mix": "texto breve",
-  "keywords": [
-    "palabra 1",
-    "palabra 2"
-  ]
+  "recommended_training_mix": "texto breve"
 }
 
 Reglas:

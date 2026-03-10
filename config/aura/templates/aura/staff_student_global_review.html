@@ -108,21 +108,15 @@
 
         <div class="cards-container">
           <div class="cards-container-header">
-            <h2>Enfoque sugerido (próximas ~10 horas)</h2>
+            <h2>Atención para la próxima sesión</h2>
           </div>
           <div class="report-card aura-inner-card">
             <div class="report-content">
-              <ul class="aura-list">
-                {% for f in data.recommended_focus_for_next_10_hours %}
-                  <li>{{ f }}</li>
-                {% empty %}
-                  <li>No hay recomendaciones específicas registradas.</li>
-                {% endfor %}
-              </ul>
-              <p class="aura-mix">
-                <strong>Mix recomendado:</strong>
-                {{ data.recommended_training_mix|default:"Sin recomendación de mix registrada." }}
-              </p>
+              <div class="report-description aura-summary-block">
+                <p class="report-description-text aura-summary-text">
+                  {{ data.next_session_awareness|default:"No hay observaciones específicas registradas para la próxima sesión." }}
+                </p>
+              </div>
             </div>
           </div>
         </div>

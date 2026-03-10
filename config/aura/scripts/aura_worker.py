@@ -11,6 +11,7 @@ import os
 import sys
 import time
 import json
+from datetime import timedelta
 
 import django
 from django.utils import timezone
@@ -26,8 +27,11 @@ django.setup()
 
 # Import Django models and functions AFTER django.setup()
 from accounts.models import User  # noqa: E402
-from aura.models import IndividualReview  # noqa: E402
-from aura.views import run_ai_analysis_for_individual_review  # noqa: E402
+from aura.models import IndividualReview, GlobalReview  # noqa: E402
+from aura.views import (  # noqa: E402
+    run_ai_analysis_for_individual_review,
+    generate_incremental_global_review_for_student,
+)
 from fms.models import (  # noqa: E402
     SimEvaluation,
     FlightEvaluation0_100,
@@ -199,6 +203,44 @@ def process_single_session(session, session_type: str) -> bool:
         session.save(update_fields=["aura_processed", "aura_review"])
     else:
         session.save(update_fields=["aura_processed"])
+
+    # Refresh the student's default global profile using the new individual review.
+    try:
+        start_date = timezone.now() - timedelta(days=90)
+        global_review = generate_incremental_global_review_for_student(
+            student_user,
+            individual_review,
+            start_date=start_date,
+            end_date=None,
+            scope_type=GlobalReview.SCOPE_OVERALL,
+            time_window=GlobalReview.WINDOW_LAST_90_DAYS,
+        )
+        if global_review:
+            print(
+                "[{}] Updated GlobalReview id={} for student id={} after session id={}".format(
+                    timezone.now(),
+                    global_review.id,
+                    student_user.id,
+                    session.id,
+                )
+            )
+        else:
+            print(
+                "[{}] No GlobalReview snapshot was created/updated for student id={} after session id={}".format(
+                    timezone.now(),
+                    student_user.id,
+                    session.id,
+                )
+            )
+    except Exception as e:
+        print(
+            "[{}] Error updating global review for student id={} after session id={}: {}".format(
+                timezone.now(),
+                student_user.id,
+                session.id,
+                e,
+            )
+        )
 
     return True
 

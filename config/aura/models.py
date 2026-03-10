@@ -62,7 +62,7 @@ class IndividualReview(models.Model):
         default=dict,
         blank=True,
         null=True,
-        help_text="Structured JSON result for this individual review (tags, mini-summary, etc.).",
+        help_text="Structured JSON result for this individual review (summary, domain analysis, and recommendations).",
     )
 
     # Aggregation bookkeeping
@@ -130,6 +130,14 @@ class GlobalReview(models.Model):
         (WINDOW_CUSTOM, "Custom window"),
     ]
 
+    GENERATION_FULL_REBUILD = "FULL_REBUILD"
+    GENERATION_INCREMENTAL_UPDATE = "INCREMENTAL_UPDATE"
+
+    GENERATION_MODE_CHOICES = [
+        (GENERATION_FULL_REBUILD, "Full rebuild"),
+        (GENERATION_INCREMENTAL_UPDATE, "Incremental update"),
+    ]
+
     # Reuse the same AI lifecycle choices as IndividualReview
     STATUS_PENDING = IndividualReview.STATUS_PENDING
     STATUS_PROCESSING = IndividualReview.STATUS_PROCESSING
@@ -160,6 +168,22 @@ class GlobalReview(models.Model):
         help_text="How the date/session range was selected when generating this review.",
     )
 
+    generation_mode = models.CharField(
+        max_length=30,
+        choices=GENERATION_MODE_CHOICES,
+        default=GENERATION_FULL_REBUILD,
+        help_text="Whether this snapshot was produced by a full rebuild or an incremental update.",
+    )
+
+    previous_global_review = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        related_name="incremental_children",
+        blank=True,
+        null=True,
+        help_text="Previous global review snapshot used as the baseline for an incremental update.",
+    )
+
     # Optional M2M link to the individual reviews used to build this snapshot
     individual_reviews = models.ManyToManyField(
         IndividualReview,
@@ -181,8 +205,8 @@ class GlobalReview(models.Model):
         blank=True,
         null=True,
         help_text=(
-            "Structured JSON profile (strengths, weaknesses, recommendations, "
-            "summary text, etc.) produced by the AI."
+            "Structured JSON profile (summary_text, up to three strengths, up to three weaknesses, "
+            "domain patterns, and a short next_session_awareness note) produced by the AI."
         ),
     )
 

@@ -1,0 +1,68 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Dashboard</title>
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="dashboard-page">
+      <header class="launchpad-header">
+        <div class="header-copy">
+          <h1>{{ dashboard_header.display_name }}</h1>
+          <div class="header-meta">
+            <span class="meta-pill">Rol: {{ dashboard_header.active_role_label }}</span>
+            {% for item in dashboard_header.meta_items %}
+              <span class="meta-pill">{{ item.label }}: {{ item.value }}</span>
+            {% endfor %}
+            {% if dashboard_header.show_balance %}
+              <span class="meta-pill balance-pill">Balance: $ {{ dashboard_header.balance }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="header-actions">
+          {% if role_switch_options %}
+            <div class="role-switcher">
+              <div class="role-switcher-buttons">
+                {% for option in role_switch_options %}
+                  <a class="header-button" href="{{ option.url }}">{{ option.label }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <a class="logout-button" href="{{ dashboard_header.logout_url }}" aria-label="Cerrar sesion">
+            <img class="logout-icon" src="{% static 'img/logout.png' %}" alt="">
+          </a>
+        </div>
+      </header>
+
+      <main class="launchpad-main">
+        <section class="apps-grid" aria-label="Aplicaciones disponibles">
+          {% for app in launchpad_apps %}
+            <article class="dashboard-square">
+              <h2 class="square-header">{{ app.label }}</h2>
+
+              {% if app.icon %}
+                <a class="image-link" href="{{ app.url }}" aria-label="{{ app.label }}">
+                  <img class="logo-img" src="{% static app.icon %}" alt="{{ app.label }}">
+                </a>
+              {% else %}
+                <a class="image-link icon-fallback" href="{{ app.url }}" aria-label="{{ app.label }}">
+                  <span class="app-monogram">{{ app.icon_text }}</span>
+                </a>
+              {% endif %}
+
+              <p class="square-description">{{ app.description }}</p>
+            </article>
+          {% endfor %}
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

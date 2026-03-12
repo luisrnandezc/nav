@@ -2,60 +2,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-
-
-ROLE_LABELS = {
-    'STUDENT': 'Estudiante',
-    'INSTRUCTOR': 'Instructor',
-    'STAFF': 'Staff',
-}
-
-ROLE_PRIORITY = ['STAFF', 'INSTRUCTOR', 'STUDENT']
-
-
-def _has_profile(user, profile_name):
-    """Safely check whether the user has a given profile relation."""
-    try:
-        return hasattr(user, profile_name) and getattr(user, profile_name)
-    except Exception:
-        return False
-
-
-def _get_available_roles(user):
-    """Return the roles the current user can switch to."""
-    available_roles = []
-
-    if _has_profile(user, 'student_profile'):
-        available_roles.append('STUDENT')
-
-    if _has_profile(user, 'instructor_profile'):
-        available_roles.append('INSTRUCTOR')
-
-    if _has_profile(user, 'staff_profile'):
-        available_roles.append('STAFF')
-
-    return available_roles
-
-
-def _get_default_role(user):
-    """Return the default role based on the agreed priority order."""
-    available_roles = _get_available_roles(user)
-
-    for role in ROLE_PRIORITY:
-        if role in available_roles:
-            return role
-
-    return getattr(user, 'role', None)
-
-
-def _resolve_active_role(user, selected_role):
-    """Use the session role when valid, otherwise fall back to the default role."""
-    available_roles = _get_available_roles(user)
-
-    if selected_role in available_roles:
-        return selected_role
-
-    return _get_default_role(user)
+from accounts.role_utils import (
+    ROLE_LABELS,
+    get_available_roles,
+    has_profile,
+    resolve_active_role,
+)
 
 
 def _build_role_switch_options(user, active_role):
@@ -66,7 +18,7 @@ def _build_role_switch_options(user, active_role):
             'label': ROLE_LABELS[role],
             'url': reverse('accounts:select_role', args=[role]),
         }
-        for role in _get_available_roles(user)
+        for role in get_available_roles(user)
         if role != active_role
     ]
 
@@ -213,7 +165,7 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'icon': 'img/addGrade.png',
             'url': reverse('academic:instructor_grades_dashboard'),
             'roles': {'INSTRUCTOR'},
-            'visible': _has_profile(user, 'instructor_profile')
+            'visible': has_profile(user, 'instructor_profile')
             and user.instructor_profile.instructor_type in {'TIERRA', 'DUAL'},
         },
         {
@@ -223,7 +175,7 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'icon': 'img/plane.png',
             'url': reverse('fms:form_selection'),
             'roles': {'INSTRUCTOR'},
-            'visible': _has_profile(user, 'instructor_profile')
+            'visible': has_profile(user, 'instructor_profile')
             and user.instructor_profile.instructor_type in {'VUELO', 'DUAL'},
         },
         {
@@ -233,7 +185,7 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'icon': 'img/flightlog.png',
             'url': reverse('fms:instructor_flightlog'),
             'roles': {'INSTRUCTOR'},
-            'visible': _has_profile(user, 'instructor_profile')
+            'visible': has_profile(user, 'instructor_profile')
             and user.instructor_profile.instructor_type in {'VUELO', 'DUAL'},
         },
         {
@@ -316,7 +268,7 @@ def dashboard(request):
     
     # Use the most recent valid role from the session or fall back to the default priority.
     selected_role = request.session.get('selected_role')
-    active_role = _resolve_active_role(user, selected_role)
+    active_role = resolve_active_role(user, selected_role)
     
     context = {
         'user': user,

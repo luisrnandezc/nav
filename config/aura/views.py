@@ -17,7 +17,17 @@ from openai import OpenAI
 import weasyprint
 
 from accounts.models import StudentProfile
+from accounts.role_utils import resolve_active_role
 from .models import IndividualReview, GlobalReview
+
+
+def _require_staff_role(request, error_message: str):
+    """Allow AURA staff views only when the active role is STAFF."""
+    if resolve_active_role(request.user, request.session.get("selected_role")) == "STAFF":
+        return None
+
+    messages.error(request, error_message)
+    return redirect("dashboard:dashboard")
 
 
 def aura_individual_review_logger():
@@ -492,10 +502,9 @@ def staff_aura_dashboard(request):
     """
     Staff-only view listing active (flying) students for AURA global review.
     """
-    user = request.user
-    if getattr(user, "role", None) != "STAFF":
-        messages.error(request, "No tiene permisos para acceder a AURA.")
-        return redirect("dashboard:dashboard")
+    denied_response = _require_staff_role(request, "No tiene permisos para acceder a AURA.")
+    if denied_response:
+        return denied_response
 
     flying_students = (
         StudentProfile.objects.select_related("user")
@@ -516,10 +525,9 @@ def staff_student_global_review(request, student_profile_id: int):
 
     For now, this always targets OVERALL + LAST_90_DAYS.
     """
-    user = request.user
-    if getattr(user, "role", None) != "STAFF":
-        messages.error(request, "No tiene permisos para acceder a AURA.")
-        return redirect("dashboard:dashboard")
+    denied_response = _require_staff_role(request, "No tiene permisos para acceder a AURA.")
+    if denied_response:
+        return denied_response
 
     student_profile = get_object_or_404(
         StudentProfile.objects.select_related("user"),
@@ -573,10 +581,12 @@ def download_global_review_pdf(request, student_profile_id: int):
     """
     Download a concise PDF for the student's latest AURA global review.
     """
-    user = request.user
-    if getattr(user, "role", None) != "STAFF":
-        messages.error(request, "No tiene permisos para descargar reportes AURA.")
-        return redirect("dashboard:dashboard")
+    denied_response = _require_staff_role(
+        request,
+        "No tiene permisos para descargar reportes AURA.",
+    )
+    if denied_response:
+        return denied_response
 
     student_profile = get_object_or_404(
         StudentProfile.objects.select_related("user"),

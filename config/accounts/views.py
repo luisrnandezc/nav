@@ -7,7 +7,7 @@ from .forms import CustomPasswordChangeForm
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from .models import StudentProfile, InstructorProfile, StaffProfile
+from .role_utils import get_available_roles
 
 
 def user_login(request):
@@ -40,27 +40,9 @@ def user_login(request):
 def select_role(request, role):
     """Handle role selection and redirect to appropriate dashboard."""
     user = request.user
-    
-    # Validate the selected role
-    valid_roles = []
-    try:
-        if hasattr(user, 'student_profile') and user.student_profile:
-            valid_roles.append('STUDENT')
-    except:
-        pass
-    
-    try:
-        if hasattr(user, 'instructor_profile') and user.instructor_profile:
-            valid_roles.append('INSTRUCTOR')
-    except:
-        pass
-    
-    try:
-        if hasattr(user, 'staff_profile') and user.staff_profile:
-            valid_roles.append('STAFF')
-    except:
-        pass
-    
+
+    valid_roles = get_available_roles(user)
+
     if role not in valid_roles:
         messages.error(request, 'Rol seleccionado no válido.')
         return redirect('dashboard:dashboard')

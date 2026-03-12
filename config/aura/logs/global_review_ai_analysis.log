@@ -699,3 +699,42 @@ openai.APIConnectionError: Connection error.
 2026-03-10 19:12:24,486 - INFO - API request for GLOBAL completed successfully
 2026-03-10 19:12:24,486 - INFO - GLOBAL response content length: 2995 characters
 2026-03-10 19:12:24,486 - INFO - ================================================================================
+2026-03-12 09:38:28,817 - INFO - ================================================================================
+2026-03-12 09:38:28,817 - INFO - Starting run_ai_analysis_for_global_review for student id=38
+2026-03-12 09:38:28,817 - INFO - AURA global prompt loaded, length: 7487 characters
+2026-03-12 09:38:28,823 - INFO - Student reviews JSON length: 38590 characters
+2026-03-12 09:38:28,823 - INFO - Rendered global prompt length: 84623 characters
+2026-03-12 09:38:28,823 - INFO - Retrieving OPENAI_API_KEY from environment variables for GLOBAL
+2026-03-12 09:38:28,823 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-12 09:38:28,823 - INFO - Attempting to initialize OpenAI client for GLOBAL
+2026-03-12 09:38:29,157 - INFO - OpenAI client initialized successfully for GLOBAL
+2026-03-12 09:38:29,157 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5-nano, effort=medium, verbosity=low)
+2026-03-12 09:40:28,679 - INFO - API request for GLOBAL completed successfully
+2026-03-12 09:40:28,679 - INFO - GLOBAL response content length: 5096 characters
+2026-03-12 09:40:28,679 - INFO - ================================================================================
+2026-03-12 11:33:47,511 - INFO - ================================================================================
+2026-03-12 11:33:47,511 - INFO - Starting run_ai_analysis_for_global_review for student id=48
+2026-03-12 11:33:47,512 - INFO - AURA global prompt loaded, length: 7487 characters
+2026-03-12 11:33:47,514 - INFO - Student reviews JSON length: 4142 characters
+2026-03-12 11:33:47,514 - INFO - Rendered global prompt length: 15727 characters
+2026-03-12 11:33:47,514 - INFO - Retrieving OPENAI_API_KEY from environment variables for GLOBAL
+2026-03-12 11:33:47,514 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-12 11:33:47,514 - INFO - Attempting to initialize OpenAI client for GLOBAL
+2026-03-12 11:33:47,833 - INFO - OpenAI client initialized successfully for GLOBAL
+2026-03-12 11:33:47,833 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5-nano, effort=medium, verbosity=low)
+2026-03-12 11:34:25,278 - INFO - ================================================================================
+2026-03-12 11:34:25,278 - INFO - Starting run_ai_analysis_for_global_review for student id=48
+2026-03-12 11:34:25,278 - INFO - AURA global prompt loaded, length: 7487 characters
+2026-03-12 11:34:25,279 - INFO - Student reviews JSON length: 4142 characters
+2026-03-12 11:34:25,279 - INFO - Rendered global prompt length: 15727 characters
+2026-03-12 11:34:25,280 - INFO - Retrieving OPENAI_API_KEY from environment variables for GLOBAL
+2026-03-12 11:34:25,281 - INFO - API key retrieved successfully (length: 164 characters)
+2026-03-12 11:34:25,281 - INFO - Attempting to initialize OpenAI client for GLOBAL
+2026-03-12 11:34:25,568 - INFO - OpenAI client initialized successfully for GLOBAL
+2026-03-12 11:34:25,568 - INFO - Making API request to OpenAI responses endpoint (GLOBAL) (model=gpt-5-nano, effort=medium, verbosity=low)
+2026-03-12 11:34:41,461 - INFO - API request for GLOBAL completed successfully
+2026-03-12 11:34:41,461 - INFO - GLOBAL response content length: 3302 characters
+2026-03-12 11:34:41,461 - INFO - ================================================================================
+2026-03-12 11:35:21,222 - INFO - API request for GLOBAL completed successfully
+2026-03-12 11:35:21,222 - INFO - GLOBAL response content length: 3455 characters
+2026-03-12 11:35:21,222 - INFO - ================================================================================

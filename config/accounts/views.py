@@ -19,11 +19,10 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    # Check if user has multiple roles (multiple profiles)
-                    if has_multiple_roles(user):
-                        return redirect('accounts:role_selection')
-                    else:
-                        return redirect('dashboard:dashboard')
+                    # A fresh login should always fall back to the default role priority.
+                    if 'selected_role' in request.session:
+                        del request.session['selected_role']
+                    return redirect('dashboard:dashboard')
                 else:
                     messages.error(request, 'Cuenta inactiva.')
             else:
@@ -35,80 +34,6 @@ def user_login(request):
         list(messages.get_messages(request))
         form = LoginForm()
     return render(request, 'accounts/login.html', {'form': form})
-
-
-def has_multiple_roles(user):
-    """Check if user has multiple role profiles."""
-    profiles_count = 0
-    try:
-        if hasattr(user, 'student_profile') and user.student_profile:
-            profiles_count += 1
-    except:
-        pass
-    
-    try:
-        if hasattr(user, 'instructor_profile') and user.instructor_profile:
-            profiles_count += 1
-    except:
-        pass
-    
-    try:
-        if hasattr(user, 'staff_profile') and user.staff_profile:
-            profiles_count += 1
-    except:
-        pass
-    
-    return profiles_count > 1
-
-
-@login_required
-def role_selection(request):
-    """Display role selection panel for users with multiple roles."""
-    user = request.user
-    
-    # Check if user actually has multiple roles
-    if not has_multiple_roles(user):
-        return redirect('dashboard:dashboard')
-    
-    available_roles = []
-    
-    # Check which profiles exist
-    try:
-        if hasattr(user, 'student_profile') and user.student_profile:
-            available_roles.append({
-                'role': 'STUDENT',
-                'name': 'Estudiante',
-                'description': 'Acceder al panel de estudiante'
-            })
-    except:
-        pass
-    
-    try:
-        if hasattr(user, 'instructor_profile') and user.instructor_profile:
-            available_roles.append({
-                'role': 'INSTRUCTOR', 
-                'name': 'Instructor',
-                'description': 'Acceder al panel de instructor'
-            })
-    except:
-        pass
-    
-    try:
-        if hasattr(user, 'staff_profile') and user.staff_profile:
-            available_roles.append({
-                'role': 'STAFF',
-                'name': 'Staff',
-                'description': 'Acceder al panel de staff'
-            })
-    except:
-        pass
-    
-    context = {
-        'user': user,
-        'available_roles': available_roles
-    }
-    
-    return render(request, 'accounts/role_selection.html', context)
 
 
 @login_required
@@ -138,7 +63,7 @@ def select_role(request, role):
     
     if role not in valid_roles:
         messages.error(request, 'Rol seleccionado no válido.')
-        return redirect('accounts:role_selection')
+        return redirect('dashboard:dashboard')
     
     # Store selected role in session
     request.session['selected_role'] = role
@@ -157,7 +82,7 @@ def user_logout(request):
     list(messages.get_messages(request))
     
     logout(request)
-    return render(request, 'accounts/logout.html')
+    return redirect('accounts:login')
 
 
 class CustomPasswordChangeView(PasswordChangeView):

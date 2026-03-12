@@ -5,7 +5,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AURA | Perfil de {{ student_profile.user.first_name }} {{ student_profile.user.last_name }}</title>
+    <title>
+      {% if is_self_view %}
+        AURA | Mi perfil global
+      {% else %}
+        AURA | Perfil de {{ student_profile.user.first_name }} {{ student_profile.user.last_name }}
+      {% endif %}
+    </title>
     <link href="{% static 'sms_base.css' %}" rel="stylesheet" />
     <link href="{% static 'sms_dashboard.css' %}" rel="stylesheet" />
     <link href="{% static 'aura_student_global_review.css' %}" rel="stylesheet" />
@@ -13,18 +19,30 @@
   <body>
     <div class="main-container">
       <div class="back-button">
-        <a href="{% url 'aura:staff_aura_dashboard' %}" class="button">&larr; Volver</a>
+        <a href="{{ back_url }}" class="button">&larr; Volver</a>
       </div>
 
       <div class="main-header">
-        <h1>Perfil global del alumno</h1>
+        <h1>
+          {% if is_self_view %}
+            Mi perfil global
+          {% else %}
+            Perfil global del alumno
+          {% endif %}
+        </h1>
         <p>AURA – últimos 90 días</p>
       </div>
 
       <!-- Meta y acciones -->
       <div class="cards-container aura-student-card">
         <div class="cards-container-header no-margin-bottom">
-          <h2>Datos del alumno</h2>
+          <h2>
+            {% if is_self_view %}
+              Mis datos
+            {% else %}
+              Datos del alumno
+            {% endif %}
+          </h2>
         </div>
         <div class="report-data-section aura-meta-grid">
           <div class="report-data">
@@ -44,20 +62,24 @@
             <span class="report-value">{{ student_profile.get_student_phase_display }}</span>
           </div>
         </div>
-        <div class="aura-actions-row">
-          <form method="post" class="aura-form-inline">
-            {% csrf_token %}
-            <button type="submit" class="aura-submit-btn">Generar / actualizar</button>
-          </form>
-          {% if latest_review %}
-            <a
-              href="{% url 'aura:download_global_review_pdf' student_profile.id %}"
-              class="aura-pdf-btn"
-            >
-              Generar PDF
-            </a>
-          {% endif %}
-        </div>
+        {% if can_update_review or can_download_pdf %}
+          <div class="aura-actions-row">
+            {% if can_update_review %}
+              <form method="post" action="{% url 'aura:refresh_global_review' student_profile.id %}" class="aura-form-inline">
+                {% csrf_token %}
+                <button type="submit" class="aura-submit-btn">Actualizar perfil global</button>
+              </form>
+            {% endif %}
+            {% if can_download_pdf and latest_review %}
+              <a
+                href="{% url 'aura:download_global_review_pdf' student_profile.id %}"
+                class="aura-pdf-btn"
+              >
+                Generar PDF
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
       </div>
 
       {% if messages %}
@@ -135,7 +157,15 @@
           <div class="cards-container-header">
             <h2>Sin perfil global aún</h2>
           </div>
-          <p class="aura-empty-text">No existe todavía un perfil global AURA para este alumno. Use el botón de arriba para generarlo.</p>
+          <p class="aura-empty-text">
+            {% if can_update_review %}
+              No existe todavía un perfil global AURA para este alumno. Use el botón de arriba para generarlo.
+            {% elif is_self_view %}
+              Aún no existe un perfil global AURA disponible para usted.
+            {% else %}
+              No existe todavía un perfil global AURA disponible para este alumno.
+            {% endif %}
+          </p>
         </div>
       {% endif %}
     </div>

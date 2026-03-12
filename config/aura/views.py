@@ -12,22 +12,14 @@ from django.contrib.staticfiles.finders import find
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import timezone
 from openai import OpenAI
 import weasyprint
 
 from accounts.models import StudentProfile
-from accounts.role_utils import resolve_active_role
+from .access import get_aura_capabilities
 from .models import IndividualReview, GlobalReview
-
-
-def _require_staff_role(request, error_message: str):
-    """Allow AURA staff views only when the active role is STAFF."""
-    if resolve_active_role(request.user, request.session.get("selected_role")) == "STAFF":
-        return None
-
-    messages.error(request, error_message)
-    return redirect("dashboard:dashboard")
 
 
 def aura_individual_review_logger():
@@ -497,96 +489,156 @@ def generate_incremental_global_review_for_student(
     )
 
 
-@login_required
-def staff_aura_dashboard(request):
-    """
-    Staff-only view listing active (flying) students for AURA global review.
-    """
-    denied_response = _require_staff_role(request, "No tiene permisos para acceder a AURA.")
-    if denied_response:
-        return denied_response
+def _deny_aura_access(request, message: str):
+    messages.error(request, message)
+    return redirect("dashboard:dashboard")
 
-    flying_students = (
+
+def _get_all_student_profiles():
+    return (
         StudentProfile.objects.select_related("user")
         .filter(student_phase=StudentProfile.FLYING)
         .order_by("user__last_name", "user__first_name")
     )
 
+
+def _get_latest_global_review(student_user):
+    return (
+        GlobalReview.objects.filter(
+            student=student_user,
+            scope_type=GlobalReview.SCOPE_OVERALL,
+            time_window=GlobalReview.WINDOW_LAST_90_DAYS,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+
+def _build_review_context(request, student_profile, capabilities, back_url):
+    return {
+        "student_profile": student_profile,
+        "latest_review": _get_latest_global_review(student_profile.user),
+        "can_download_pdf": capabilities["can_download_pdf"],
+        "can_update_review": capabilities["can_update_review"],
+        "is_self_view": capabilities["can_view_own_review"] and not capabilities["can_view_all_reviews"],
+        "back_url": back_url,
+    }
+
+
+@login_required
+def aura_home(request):
+    """Entry point for AURA based on the active role."""
+    capabilities = get_aura_capabilities(request)
+
+    if capabilities["can_view_all_reviews"]:
+        return redirect("aura:student_review_list")
+
+    if capabilities["can_view_own_review"]:
+        return redirect("aura:my_global_review")
+
+    return _deny_aura_access(request, "No tiene permisos para acceder a AURA.")
+
+
+@login_required
+def student_review_list(request):
+    """Instructor/staff view listing all students for AURA review access."""
+    capabilities = get_aura_capabilities(request)
+    if not capabilities["can_view_all_reviews"]:
+        return _deny_aura_access(request, "No tiene permisos para acceder a las revisiones AURA.")
+
     context = {
-        "students": flying_students,
+        "students": _get_all_student_profiles(),
+        "active_role": capabilities["active_role"],
     }
     return render(request, "aura/staff_aura_dashboard.html", context)
 
 
 @login_required
-def staff_student_global_review(request, student_profile_id: int):
-    """
-    Staff-only view to generate and inspect a student's AURA global review.
-
-    For now, this always targets OVERALL + LAST_90_DAYS.
-    """
-    denied_response = _require_staff_role(request, "No tiene permisos para acceder a AURA.")
-    if denied_response:
-        return denied_response
+def my_global_review(request):
+    """Student-only read-only view for the current student's own review."""
+    capabilities = get_aura_capabilities(request)
+    if not capabilities["can_view_own_review"]:
+        return _deny_aura_access(request, "No tiene permisos para acceder a su perfil AURA.")
 
     student_profile = get_object_or_404(
         StudentProfile.objects.select_related("user"),
-        id=student_profile_id,
+        user=request.user,
         student_phase=StudentProfile.FLYING,
     )
-    student_user = student_profile.user
-
-    # Latest existing global review for default scope/time window
-    latest_review = (
-        GlobalReview.objects.filter(
-            student=student_user,
-            scope_type=GlobalReview.SCOPE_OVERALL,
-            time_window=GlobalReview.WINDOW_LAST_90_DAYS,
-        )
-        .order_by("-created_at")
-        .first()
+    context = _build_review_context(
+        request,
+        student_profile,
+        capabilities,
+        reverse("dashboard:dashboard"),
     )
-
-    if request.method == "POST":
-        # Default: OVERALL + last 90 days
-        start_date = timezone.now() - timedelta(days=90)
-        new_review = generate_global_review_for_student(
-            student_user,
-            start_date=start_date,
-            end_date=None,
-            scope_type=GlobalReview.SCOPE_OVERALL,
-            time_window=GlobalReview.WINDOW_LAST_90_DAYS,
-        )
-        if new_review:
-            messages.success(
-                request,
-                "Se generó el perfil global AURA (últimos 90 días) para este alumno.",
-            )
-        else:
-            messages.error(
-                request,
-                "No se pudo generar el perfil global AURA. Verifique que existan revisiones individuales.",
-            )
-        return redirect("aura:staff_student_global_review", student_profile_id=student_profile.id)
-
-    context = {
-        "student_profile": student_profile,
-        "latest_review": latest_review,
-    }
     return render(request, "aura/staff_student_global_review.html", context)
 
 
 @login_required
-def download_global_review_pdf(request, student_profile_id: int):
-    """
-    Download a concise PDF for the student's latest AURA global review.
-    """
-    denied_response = _require_staff_role(
-        request,
-        "No tiene permisos para descargar reportes AURA.",
+def student_global_review(request, student_profile_id: int):
+    """Instructor/staff detail view for a student's AURA global review."""
+    capabilities = get_aura_capabilities(request)
+    if not capabilities["can_view_all_reviews"]:
+        return _deny_aura_access(request, "No tiene permisos para acceder a las revisiones AURA.")
+
+    student_profile = get_object_or_404(
+        StudentProfile.objects.select_related("user"),
+        id=student_profile_id,
+        student_phase=StudentProfile.FLYING,
     )
-    if denied_response:
-        return denied_response
+    context = _build_review_context(
+        request,
+        student_profile,
+        capabilities,
+        reverse("aura:student_review_list"),
+    )
+    return render(request, "aura/staff_student_global_review.html", context)
+
+
+@login_required
+def refresh_global_review(request, student_profile_id: int):
+    """Refresh a student's global review for authorized staff only."""
+    capabilities = get_aura_capabilities(request)
+    if not capabilities["can_update_review"]:
+        return _deny_aura_access(request, "No tiene permisos para actualizar perfiles AURA.")
+
+    student_profile = get_object_or_404(
+        StudentProfile.objects.select_related("user"),
+        id=student_profile_id,
+        student_phase=StudentProfile.FLYING,
+    )
+
+    if request.method != "POST":
+        return redirect("aura:student_global_review", student_profile_id=student_profile.id)
+
+    start_date = timezone.now() - timedelta(days=90)
+    new_review = generate_global_review_for_student(
+        student_profile.user,
+        start_date=start_date,
+        end_date=None,
+        scope_type=GlobalReview.SCOPE_OVERALL,
+        time_window=GlobalReview.WINDOW_LAST_90_DAYS,
+    )
+    if new_review:
+        messages.success(
+            request,
+            "Se actualizó el perfil global AURA (últimos 90 días) para este alumno.",
+        )
+    else:
+        messages.error(
+            request,
+            "No se pudo actualizar el perfil global AURA. Verifique que existan revisiones individuales.",
+        )
+
+    return redirect("aura:student_global_review", student_profile_id=student_profile.id)
+
+
+@login_required
+def download_global_review_pdf(request, student_profile_id: int):
+    """Download a concise PDF for the student's latest AURA global review."""
+    capabilities = get_aura_capabilities(request)
+    if not capabilities["can_download_pdf"]:
+        return _deny_aura_access(request, "No tiene permisos para descargar reportes AURA.")
 
     student_profile = get_object_or_404(
         StudentProfile.objects.select_related("user"),
@@ -594,20 +646,11 @@ def download_global_review_pdf(request, student_profile_id: int):
         student_phase=StudentProfile.FLYING,
     )
     student_user = student_profile.user
-
-    latest_review = (
-        GlobalReview.objects.filter(
-            student=student_user,
-            scope_type=GlobalReview.SCOPE_OVERALL,
-            time_window=GlobalReview.WINDOW_LAST_90_DAYS,
-        )
-        .order_by("-created_at")
-        .first()
-    )
+    latest_review = _get_latest_global_review(student_user)
 
     if not latest_review:
         messages.error(request, "No existe un perfil global AURA para generar el PDF.")
-        return redirect("aura:staff_student_global_review", student_profile_id=student_profile.id)
+        return redirect("aura:student_global_review", student_profile_id=student_profile.id)
 
     try:
         raw_logo_path = find("img/evaluation_logo.png")
@@ -632,7 +675,7 @@ def download_global_review_pdf(request, student_profile_id: int):
         css_path = find("aura_pdf_global_review.css")
         if not css_path:
             messages.error(request, "No se encontró el archivo CSS para generar el PDF AURA.")
-            return redirect("aura:staff_student_global_review", student_profile_id=student_profile.id)
+            return redirect("aura:student_global_review", student_profile_id=student_profile.id)
 
         html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
         pdf = html_doc.write_pdf(stylesheets=[weasyprint.CSS(filename=css_path)])
@@ -645,4 +688,4 @@ def download_global_review_pdf(request, student_profile_id: int):
 
     except Exception as e:
         messages.error(request, f"Error al generar el PDF AURA: {str(e)}")
-        return redirect("aura:staff_student_global_review", student_profile_id=student_profile.id)
+        return redirect("aura:student_global_review", student_profile_id=student_profile.id)

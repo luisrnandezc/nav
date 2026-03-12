@@ -342,6 +342,7 @@ class StaffProfile(models.Model):
             ('can_manage_transactions', 'Can manage transactions'),
             ('can_manage_sms', 'Can manage SMS'),
             ('can_view_user_stats', 'Can view user statistics'),
+            ('can_update_aura_reviews', 'Can update AURA reviews'),
         ]
 
     def __str__(self):

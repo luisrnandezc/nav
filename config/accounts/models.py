@@ -145,6 +145,12 @@ class StudentProfile(models.Model):
         null=True,
         blank=True,
     )
+    medical_exp_date = models.DateField(
+        verbose_name='Expiración del certificado médico',
+        default=None,
+        null=True,
+        blank=True,
+    )
     sim_hours = models.DecimalField(
         max_digits=4,
         decimal_places=1,
@@ -273,6 +279,18 @@ class InstructorProfile(models.Model):
         (LICENSE_OTHER, 'OTRO'),
     ]
 
+    INSTRUCTOR_SCOPE_NA = 'NA'
+    INSTRUCTOR_SCOPE_FLIGHT = 'VUELO'
+    INSTRUCTOR_SCOPE_SIM = 'SIM'
+    INSTRUCTOR_SCOPE_BOTH = 'AMBOS'
+
+    INSTRUCTOR_SCOPE_TYPES = [
+        (INSTRUCTOR_SCOPE_NA, 'N/A'),
+        (INSTRUCTOR_SCOPE_FLIGHT, 'Vuelo'),
+        (INSTRUCTOR_SCOPE_SIM, 'Simulador'),
+        (INSTRUCTOR_SCOPE_BOTH, 'Ambos'),
+    ]
+
     #endregion
 
     #region MODEL FIELDS
@@ -296,6 +314,24 @@ class InstructorProfile(models.Model):
     )
     license_exp_date = models.DateField(
         verbose_name='Expiración de la licencia',
+        default=None,
+        null=True,
+        blank=True,
+    )
+    medical_exp_date = models.DateField(
+        verbose_name='Expiración del certificado médico',
+        default=None,
+        null=True,
+        blank=True,
+    )
+    instructor_scope_type = models.CharField(
+        max_length=10,
+        choices=INSTRUCTOR_SCOPE_TYPES,
+        default=INSTRUCTOR_SCOPE_NA,
+        verbose_name='Tipo de licencia de instructor',
+    )
+    instructor_scope_exp_date = models.DateField(
+        verbose_name='Expiración de la licencia de instructor',
         default=None,
         null=True,
         blank=True,

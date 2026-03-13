@@ -1,0 +1,62 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Mi cuenta</title>
+    <link href="{% static 'sms_base.css' %}" rel="stylesheet" />
+    <link href="{% static 'accounts_home.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="back-button">
+        <a href="{{ dashboard_url }}" class="button">&larr; Volver</a>
+      </div>
+
+      <div class="main-header">
+        <h1>Mi cuenta</h1>
+        <p>Resumen del perfil activo: {{ active_role_label }}</p>
+      </div>
+
+      <div class="buttons-container">
+        <div class="main-button">
+          <a href="{{ password_change_url }}" class="button">Cambiar contraseña</a>
+        </div>
+      </div>
+
+      <div class="accounts-grid">
+        <section class="cards-container account-card">
+          <div class="cards-container-header">
+            <h2>Datos personales</h2>
+          </div>
+          <div class="account-details-grid">
+            {% for item in identity_items %}
+              <div class="report-data">
+                <span class="report-label">{{ item.label }}:</span>
+                <span class="report-value">{{ item.value }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        {% if document_items %}
+          <section class="cards-container account-card">
+            <div class="cards-container-header">
+              <h2>Vencimientos</h2>
+            </div>
+            <div class="account-details-grid">
+              {% for item in document_items %}
+                <div class="report-data">
+                  <span class="report-label">{{ item.label }}:</span>
+                  <span class="report-value">{{ item.value }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          </section>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

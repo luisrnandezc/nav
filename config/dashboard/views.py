@@ -112,11 +112,11 @@ def _build_launchpad_apps(request, active_role, user_profile):
     apps = [
         {
             'key': 'accounts',
-            'label': 'Accounts',
+            'label': 'Mi cuenta',
             'description': 'Perfil y seguridad de la cuenta.',
             'icon': 'img/user.png',
             'icon_text': 'A',
-            'url': reverse('accounts:password_change'),
+            'url': reverse('accounts:account_home'),
             'roles': {'STUDENT', 'INSTRUCTOR', 'STAFF'},
             'visible': True,
             'summary_items': _get_profile_summary_items(user, active_role, user_profile),

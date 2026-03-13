@@ -110,6 +110,32 @@ def run_ai_analysis(report):
         return False
 
 
+def process_pending_reports():
+    """
+    Find and process pending SMS reports once.
+    """
+    yesterday = timezone.now() - timedelta(days=2)
+    pending_reports = VoluntaryHazardReport.objects.filter(
+        Q(ai_analysis_status='PENDING') | Q(ai_analysis_status='FAILED'),
+        created_at__gte=yesterday
+    ).order_by('created_at')
+
+    if pending_reports.exists():
+        print("[{}] Found {} pending reports".format(timezone.now(), pending_reports.count()))
+
+        for report in pending_reports:
+            success = run_ai_analysis(report)
+            if success:
+                print("[{}] Report {} processed successfully".format(timezone.now(), report.id))
+            else:
+                print("[{}] Report {} processing failed".format(timezone.now(), report.id))
+
+            # Small delay between reports to prevent API rate limiting
+            time.sleep(5)
+    else:
+        print("[{}] No pending reports found".format(timezone.now()))
+
+
 def main_worker_loop():
     """
     Main worker loop that continuously scans for pending reports.
@@ -119,29 +145,8 @@ def main_worker_loop():
     
     while True:
         try:
-            # Get reports from last 48 hours with PENDING status
-            yesterday = timezone.now() - timedelta(days=2)
-            pending_reports = VoluntaryHazardReport.objects.filter(
-                Q(ai_analysis_status='PENDING') | Q(ai_analysis_status='FAILED'),
-                created_at__gte=yesterday
-            ).order_by('created_at')
+            process_pending_reports()
 
-            if pending_reports.exists():
-                print("[{}] Found {} pending reports".format(timezone.now(), pending_reports.count()))
-                
-                # Process one report at a time
-                for report in pending_reports:
-                    success = run_ai_analysis(report)
-                    if success:
-                        print("[{}] Report {} processed successfully".format(timezone.now(), report.id))
-                    else:
-                        print("[{}] Report {} processing failed".format(timezone.now(), report.id))
-                    
-                    # Small delay between reports to prevent API rate limiting
-                    time.sleep(5)
-            else:
-                print("[{}] No pending reports found".format(timezone.now()))
-            
             # Wait 30 seconds before next scan
             time.sleep(30)
             

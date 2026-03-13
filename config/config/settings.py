@@ -150,13 +150,9 @@ STATIC_URL = '/static/'
 # Directory where collectstatic will place all static files
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Directories where Django will look for static files
-STATICFILES_DIRS = [
-    BASE_DIR / 'accounts' / 'static',
-    BASE_DIR / 'dashboard' / 'static',
-    BASE_DIR / 'fms' / 'static',
-    BASE_DIR / 'website' / 'static',
-]
+# App static files are discovered automatically via INSTALLED_APPS.
+# Keep this empty unless you add a separate project-level static directory.
+STATICFILES_DIRS = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

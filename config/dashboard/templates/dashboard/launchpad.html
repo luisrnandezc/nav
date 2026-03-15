@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Dashboard</title>
-    <link href="{% static 'dashboard.css' %}" rel="stylesheet" />
+    <link href="{% static 'dashboard/dashboard.css' %}" rel="stylesheet" />
   </head>
 
   <body>
@@ -37,7 +37,7 @@
           {% endif %}
 
           <a class="logout-button" href="{{ dashboard_header.logout_url }}" aria-label="Cerrar sesion">
-            <img class="logout-icon" src="{% static 'img/logout.png' %}" alt="">
+            <img class="logout-icon" src="{% static 'dashboard/img/logout.png' %}" alt="">
           </a>
         </div>
       </header>

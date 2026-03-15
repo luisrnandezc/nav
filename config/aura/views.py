@@ -653,7 +653,7 @@ def download_global_review_pdf(request, student_profile_id: int):
         return redirect("aura:student_global_review", student_profile_id=student_profile.id)
 
     try:
-        raw_logo_path = find("img/evaluation_logo.png")
+        raw_logo_path = find("aura/img/evaluation_logo.png")
         if raw_logo_path:
             logo_path = Path(raw_logo_path).as_posix()
             logo_uri = f"file:///{logo_path}"
@@ -672,7 +672,7 @@ def download_global_review_pdf(request, student_profile_id: int):
         )
 
         base_url = request.build_absolute_uri()
-        css_path = find("aura_pdf_global_review.css")
+        css_path = find("aura/aura_pdf_global_review.css")
         if not css_path:
             messages.error(request, "No se encontró el archivo CSS para generar el PDF AURA.")
             return redirect("aura:student_global_review", student_profile_id=student_profile.id)

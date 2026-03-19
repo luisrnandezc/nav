@@ -10,9 +10,9 @@ class CourseTypeAdmin(admin.ModelAdmin):
 
 @admin.register(CourseEdition)
 class CourseEditionAdmin(admin.ModelAdmin):
-    list_display = ('get_course_code', 'course_type', 'edition', 'start_date', 'time_slot')
-    list_filter = ('course_type', 'time_slot')
-    search_fields = ('course_type__name', 'course_type__code')
+    list_display = ('get_course_code', 'course_type', 'modality', 'year', 'edition', 'start_date', 'time_slot')
+    list_filter = ('course_type', 'modality', 'year', 'time_slot')
+    search_fields = ('course_type__name', 'course_type__code', 'modality', 'year')
     filter_horizontal = ('students',)
 
     def get_course_code(self, obj):

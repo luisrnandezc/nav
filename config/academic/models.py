@@ -46,8 +46,8 @@ SUBJECTS_CODES = (
     ('PPA-MYC', 'PPA-MYC'),
     ('PPA-PRF', 'PPA-PRF'),
     ('PPA-RDC', 'PPA-RDC'),
-    ('PPA-FHH', 'PPA-FHH'),
-    ('PPA-SEG', 'PPA-SEG'),
+    ('PPA-FH-I', 'PPA-FH-I'),
+    ('PPA-SEG-I', 'PPA-SEG-I'),
     ('PPA-SPV', 'PPA-SPV'),
     ('PPA-PRO-I', 'PPA-PRO-I'),
     ('HVI-DER', 'HVI-DER'),
@@ -82,8 +82,8 @@ SUBJECTS_NAMES = (
     ('PPA-MYC', 'PPA - Masa y Centrado'),
     ('PPA-PRF', 'PPA - Performance'),
     ('PPA-RDC', 'PPA - Radiocomunicaciones'),
-    ('PPA-FHH', 'PPA - Factores Humanos'),
-    ('PPA-SEG', 'PPA - Seguridad Aérea'),
+    ('PPA-FH-I', 'PPA - Factores Humanos I'),
+    ('PPA-SEG-I', 'PPA - Seguridad Aérea I'),
     ('PPA-SPV', 'PPA - Supervivencia'),
     ('PPA-PRO-I', 'PPA - Procedimientos Operacionales I'),
     ('HVI-DER', 'HVI - Derecho Aeronáutico'),
@@ -119,6 +119,12 @@ TIME_SLOTS = (
 TEST_TYPES = (
     ('STANDARD', 'Estándar'),
     ('RECOVERY', 'Reparación'),
+)
+
+# Course modality choices
+COURSE_MODALITIES = (
+    ('GROUP', 'Grupal'),
+    ('INDIVIDUAL', 'Individual'),
 )
 
 #endregion
@@ -163,6 +169,17 @@ class CourseEdition(models.Model):
         related_name='editions',
         verbose_name='Tipo de Curso'
     )
+    modality = models.CharField(
+        max_length=10,
+        choices=COURSE_MODALITIES,
+        default='GROUP',
+        verbose_name='Modalidad'
+    )
+    year = models.IntegerField(
+        validators=[MinValueValidator(2026)],
+        default=2026,
+        verbose_name='Año del curso'
+    )
     edition = models.IntegerField(
         validators=[MinValueValidator(0)], 
         default=0,
@@ -191,11 +208,11 @@ class CourseEdition(models.Model):
     class Meta:
         verbose_name = 'Edición de Curso'
         verbose_name_plural = 'Ediciones de Cursos'
-        unique_together = ['course_type', 'edition']
-        ordering = ['course_type', 'edition']
+        unique_together = ['course_type', 'modality', 'edition']
+        ordering = ['course_type', 'modality', 'edition']
     
     def __str__(self):
-        return f"{self.course_type.name} - {self.edition}"
+        return f"{self.course_type.code}-{self.modality.capitalize()}-{self.edition}-{self.year}"
     
     
 # Subject Model (Belongs to a Course Type)

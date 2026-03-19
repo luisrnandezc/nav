@@ -43,14 +43,18 @@ def _build_identity_items(user, active_role, user_profile):
 
 def _build_document_items(active_role, user_profile):
     if active_role == 'STUDENT':
-        license_value = 'No aplica'
+        license_value = 'N/A'
         if user_profile.student_phase != user_profile.GROUND:
             if user_profile.student_license_type == user_profile.LICENSE_NA:
                 license_value = 'N/A'
-            else:
+            elif user_profile.student_license_type == user_profile.LICENSE_AP:
                 license_value = (
                     f'{user_profile.get_student_license_type_display()} - '
                     f'{_format_date_or_na(user_profile.license_exp_date)}'
+                )
+            else:
+                license_value = (
+                    f'{user_profile.get_student_license_type_display()}'
                 )
 
         return [
@@ -59,24 +63,30 @@ def _build_document_items(active_role, user_profile):
         ]
 
     if active_role == 'INSTRUCTOR':
-        pilot_license_value = 'N/A'
+        instructor_license_type = 'N/A'
         if user_profile.instructor_license_type != user_profile.LICENSE_NA:
-            pilot_license_value = (
-                f'{user_profile.get_instructor_license_type_display()} - '
-                f'{_format_date_or_na(user_profile.license_exp_date)}'
+            instructor_license_type = (
+                f'{user_profile.get_instructor_license_type_display()}'
             )
 
-        instructor_license_value = 'N/A'
-        if user_profile.instructor_scope_type != user_profile.INSTRUCTOR_SCOPE_NA:
-            instructor_license_value = (
-                f'{user_profile.get_instructor_scope_type_display()} - '
-                f'{_format_date_or_na(user_profile.instructor_scope_exp_date)}'
-            )
+        ivs_license_value = 'N/A'
+        if user_profile.ivs_exp_date:
+            ivs_license_value = f'{_format_date_or_na(user_profile.ivs_exp_date)}'
+        
+        iva_license_value = 'N/A'
+        if user_profile.iva_exp_date:
+            iva_license_value = f'{_format_date_or_na(user_profile.iva_exp_date)}'
+        
+        rating_value = 'N/A'
+        if user_profile.rating_exp_date:
+            rating_value = f'{_format_date_or_na(user_profile.rating_exp_date)}'
 
         return [
+            {'label': 'Tipo de licencia', 'value': instructor_license_type},
+            {'label': 'Licencia IVS', 'value': ivs_license_value},
+            {'label': 'Licencia IVA', 'value': iva_license_value},
+            {'label': 'Habilitación PA-28', 'value': rating_value},            
             {'label': 'Certificado médico', 'value': _format_date_or_na(user_profile.medical_exp_date)},
-            {'label': 'Licencia de piloto', 'value': pilot_license_value},
-            {'label': 'Licencia de instructor', 'value': instructor_license_value},
         ]
 
     return []

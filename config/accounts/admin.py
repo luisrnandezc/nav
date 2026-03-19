@@ -31,8 +31,9 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'get_student_id', 'student_phase', 'get_course_type',
-                    'get_course_edition', 'balance', 'nav_flight_hours', 'flight_hours', 'sim_hours')
-    list_filter = ('student_phase',)
+                    'get_course_edition', 'student_license_type', 'balance', 'flight_rate',
+                    'nav_flight_hours', 'flight_hours', 'sim_hours')
+    list_filter = ('student_phase', 'student_license_type', 'advanced_student', 'has_credit', 'has_temp_permission')
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
     readonly_fields = ('get_course_type', 'get_course_edition')
 
@@ -74,7 +75,8 @@ class StudentProfileAdmin(admin.ModelAdmin):
 @admin.register(InstructorProfile)
 class InstructorProfileAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'get_instructor_id', 'get_first_name', 'get_last_name',
-                     'instructor_license_type', 'instructor_type')
+                    'instructor_license_type', 'instructor_type', 'flight_instructor_hourly_rate')
+    list_filter = ('instructor_type', 'instructor_license_type')
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
 
     fieldsets = (
@@ -85,11 +87,13 @@ class InstructorProfileAdmin(admin.ModelAdmin):
             'fields': (
                 'instructor_type',
                 'instructor_license_type',
-                'license_exp_date',
                 'medical_exp_date',
-                'instructor_scope_type',
-                'instructor_scope_exp_date',
-                'instructor_hourly_rate',
+                'ivs_exp_date',
+                'iva_exp_date',
+                'rating_exp_date',
+                'ground_instructor_hourly_rate',
+                'sim_instructor_hourly_rate',
+                'flight_instructor_hourly_rate',
             )
         }),
     )

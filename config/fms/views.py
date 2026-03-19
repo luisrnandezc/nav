@@ -749,14 +749,14 @@ def session_detail(request, form_type, evaluation_id):
         messages.error(request, f'Error al cargar la sesión: {str(e)}')
         return redirect('dashboard:dashboard')
 
-def calculate_user_stats(user_id, role_type='student', instructor_hourly_rate=None, student_hourly_rate=None):
+def calculate_user_stats(user_id, role_type='student', flight_instructor_hourly_rate=None, student_hourly_rate=None):
     """
     Helper function to calculate statistics for a user (student or instructor).
     
     Args:
         user_id: The national_id of the user
         role_type: Either 'student' or 'instructor' to determine which field to filter by
-        instructor_hourly_rate: The hourly rate of the instructor
+        flight_instructor_hourly_rate: The hourly rate of the instructor
         student_hourly_rate: The hourly rate of the student
     Returns:
         Dictionary with all calculated statistics.
@@ -903,9 +903,9 @@ def calculate_user_stats(user_id, role_type='student', instructor_hourly_rate=No
     if total_flight_hours_yv206e > 0:
         flight_hour_cost_yv206e = (total_flight_hours_dollars_yv206e + total_fuel_cost_yv206e) / total_flight_hours_yv206e
 
-    if role_type == 'instructor' and instructor_hourly_rate is not None:
-        total_paid_to_instructor_yv204e = total_flight_hours_yv204e * instructor_hourly_rate
-        total_paid_to_instructor_yv206e = total_flight_hours_yv206e * instructor_hourly_rate
+    if role_type == 'instructor' and flight_instructor_hourly_rate is not None:
+        total_paid_to_instructor_yv204e = total_flight_hours_yv204e * flight_instructor_hourly_rate
+        total_paid_to_instructor_yv206e = total_flight_hours_yv206e * flight_instructor_hourly_rate
         total_paid_to_instructor = total_paid_to_instructor_yv204e + total_paid_to_instructor_yv206e
 
     return {
@@ -1041,7 +1041,7 @@ def instructor_stats_page(request, instructor_id=None):
         try:
             instructor = User.objects.get(national_id=instructor_id, role='INSTRUCTOR')
             instructor_profile = InstructorProfile.objects.get(user=instructor)
-            instructor_hourly_rate = instructor_profile.instructor_hourly_rate
+            flight_instructor_hourly_rate = instructor_profile.flight_instructor_hourly_rate
             user_id = instructor_id
         except User.DoesNotExist:
             messages.error(request, 'Instructor no encontrado')
@@ -1056,7 +1056,7 @@ def instructor_stats_page(request, instructor_id=None):
         
         try:
             instructor_profile = InstructorProfile.objects.get(user=user)
-            instructor_hourly_rate = instructor_profile.instructor_hourly_rate
+            flight_instructor_hourly_rate = instructor_profile.flight_instructor_hourly_rate
         except InstructorProfile.DoesNotExist:
             messages.error(request, 'Perfil de instructor no encontrado')
             return redirect('dashboard:dashboard')
@@ -1071,7 +1071,7 @@ def instructor_stats_page(request, instructor_id=None):
             return redirect('dashboard:dashboard')
 
     try:
-        stats = calculate_user_stats(user_id, 'instructor', instructor_hourly_rate, None)
+        stats = calculate_user_stats(user_id, 'instructor', flight_instructor_hourly_rate, None)
     except Aircraft.DoesNotExist:
         messages.error(request, 'Aeronave no encontrada')
         if instructor_id:

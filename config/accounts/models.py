@@ -140,16 +140,16 @@ class StudentProfile(models.Model):
         verbose_name='Tipo de licencia',
     )
     license_exp_date = models.DateField(
-        verbose_name='Expiración de la licencia',
         default=None,
         null=True,
         blank=True,
+        verbose_name='Exp. de la licencia',
     )
     medical_exp_date = models.DateField(
-        verbose_name='Expiración del certificado médico',
         default=None,
         null=True,
         blank=True,
+        verbose_name='Exp. Cert. Médico',
     )
     sim_hours = models.DecimalField(
         max_digits=4,
@@ -278,19 +278,6 @@ class InstructorProfile(models.Model):
         (LICENSE_IVS, 'IVS'),
         (LICENSE_OTHER, 'OTRO'),
     ]
-
-    INSTRUCTOR_SCOPE_NA = 'NA'
-    INSTRUCTOR_SCOPE_FLIGHT = 'VUELO'
-    INSTRUCTOR_SCOPE_SIM = 'SIM'
-    INSTRUCTOR_SCOPE_BOTH = 'AMBOS'
-
-    INSTRUCTOR_SCOPE_TYPES = [
-        (INSTRUCTOR_SCOPE_NA, 'N/A'),
-        (INSTRUCTOR_SCOPE_FLIGHT, 'Vuelo'),
-        (INSTRUCTOR_SCOPE_SIM, 'Simulador'),
-        (INSTRUCTOR_SCOPE_BOTH, 'Ambos'),
-    ]
-
     #endregion
 
     #region MODEL FIELDS
@@ -312,35 +299,47 @@ class InstructorProfile(models.Model):
         default=LICENSE_PCA,
         verbose_name='Tipo de licencia',
     )
-    license_exp_date = models.DateField(
-        verbose_name='Expiración de la licencia',
-        default=None,
-        null=True,
-        blank=True,
-    )
     medical_exp_date = models.DateField(
-        verbose_name='Expiración del certificado médico',
         default=None,
         null=True,
         blank=True,
+        verbose_name='Exp. Cert. Médico',
     )
-    instructor_scope_type = models.CharField(
-        max_length=10,
-        choices=INSTRUCTOR_SCOPE_TYPES,
-        default=INSTRUCTOR_SCOPE_NA,
-        verbose_name='Tipo de licencia de instructor',
-    )
-    instructor_scope_exp_date = models.DateField(
-        verbose_name='Expiración de la licencia de instructor',
+    ivs_exp_date = models.DateField(
         default=None,
         null=True,
         blank=True,
+        verbose_name='Exp. Licencia IVS',
     )
-    instructor_hourly_rate = models.DecimalField(
+    iva_exp_date = models.DateField(
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name='Exp. Licencia IVA',
+    )
+    rating_exp_date = models.DateField(
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name='Exp. Habilitación PA-28',
+    )
+    ground_instructor_hourly_rate = models.DecimalField(
+        max_digits=3,
+        decimal_places=1,
+        default=8.0,
+        verbose_name="Tasa instrucción tierra ($/h)"
+    )
+    sim_instructor_hourly_rate = models.DecimalField(
+        max_digits=3,
+        decimal_places=1,
+        default=15.0,
+        verbose_name="Tasa instrucción simulador ($/h)"
+    )
+    flight_instructor_hourly_rate = models.DecimalField(
         max_digits=3,
         decimal_places=1,
         default=20.0,
-        verbose_name="Tasa de instrucción ($/h)"
+        verbose_name="Tasa instrucción vuelo ($/h)"
     )
     #endregion
 

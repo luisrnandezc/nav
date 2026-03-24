@@ -1,12 +1,10 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>NAV | Planilla de evaluación</title>
-        <link href="{% static 'fms/pdf.css' %}" rel="stylesheet"> 
+        {# CSS is applied in download_pdf via weasyprint.CSS(filename=...) — avoid <link> so WeasyPrint does not HTTP-fetch static (breaks behind Cloudflare / prod). #}
     </head>
 
     <body>

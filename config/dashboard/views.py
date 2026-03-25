@@ -239,8 +239,8 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'description': 'Acceder al panel de revisión AURA.',
             'icon': 'dashboard/img/aura.png',
             'url': reverse('aura:home'),
-            'roles': {'STUDENT', 'INSTRUCTOR', 'STAFF'},
-            'visible': active_role != 'STUDENT' or user_profile.student_phase == user_profile.FLYING,
+            'roles': {'STAFF'},
+            'visible': True,
         },
     ]
 

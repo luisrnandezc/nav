@@ -514,10 +514,46 @@ def _get_latest_global_review(student_user):
     )
 
 
+def _global_review_public_snapshot(global_review):
+    """
+    Subset of ai_result for web/PDF: narrative summary, strengths/weaknesses lists,
+    next-session note. Domains, levels, and the rest of the JSON stay off templates
+    (admin / future API for raw structure).
+    """
+    empty = {
+        "summary_text": "",
+        "global_strengths": [],
+        "global_weaknesses": [],
+        "next_session_awareness": "",
+    }
+    if not global_review or not isinstance(global_review.ai_result, dict):
+        return empty
+    data = global_review.ai_result
+
+    def as_str_list(key):
+        raw = data.get(key) or []
+        if not isinstance(raw, list):
+            return []
+        return [str(x).strip() for x in raw if str(x).strip()]
+
+    return {
+        "summary_text": (data.get("summary_text") or "").strip(),
+        "global_strengths": as_str_list("global_strengths"),
+        "global_weaknesses": as_str_list("global_weaknesses"),
+        "next_session_awareness": (data.get("next_session_awareness") or "").strip(),
+    }
+
+
 def _build_review_context(request, student_profile, capabilities, back_url):
+    latest_review = _get_latest_global_review(student_profile.user)
+    snap = _global_review_public_snapshot(latest_review)
     return {
         "student_profile": student_profile,
-        "latest_review": _get_latest_global_review(student_profile.user),
+        "latest_review": latest_review,
+        "aura_summary_text": snap["summary_text"],
+        "aura_global_strengths": snap["global_strengths"],
+        "aura_global_weaknesses": snap["global_weaknesses"],
+        "aura_next_session_awareness": snap["next_session_awareness"],
         "can_download_pdf": capabilities["can_download_pdf"],
         "can_update_review": capabilities["can_update_review"],
         "is_self_view": capabilities["can_view_own_review"] and not capabilities["can_view_all_reviews"],
@@ -660,12 +696,16 @@ def download_global_review_pdf(request, student_profile_id: int):
         else:
             logo_uri = ""
 
+        snap = _global_review_public_snapshot(latest_review)
         html_string = render_to_string(
             "aura/pdf_global_review.html",
             {
                 "student_profile": student_profile,
                 "latest_review": latest_review,
-                "data": latest_review.ai_result or {},
+                "aura_summary_text": snap["summary_text"],
+                "aura_global_strengths": snap["global_strengths"],
+                "aura_global_weaknesses": snap["global_weaknesses"],
+                "aura_next_session_awareness": snap["next_session_awareness"],
                 "logo_path": logo_uri,
                 "generated_at": timezone.now(),
             },

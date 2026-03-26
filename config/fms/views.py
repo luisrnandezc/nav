@@ -597,7 +597,7 @@ def download_pdf(request, form_type, evaluation_id):
         evaluation, template_name = get_evaluation_and_template(form_type, evaluation_id)
         
         # Find the static image path (logo)
-        raw_logo_path = find('img/evaluation_logo.png')
+        raw_logo_path = find('fms/img/evaluation_logo.png')
         if raw_logo_path:
             logo_path = Path(raw_logo_path).as_posix()
             logo_uri = f'file:///{logo_path}'
@@ -613,9 +613,10 @@ def download_pdf(request, form_type, evaluation_id):
         # Get the base URL for static files
         base_url = request.build_absolute_uri()
 
-        # Find the CSS file path
-        css_path = find('pdf.css')
-        
+        # Find the CSS file path (do not rely on <link> in templates — fetching CSS via HTTP
+        # behind Cloudflare/proxies can fail or trigger WeasyPrint recursion errors on some hosts).
+        css_path = find('fms/pdf.css')
+
         # Generate PDF using WeasyPrint with CSS
         html_doc = weasyprint.HTML(string=html_string, base_url=base_url)
         pdf = html_doc.write_pdf(stylesheets=[weasyprint.CSS(filename=css_path)] if css_path else None)

@@ -48,7 +48,7 @@
             </div>
             <div class="account-details-grid">
               {% for item in document_items %}
-                <div class="report-data">
+                <div class="report-data {{ item.value_class }}">
                   <span class="report-label">{{ item.label }}:</span>
                   <span class="report-value">{{ item.value }}</span>
                 </div>

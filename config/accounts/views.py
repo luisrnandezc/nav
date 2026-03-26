@@ -8,11 +8,40 @@ from .forms import CustomPasswordChangeForm
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from .role_utils import ROLE_LABELS, get_available_roles, resolve_active_role
 
 
 def _format_date_or_na(value):
     return value.strftime('%d/%m/%Y') if value else 'N/A'
+
+
+def _document_expiry_class(exp_date):
+    """
+    CSS class for document expiry emphasis on the account page.
+    - Urgent (red): already expired, or fewer than 15 days until expiration.
+    - Soon (yellow): between 15 and 30 days inclusive.
+    - Normal: more than 30 days; no date -> no class.
+    Red wins when both could apply.
+    """
+    if not exp_date:
+        return ''
+    today = timezone.localdate()
+    delta = (exp_date - today).days
+    if delta < 0 or delta < 15:
+        return 'account-expiry--urgent'
+    if delta <= 30:
+        return 'account-expiry--soon'
+    return ''
+
+
+def _doc_row(label, value, exp_date=None):
+    """Build one document row for the template; optional expiry styling from date."""
+    return {
+        'label': label,
+        'value': value,
+        'value_class': _document_expiry_class(exp_date) if exp_date else '',
+    }
 
 
 def _build_identity_items(user, active_role, user_profile):
@@ -48,45 +77,60 @@ def _build_document_items(active_role, user_profile):
             if user_profile.student_license_type == user_profile.LICENSE_NA:
                 license_value = 'N/A'
             elif user_profile.student_license_type == user_profile.LICENSE_AP:
-                license_value = (
-                    f'{user_profile.get_student_license_type_display()} - '
-                    f'{_format_date_or_na(user_profile.license_exp_date)}'
-                )
+                license_value = user_profile.get_student_license_type_display()
             else:
                 license_value = (
                     f'{user_profile.get_student_license_type_display()}'
                 )
 
         return [
-            {'label': 'Certificado médico', 'value': _format_date_or_na(user_profile.medical_exp_date)},
-            {'label': 'Licencia', 'value': license_value},
+            _doc_row(
+                'Certificado médico',
+                _format_date_or_na(user_profile.medical_exp_date),
+                user_profile.medical_exp_date,
+            ),
+            {'label': 'Licencia', 'value': license_value, 'value_class': ''},
+            _doc_row(
+                'Habilitación (PA28)',
+                _format_date_or_na(user_profile.rating_exp_date),
+                user_profile.rating_exp_date,
+            ),
         ]
 
     if active_role == 'INSTRUCTOR':
-        instructor_license_type = 'N/A'
-        if user_profile.instructor_license_type != user_profile.LICENSE_NA:
-            instructor_license_type = (
-                f'{user_profile.get_instructor_license_type_display()}'
-            )
-
         ivs_license_value = 'N/A'
         if user_profile.ivs_exp_date:
             ivs_license_value = f'{_format_date_or_na(user_profile.ivs_exp_date)}'
-        
+
         iva_license_value = 'N/A'
         if user_profile.iva_exp_date:
             iva_license_value = f'{_format_date_or_na(user_profile.iva_exp_date)}'
-        
+
         rating_value = 'N/A'
         if user_profile.rating_exp_date:
             rating_value = f'{_format_date_or_na(user_profile.rating_exp_date)}'
 
         return [
-            {'label': 'Tipo de licencia', 'value': instructor_license_type},
-            {'label': 'Licencia IVS', 'value': ivs_license_value},
-            {'label': 'Licencia IVA', 'value': iva_license_value},
-            {'label': 'Habilitación PA-28', 'value': rating_value},            
-            {'label': 'Certificado médico', 'value': _format_date_or_na(user_profile.medical_exp_date)},
+            _doc_row(
+                'Certificado médico',
+                _format_date_or_na(user_profile.medical_exp_date),
+                user_profile.medical_exp_date,
+            ),
+            _doc_row(
+                'Habilitación IVS (ATD)',
+                ivs_license_value,
+                user_profile.ivs_exp_date,
+            ),
+            _doc_row(
+                'Habilitación IVA (PA28)',
+                iva_license_value,
+                user_profile.iva_exp_date,
+            ),
+            _doc_row(
+                'Habilitación (PA28)',
+                rating_value,
+                user_profile.rating_exp_date,
+            ),
         ]
 
     return []

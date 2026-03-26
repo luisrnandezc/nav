@@ -54,74 +54,26 @@
 
 /*
  * Expiry emphasis for "Mi cuenta" document dates.
- * This is intentionally placed in accounts_home.css so it always loads with the page.
+ * Simple highlight for urgent / soon expiries.
  */
-.account-card .report-data.account-expiry--urgent,
-.report-data.account-expiry--urgent {
-  /* Use background-color + inset shadow so other CSS can't visually mask it */
-  background-color: rgba(244, 67, 54, 0.28) !important;
-  background: rgba(244, 67, 54, 0.28) !important;
-  background-image: none !important;
-  box-shadow: inset 0 0 0 9999px rgba(244, 67, 54, 0.28) !important;
-
-  border-left: 4px solid #f44336 !important;
+.account-card .report-data.account-expiry--urgent {
+  background: rgba(244, 67, 54, 0.12);
+  border-left: 3px solid #f44336;
   border-radius: 12px;
-  outline: 2px solid rgba(244, 67, 54, 0.75) !important;
-  outline-offset: -2px;
 }
 
-.account-card .report-data.account-expiry--urgent .report-value,
-.report-data.account-expiry--urgent .report-value {
-  color: #ffcdd2 !important;
-  font-weight: 700 !important;
+.account-card .report-data.account-expiry--urgent .report-value {
+  color: #ffcdd2;
+  font-weight: 600;
 }
 
-.account-card .report-data.account-expiry--soon,
-.report-data.account-expiry--soon {
-  background-color: rgba(255, 152, 0, 0.22) !important;
-  background: rgba(255, 152, 0, 0.22) !important;
-  background-image: none !important;
-  box-shadow: inset 0 0 0 9999px rgba(255, 152, 0, 0.22) !important;
-
-  border: 1px solid #ff9800 !important;
+.account-card .report-data.account-expiry--soon {
+  background: rgba(255, 193, 7, 0.12);
+  border-left: 3px solid #ff9800;
   border-radius: 12px;
-  outline: 2px solid rgba(255, 152, 0, 0.65) !important;
-  outline-offset: -2px;
 }
 
-.account-card .report-data.account-expiry--soon .report-value,
-.report-data.account-expiry--soon .report-value {
-  color: #ffd28a !important;
-  font-weight: 650 !important;
-}
-
-/*
- * Debug styling (temporary): if you can see the class but not the styling,
- * this confirms whether `.report-data` rules are actually taking effect.
- */
-.account-card .report-data {
-  background: #0000ff !important; /* solid blue */
-  border: 3px solid #00ffff !important; /* cyan border */
-  outline: 5px solid #ff00ff !important; /* magenta outline */
-  outline-offset: -3px;
-}
-
-.report-data.account-expiry--urgent {
-  background: #ff0000 !important; /* solid red */
-  border: 5px solid #000000 !important;
-  outline: 6px solid #ffffff !important;
-  outline-offset: -4px;
-}
-
-.report-data.account-expiry--soon {
-  background: #ffff00 !important; /* solid yellow */
-  border: 5px solid #000000 !important;
-  outline: 6px solid #000000 !important;
-  outline-offset: -4px;
-}
-
-.report-data.account-expiry--urgent .report-value,
-.report-data.account-expiry--soon .report-value {
-  color: #ffffff !important;
-  font-weight: 900 !important;
+.account-card .report-data.account-expiry--soon .report-value {
+  color: #ffd28a;
+  font-weight: 600;
 }

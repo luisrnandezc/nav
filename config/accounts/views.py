@@ -57,12 +57,12 @@ def _build_identity_items(user, active_role, user_profile):
         items.extend([
             {'label': 'Curso', 'value': f'{user_profile.current_course_type}-{user_profile.current_course_edition}'},
             {'label': 'Fase', 'value': user_profile.get_student_phase_display()},
-            {'label': 'Balance', 'value': f'$ {user_profile.balance}'},
+            {'label': 'Tipo de licencia', 'value': user_profile.get_student_license_type_display()},
         ])
     elif active_role == 'INSTRUCTOR':
         items.extend([
             {'label': 'Tipo de instructor', 'value': user_profile.get_instructor_type_display()},
-            {'label': 'Licencia de piloto', 'value': user_profile.get_instructor_license_type_display()},
+            {'label': 'Tipo de licencia', 'value': user_profile.get_instructor_license_type_display()},
         ])
     elif active_role == 'STAFF':
         items.append({'label': 'Cargo', 'value': user_profile.position})
@@ -89,7 +89,11 @@ def _build_document_items(active_role, user_profile):
                 _format_date_or_na(user_profile.medical_exp_date),
                 user_profile.medical_exp_date,
             ),
-            {'label': 'Licencia', 'value': license_value, 'value_class': ''},
+            _doc_row(
+                'Licencia AP',
+                _format_date_or_na(user_profile.ap_exp_date),
+                user_profile.ap_exp_date,
+            ),
             _doc_row(
                 'Habilitación (PA28)',
                 _format_date_or_na(user_profile.rating_exp_date),

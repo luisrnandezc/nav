@@ -6,18 +6,18 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>NAV | Nosotros</title>
-        <link href="{% static 'navbar.css' %}" rel="stylesheet">
-        <link href="{% static 'about.css' %}" rel="stylesheet">
+        <link href="{% static 'website/navbar.css' %}" rel="stylesheet">
+        <link href="{% static 'website/about.css' %}" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-        <link href="{% static 'footer.css' %}" rel="stylesheet">
-        <link rel="icon" href="{% static 'img/index/favicon.ico' %}">
-        <link rel="icon" href="{% static 'img/index/favicon.ico' %}" sizes="any">
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/index/favicon-32x32.png' %}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/index/favicon-16x16.png' %}">
-        <link rel="apple-touch-icon" href="{% static 'img/index/apple-touch-icon.png' %}">
+        <link href="{% static 'website/footer.css' %}" rel="stylesheet">
+        <link rel="icon" href="{% static 'website/img/index/favicon.ico' %}">
+        <link rel="icon" href="{% static 'website/img/index/favicon.ico' %}" sizes="any">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'website/img/index/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'website/img/index/favicon-16x16.png' %}">
+        <link rel="apple-touch-icon" href="{% static 'website/img/index/apple-touch-icon.png' %}">
 
         <script>
-            const modelPath = "{% static '3dmodel/pa28.glb' %}";
+            const modelPath = "{% static 'website/3dmodel/pa28.glb' %}";
         </script> 
 
         <!--CDN import for the three.js library.-->
@@ -269,8 +269,8 @@
         {% include 'website/footer.html' %}
         <!--javascript-->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        <script src="{% static 'js/about_dynamics.js' %}"></script>
-        <script type="module" src="{% static 'js/3dviewer.js' %}"></script>
-        <script src="{% static 'js/navbar_dynamics.js' %}"></script>
+        <script src="{% static 'website/js/about_dynamics.js' %}"></script>
+        <script type="module" src="{% static 'website/js/3dviewer.js' %}"></script>
+        <script src="{% static 'website/js/navbar_dynamics.js' %}"></script>
     </body>
 </html>

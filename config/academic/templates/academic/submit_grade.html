@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Carga de nota</title>
-    <link href="{% static 'submit_grade.css' %}" rel="stylesheet" />
-    <link href="{% static 'shared_components.css' %}" rel="stylesheet" />
+    <link href="{% static 'academic/submit_grade.css' %}" rel="stylesheet" />
+    <link href="{% static 'academic/shared_components.css' %}" rel="stylesheet" />
   </head>
 
   <body>
@@ -101,7 +101,7 @@
       {% endif %}
     </div>
 
-    <script src="{% static 'js/submit_grade_dynamics.js' %}"></script>
+    <script src="{% static 'academic/js/submit_grade_dynamics.js' %}"></script>
     <script>
       function confirmDelete(studentName) {
         return confirm(`¿Estás seguro de que quieres eliminar la calificación de ${studentName}?`);

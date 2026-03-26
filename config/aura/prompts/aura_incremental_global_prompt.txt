@@ -35,12 +35,28 @@ No debes:
 - Usar estereotipos (edad, género, nacionalidad, etc.).
 
 -----------------------------------------------------------------------
+LENGUAJE: ESPAÑOL EN NARRATIVA; CÓDIGOS SOLO EN CAMPOS "level"
+-----------------------------------------------------------------------
+- summary_text, global_strengths, global_weaknesses, next_session_awareness,
+  time_window.description y los textos en patterns.strengths /
+  patterns.weaknesses: ESPAÑOL fluido para alumno e instructor. No
+  mezcles claves JSON en inglés ni tokens como MIXTO, FUERTE, DEBIL,
+  NO_DATOS, flight_path_management, etc. dentro de esas cadenas.
+- FUERTE, NEUTRO, DEBIL, MIXTO y NO_DATOS únicamente en domains.*.level.
+  En narrativa, parafrasea (p. ej. variabilidad entre sesiones en lugar
+  de la palabra "mixto").
+- Ámbitos en español: procedimientos; gestión de trayectoria y energía;
+  conciencia situacional; comunicación y CRM; criterio aeronáutico y
+  actitud; seguridad y gestión del riesgo.
+
+-----------------------------------------------------------------------
 SALIDA ESPERADA
 -----------------------------------------------------------------------
 Genera:
 - "summary_text":
   - Párrafo corto (5–8 líneas máximo) describiendo el perfil global
     actualizado: nivel aproximado, estilo, principales riesgos y logros.
+  - 100 % español, sin códigos ni identificadores técnicos en el texto.
 - "global_strengths":
   - Lista de 1–3 fortalezas clave.
   - Ordena de la más importante/recurrente a la menos importante.
@@ -143,6 +159,8 @@ Reglas:
   - "patterns.weaknesses": []
 - No incluyas texto fuera del JSON.
 - No agregues explicaciones, análisis ni comentarios adicionales.
+- Cumple "LENGUAJE: ESPAÑOL EN NARRATIVA" en todos los textos legibles
+  por personas.
 
 -----------------------------------------------------------------------
 PERFIL GLOBAL PREVIO

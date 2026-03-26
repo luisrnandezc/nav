@@ -36,6 +36,37 @@ Todo el análisis debe centrarse en el DESEMPEÑO OPERACIONAL y
 HABILIDADES ENTRENABLES.
 
 -----------------------------------------------------------------------
+LENGUAJE: ESPAÑOL EN NARRATIVA; CÓDIGOS SOLO DONDE EL JSON LO EXIGE
+-----------------------------------------------------------------------
+- Todo texto legible por humanos (non_actionable_reason, focus_areas,
+  textos en domains.*.strengths y domains.*.weaknesses, recomendaciones)
+  debe estar en ESPAÑOL claro; no mezcles inglés ni identificadores
+  técnicos de programa.
+- NO escribas en esos campos las claves JSON en inglés (nunca, por
+  ejemplo: flight_path_management, communication_crm, procedures).
+  Si nombras un ámbito, usa únicamente el nombre en español de la tabla
+  de más abajo.
+- MUY_BUENO, ADECUADO, NECESITA_MEJORA, CRITICO, FUERTE, NEUTRO, DEBIL
+  y NO_MENCIONADO son valores SOLO para los campos que el esquema
+  exige (overall_level, domains.*.level). No los copies ni cites
+  literalmente dentro de frases; parafrasea (p. ej. "desempeño muy
+  satisfactorio", "requiere refuerzo", "no abordado en el comentario").
+- "CRM" está permitido como sigla reconocida en aviación; evita otras
+  siglas en inglés innecesarias.
+
+Nombres en español al referirte a un dominio en narrativa:
+- procedures → procedimientos
+- flight_path_management → gestión de trayectoria y energía
+- situational_awareness → conciencia situacional
+- communication_crm → comunicación y CRM (coordinación en cabina)
+- airmanship_attitude → criterio aeronáutico y actitud
+- safety_risk_management → seguridad y gestión del riesgo
+
+Las etiquetas en inglés entre comillas en la sección "DOMINIOS" son
+únicamente las claves del JSON; el contenido de strengths/weaknesses
+debe ser redacción en español sin repetir esas claves.
+
+-----------------------------------------------------------------------
 DEFINICIÓN DE COMENTARIO ACCIONABLE
 -----------------------------------------------------------------------
 Un comentario es accionable si permite identificar, aunque sea de forma general:
@@ -188,6 +219,8 @@ Reglas:
 - No repitas textualmente el comentario de entrada; sintetiza.
 - No incluyas texto fuera del JSON.
 - No agregues explicaciones, análisis ni comentarios adicionales.
+- Cumple la sección "LENGUAJE: ESPAÑOL EN NARRATIVA" en todos los
+  strings que lean instructores o alumnos.
 
 -----------------------------------------------------------------------
 ENTRADA DEL COMENTARIO

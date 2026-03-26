@@ -1,5 +1,5 @@
 # Admin customization
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from .models import User, StudentProfile, InstructorProfile, StaffProfile
 
@@ -36,6 +36,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
     list_filter = ('student_phase', 'student_license_type', 'advanced_student', 'has_credit', 'has_temp_permission')
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
     readonly_fields = ('get_course_type', 'get_course_edition')
+    actions = ('run_aura_pending_for_students',)
 
     fieldsets = (
         ('Información del usuario', {
@@ -71,6 +72,43 @@ class StudentProfileAdmin(admin.ModelAdmin):
     def get_course_edition(self, obj):
         return obj.current_course_edition
     get_course_edition.short_description = 'Edición de Curso'
+
+    @admin.action(description='Procesar AURA (estudiantes seleccionados)')
+    def run_aura_pending_for_students(self, request, queryset):
+        from aura.scripts.aura_worker import process_pending_sessions_for_student
+
+        lines = []
+        for profile in queryset.select_related('user'):
+            user = profile.user
+            if user is None:
+                self.message_user(
+                    request,
+                    'Un perfil seleccionado no tiene usuario asociado; se omitió.',
+                    level=messages.WARNING,
+                )
+                continue
+            if user.role != User.Role.STUDENT:
+                self.message_user(
+                    request,
+                    f'{user.username}: el usuario no es estudiante (rol {user.role}); se omitió.',
+                    level=messages.WARNING,
+                )
+                continue
+            result = process_pending_sessions_for_student(user)
+            lines.append(
+                f'{user.get_full_name() or user.username} (cédula {user.national_id}): '
+                f'{result["reviews_created"]} revisión(es) nuevas de '
+                f'{result["pending_before"]} sesión(es) pendiente(s) considerada(s).'
+            )
+
+        if lines:
+            self.message_user(request, ' '.join(lines), level=messages.SUCCESS)
+        else:
+            self.message_user(
+                request,
+                'No se procesó ningún estudiante válido o no había filas seleccionadas.',
+                level=messages.INFO,
+            )
 
 @admin.register(InstructorProfile)
 class InstructorProfileAdmin(admin.ModelAdmin):

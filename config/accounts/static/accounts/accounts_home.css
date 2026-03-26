@@ -6,6 +6,11 @@
   margin: 0 auto;
 }
 
+/* One card (e.g. staff with no vencimientos): span full grid width so it is centered */
+.accounts-grid > .account-card:only-child {
+  grid-column: 1 / -1;
+}
+
 .account-card {
   display: flex;
   flex-direction: column;

@@ -139,17 +139,17 @@ class StudentProfile(models.Model):
         default=LICENSE_NA,
         verbose_name='Tipo de licencia',
     )
-    license_exp_date = models.DateField(
-        default=None,
-        null=True,
-        blank=True,
-        verbose_name='Exp. de la licencia',
-    )
     medical_exp_date = models.DateField(
         default=None,
         null=True,
         blank=True,
         verbose_name='Exp. Cert. Médico',
+    )
+    rating_exp_date = models.DateField(
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name='Exp. Habilitación (PA28)',
     )
     sim_hours = models.DecimalField(
         max_digits=4,
@@ -315,13 +315,13 @@ class InstructorProfile(models.Model):
         default=None,
         null=True,
         blank=True,
-        verbose_name='Exp. Licencia IVA',
+        verbose_name='Exp. Licencia IVA (PA28)',
     )
     rating_exp_date = models.DateField(
         default=None,
         null=True,
         blank=True,
-        verbose_name='Exp. Habilitación PA-28',
+        verbose_name='Exp. Habilitación (PA28)',
     )
     ground_instructor_hourly_rate = models.DecimalField(
         max_digits=3,

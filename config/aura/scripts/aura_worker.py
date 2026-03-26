@@ -245,6 +245,70 @@ def process_single_session(session, session_type: str) -> bool:
     return True
 
 
+def process_pending_sessions_for_student(student_user: User, sleep_seconds: float = 3.0) -> dict:
+    """
+    Process pending FMS sessions for one student (matches evaluation.student_id to user.national_id).
+
+    Returns:
+        dict with keys: reviews_created (int), sessions_scanned (int), pending_before (int)
+    """
+    nid = student_user.national_id
+    sim_pending = SimEvaluation.objects.filter(
+        aura_processed=False, student_id=nid
+    ).order_by("session_date", "id")
+    f0_pending = FlightEvaluation0_100.objects.filter(
+        aura_processed=False, student_id=nid
+    ).order_by("session_date", "id")
+    f1_pending = FlightEvaluation100_120.objects.filter(
+        aura_processed=False, student_id=nid
+    ).order_by("session_date", "id")
+    f2_pending = FlightEvaluation120_170.objects.filter(
+        aura_processed=False, student_id=nid
+    ).order_by("session_date", "id")
+
+    pending_before = (
+        sim_pending.count() + f0_pending.count() + f1_pending.count() + f2_pending.count()
+    )
+    print(
+        "[{}] AURA student id={} national_id={}: {} pending session(s)".format(
+            timezone.now(), student_user.id, nid, pending_before
+        )
+    )
+
+    reviews_created = 0
+    sessions_scanned = 0
+
+    for session in sim_pending:
+        sessions_scanned += 1
+        if process_single_session(session, session_type="SIM"):
+            reviews_created += 1
+        time.sleep(sleep_seconds)
+
+    for session in f0_pending:
+        sessions_scanned += 1
+        if process_single_session(session, session_type="FLIGHT"):
+            reviews_created += 1
+        time.sleep(sleep_seconds)
+
+    for session in f1_pending:
+        sessions_scanned += 1
+        if process_single_session(session, session_type="FLIGHT"):
+            reviews_created += 1
+        time.sleep(sleep_seconds)
+
+    for session in f2_pending:
+        sessions_scanned += 1
+        if process_single_session(session, session_type="FLIGHT"):
+            reviews_created += 1
+        time.sleep(sleep_seconds)
+
+    return {
+        "reviews_created": reviews_created,
+        "sessions_scanned": sessions_scanned,
+        "pending_before": pending_before,
+    }
+
+
 def process_pending_sessions():
     """
     Find and process all pending (aura_processed=False) sessions.

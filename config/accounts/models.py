@@ -145,6 +145,12 @@ class StudentProfile(models.Model):
         blank=True,
         verbose_name='Exp. Cert. Médico',
     )
+    ap_exp_date = models.DateField(
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name='Exp. Licencia AP',
+    )
     rating_exp_date = models.DateField(
         default=None,
         null=True,

@@ -491,7 +491,7 @@ def download_vhr_pdf(request, report_id):
     
     try:
         # Find the static image path (logo)
-        raw_logo_path = find('img/evaluation_logo.png')
+        raw_logo_path = find('sms/img/evaluation_logo.png')
         if raw_logo_path:
             logo_path = Path(raw_logo_path).as_posix()
             logo_uri = f'file:///{logo_path}'
@@ -509,7 +509,7 @@ def download_vhr_pdf(request, report_id):
         base_url = request.build_absolute_uri()
 
         # Find the CSS file path
-        css_path = find('pdf_vhr.css')
+        css_path = find('sms/pdf_vhr.css')
         if not css_path:
             messages.error(request, 'No se encontró el archivo CSS para generar el PDF del VHR.')
             return redirect('sms:vhr_action_panel', report_id=report_id)

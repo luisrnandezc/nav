@@ -47,7 +47,7 @@ def _get_profile_summary_items(user, active_role, user_profile):
         summary_items.append(
             {
                 'label': 'Funcion',
-                'value': user_profile.instructor_type,
+                'value': user_profile.get_instructor_type_display(),
             }
         )
     elif active_role == 'STAFF':
@@ -85,14 +85,14 @@ def _build_header_context(user, active_role, user_profile):
             },
             {
                 'label': 'Fase',
-                'value': user_profile.student_phase,
+                'value': user_profile.get_student_phase_display(),
             },
         ]
     elif active_role == 'INSTRUCTOR':
         header_context['meta_items'] = [
             {
                 'label': 'Función',
-                'value': user_profile.instructor_type,
+                'value': user_profile.get_instructor_type_display(),
             },
         ]
     elif active_role == 'STAFF':

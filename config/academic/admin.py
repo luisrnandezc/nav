@@ -59,7 +59,7 @@ class StudentGradeAdmin(admin.ModelAdmin):
     )
 
     def has_add_permission(self, request):
-        return False  # Disable adding new grades from admin
+        return True
 
     def student_national_id(self, obj):
         return obj.student.national_id if obj.student else '-'

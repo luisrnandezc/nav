@@ -39,8 +39,6 @@ if ON_PYTHONANYWHERE:
     CSRF_TRUSTED_ORIGINS = [
         'https://www.navaviation.org',
         'https://navaviation.org',
-        'http://www.navaviation.org',  # Include HTTP as fallback
-        'http://navaviation.org'       # Include HTTP as fallback
     ]
 else:
     ALLOWED_HOSTS = ['*']
@@ -165,12 +163,12 @@ AUTH_USER_MODEL = 'accounts.User'
 # Additional CSRF settings for production
 if ON_PYTHONANYWHERE:
     # Ensure CSRF cookies are secure in production
-    CSRF_COOKIE_SECURE = False  # Temporarily set to False for debugging
+    CSRF_COOKIE_SECURE = True
     CSRF_COOKIE_HTTPONLY = True
     CSRF_COOKIE_SAMESITE = 'Lax'
     
     # Session settings for production
-    SESSION_COOKIE_SECURE = False  # Temporarily set to False for debugging
+    SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     

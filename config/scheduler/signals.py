@@ -78,7 +78,19 @@ def notify_staff_on_flight_request_created(sender, instance: FlightRequest, crea
 
 @receiver(domain_signals.flight_request_cancelled)
 def notify_staff_on_cancelled(sender, instance: FlightRequest, **kwargs):
-    """Email staff when a student cancels a flight request."""
+    """Email staff when the student cancels."""
+    cancelled_by = kwargs.get('cancelled_by')
+    if cancelled_by != domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STUDENT:
+        if cancelled_by not in (
+            domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STAFF,
+            domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STUDENT,
+        ):
+            logger.warning(
+                "Staff cancellation email skipped: flight_request_cancelled missing or invalid cancelled_by=%r",
+                cancelled_by,
+            )
+        return
+
     staff_email = getattr(settings, 'OPS_NOTIFICATION_EMAIL', None)
     from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None)
     if not staff_email or not from_email:
@@ -189,7 +201,18 @@ def notify_instructor_removed(sender, slot, instructor, **kwargs):
 
 @receiver(domain_signals.flight_request_cancelled)
 def notify_instructor_on_cancelled(sender, instance: FlightRequest, **kwargs):
-    """Email assigned instructor when a flight request is cancelled."""
+    """Email assigned instructor when a flight request is cancelled (student or staff)."""
+    cancelled_by = kwargs.get('cancelled_by')
+    if cancelled_by not in (
+        domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STAFF,
+        domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STUDENT,
+    ):
+        logger.warning(
+            "Instructor cancellation email skipped: flight_request_cancelled missing or invalid cancelled_by=%r",
+            cancelled_by,
+        )
+        return
+
     instructor = getattr(getattr(instance, 'slot', None), 'instructor', None)
     to_email = getattr(instructor, 'email', None)
     from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None)
@@ -222,10 +245,15 @@ def notify_instructor_on_cancelled(sender, instance: FlightRequest, **kwargs):
             inst_last = getattr(instructor, 'last_name', '') or ''
             inst_email = getattr(instructor, 'email', None)
 
+        if cancelled_by == domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STUDENT:
+            intro = "El estudiante canceló la solicitud de vuelo para la cual usted estaba asignado.\n\n"
+        else:
+            intro = "La escuela canceló la solicitud de vuelo para la cual usted estaba asignado.\n\n"
+
         subject = f"Solicitud cancelada – {date_str} {block_str}"
         body = (
             f"Hola {inst_first} {inst_last},\n\n"
-            "Se ha cancelado una solicitud de vuelo para la cual usted estaba asignado.\n\n"
+            f"{intro}"
             f"Estudiante: {student_first} {student_last}\n"
             f"Aeronave: {aircraft_reg}\n"
             f"Fecha: {date_str}\n"
@@ -244,9 +272,60 @@ def notify_instructor_on_cancelled(sender, instance: FlightRequest, **kwargs):
 # STUDENT NOTIFICATIONS
 # ============================================================================
 
+def _student_flight_session_email_subject_and_body(fr: FlightRequest, *, staff_assigned: bool):
+    student_first = fr.student.first_name or ''
+    student_last = fr.student.last_name or ''
+    aircraft_reg = fr.slot.aircraft.registration if fr.slot and fr.slot.aircraft else 'N/A'
+    date_str = fr.slot.date.strftime('%Y-%m-%d') if fr.slot and fr.slot.date else 'N/A'
+    block_str = fr.slot.get_block_display() if fr.slot else 'N/A'
+
+    if staff_assigned:
+        subject = f"Sesión de vuelo asignada – {date_str} {block_str}"
+        body = (
+            f"Hola {student_first} {student_last},\n\n"
+            "La escuela le ha asignado una sesión de vuelo aprobada.\n\n"
+            f"Aeronave: {aircraft_reg}\n"
+            f"Fecha: {date_str}\n"
+            f"Bloque: {block_str}\n"
+        )
+    else:
+        subject = f"Solicitud de vuelo aprobada – {date_str} {block_str}"
+        body = (
+            f"Hola {student_first} {student_last},\n\n"
+            "Tu solicitud de vuelo ha sido aprobada.\n\n"
+            f"Aeronave: {aircraft_reg}\n"
+            f"Fecha: {date_str}\n"
+            f"Bloque: {block_str}\n"
+        )
+    return subject, body
+
+
 @receiver(post_save, sender=FlightRequest)
 def notify_student_on_status_change(sender, instance: FlightRequest, created: bool, **kwargs):
-    """Email student when flight request is approved."""
+    """Email student when a flight request is approved (pending→approved or staff-created as approved)."""
+    if created and instance.status == 'approved':
+        to_email = getattr(instance.student, 'email', None)
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None)
+        if not to_email or not from_email:
+            logger.warning(
+                "Student staff-assigned session email skipped: missing recipient or DEFAULT_FROM_EMAIL"
+            )
+            return
+
+        def _send_created_approved():
+            fr = FlightRequest.objects.select_related('student', 'slot', 'slot__aircraft').get(pk=instance.pk)
+            subject, body = _student_flight_session_email_subject_and_body(fr, staff_assigned=True)
+            try:
+                send_mail(subject, body, from_email, [to_email], fail_silently=False)
+            except Exception:
+                logger.exception(
+                    "Failed to send student staff-assigned session email for FlightRequest %s",
+                    fr.id,
+                )
+
+        transaction.on_commit(_send_created_approved)
+        return
+
     if created:
         return
     old_status = getattr(instance, '_old_status', None)
@@ -264,24 +343,19 @@ def notify_student_on_status_change(sender, instance: FlightRequest, created: bo
 
     def _send():
         fr = (
-            FlightRequest.objects.select_related('student', 'slot__aircraft')
-            .only('id', 'student__first_name', 'student__last_name', 'student__email', 'slot__date', 'slot__block', 'slot__aircraft__registration')
+            FlightRequest.objects.select_related('student', 'slot', 'slot__aircraft')
+            .only(
+                'id',
+                'student__first_name',
+                'student__last_name',
+                'student__email',
+                'slot__date',
+                'slot__block',
+                'slot__aircraft__registration',
+            )
             .get(pk=instance.pk)
         )
-        student_first = fr.student.first_name or ''
-        student_last = fr.student.last_name or ''
-        aircraft_reg = fr.slot.aircraft.registration if fr.slot and fr.slot.aircraft else 'N/A'
-        date_str = fr.slot.date.strftime('%Y-%m-%d') if fr.slot and fr.slot.date else 'N/A'
-        block_str = fr.slot.block or 'N/A'
-
-        subject = f"Solicitud de vuelo aprobada – {date_str} {block_str}"
-        body = (
-            f"Hola {student_first} {student_last},\n\n"
-            "Tu solicitud de vuelo ha sido aprobada.\n\n"
-            f"Aeronave: {aircraft_reg}\n"
-            f"Fecha: {date_str}\n"
-            f"Bloque: {block_str}\n"
-        )
+        subject, body = _student_flight_session_email_subject_and_body(fr, staff_assigned=False)
         try:
             send_mail(subject, body, from_email, [to_email], fail_silently=False)
         except Exception:
@@ -292,7 +366,19 @@ def notify_student_on_status_change(sender, instance: FlightRequest, created: bo
 
 @receiver(domain_signals.flight_request_cancelled)
 def notify_student_on_cancelled(sender, instance: FlightRequest, **kwargs):
-    """Email student when flight request is cancelled."""
+    """Email student when staff cancels their request (not when they cancel themselves)."""
+    cancelled_by = kwargs.get('cancelled_by')
+    if cancelled_by != domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STAFF:
+        if cancelled_by not in (
+            domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STAFF,
+            domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STUDENT,
+        ):
+            logger.warning(
+                "Student cancellation email skipped: flight_request_cancelled missing or invalid cancelled_by=%r",
+                cancelled_by,
+            )
+        return
+
     to_email = getattr(instance.student, 'email', None)
     from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None)
     if not to_email or not from_email:
@@ -319,7 +405,7 @@ def notify_student_on_cancelled(sender, instance: FlightRequest, **kwargs):
         subject = f"Solicitud de vuelo cancelada – {date_str} {block_str}"
         body = (
             f"Hola {student_first} {student_last},\n\n"
-            "Tu solicitud de vuelo ha sido cancelada.\n\n"
+            "Tu solicitud de vuelo ha sido cancelada por la escuela.\n\n"
             f"Aeronave: {aircraft_reg}\n"
             f"Fecha: {date_str}\n"
             f"Bloque: {block_str}\n"

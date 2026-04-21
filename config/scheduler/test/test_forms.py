@@ -1,6 +1,7 @@
 from django.test import TestCase
 from datetime import date
-from scheduler.forms import CreateFlightPeriodForm
+from accounts.models import StudentProfile
+from scheduler.forms import CreateFlightPeriodForm, StaffCreateApprovedFlightRequestForm
 from .factories import *
 
 
@@ -51,3 +52,18 @@ class CreateFlightPeriodFormTest(TestCase):
         self.assertEqual(result, form.cleaned_data)
         self.assertIn('end_date', form.errors)
         self.assertIn('La fecha de cierre debe ser posterior a la fecha de inicio', str(form.errors['end_date']))
+
+
+class StaffCreateApprovedFlightRequestFormTest(TestCase):
+    """Staff FR form only lists students in flying phase."""
+
+    def test_student_queryset_only_flying_phase(self):
+        flying = UserFactory()
+        StudentProfileFactory(user=flying, student_phase=StudentProfile.FLYING)
+        ground = UserFactory()
+        StudentProfileFactory(user=ground, student_phase=StudentProfile.GROUND)
+
+        form = StaffCreateApprovedFlightRequestForm()
+        qs = form.fields['student'].queryset
+        self.assertIn(flying, qs)
+        self.assertNotIn(ground, qs)

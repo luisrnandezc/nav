@@ -320,6 +320,54 @@ class FlightRequest(models.Model):
             self.pk = flight_request.pk
             self.save()
 
+    @classmethod
+    def create_approved_by_staff(cls, student, slot):
+        """
+        Create an approved flight request and reserve the slot (staff-initiated).
+
+        Enforces the same slot/period preconditions as create_request and the same
+        balance rules as approve, without a pending state.
+        """
+        if getattr(student, "role", None) != "STUDENT":
+            raise ValidationError("El usuario debe ser un estudiante")
+
+        with transaction.atomic():
+            slot = FlightSlot.objects.select_for_update().get(pk=slot.pk)
+
+            if slot.status != "available":
+                raise ValidationError("El slot no está disponible")
+            if slot.flight_period.is_active is not True:
+                raise ValidationError("El período de vuelo no está activo")
+            if cls.objects.filter(slot=slot, status__in=["pending", "approved"]).exists():
+                raise ValidationError("Este slot ya tiene una solicitud de vuelo activa")
+
+            try:
+                balance = student.student_profile.balance
+                if balance < 500.00 and not (
+                    student.student_profile.has_credit
+                    or student.student_profile.has_temp_permission
+                ):
+                    raise ValidationError(
+                        f"Balance insuficiente para aprobar. Balance actual: ${balance:.2f}"
+                    )
+            except StudentProfile.DoesNotExist:
+                raise ValidationError(
+                    "No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado"
+                )
+
+            flight_request = cls(student=student, slot=slot, status="approved")
+            flight_request.save()
+
+            slot.status = "reserved"
+            slot.student = student
+            slot.save()
+
+            if student.student_profile.has_temp_permission:
+                student.student_profile.has_temp_permission = False
+                student.student_profile.save()
+
+        return flight_request
+
     def approve(self, original_status=None):
         """Approve the flight request and update the slot status to reserved."""
         # Check if we can approve (use original_status if provided, otherwise current status)
@@ -358,8 +406,13 @@ class FlightRequest(models.Model):
                 self.student.student_profile.has_temp_permission = False
                 self.student.student_profile.save()
     
-    def cancel(self, apply_fee=False):
-        """Cancel the flight request and free up the slot."""
+    def cancel(self, apply_fee=False, *, cancelled_by):
+        """Cancel the flight request and free up the slot.
+
+        cancelled_by: who started the cancellation, for emails — use
+        domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STUDENT or
+        FLIGHT_REQUEST_CANCELLED_BY_STAFF.
+        """
         if self.status not in ['pending', 'approved']:
             raise ValidationError("Solo solicitudes pendientes o aprobadas pueden ser canceladas")
         
@@ -385,7 +438,13 @@ class FlightRequest(models.Model):
                 self.student.student_profile.save()
 
         # Emit domain signal after cancellation to notify listeners
-        transaction.on_commit(lambda: domain_signals.flight_request_cancelled.send(sender=FlightRequest, instance=self))
+        transaction.on_commit(
+            lambda: domain_signals.flight_request_cancelled.send(
+                sender=FlightRequest,
+                instance=self,
+                cancelled_by=cancelled_by,
+            )
+        )
 
     def clean(self):
         try:

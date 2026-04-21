@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from scheduler.models import FlightSlot, FlightRequest
+from scheduler.domain_signals import FLIGHT_REQUEST_CANCELLED_BY_STUDENT
 from .factories import *
 
 User = get_user_model()
@@ -310,7 +311,7 @@ class FlightRequestModelTest(TestCase):
         self.assertIsNone(self.slot.student)
         
         # Cancel the request
-        self.flight_request.cancel()
+        self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         # Verify final state
         self.flight_request.refresh_from_db()
@@ -333,7 +334,7 @@ class FlightRequestModelTest(TestCase):
         self.assertEqual(self.slot.student, self.student)
         
         # Cancel the approved request
-        self.flight_request.cancel()
+        self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         # Verify final state
         self.flight_request.refresh_from_db()
@@ -351,7 +352,7 @@ class FlightRequestModelTest(TestCase):
         
         # Try to cancel again
         with self.assertRaises(ValidationError) as context:
-            self.flight_request.cancel()
+            self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         self.assertIn("Solo solicitudes pendientes o aprobadas pueden ser canceladas", str(context.exception))
 
@@ -370,7 +371,7 @@ class FlightRequestModelTest(TestCase):
         
         # Try to cancel
         with self.assertRaises(ValidationError) as context:
-            self.flight_request.cancel()
+            self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         self.assertIn("Solo solicitudes pendientes o aprobadas pueden ser canceladas", str(context.exception))
 
@@ -389,7 +390,7 @@ class FlightRequestModelTest(TestCase):
         # Mock the slot save to raise an exception
         with patch.object(self.slot, 'save', side_effect=Exception("Database error")):
             with self.assertRaises(Exception):
-                self.flight_request.cancel()
+                self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         # Verify that flight request status was not changed (still approved)
         self.flight_request.refresh_from_db()
@@ -410,7 +411,7 @@ class FlightRequestModelTest(TestCase):
         time.sleep(0.01)
         
         # Cancel the request
-        self.flight_request.cancel()
+        self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         # Verify timestamp was updated
         self.flight_request.refresh_from_db()
@@ -435,13 +436,13 @@ class FlightRequestModelTest(TestCase):
                 
                 if should_succeed:
                     # Should succeed
-                    self.flight_request.cancel()
+                    self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
                     self.flight_request.refresh_from_db()
                     self.assertEqual(self.flight_request.status, 'cancelled')
                 else:
                     # Should fail
                     with self.assertRaises(ValidationError) as context:
-                        self.flight_request.cancel()
+                        self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
                     self.assertIn("Solo solicitudes pendientes o aprobadas pueden ser canceladas", str(context.exception))
         
         # Test invalid status separately since it can't be saved
@@ -459,7 +460,7 @@ class FlightRequestModelTest(TestCase):
         self.assertIsNone(self.slot.student)
         
         # Cancel the request
-        self.flight_request.cancel()
+        self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         # Verify cancelled state
         self.flight_request.refresh_from_db()
@@ -482,7 +483,7 @@ class FlightRequestModelTest(TestCase):
         self.assertEqual(self.slot.student, self.student)
         
         # Cancel the approved request
-        self.flight_request.cancel()
+        self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         # Verify cancelled state
         self.flight_request.refresh_from_db()
@@ -503,7 +504,7 @@ class FlightRequestModelTest(TestCase):
         self.assertEqual(self.slot.student, self.student)
         
         # Cancel the request
-        self.flight_request.cancel()
+        self.flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STUDENT)
         
         # Verify slot is available again
         self.slot.refresh_from_db()
@@ -581,3 +582,109 @@ class FlightRequestModelTest(TestCase):
         self.slot.refresh_from_db()
         self.assertEqual(self.slot.status, 'available')
         self.assertIsNone(self.slot.student)
+
+    # ===== CREATE_APPROVED_BY_STAFF METHOD TESTS =====
+
+    def test_create_approved_by_staff_success(self):
+        """Staff path creates an approved request and reserves the slot."""
+        other_aircraft = AircraftFactory()
+        active_period = FlightPeriodFactory(aircraft=other_aircraft, is_active=True)
+        active_period.generate_slots()
+        new_slot = FlightSlot.objects.filter(flight_period=active_period).first()
+        new_slot.status = 'available'
+        new_slot.student = None
+        new_slot.save()
+
+        flight_request = FlightRequest.create_approved_by_staff(self.student, new_slot)
+
+        self.assertEqual(flight_request.status, 'approved')
+        self.assertEqual(flight_request.student, self.student)
+        self.assertEqual(flight_request.slot, new_slot)
+        new_slot.refresh_from_db()
+        self.assertEqual(new_slot.status, 'reserved')
+        self.assertEqual(new_slot.student, self.student)
+
+    def test_create_approved_by_staff_rejects_non_student(self):
+        staff_user = StaffUserFactory()
+        other_aircraft = AircraftFactory()
+        active_period = FlightPeriodFactory(aircraft=other_aircraft, is_active=True)
+        active_period.generate_slots()
+        new_slot = FlightSlot.objects.filter(flight_period=active_period).first()
+        new_slot.status = 'available'
+        new_slot.student = None
+        new_slot.save()
+
+        with self.assertRaises(ValidationError) as context:
+            FlightRequest.create_approved_by_staff(staff_user, new_slot)
+
+        self.assertIn("estudiante", str(context.exception).lower())
+
+    def test_create_approved_by_staff_inactive_period(self):
+        """Inactive flight period rejects staff-created approved request."""
+        FlightRequest.objects.filter(slot=self.slot).delete()
+        self.period.is_active = False
+        self.period.save()
+        self.slot.status = 'available'
+        self.slot.student = None
+        self.slot.save()
+
+        with self.assertRaises(ValidationError) as context:
+            FlightRequest.create_approved_by_staff(self.student, self.slot)
+
+        self.assertIn("El período de vuelo no está activo", str(context.exception))
+
+    def test_create_approved_by_staff_slot_not_available(self):
+        """Non-available slot rejects staff-created approved request."""
+        FlightRequest.objects.filter(slot=self.slot).delete()
+        self.period.is_active = True
+        self.period.save()
+        self.slot.status = 'reserved'
+        self.slot.student = self.student
+        self.slot.save()
+
+        with self.assertRaises(ValidationError) as context:
+            FlightRequest.create_approved_by_staff(self.student, self.slot)
+
+        self.assertIn("El slot no está disponible", str(context.exception))
+
+    def test_create_approved_by_staff_insufficient_balance(self):
+        """Insufficient balance rejects staff-created approved request."""
+        other_aircraft = AircraftFactory()
+        active_period = FlightPeriodFactory(aircraft=other_aircraft, is_active=True)
+        active_period.generate_slots()
+        new_slot = FlightSlot.objects.filter(flight_period=active_period).first()
+        new_slot.status = 'available'
+        new_slot.student = None
+        new_slot.save()
+
+        self.student_profile.balance = 400.00
+        self.student_profile.has_credit = False
+        self.student_profile.has_temp_permission = False
+        self.student_profile.save()
+
+        with self.assertRaises(ValidationError) as context:
+            FlightRequest.create_approved_by_staff(self.student, new_slot)
+
+        self.assertIn("Balance insuficiente", str(context.exception))
+
+    def test_create_approved_by_staff_clears_temp_permission(self):
+        """Same as approve: temp permission is cleared after staff books."""
+        FlightRequest.objects.filter(student=self.student).delete()
+
+        other_aircraft = AircraftFactory()
+        active_period = FlightPeriodFactory(aircraft=other_aircraft, is_active=True)
+        active_period.generate_slots()
+        new_slot = FlightSlot.objects.filter(flight_period=active_period).first()
+        new_slot.status = 'available'
+        new_slot.student = None
+        new_slot.save()
+
+        self.student_profile.balance = 400.00
+        self.student_profile.has_credit = False
+        self.student_profile.has_temp_permission = True
+        self.student_profile.save()
+
+        FlightRequest.create_approved_by_staff(self.student, new_slot)
+
+        self.student_profile.refresh_from_db()
+        self.assertFalse(self.student_profile.has_temp_permission)

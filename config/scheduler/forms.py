@@ -1,7 +1,11 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.forms.widgets import DateInput
+from accounts.models import StudentProfile
 from .models import FlightPeriod
 from datetime import date, timedelta
+
+User = get_user_model()
 
 
 class CreateFlightPeriodForm(forms.ModelForm):
@@ -86,3 +90,19 @@ class CreateFlightPeriodForm(forms.ModelForm):
                 self.add_error('end_date', 'La fecha de cierre debe ser posterior a la fecha de inicio.')
 
         return cleaned_data
+
+
+class StaffCreateApprovedFlightRequestForm(forms.Form):
+    student = forms.ModelChoiceField(
+        queryset=User.objects.none(),
+        label='Estudiante',
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['student'].queryset = User.objects.filter(
+            role=User.Role.STUDENT,
+            is_active=True,
+            student_profile__student_phase=StudentProfile.FLYING,
+        ).order_by('first_name', 'last_name', 'username')

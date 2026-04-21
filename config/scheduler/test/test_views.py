@@ -1,7 +1,9 @@
 import json
-from django.test import TestCase, Client
+from django.core import mail
+from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from accounts.models import StudentProfile
 from scheduler.models import FlightPeriod, FlightRequest
 from .factories import *
 from datetime import date, timedelta
@@ -20,8 +22,12 @@ class FlightRequestViewTest(TestCase):
         self.student = UserFactory()
         self.staff = StaffUserFactory()
         
-        # Create student profile
-        self.student_profile = StudentProfileFactory(user=self.student, balance=1000.00)
+        # Create student profile (flying phase only appear in staff FR student list)
+        self.student_profile = StudentProfileFactory(
+            user=self.student,
+            balance=1000.00,
+            student_phase=StudentProfile.FLYING,
+        )
         
         # Create test data
         self.aircraft = AircraftFactory()
@@ -100,6 +106,80 @@ class FlightRequestViewTest(TestCase):
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
+
+    def test_staff_create_approved_flight_request_get_success(self):
+        """Staff can open the staff-create flight request form for a slot."""
+        self.client.force_login(self.staff)
+        response = self.client.get(
+            reverse('scheduler:staff_create_approved_flight_request', args=[self.slot.id]),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Crear solicitud aprobada')
+
+    def test_staff_create_approved_flight_request_get_forbidden_for_student(self):
+        self.client.force_login(self.student)
+        response = self.client.get(
+            reverse('scheduler:staff_create_approved_flight_request', args=[self.slot.id]),
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_create_approved_flight_request_get_redirects_if_anonymous(self):
+        response = self.client.get(
+            reverse('scheduler:staff_create_approved_flight_request', args=[self.slot.id]),
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_staff_create_approved_flight_request_post_success(self):
+        """Staff POST creates an approved FlightRequest and stays on the same page."""
+        self.client.force_login(self.staff)
+        response = self.client.post(
+            reverse('scheduler:staff_create_approved_flight_request', args=[self.slot.id]),
+            {'student': self.student.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Solicitud de vuelo creada y aprobada exitosamente')
+        self.assertContains(response, 'ya no está disponible')
+        self.assertTrue(
+            FlightRequest.objects.filter(
+                student=self.student,
+                slot=self.slot,
+                status='approved',
+            ).exists()
+        )
+        self.slot.refresh_from_db()
+        self.assertEqual(self.slot.status, 'reserved')
+        self.assertEqual(self.slot.student, self.student)
+
+    @override_settings(
+        EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+        DEFAULT_FROM_EMAIL='scheduler-from@test.com',
+        OPS_NOTIFICATION_EMAIL='ops-notify@test.com',
+    )
+    def test_staff_create_approved_flight_request_sends_student_session_email(self):
+        """Student receives session email when staff creates an approved request."""
+        self.client.force_login(self.staff)
+        mail.outbox.clear()
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post(
+                reverse('scheduler:staff_create_approved_flight_request', args=[self.slot.id]),
+                {'student': self.student.pk},
+            )
+        student_messages = [m for m in mail.outbox if list(m.to) == [self.student.email]]
+        self.assertEqual(len(student_messages), 1)
+        self.assertIn('Sesión de vuelo asignada', student_messages[0].subject)
+        self.assertIn(self.slot.aircraft.registration, student_messages[0].body)
+
+    def test_staff_create_approved_flight_request_post_shows_slot_error(self):
+        """When the slot is not available, the form is re-rendered with an error."""
+        self.client.force_login(self.staff)
+        self.slot.status = 'reserved'
+        self.slot.save()
+        response = self.client.post(
+            reverse('scheduler:staff_create_approved_flight_request', args=[self.slot.id]),
+            {'student': self.student.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'disponible')
 
     def test_approve_flight_request_success(self):
         """Test successful flight request approval."""
@@ -224,6 +304,64 @@ class FlightRequestViewTest(TestCase):
         self.assertEqual(flight_request.status, 'cancelled')
         self.slot.refresh_from_db()
         self.assertEqual(self.slot.status, 'available')
+
+    @override_settings(
+        EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+        DEFAULT_FROM_EMAIL='scheduler-from@test.com',
+        OPS_NOTIFICATION_EMAIL='ops-notify@test.com',
+    )
+    def test_cancel_by_student_emails_staff_not_student(self):
+        """Student cancel: ops gets 'student cancelled' mail; student does not get cancel mail."""
+        mail.outbox.clear()
+        self.client.force_login(self.student)
+        flight_request = FlightRequestFactory(
+            student=self.student,
+            slot=self.slot,
+            status='pending',
+        )
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(
+                reverse('scheduler:cancel_flight_request', args=[flight_request.id]),
+                data=json.dumps({}),
+                content_type='application/json',
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            )
+        self.assertEqual(response.status_code, 200)
+        to_ops = [m for m in mail.outbox if 'ops-notify@test.com' in m.to]
+        self.assertTrue(to_ops, 'Expected mail to OPS_NOTIFICATION_EMAIL')
+        self.assertIn('El estudiante ha cancelado', to_ops[0].body)
+        to_student = [m for m in mail.outbox if self.student.email in m.to]
+        cancel_to_student = [m for m in to_student if 'Solicitud de vuelo cancelada' in m.subject]
+        self.assertEqual(cancel_to_student, [])
+
+    @override_settings(
+        EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+        DEFAULT_FROM_EMAIL='scheduler-from@test.com',
+        OPS_NOTIFICATION_EMAIL='ops-notify@test.com',
+    )
+    def test_cancel_by_staff_emails_student_not_ops_student_cancelled(self):
+        """Staff cancel: student gets mail; ops does not get 'student cancelled' mail."""
+        mail.outbox.clear()
+        self.client.force_login(self.staff)
+        flight_request = FlightRequestFactory(
+            student=self.student,
+            slot=self.slot,
+            status='pending',
+        )
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(
+                reverse('scheduler:cancel_flight_request', args=[flight_request.id]),
+                data=json.dumps({}),
+                content_type='application/json',
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            )
+        self.assertEqual(response.status_code, 200)
+        to_student = [m for m in mail.outbox if self.student.email in m.to]
+        self.assertTrue(to_student, 'Expected mail to student')
+        self.assertIn('Solicitud de vuelo cancelada', to_student[0].subject)
+        self.assertIn('cancelada por la escuela', to_student[0].body)
+        to_ops = [m for m in mail.outbox if 'ops-notify@test.com' in m.to]
+        self.assertEqual(to_ops, [])
 
     def test_cancel_flight_request_validation_error(self):
         """Test handling of validation errors in flight request cancellation."""

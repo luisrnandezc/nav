@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from datetime import timedelta
-from .forms import CreateFlightPeriodForm
+from .forms import CreateFlightPeriodForm, StaffCreateApprovedFlightRequestForm
 from .models import FlightPeriod, FlightSlot, FlightRequest, CancellationsFee
 from accounts.models import User
 import json
@@ -237,6 +237,63 @@ def create_flight_request(request, slot_id):
 
 @login_required
 @staff_required
+def staff_create_approved_flight_request(request, slot_id):
+    """Staff: assign a student to an available slot as an approved flight request."""
+    slot = get_object_or_404(
+        FlightSlot.objects.select_related(
+            'flight_period',
+            'flight_period__aircraft',
+            'aircraft',
+        ),
+        pk=slot_id,
+    )
+    if request.method == 'POST':
+        form = StaffCreateApprovedFlightRequestForm(request.POST)
+        if form.is_valid():
+            student = form.cleaned_data['student']
+            try:
+                FlightRequest.create_approved_by_staff(student, slot)
+            except ValidationError as exc:
+                if hasattr(exc, 'message_dict') and exc.message_dict:
+                    for msgs in exc.message_dict.values():
+                        for msg in msgs:
+                            form.add_error(None, msg)
+                else:
+                    err_messages = list(getattr(exc, 'messages', []))
+                    if not err_messages:
+                        form.add_error(None, str(exc))
+                    else:
+                        for msg in err_messages:
+                            form.add_error(None, msg)
+            else:
+                messages.success(
+                    request,
+                    'Solicitud de vuelo creada y aprobada exitosamente.',
+                )
+                slot.refresh_from_db()
+                form = StaffCreateApprovedFlightRequestForm()
+        return render(
+            request,
+            'scheduler/staff_create_approved_flight_request.html',
+            {
+                'form': form,
+                'slot': slot,
+                'can_assign_student': slot.status == 'available',
+            },
+        )
+    form = StaffCreateApprovedFlightRequestForm()
+    return render(
+        request,
+        'scheduler/staff_create_approved_flight_request.html',
+        {
+            'form': form,
+            'slot': slot,
+            'can_assign_student': slot.status == 'available',
+        },
+    )
+
+@login_required
+@staff_required
 @require_POST
 def approve_flight_request(request, request_id):
     """Approve a flight request and update the slot status to reserved."""
@@ -266,8 +323,13 @@ def cancel_flight_request(request, request_id):
     try:
         data = json.loads(request.body) if request.body else {}
         apply_fee = data.get('apply_fee', False)
-        
-        flight_request.cancel(apply_fee=apply_fee)
+
+        cancelled_by = (
+            domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STAFF
+            if request.user.role == 'STAFF'
+            else domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STUDENT
+        )
+        flight_request.cancel(apply_fee=apply_fee, cancelled_by=cancelled_by)
         
         # Create cancellation fee record if fee should be applied
         if apply_fee:
@@ -314,7 +376,9 @@ def change_slot_status(request, slot_id):
                 # First cancel any existing flight request for this slot
                 flight_request = FlightRequest.objects.filter(slot=slot).first()
                 if flight_request:
-                    flight_request.cancel()
+                    flight_request.cancel(
+                        cancelled_by=domain_signals.FLIGHT_REQUEST_CANCELLED_BY_STAFF
+                    )
                 
                 # Then set slot to unavailable
                 slot.status = 'unavailable'

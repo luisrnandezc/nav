@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
         actionsContainer.className = 'context-menu-actions';
         
         addStatusChangeActions(actionsContainer, slotData);
+        addStaffStudentBookingAction(actionsContainer, slotData);
         addInstructorActions(actionsContainer, slotData);
         
         menu.appendChild(actionsContainer);
@@ -147,6 +148,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 changeSlotStatus(slotId, 'cancel_and_unavailable', 'unavailable', element);
             });
         }
+    }
+
+    function staffCreateApprovedFlightRequestUrl(slotId) {
+        const tpl = window.STAFF_CREATE_APPROVED_FR_URL_TEMPLATE;
+        if (!tpl) {
+            return null;
+        }
+        return tpl.replace('888888888', String(slotId));
+    }
+
+    function addStaffStudentBookingAction(container, slotData) {
+        if (slotData.currentStatus !== 'available') {
+            return;
+        }
+        const url = staffCreateApprovedFlightRequestUrl(slotData.slotId);
+        if (!url) {
+            return;
+        }
+        addActionButton(container, 'Agregar estudiante', () => {
+            window.location.href = url;
+        });
     }
     
     function addInstructorActions(container, slotData) {

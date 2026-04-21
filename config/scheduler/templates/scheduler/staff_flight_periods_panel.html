@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'scheduler/shared_components.css' %}">
     <script>
         window.csrfToken = '{{ csrf_token }}';
+        window.STAFF_CREATE_APPROVED_FR_URL_TEMPLATE = '{% url "scheduler:staff_create_approved_flight_request" 888888888 %}';
     </script>
     <script src="{% static 'scheduler/js/staff_flight_periods_panel_dynamics.js' %}"></script>
 </head>

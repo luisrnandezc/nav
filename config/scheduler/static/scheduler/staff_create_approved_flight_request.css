@@ -1,0 +1,60 @@
+/* Staff "create approved flight request" page — slot summary + layout tweaks */
+
+.staff-create-fr-page .staff-fr-slot-panel {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto 1.35rem auto;
+  padding: 1.15rem 1.35rem 1.3rem;
+  background: rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(245, 166, 35, 0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  text-align: center;
+}
+
+.staff-create-fr-page .staff-fr-slot-panel + .form-container {
+  margin-top: 0.35rem;
+}
+
+.staff-create-fr-page .staff-fr-slot-panel__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem 0.5rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: #f5a623;
+}
+
+.staff-create-fr-page .staff-fr-slot-panel__sep {
+  color: rgba(245, 166, 35, 0.42);
+  font-weight: 300;
+  padding: 0 0.2rem;
+  user-select: none;
+}
+
+.staff-create-fr-page .staff-fr-slot-panel__pair {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.staff-create-fr-page .staff-fr-slot-panel__value {
+  color: #f5a623;
+  font-weight: 500;
+}
+
+.staff-create-fr-page .staff-fr-slot-closed {
+  margin: 0.5rem 0 0 0;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  line-height: 1.5;
+  color: #f5a623;
+  font-size: 0.95rem;
+}
+
+.staff-create-fr-page .form-container .messages {
+  margin-bottom: 1rem;
+}

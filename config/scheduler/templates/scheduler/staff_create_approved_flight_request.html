@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asignar estudiante al slot</title>
+    <link rel="stylesheet" href="{% static 'scheduler/create_flight_period.css' %}">
+    <link rel="stylesheet" href="{% static 'scheduler/shared_components.css' %}">
+    <link rel="stylesheet" href="{% static 'scheduler/staff_create_approved_flight_request.css' %}">
+</head>
+<body class="staff-create-fr-page">
+    <div class="main-container">
+
+        <div class="back-button">
+            <a href="{% url 'scheduler:create_staff_flight_period_grids' %}" class="button">&larr; Volver</a>
+        </div>
+
+        <h1 class="main-header">Crear solicitud aprobada</h1>
+
+        <div class="staff-fr-slot-panel" aria-label="Datos del slot">
+            <div class="staff-fr-slot-panel__row">
+                <span class="staff-fr-slot-panel__pair">
+                    <span class="staff-fr-slot-panel__value">{{ slot.aircraft.registration }}</span>
+                </span>
+                <span class="staff-fr-slot-panel__sep" aria-hidden="true">|</span>
+                <span class="staff-fr-slot-panel__pair">
+                    <span class="staff-fr-slot-panel__value">{{ slot.date|date:"Y-m-d" }}</span>
+                </span>
+                <span class="staff-fr-slot-panel__sep" aria-hidden="true">|</span>
+                <span class="staff-fr-slot-panel__pair">
+                    <span class="staff-fr-slot-panel__value">{{ slot.get_block_display }}</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-container">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if can_assign_student %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    <label for="id_student">{{ form.student.label }}</label>
+                    <div class="form-field">
+                        {{ form.student }}
+                    </div>
+                </div>
+                <div class="actions">
+                    <button type="submit">Crear</button>
+                </div>
+
+                {% if form.non_field_errors %}
+                <div class="form-errors">
+                    <ul>
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if form.student.errors %}
+                <div class="form-errors">
+                    <ul>
+                        {% for error in form.student.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </form>
+            {% else %}
+            <p class="staff-fr-slot-closed">
+                Este slot ya no está disponible para nuevas asignaciones.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import FlightPeriod, FlightSlot, FlightRequest, CancellationsFee
+from .domain_signals import FLIGHT_REQUEST_CANCELLED_BY_STAFF
 
 # Register your models here.
 
@@ -87,7 +88,7 @@ class FlightRequestAdmin(admin.ModelAdmin):
         cancelled_count = 0
         for flight_request in queryset.filter(status__in=['pending', 'approved']):
             try:
-                flight_request.cancel()
+                flight_request.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STAFF)
                 cancelled_count += 1
             except ValueError as e:
                 self.message_user(request, f"Error cancelando solicitud {flight_request.id}: {str(e)}", level='ERROR')
@@ -120,7 +121,7 @@ class FlightRequestAdmin(admin.ModelAdmin):
                     return
                 elif obj.status == 'cancelled' and original_status in ['pending', 'approved']:
                     # Use our custom cancel method
-                    obj.cancel()
+                    obj.cancel(cancelled_by=FLIGHT_REQUEST_CANCELLED_BY_STAFF)
                     return
         
         # For new objects or no status change, use normal save

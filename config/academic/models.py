@@ -20,6 +20,8 @@ COURSE_CODES = (
     ('IVS-T', 'IVS-T'),
     ('IVS-P', 'IVS-P'),
     ('RCL', 'RCL'),
+    ('PPA-REC', 'PPA-REC'),
+    ('HVI-REC', 'HVI-REC'),
 )
 COURSE_NAMES = (
     ('Piloto Privado Avión Teórico', 'Piloto Privado Avión Teórico'),
@@ -33,6 +35,8 @@ COURSE_NAMES = (
     ('Instructor de Vuelo Simulado Teórico', 'Instructor de Vuelo Simulado Teórico'),
     ('Instructor de Vuelo Simulado Práctico', 'Instructor de Vuelo Simulado Práctico'),
     ('Recalificación', 'Recalificación'),
+    ('Piloto Privado Avión Recurrente', 'Piloto Privado Avión Recurrente'),
+    ('Habilitación Vuelo Instrumental Avión Recurrente', 'Habilitación Vuelo Instrumental Avión Recurrente'),
 )
 
 # Subject Choices by Course Type

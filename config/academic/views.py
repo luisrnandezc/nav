@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .forms import StudentGradeForm
-from .models import SubjectEdition, StudentGrade
+from .models import SubjectEdition, StudentGrade, SubjectEditionGradingComponent
 from accounts.models import User
 
 
@@ -22,8 +22,11 @@ def submit_student_grade(request):
                 temp_grades = request.session.get('temp_grades', [])
                 
                 # Add new grade to temporary storage (store only essential data)
+                comp = form.cleaned_data['component']
                 grade_data = {
                     'subject_edition_id': form.cleaned_data['subject_edition'].id,
+                    'component_id': comp.id,
+                    'component_label': comp.label,
                     'student_id': form.cleaned_data['student'].id,
                     'instructor_id': request.user.id,
                     'grade': float(form.cleaned_data['grade']),
@@ -34,6 +37,7 @@ def submit_student_grade(request):
                 # Check for duplicates in temp storage
                 if not any(g['subject_edition_id'] == grade_data['subject_edition_id'] and 
                           g['student_id'] == grade_data['student_id'] and 
+                          g['component_id'] == grade_data['component_id'] and
                           g['test_type'] == grade_data['test_type'] 
                           for g in temp_grades):
                     temp_grades.append(grade_data)
@@ -62,6 +66,7 @@ def submit_student_grade(request):
                     # Create the grade with all required fields
                     StudentGrade.objects.create(
                         subject_edition_id=grade_data['subject_edition_id'],
+                        component_id=grade_data['component_id'],
                         student_id=grade_data['student_id'],
                         instructor_id=grade_data['instructor_id'],
                         grade=grade_data['grade'],
@@ -113,6 +118,14 @@ def submit_student_grade(request):
             student = User.objects.get(id=grade['student_id'])
             grade['subject_name'] = subject.subject_type.name
             grade['student_name'] = f"{student.first_name} {student.last_name}"
+            cid = grade.get('component_id')
+            if cid:
+                grade.setdefault(
+                    'component_label',
+                    SubjectEditionGradingComponent.objects.filter(pk=cid).values_list('label', flat=True).first() or '—',
+                )
+            else:
+                grade.setdefault('component_label', '—')
         except (SubjectEdition.DoesNotExist, User.DoesNotExist):
             # Remove invalid grades from session
             temp_grades.remove(grade)
@@ -145,7 +158,32 @@ def load_students(request):
         return JsonResponse({'students': student_list})
     except SubjectEdition.DoesNotExist:
         return JsonResponse({'error': 'Edición de materia no encontrada'}, status=404)
-    
+
+
+@login_required
+def load_grading_components(request):
+    """AJAX: list grading components for a subject edition (same instructor check as load_students)."""
+    subject_edition_id = request.GET.get('subject_edition')
+    if not subject_edition_id:
+        return JsonResponse({'error': 'No se proporcionó una edición de materia'}, status=400)
+    try:
+        subject_edition = SubjectEdition.objects.select_related('instructor').get(id=subject_edition_id)
+        if subject_edition.instructor != request.user:
+            return JsonResponse({'error': 'Instructor no autorizado'}, status=403)
+        components = subject_edition.grading_components.order_by('order', 'code')
+        data = [
+            {
+                'id': c.id,
+                'label': f'{c.label} (peso {c.weight})',
+                'code': c.code,
+            }
+            for c in components
+        ]
+        return JsonResponse({'components': data})
+    except SubjectEdition.DoesNotExist:
+        return JsonResponse({'error': 'Edición de materia no encontrada'}, status=404)
+
+
 @login_required
 def grade_logs(request):
     """
@@ -156,7 +194,7 @@ def grade_logs(request):
     # Fetch grade logs for the student (last 10)
     grade_logs = StudentGrade.objects.filter(
         student=user
-    ).order_by('-date')[:10]
+    ).select_related('component', 'subject_edition__subject_type').order_by('-date')[:10]
     
     context = {
         'grade_logs': grade_logs,
@@ -175,7 +213,7 @@ def instructor_grades_dashboard(request):
     # Fetch recent grades submitted by this instructor (last 30)
     recent_grades = StudentGrade.objects.filter(
         instructor=user
-    ).select_related('student', 'subject_edition__subject_type').order_by('-date')[:30]
+    ).select_related('student', 'subject_edition__subject_type', 'component').order_by('-date')[:30]
     
     context = {
         'recent_grades': recent_grades,

@@ -1,5 +1,17 @@
+from decimal import Decimal
+
 from django.contrib import admin
-from .models import CourseType, CourseEdition, SubjectType, SubjectEdition, StudentGrade
+from django.forms.models import BaseInlineFormSet
+
+from .grading import ensure_theory_practical_components
+from .models import (
+    CourseType,
+    CourseEdition,
+    SubjectType,
+    SubjectEdition,
+    SubjectEditionGradingComponent,
+    StudentGrade,
+)
 from accounts.models import User
 
 @admin.register(CourseType)
@@ -26,12 +38,45 @@ class SubjectTypeAdmin(admin.ModelAdmin):
     list_filter = ('course_type',)
     search_fields = ('code', 'name', 'course_type__name')
 
+class SubjectEditionGradingComponentFormSet(BaseInlineFormSet):
+    """Delegates total-weight validation to the model (same rule as custom pages)."""
+
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        weights = [
+            form.cleaned_data.get('weight')
+            for form in self.forms
+            if hasattr(form, 'cleaned_data')
+            and form.cleaned_data
+            and not form.cleaned_data.get('DELETE')
+        ]
+        SubjectEditionGradingComponent.validate_weight_total(weights)
+
+
+class SubjectEditionGradingComponentInline(admin.TabularInline):
+    model = SubjectEditionGradingComponent
+    formset = SubjectEditionGradingComponentFormSet
+    extra = 0
+    max_num = 2
+    can_delete = False
+    ordering = ('order', 'code')
+    fields = ('code', 'kind', 'label', 'weight', 'order')
+    readonly_fields = ('code', 'kind')
+
+
 @admin.register(SubjectEdition)
 class SubjectEditionAdmin(admin.ModelAdmin):
     list_display = ('get_subject_code', 'instructor', 'time_slot', 'start_date', 'end_date')
     list_filter = ('subject_type__course_type', 'time_slot')
     search_fields = ('subject_type__name', 'subject_type__code', 'instructor__username')
     filter_horizontal = ('students',)
+    inlines = [SubjectEditionGradingComponentInline]
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        ensure_theory_practical_components(form.instance)
 
     def get_subject_code(self, obj):
         return obj.subject_type.code if obj.subject_type else '-'
@@ -40,11 +85,20 @@ class SubjectEditionAdmin(admin.ModelAdmin):
 
 @admin.register(StudentGrade)
 class StudentGradeAdmin(admin.ModelAdmin):
-    list_display = ('get_student_name', 'get_student_id', 'grade', 'test_type', 'get_subject_info', 'get_instructor_name', 'date')
+    list_display = (
+        'get_student_name',
+        'get_student_id',
+        'get_component_label',
+        'grade',
+        'test_type',
+        'get_subject_info',
+        'get_instructor_name',
+        'date',
+    )
     list_filter = ('subject_edition__subject_type__course_type', 'subject_edition__time_slot', 'test_type', 'date')
     search_fields = ('student__first_name', 'student__last_name', 'student__national_id', 'subject_edition__subject_type__name', 'subject_edition__subject_type__code', 'instructor__first_name', 'instructor__last_name', 'instructor__national_id')
     readonly_fields = ('student', 'instructor', 'date', 'student_national_id', 'student_first_name', 'student_last_name', 'instructor_national_id', 'instructor_first_name', 'instructor_last_name', 'subject_name')
-    list_select_related = ('student', 'instructor', 'subject_edition', 'subject_edition__subject_type')
+    list_select_related = ('student', 'instructor', 'subject_edition', 'subject_edition__subject_type', 'component')
     
     fieldsets = (
         ('Información del estudiante', {
@@ -54,7 +108,7 @@ class StudentGradeAdmin(admin.ModelAdmin):
             'fields': ('instructor', 'instructor_national_id', 'instructor_first_name', 'instructor_last_name'),
         }),
         ('Calificación', {
-            'fields': ('subject_edition', 'subject_name', 'grade', 'test_type', 'date'),
+            'fields': ('subject_edition', 'component', 'subject_name', 'grade', 'test_type', 'date'),
         }),
     )
 
@@ -97,6 +151,13 @@ class StudentGradeAdmin(admin.ModelAdmin):
             return subject_code  # Fallback to code if not found in choices
         return '-'
     subject_name.short_description = 'Nombre de la Materia'
+
+    def get_component_label(self, obj):
+        if obj.component_id:
+            return f'{obj.component.label} ({obj.component.code})'
+        return '-'
+    get_component_label.short_description = 'Componente'
+    get_component_label.admin_order_field = 'component__code'
 
     def get_subject_info(self, obj):
         if obj.subject_edition and obj.subject_edition.subject_type:

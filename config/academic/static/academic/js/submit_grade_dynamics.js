@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 componentSelect.innerHTML = '<option value="">---------</option>';
                 (data.components || []).forEach(c => {
                     const option = document.createElement('option');
-                    option.value = c.id;
+                    option.value = c.code;
                     option.textContent = c.label;
                     componentSelect.appendChild(option);
                 });

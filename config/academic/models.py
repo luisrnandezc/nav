@@ -1,9 +1,9 @@
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import Decimal
 
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
-from django.db.models import Q, Sum
+from django.db.models import Q
 from django.utils import timezone
 import datetime
 
@@ -127,17 +127,14 @@ TEST_TYPES = (
     ('RECOVERY', 'Reparación'),
 )
 
-# Grading component kind (theory vs practical slice of the final mark)
-GRADING_COMPONENT_KINDS = (
-    ('THEORY', 'Teórico'),
-    ('PRACTICAL', 'Práctico'),
-)
-
-# Every subject edition has exactly two components: theory + practical (school rule).
-GRADING_COMPONENT_CODES = (
+# Slice of the mark (stored on each StudentGrade row).
+GRADE_COMPONENT_CHOICES = (
     ('theory', 'Teoría'),
     ('practical', 'Práctica'),
 )
+
+# Allowed (theory_weight, practical_weight) pairs; sum must be 1.
+WEIGHT_PAIR_EPSILON = Decimal('0.001')
 
 # Course modality choices
 COURSE_MODALITIES = (
@@ -258,16 +255,6 @@ class SubjectType(models.Model):
         default=0,
         verbose_name='Horas académicas'
     )
-    passing_grade = models.PositiveIntegerField(
-        default=80,
-        validators=[MinValueValidator(0), MaxValueValidator(100)],
-        verbose_name='Nota mínima requerida para aprobar'
-    )
-    recovery_passing_grade = models.PositiveIntegerField(
-        default=90,
-        validators=[MinValueValidator(0), MaxValueValidator(100)],
-        verbose_name='Nota mínima requerida para aprobar la reparación'
-    )
 
     class Meta:
         verbose_name = 'Materia'
@@ -324,6 +311,22 @@ class SubjectEdition(models.Model):
         default=datetime.time(12, 30),
         verbose_name='Hora de finalización'
     )
+    theory_weight = models.DecimalField(
+        max_digits=4,
+        decimal_places=3,
+        default=Decimal('1'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('1'))],
+        verbose_name='Peso teoría',
+        help_text='Solo teoría: 1.0. Con evaluación práctica: 0.8.',
+    )
+    practical_weight = models.DecimalField(
+        max_digits=4,
+        decimal_places=3,
+        default=Decimal('0'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('1'))],
+        verbose_name='Peso práctica',
+        help_text='Sin práctica: 0. Con práctica: 0.2.',
+    )
 
     class Meta:
         verbose_name = 'Edición de Materia'
@@ -333,141 +336,40 @@ class SubjectEdition(models.Model):
     def clean(self):
         if not self.subject_type:
             raise ValidationError('Debe seleccionar un tipo de materia')
-            
+
         if self.end_date < self.start_date:
             raise ValidationError('La fecha de finalización debe ser posterior a la fecha de inicio')
-        
+
         if self.end_time <= self.start_time:
             raise ValidationError('La hora de finalización debe ser posterior a la hora de inicio')
-        
-        # Check if instructor is assigned
+
         if not self.instructor:
             raise ValidationError('Debe asignar un instructor a la materia')
-        
-        # Check if instructor is qualified for this subject type
+
         if self.instructor and self.subject_type:
             instructor_type = self.instructor.instructor_profile.instructor_type
             if instructor_type not in ['TIERRA', 'DUAL']:
                 raise ValidationError('El instructor debe ser de tipo TIERRA o DUAL')
 
-    def __str__(self):
-        return f'{self.subject_type.code} ({self.time_slot})'
-
-
-# Max sum of SubjectEditionGradingComponent.weight for one subject edition (with float tolerance).
-GRADING_COMPONENT_WEIGHT_MAX_TOTAL = Decimal('1')
-GRADING_COMPONENT_WEIGHT_EPSILON = Decimal('0.001')
-
-
-class SubjectEditionGradingComponent(models.Model):
-    """
-    Exactly two weighted pieces per subject edition: theory and practical (fixed codes).
-    Default weights: theory 1.0, practical 0.0. Staff may edit weights (must still sum to 1.0).
-    """
-    subject_edition = models.ForeignKey(
-        SubjectEdition,
-        on_delete=models.CASCADE,
-        related_name='grading_components',
-        verbose_name='Edición de materia',
-    )
-    code = models.SlugField(
-        max_length=32,
-        choices=GRADING_COMPONENT_CODES,
-        verbose_name='Código',
-        help_text='Siempre theory o practical',
-    )
-    kind = models.CharField(
-        max_length=20,
-        choices=GRADING_COMPONENT_KINDS,
-        default='THEORY',
-        verbose_name='Tipo',
-    )
-    label = models.CharField(
-        max_length=100,
-        verbose_name='Etiqueta',
-        help_text='Texto mostrado en informes y administración',
-    )
-    weight = models.DecimalField(
-        max_digits=4,
-        decimal_places=3,
-        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('1'))],
-        verbose_name='Peso',
-        help_text='Fracción del total (teoría + práctica deben sumar 1.0; la práctica puede ser 0)',
-    )
-    order = models.PositiveSmallIntegerField(
-        default=0,
-        verbose_name='Orden',
-    )
-
-    class Meta:
-        verbose_name = 'Componente de calificación'
-        verbose_name_plural = 'Componentes de calificación'
-        ordering = ['subject_edition_id', 'order', 'code']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['subject_edition', 'code'],
-                name='unique_grading_component_code_per_edition',
-            ),
-            models.UniqueConstraint(
-                fields=['subject_edition', 'kind'],
-                name='unique_grading_component_kind_per_edition',
-            ),
-        ]
-
-    def __str__(self):
-        return f'{self.subject_edition} — {self.label} ({self.weight})'
-
-    @classmethod
-    def validate_weight_total(cls, weights):
-        """
-        Reject if the sum of given weights exceeds the edition budget (1.0).
-
-        Use this when saving several components in one request (custom UI, bulk form),
-        passing the full list of weights that should exist together after the operation
-        (e.g. all non-deleted rows from a formset).
-
-        For a single row being saved against the database, instance ``clean()`` already
-        compares this row to other persisted rows.
-        """
-        quant = Decimal('0.001')
-        parsed: list[Decimal] = []
-        for w in weights:
-            if w is None or w == '':
-                continue
-            d = w if isinstance(w, Decimal) else Decimal(str(w).replace(',', '.'))
-            parsed.append(d.quantize(quant, rounding=ROUND_HALF_UP))
-        total = sum(parsed, start=Decimal('0'))
-        if total > GRADING_COMPONENT_WEIGHT_MAX_TOTAL + GRADING_COMPONENT_WEIGHT_EPSILON:
-            raise ValidationError(
-                f'La suma de los pesos no puede ser mayor que {GRADING_COMPONENT_WEIGHT_MAX_TOTAL} '
-                f'(total: {total}; pesos: {parsed}).'
-            )
-
-    def clean(self):
-        super().clean()
-        if self.code == 'theory' and self.kind != 'THEORY':
-            raise ValidationError({'kind': 'El código theory debe ir con tipo Teórico.'})
-        if self.code == 'practical' and self.kind != 'PRACTICAL':
-            raise ValidationError({'kind': 'El código practical debe ir con tipo Práctico.'})
-        if self.subject_edition_id is None or self.weight is None:
-            return
-        qs = SubjectEditionGradingComponent.objects.filter(subject_edition_id=self.subject_edition_id)
-        if self.pk:
-            qs = qs.exclude(pk=self.pk)
-        other_sum = qs.aggregate(total=Sum('weight'))['total'] or Decimal('0')
-        if other_sum + self.weight > GRADING_COMPONENT_WEIGHT_MAX_TOTAL + GRADING_COMPONENT_WEIGHT_EPSILON:
-            raise ValidationError(
-                {
-                    'weight': (
-                        'La suma de los pesos de esta edición no puede superar 1.0 '
-                        '(incluyendo este componente).'
-                    )
-                }
-            )
+        tw, pw = self.theory_weight, self.practical_weight
+        if tw is not None and pw is not None:
+            if abs(tw + pw - Decimal('1')) > WEIGHT_PAIR_EPSILON:
+                raise ValidationError('La suma de los pesos teoría + práctica debe ser 1.0.')
+            theory_only = abs(tw - Decimal('1')) <= WEIGHT_PAIR_EPSILON and abs(pw) <= WEIGHT_PAIR_EPSILON
+            theory_and_practical = abs(tw - Decimal('0.8')) <= WEIGHT_PAIR_EPSILON and abs(
+                pw - Decimal('0.2')
+            ) <= WEIGHT_PAIR_EPSILON
+            if not (theory_only or theory_and_practical):
+                raise ValidationError(
+                    'Pesos permitidos: solo teoría (1.0 y 0) o teoría + práctica (0.8 y 0.2).'
+                )
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.subject_type.code} ({self.time_slot})'
 
 
 class StudentGrade(models.Model):
@@ -498,10 +400,9 @@ class StudentGrade(models.Model):
         related_name='grades',
         verbose_name='Edición de Materia'
     )
-    component = models.ForeignKey(
-        SubjectEditionGradingComponent,
-        on_delete=models.PROTECT,
-        related_name='grades',
+    component = models.CharField(
+        max_length=16,
+        choices=GRADE_COMPONENT_CHOICES,
         verbose_name='Componente',
     )
     #endregion
@@ -531,9 +432,9 @@ class StudentGrade(models.Model):
         ordering = ['-date']
         constraints = [
             models.UniqueConstraint(
-                fields=['component', 'student', 'test_type'],
-                name='unique_student_grade_per_component_test_type',
-                violation_error_message='Ya existe una nota para este estudiante, componente y tipo de examen',
+                fields=['subject_edition', 'student', 'component', 'test_type'],
+                name='unique_student_grade_per_edition_component_test_type',
+                violation_error_message='Ya existe una nota para este estudiante, edición, componente y tipo de examen',
             ),
         ]
         indexes = [
@@ -545,23 +446,19 @@ class StudentGrade(models.Model):
 
     def clean(self):
         super().clean()
-        if self.component_id and self.subject_edition_id:
-            if self.component.subject_edition_id != self.subject_edition_id:
+        if self.subject_edition_id and self.component:
+            if self.component == 'practical' and self.subject_edition.practical_weight <= WEIGHT_PAIR_EPSILON:
                 raise ValidationError(
-                    {'component': 'El componente no pertenece a la edición de materia seleccionada.'}
+                    {'component': 'Esta edición no incluye evaluación práctica (peso práctica es 0).'}
+                )
+            if self.test_type == 'RECOVERY' and self.component != 'theory':
+                raise ValidationError(
+                    {'component': 'La recuperación solo aplica a la teoría.'}
                 )
         if self.subject_edition_id and self.student_id:
             if not self.subject_edition.students.filter(pk=self.student_id).exists():
                 raise ValidationError(
                     {'student': 'El estudiante no está inscrito en esta edición de materia.'}
-                )
-        if self.subject_edition_id:
-            from .grading import grading_components_weight_sum
-
-            total = grading_components_weight_sum(self.subject_edition)
-            if abs(total - Decimal('1')) > Decimal('0.001'):
-                raise ValidationError(
-                    'Los pesos de los componentes de esta edición deben sumar 1.0 antes de registrar notas.'
                 )
 
     def save(self, *args, **kwargs):
@@ -570,11 +467,9 @@ class StudentGrade(models.Model):
 
     @property
     def passed(self):
-        """Check if the student passed the exam based on test type and passing grade"""
-        passing_grade = (
-            self.subject_edition.subject_type.recovery_passing_grade
-            if self.test_type == 'RECOVERY'
-            else self.subject_edition.subject_type.passing_grade
-        )
-        return self.grade >= passing_grade
+        """Aprobación por nota mínima fija de la academia (80 estándar, 90 recuperación teórica)."""
+        from .grading import RECOVERY_PASSING_GRADE, STANDARD_PASSING_GRADE
+
+        threshold = RECOVERY_PASSING_GRADE if self.test_type == 'RECOVERY' else STANDARD_PASSING_GRADE
+        return self.grade >= threshold
 #endregion

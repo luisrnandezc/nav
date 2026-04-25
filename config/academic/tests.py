@@ -1,256 +1,222 @@
+"""Tests for grading helpers and related model validation."""
+
+from __future__ import annotations
+
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
 
 from accounts.models import InstructorProfile, StudentProfile, User
-from academic.grading import (
-    effective_grade_for_component,
+
+from .grading import (
+    RECOVERY_PASSING_GRADE,
+    STANDARD_PASSING_GRADE,
     final_weighted_grade,
-    grading_components_weight_sum,
     student_passed_final,
 )
-from academic.models import (
-    CourseType,
-    StudentGrade,
-    SubjectEdition,
-    SubjectEditionGradingComponent,
-    SubjectType,
-)
+from .models import CourseType, StudentGrade, SubjectEdition, SubjectType
 
 
-def _make_instructor(username='inst1', national_id=2000001):
-    u = User.objects.create(
-        username=username,
-        email=f'{username}@test.com',
-        national_id=national_id,
-        role='INSTRUCTOR',
-        first_name='Ann',
-        last_name='Instructor',
-    )
-    InstructorProfile.objects.create(user=u, instructor_type='TIERRA')
-    return u
+class GradingTestCase(TestCase):
+    """Shared fixtures: course, subject type, instructor, student, subject edition."""
 
+    _national_id_seq = 10_250_000
 
-def _make_student(username='stu1', national_id=3000001):
-    u = User.objects.create(
-        username=username,
-        email=f'{username}@test.com',
-        national_id=national_id,
-        role='STUDENT',
-        first_name='Sam',
-        last_name='Student',
-    )
-    StudentProfile.objects.create(user=u, student_age=20, balance=1000)
-    return u
+    @classmethod
+    def _next_national_id(cls) -> int:
+        cls._national_id_seq += 1
+        return cls._national_id_seq
 
-
-class GradingComponentsModelTest(TestCase):
     def setUp(self):
-        self.course = CourseType.objects.create(
+        self.course_type = CourseType.objects.create(
             code='PPA-T',
             name='Piloto Privado Avión Teórico',
+            credit_hours=10,
         )
         self.subject_type = SubjectType.objects.create(
-            course_type=self.course,
-            code='PPA-NAV',
-            name='PPA - Navegación Visual',
+            course_type=self.course_type,
+            code='PPA-AER-I',
+            name='PPA - Aeronáutica I',
+            credit_hours=2,
         )
-        self.instructor = _make_instructor()
-        self.student = _make_student()
-        self.edition = SubjectEdition.objects.create(
+        self.instructor = User.objects.create_user(
+            username='inst_grading',
+            email='inst_grading@test.nav',
+            national_id=self._next_national_id(),
+            password='x',
+            role=User.Role.INSTRUCTOR,
+            first_name='Ann',
+            last_name='Instructor',
+        )
+        InstructorProfile.objects.create(
+            user=self.instructor,
+            instructor_type=InstructorProfile.GROUND,
+        )
+        self.student = User.objects.create_user(
+            username='stu_grading',
+            email='stu_grading@test.nav',
+            national_id=self._next_national_id(),
+            password='x',
+            role=User.Role.STUDENT,
+            first_name='Bob',
+            last_name='Student',
+        )
+        StudentProfile.objects.create(
+            user=self.student,
+            student_age=20,
+        )
+        today = timezone.now().date()
+        self.edition_theory_only = SubjectEdition(
             subject_type=self.subject_type,
             instructor=self.instructor,
             time_slot='M',
+            start_date=today,
+            end_date=today,
+            start_time=timezone.datetime.strptime('09:00', '%H:%M').time(),
+            end_time=timezone.datetime.strptime('12:00', '%H:%M').time(),
+            theory_weight=Decimal('1'),
+            practical_weight=Decimal('0'),
         )
-        self.edition.students.add(self.student)
-        self.theory = SubjectEditionGradingComponent.objects.create(
-            subject_edition=self.edition,
-            code='theory',
-            kind='THEORY',
-            label='Examen teórico',
-            weight=Decimal('0.7'),
-            order=0,
-        )
-        self.practical = SubjectEditionGradingComponent.objects.create(
-            subject_edition=self.edition,
-            code='practical',
-            kind='PRACTICAL',
-            label='Evaluación práctica',
-            weight=Decimal('0.3'),
-            order=1,
-        )
+        self.edition_theory_only.save()
+        self.edition_theory_only.students.add(self.student)
 
-    def test_weight_sum_helper(self):
-        self.assertEqual(grading_components_weight_sum(self.edition), Decimal('1'))
-
-    def test_final_weighted_grade(self):
-        StudentGrade.objects.create(
-            student=self.student,
-            instructor=self.instructor,
-            subject_edition=self.edition,
-            component=self.theory,
-            grade=Decimal('80.0'),
-            test_type='STANDARD',
-        )
-        StudentGrade.objects.create(
-            student=self.student,
-            instructor=self.instructor,
-            subject_edition=self.edition,
-            component=self.practical,
-            grade=Decimal('90.0'),
-            test_type='STANDARD',
-        )
-        final = final_weighted_grade(self.edition, self.student.id)
-        self.assertEqual(final, Decimal('83.0'))
-
-    def test_effective_grade_uses_max_of_standard_and_recovery(self):
-        StudentGrade.objects.create(
-            student=self.student,
-            instructor=self.instructor,
-            subject_edition=self.edition,
-            component=self.theory,
-            grade=Decimal('70.0'),
-            test_type='STANDARD',
-        )
-        StudentGrade.objects.create(
-            student=self.student,
-            instructor=self.instructor,
-            subject_edition=self.edition,
-            component=self.theory,
-            grade=Decimal('85.0'),
-            test_type='RECOVERY',
-        )
-        eg = effective_grade_for_component(self.student.id, self.theory)
-        self.assertEqual(eg, Decimal('85.0'))
-
-    def test_student_grade_clean_rejects_mismatched_component_edition(self):
-        other_edition = SubjectEdition.objects.create(
+        self.edition_mixed = SubjectEdition(
             subject_type=self.subject_type,
             instructor=self.instructor,
             time_slot='T',
+            start_date=today,
+            end_date=today,
+            start_time=timezone.datetime.strptime('09:00', '%H:%M').time(),
+            end_time=timezone.datetime.strptime('12:00', '%H:%M').time(),
+            theory_weight=Decimal('0.8'),
+            practical_weight=Decimal('0.2'),
         )
-        other_edition.students.add(self.student)
-        other_comp = SubjectEditionGradingComponent.objects.create(
-            subject_edition=other_edition,
-            code='theory',
-            kind='THEORY',
-            label='Teórico',
-            weight=Decimal('1.0'),
-            order=0,
-        )
-        SubjectEditionGradingComponent.objects.create(
-            subject_edition=other_edition,
-            code='practical',
-            kind='PRACTICAL',
-            label='Práctica',
-            weight=Decimal('0'),
-            order=1,
-        )
-        g = StudentGrade(
+        self.edition_mixed.save()
+        self.edition_mixed.students.add(self.student)
+
+    def _add_grade(self, edition, component, grade, test_type='STANDARD'):
+        return StudentGrade.objects.create(
+            subject_edition=edition,
             student=self.student,
             instructor=self.instructor,
-            subject_edition=self.edition,
-            component=other_comp,
-            grade=Decimal('80.0'),
-            test_type='STANDARD',
+            component=component,
+            grade=Decimal(str(grade)),
+            test_type=test_type,
         )
-        with self.assertRaises(ValidationError):
-            g.full_clean()
 
-    def test_student_grade_clean_requires_weights_sum_to_one(self):
-        self.practical.weight = Decimal('0.05')
-        self.practical.save()
-        self.theory.weight = Decimal('0.9')
-        self.theory.save()
-        try:
-            g = StudentGrade(
+
+class FinalWeightedGradeTests(GradingTestCase):
+    def test_theory_only_full_weight_returns_theory_standard(self):
+        self._add_grade(self.edition_theory_only, 'theory', 85)
+        result = final_weighted_grade(self.edition_theory_only, self.student.pk)
+        self.assertEqual(result, Decimal('85.0'))
+
+    def test_theory_only_missing_standard_returns_none(self):
+        self.assertIsNone(final_weighted_grade(self.edition_theory_only, self.student.pk))
+
+    def test_theory_only_recovery_does_not_count_toward_final(self):
+        self._add_grade(self.edition_theory_only, 'theory', 50, test_type='RECOVERY')
+        self.assertIsNone(final_weighted_grade(self.edition_theory_only, self.student.pk))
+
+    def test_mixed_weights_computes_weighted_sum(self):
+        self._add_grade(self.edition_mixed, 'theory', 80)
+        self._add_grade(self.edition_mixed, 'practical', 100)
+        result = final_weighted_grade(self.edition_mixed, self.student.pk)
+        self.assertEqual(result, Decimal('84.0'))
+
+    def test_mixed_missing_practical_returns_none(self):
+        self._add_grade(self.edition_mixed, 'theory', 90)
+        self.assertIsNone(final_weighted_grade(self.edition_mixed, self.student.pk))
+
+    def test_mixed_missing_theory_returns_none(self):
+        self._add_grade(self.edition_mixed, 'practical', 90)
+        self.assertIsNone(final_weighted_grade(self.edition_mixed, self.student.pk))
+
+
+class StudentPassedFinalTests(GradingTestCase):
+    def test_passes_when_final_at_least_standard_threshold(self):
+        self._add_grade(self.edition_theory_only, 'theory', STANDARD_PASSING_GRADE)
+        self.assertTrue(student_passed_final(self.edition_theory_only, self.student.pk))
+
+    def test_fails_when_below_threshold_and_no_recovery(self):
+        self._add_grade(self.edition_theory_only, 'theory', Decimal('79'))
+        self.assertFalse(student_passed_final(self.edition_theory_only, self.student.pk))
+
+    def test_passes_via_recovery_when_final_below_but_theory_recovery_enough(self):
+        self._add_grade(self.edition_theory_only, 'theory', Decimal('79'))
+        self._add_grade(self.edition_theory_only, 'theory', RECOVERY_PASSING_GRADE, test_type='RECOVERY')
+        self.assertTrue(student_passed_final(self.edition_theory_only, self.student.pk))
+
+    def test_fails_recovery_below_ninety(self):
+        self._add_grade(self.edition_theory_only, 'theory', Decimal('79'))
+        self._add_grade(self.edition_theory_only, 'theory', Decimal('89'), test_type='RECOVERY')
+        self.assertFalse(student_passed_final(self.edition_theory_only, self.student.pk))
+
+    def test_incomplete_final_returns_none(self):
+        self.assertIsNone(student_passed_final(self.edition_theory_only, self.student.pk))
+
+    def test_mixed_passes_on_weighted_final_without_recovery(self):
+        self._add_grade(self.edition_mixed, 'theory', 75)
+        self._add_grade(self.edition_mixed, 'practical', 100)
+        self.assertTrue(student_passed_final(self.edition_mixed, self.student.pk))
+
+
+class StudentGradeValidationTests(GradingTestCase):
+    def test_practical_not_allowed_when_edition_has_no_practical_weight(self):
+        with self.assertRaises(ValidationError):
+            StudentGrade(
+                subject_edition=self.edition_theory_only,
                 student=self.student,
                 instructor=self.instructor,
-                subject_edition=self.edition,
-                component=self.theory,
-                grade=Decimal('80.0'),
-                test_type='STANDARD',
-            )
-            with self.assertRaises(ValidationError):
-                g.full_clean()
-        finally:
-            self.theory.weight = Decimal('0.7')
-            self.theory.save()
-            self.practical.weight = Decimal('0.3')
-            self.practical.save()
+                component='practical',
+                grade=Decimal('90'),
+            ).save()
 
-    def test_final_weighted_grade_ignores_zero_weight_practical(self):
-        self.practical.weight = Decimal('0')
-        self.practical.save()
-        self.theory.weight = Decimal('1.0')
-        self.theory.save()
-        try:
-            StudentGrade.objects.create(
+    def test_recovery_only_on_theory(self):
+        with self.assertRaises(ValidationError):
+            StudentGrade(
+                subject_edition=self.edition_mixed,
                 student=self.student,
                 instructor=self.instructor,
-                subject_edition=self.edition,
-                component=self.theory,
-                grade=Decimal('80.0'),
-                test_type='STANDARD',
-            )
-            final = final_weighted_grade(self.edition, self.student.id)
-            self.assertEqual(final, Decimal('80.0'))
-        finally:
-            self.theory.weight = Decimal('0.7')
-            self.theory.save()
-            self.practical.weight = Decimal('0.3')
-            self.practical.save()
+                component='practical',
+                grade=Decimal('90'),
+                test_type='RECOVERY',
+            ).save()
 
-    def test_invalid_component_code_rejected(self):
-        bad = SubjectEditionGradingComponent(
-            subject_edition=self.edition,
-            code='oral',
-            kind='THEORY',
-            label='Oral',
-            weight=Decimal('0.01'),
-            order=2,
+    def test_student_must_be_enrolled(self):
+        other = User.objects.create_user(
+            username='other_stu',
+            email='other@test.nav',
+            national_id=GradingTestCase._next_national_id(),
+            password='x',
+            role=User.Role.STUDENT,
+            first_name='O',
+            last_name='Other',
         )
+        StudentProfile.objects.create(user=other, student_age=21)
         with self.assertRaises(ValidationError):
-            bad.full_clean()
+            StudentGrade(
+                subject_edition=self.edition_theory_only,
+                student=other,
+                instructor=self.instructor,
+                component='theory',
+                grade=Decimal('80'),
+            ).save()
 
-    def test_cannot_save_component_if_total_weight_would_exceed_one(self):
-        try:
-            self.theory.weight = Decimal('0.6')
-            self.theory.save()
-            self.practical.weight = Decimal('0.6')
-            with self.assertRaises(ValidationError):
-                self.practical.save()
-        finally:
-            self.theory.weight = Decimal('0.7')
-            self.theory.save()
-            self.practical.weight = Decimal('0.3')
-            self.practical.save()
 
-    def test_validate_weight_total_classmethod_batch(self):
-        with self.assertRaises(ValidationError):
-            SubjectEditionGradingComponent.validate_weight_total(
-                [Decimal('0.6'), Decimal('0.6')]
-            )
-        SubjectEditionGradingComponent.validate_weight_total(
-            [Decimal('0.6'), Decimal('0.4')]
-        )
+class StudentGradePassedPropertyTests(GradingTestCase):
+    def test_standard_uses_eighty_threshold(self):
+        g = self._add_grade(self.edition_theory_only, 'theory', 80)
+        self.assertTrue(g.passed)
+        g.grade = Decimal('79.9')
+        g.save()
+        self.assertFalse(g.passed)
 
-    def test_student_passed_final_uses_recovery_threshold_when_recovery_exists(self):
-        StudentGrade.objects.create(
-            student=self.student,
-            instructor=self.instructor,
-            subject_edition=self.edition,
-            component=self.theory,
-            grade=Decimal('100.0'),
-            test_type='STANDARD',
-        )
-        StudentGrade.objects.create(
-            student=self.student,
-            instructor=self.instructor,
-            subject_edition=self.edition,
-            component=self.practical,
-            grade=Decimal('100.0'),
-            test_type='RECOVERY',
-        )
-        self.assertTrue(student_passed_final(self.edition, self.student.id))
+    def test_recovery_uses_ninety_threshold(self):
+        g = self._add_grade(self.edition_theory_only, 'theory', 90, test_type='RECOVERY')
+        self.assertTrue(g.passed)
+        g.grade = Decimal('89.9')
+        g.save()
+        self.assertFalse(g.passed)

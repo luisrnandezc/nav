@@ -1,24 +1,18 @@
-from decimal import Decimal
-
 from django.contrib import admin
-from django.forms.models import BaseInlineFormSet
 
-from .grading import ensure_theory_practical_components
 from .models import (
     CourseType,
     CourseEdition,
     SubjectType,
     SubjectEdition,
-    SubjectEditionGradingComponent,
     StudentGrade,
 )
-from accounts.models import User
-
 @admin.register(CourseType)
 class CourseTypeAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'credit_hours')
     search_fields = ('code', 'name')
     ordering = ('code',)
+
 
 @admin.register(CourseEdition)
 class CourseEditionAdmin(admin.ModelAdmin):
@@ -29,41 +23,16 @@ class CourseEditionAdmin(admin.ModelAdmin):
 
     def get_course_code(self, obj):
         return obj.course_type.code if obj.course_type else '-'
+
     get_course_code.short_description = 'Código'
     get_course_code.admin_order_field = 'course_type__code'
 
+
 @admin.register(SubjectType)
 class SubjectTypeAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'course_type', 'credit_hours', 'passing_grade')
+    list_display = ('code', 'name', 'course_type', 'credit_hours')
     list_filter = ('course_type',)
     search_fields = ('code', 'name', 'course_type__name')
-
-class SubjectEditionGradingComponentFormSet(BaseInlineFormSet):
-    """Delegates total-weight validation to the model (same rule as custom pages)."""
-
-    def clean(self):
-        super().clean()
-        if any(self.errors):
-            return
-        weights = [
-            form.cleaned_data.get('weight')
-            for form in self.forms
-            if hasattr(form, 'cleaned_data')
-            and form.cleaned_data
-            and not form.cleaned_data.get('DELETE')
-        ]
-        SubjectEditionGradingComponent.validate_weight_total(weights)
-
-
-class SubjectEditionGradingComponentInline(admin.TabularInline):
-    model = SubjectEditionGradingComponent
-    formset = SubjectEditionGradingComponentFormSet
-    extra = 0
-    max_num = 2
-    can_delete = False
-    ordering = ('order', 'code')
-    fields = ('code', 'kind', 'label', 'weight', 'order')
-    readonly_fields = ('code', 'kind')
 
 
 @admin.register(SubjectEdition)
@@ -72,23 +41,32 @@ class SubjectEditionAdmin(admin.ModelAdmin):
     list_filter = ('subject_type__course_type', 'time_slot')
     search_fields = ('subject_type__name', 'subject_type__code', 'instructor__username')
     filter_horizontal = ('students',)
-    inlines = [SubjectEditionGradingComponentInline]
-
-    def save_related(self, request, form, formsets, change):
-        super().save_related(request, form, formsets, change)
-        ensure_theory_practical_components(form.instance)
+    fields = (
+        'subject_type',
+        'instructor',
+        'students',
+        'time_slot',
+        'start_date',
+        'end_date',
+        'start_time',
+        'end_time',
+        'theory_weight',
+        'practical_weight',
+    )
 
     def get_subject_code(self, obj):
         return obj.subject_type.code if obj.subject_type else '-'
+
     get_subject_code.short_description = 'Materia'
     get_subject_code.admin_order_field = 'subject_type__code'
+
 
 @admin.register(StudentGrade)
 class StudentGradeAdmin(admin.ModelAdmin):
     list_display = (
         'get_student_name',
         'get_student_id',
-        'get_component_label',
+        'get_component_display',
         'grade',
         'test_type',
         'get_subject_info',
@@ -96,10 +74,30 @@ class StudentGradeAdmin(admin.ModelAdmin):
         'date',
     )
     list_filter = ('subject_edition__subject_type__course_type', 'subject_edition__time_slot', 'test_type', 'date')
-    search_fields = ('student__first_name', 'student__last_name', 'student__national_id', 'subject_edition__subject_type__name', 'subject_edition__subject_type__code', 'instructor__first_name', 'instructor__last_name', 'instructor__national_id')
-    readonly_fields = ('student', 'instructor', 'date', 'student_national_id', 'student_first_name', 'student_last_name', 'instructor_national_id', 'instructor_first_name', 'instructor_last_name', 'subject_name')
-    list_select_related = ('student', 'instructor', 'subject_edition', 'subject_edition__subject_type', 'component')
-    
+    search_fields = (
+        'student__first_name',
+        'student__last_name',
+        'student__national_id',
+        'subject_edition__subject_type__name',
+        'subject_edition__subject_type__code',
+        'instructor__first_name',
+        'instructor__last_name',
+        'instructor__national_id',
+    )
+    readonly_fields = (
+        'student',
+        'instructor',
+        'date',
+        'student_national_id',
+        'student_first_name',
+        'student_last_name',
+        'instructor_national_id',
+        'instructor_first_name',
+        'instructor_last_name',
+        'subject_name',
+    )
+    list_select_related = ('student', 'instructor', 'subject_edition', 'subject_edition__subject_type')
+
     fieldsets = (
         ('Información del estudiante', {
             'fields': ('student', 'student_national_id', 'student_first_name', 'student_last_name'),
@@ -117,59 +115,60 @@ class StudentGradeAdmin(admin.ModelAdmin):
 
     def student_national_id(self, obj):
         return obj.student.national_id if obj.student else '-'
+
     student_national_id.short_description = 'ID'
 
     def student_first_name(self, obj):
         return obj.student.first_name if obj.student else '-'
+
     student_first_name.short_description = 'Nombre'
 
     def student_last_name(self, obj):
         return obj.student.last_name if obj.student else '-'
+
     student_last_name.short_description = 'Apellido'
 
     def instructor_national_id(self, obj):
         return obj.instructor.national_id if obj.instructor else '-'
+
     instructor_national_id.short_description = 'ID'
 
     def instructor_first_name(self, obj):
         return obj.instructor.first_name if obj.instructor else '-'
+
     instructor_first_name.short_description = 'Nombre'
 
     def instructor_last_name(self, obj):
         return obj.instructor.last_name if obj.instructor else '-'
+
     instructor_last_name.short_description = 'Apellido'
 
     def subject_name(self, obj):
         if obj.subject_edition and obj.subject_edition.subject_type:
-            # Get the human-readable name from the choices tuple
             from .models import SUBJECTS_NAMES
+
             subject_code = obj.subject_edition.subject_type.code
-            # Find the matching tuple and return the second value (human-readable name)
             for code, name in SUBJECTS_NAMES:
                 if code == subject_code:
                     return name
-            return subject_code  # Fallback to code if not found in choices
+            return subject_code
         return '-'
-    subject_name.short_description = 'Nombre de la Materia'
 
-    def get_component_label(self, obj):
-        if obj.component_id:
-            return f'{obj.component.label} ({obj.component.code})'
-        return '-'
-    get_component_label.short_description = 'Componente'
-    get_component_label.admin_order_field = 'component__code'
+    subject_name.short_description = 'Nombre de la Materia'
 
     def get_subject_info(self, obj):
         if obj.subject_edition and obj.subject_edition.subject_type:
-            return f"{obj.subject_edition.subject_type.code} ({obj.subject_edition.time_slot})"
+            return f'{obj.subject_edition.subject_type.code} ({obj.subject_edition.time_slot})'
         return '-'
+
     get_subject_info.short_description = 'Materia'
     get_subject_info.admin_order_field = 'subject_edition__subject_type__code'
 
     def get_student_name(self, obj):
         if obj.student:
-            return f"{obj.student.first_name} {obj.student.last_name}"
+            return f'{obj.student.first_name} {obj.student.last_name}'
         return '-'
+
     get_student_name.short_description = 'Estudiante'
     get_student_name.admin_order_field = 'student__first_name'
 
@@ -177,12 +176,14 @@ class StudentGradeAdmin(admin.ModelAdmin):
         if obj.student:
             return obj.student.national_id
         return '-'
+
     get_student_id.short_description = 'ID Estudiante'
     get_student_id.admin_order_field = 'student__national_id'
 
     def get_instructor_name(self, obj):
         if obj.instructor:
-            return f"{obj.instructor.first_name} {obj.instructor.last_name}"
+            return f'{obj.instructor.first_name} {obj.instructor.last_name}'
         return '-'
+
     get_instructor_name.short_description = 'Instructor'
     get_instructor_name.admin_order_field = 'instructor__first_name'

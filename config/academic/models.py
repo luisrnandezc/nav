@@ -133,7 +133,7 @@ GRADE_COMPONENT_CHOICES = (
     ('practical', 'Práctica'),
 )
 
-# Allowed (theory_weight, practical_weight) pairs; sum must be 1.
+# theory_weight + practical_weight must equal 1 (within this tolerance).
 WEIGHT_PAIR_EPSILON = Decimal('0.001')
 
 # Course modality choices
@@ -317,7 +317,7 @@ class SubjectEdition(models.Model):
         default=Decimal('1'),
         validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('1'))],
         verbose_name='Peso teoría',
-        help_text='Solo teoría: 1.0. Con evaluación práctica: 0.8.',
+        help_text='Fracción del examen final atribuida a teoría. Debe sumar 1.0 con el peso de práctica (ej. 1 y 0, o 0.7 y 0.3).',
     )
     practical_weight = models.DecimalField(
         max_digits=4,
@@ -325,7 +325,7 @@ class SubjectEdition(models.Model):
         default=Decimal('0'),
         validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('1'))],
         verbose_name='Peso práctica',
-        help_text='Sin práctica: 0. Con práctica: 0.2.',
+        help_text='Fracción del examen final atribuida a práctica. Debe sumar 1.0 con el peso de teoría.',
     )
 
     class Meta:
@@ -355,14 +355,6 @@ class SubjectEdition(models.Model):
         if tw is not None and pw is not None:
             if abs(tw + pw - Decimal('1')) > WEIGHT_PAIR_EPSILON:
                 raise ValidationError('La suma de los pesos teoría + práctica debe ser 1.0.')
-            theory_only = abs(tw - Decimal('1')) <= WEIGHT_PAIR_EPSILON and abs(pw) <= WEIGHT_PAIR_EPSILON
-            theory_and_practical = abs(tw - Decimal('0.8')) <= WEIGHT_PAIR_EPSILON and abs(
-                pw - Decimal('0.2')
-            ) <= WEIGHT_PAIR_EPSILON
-            if not (theory_only or theory_and_practical):
-                raise ValidationError(
-                    'Pesos permitidos: solo teoría (1.0 y 0) o teoría + práctica (0.8 y 0.2).'
-                )
 
     def save(self, *args, **kwargs):
         self.full_clean()

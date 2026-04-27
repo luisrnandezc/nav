@@ -134,6 +134,27 @@ class FinalWeightedGradeTests(GradingTestCase):
         self._add_grade(self.edition_mixed, 'practical', 90)
         self.assertIsNone(final_weighted_grade(self.edition_mixed, self.student.pk))
 
+    def test_custom_weight_split_computes_weighted_sum(self):
+        self.edition_mixed.theory_weight = Decimal('0.7')
+        self.edition_mixed.practical_weight = Decimal('0.3')
+        self.edition_mixed.save()
+        self._add_grade(self.edition_mixed, 'theory', 80)
+        self._add_grade(self.edition_mixed, 'practical', 100)
+        self.assertEqual(final_weighted_grade(self.edition_mixed, self.student.pk), Decimal('86.0'))
+
+
+class SubjectEditionWeightPolicyTests(GradingTestCase):
+    def test_arbitrary_positive_split_passes_validation(self):
+        self.edition_mixed.theory_weight = Decimal('0.7')
+        self.edition_mixed.practical_weight = Decimal('0.3')
+        self.edition_mixed.full_clean()
+
+    def test_weights_must_sum_to_one(self):
+        self.edition_mixed.theory_weight = Decimal('0.6')
+        self.edition_mixed.practical_weight = Decimal('0.3')
+        with self.assertRaises(ValidationError):
+            self.edition_mixed.full_clean()
+
 
 class StudentPassedFinalTests(GradingTestCase):
     def test_passes_when_final_at_least_standard_threshold(self):

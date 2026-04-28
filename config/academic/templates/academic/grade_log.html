@@ -1,51 +1,103 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>NAV | Calificaciones</title>
         <link href="{% static 'academic/grade_log.css' %}" rel="stylesheet" />
+        <link href="{% static 'academic/grade_log_dashboard.css' %}" rel="stylesheet" />
         <link href="{% static 'academic/shared_components.css' %}" rel="stylesheet" />
     </head>
 
     <body>
-        <div class="main-container">
+        <div class="main-container gl-grade-log-layout">
 
             <div class="back-button">
                 <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
             </div>
 
-            <h1 class="main-header">Registro de calificaciones</h1>
+            <div class="main-header gl-page-title">
+                <h1>Registro de calificaciones</h1>
+                <p>Resumen por materias inscritas y detalle de notas.</p>
+            </div>
 
-            <div class="grade-logs-list-container">
-                <div class="grade-logs-section">
-                    <div class="grade-logs-list">
-                        {% for log in grade_logs %}
-                            <div class="grade-card {% if log.passed %}status-passed{% else %}status-failed{% endif %}">
-                                <div class="grade-top">
-                                    <div class="grade-left">
-                                        <div class="grade-line"><span class="grade-label">Fecha:</span> {{ log.date|date:"d/m/Y" }}</div>
-                                        <div class="grade-line"><span class="grade-label">Instructor:</span> {{ log.instructor.first_name }} {{ log.instructor.last_name }}</div>
-                                    </div>
-                                    <div class="grade-center">
-                                        <div class="grade-line"><span class="grade-label">Materia:</span> {{ log.subject_edition.subject_type.name }}</div>
-                                        <div class="grade-line"><span class="grade-label">Componente:</span> {{ log.get_component_display }}</div>
-                                        <div class="grade-line"><span class="grade-label">Tipo de examen:</span> {{ log.get_test_type_display }}</div>
-                                    </div>
-                                    <div class="grade-right">
-                                        <div class="grade-line"><span class="grade-label">Nota:</span> <span class="grade-score">{{ log.grade }}</span></div>
-                                        <div class="grade-badge">Status: <span class="badge {% if log.passed %}badge-passed{% else %}badge-failed{% endif %}">
-                                            {% if log.passed %}Aprobado{% else %}Reprobado{% endif %}
-                                        </span></div>
-                                    </div>
+            <div class="gl-cards-container">
+                <div class="gl-cards-header">
+                    <h2>Resumen</h2>
+                </div>
+                <div class="gl-summary-stats">
+                    <div class="gl-stat-item">
+                        <span class="gl-stat-value">{{ summary_passed }}</span>
+                        <span class="gl-stat-label">Materias aprobadas</span>
+                    </div>
+                    <div class="gl-stat-item">
+                        <span class="gl-stat-value">{{ summary_remaining }}</span>
+                        <span class="gl-stat-label">Materias pendientes</span>
+                    </div>
+                    <div class="gl-stat-item">
+                        <span class="gl-stat-value">{% if summary_avg is not None %}{{ summary_avg|floatformat:1 }}{% else %}—{% endif %}</span>
+                        <span class="gl-stat-label">Promedio de notas</span>
+                    </div>
+                    <div class="gl-stat-item">
+                        <span class="gl-stat-value">{% if summary_min is not None %}{{ summary_min|floatformat:1 }}{% else %}—{% endif %}</span>
+                        <span class="gl-stat-label">Nota final mínima</span>
+                    </div>
+                    <div class="gl-stat-item">
+                        <span class="gl-stat-value">{% if summary_max is not None %}{{ summary_max|floatformat:1 }}{% else %}—{% endif %}</span>
+                        <span class="gl-stat-label">Nota final máxima</span>
+                    </div>
+                </div>
+                <p class="gl-stat-note">
+                    Aprobadas = materias inscritas en las que aprobaste el curso.
+                    Pendientes = total de materias no cursadas o no aprobadas.
+                    Estás inscrito en {{ enrolled_edition_count }} edición(es).
+                    Promedio / mín / máx = calculado con base en la nota final por materia.
+                </p>
+            </div>
+
+            <div class="gl-cards-container">
+                <div class="gl-cards-header">
+                    <h2>Calificaciones</h2>
+                </div>
+
+                <form method="get" action="{% url 'academic:grade_logs' %}" class="gl-filter-bar">
+                    <label for="gl-subject-filter">Materia</label>
+                    <select name="subject" id="gl-subject-filter" aria-label="Filtrar por materia">
+                        <option value="">Todas las materias</option>
+                        {% for st in subject_options %}
+                            <option value="{{ st.pk }}"{% if selected_subject_id == st.pk %} selected{% endif %}>{{ st.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="gl-filter-submit">Aplicar</button>
+                </form>
+                <p class="gl-filter-hint">Mostrando hasta 500 registros, más recientes primero.</p>
+
+                <div class="gl-reports-list">
+                    {% for log in grade_logs %}
+                        <div class="grade-card gl-report-card {% if log.passed %}status-passed{% else %}status-failed{% endif %}">
+                            <div class="grade-top">
+                                <div class="grade-left">
+                                    <div class="grade-line"><span class="grade-label">Fecha:</span> {{ log.date|date:"d/m/Y" }}</div>
+                                    <div class="grade-line"><span class="grade-label">Instructor:</span> {{ log.instructor.first_name }} {{ log.instructor.last_name }}</div>
+                                </div>
+                                <div class="grade-center">
+                                    <div class="grade-line"><span class="grade-label">Materia:</span> {{ log.subject_edition.subject_type.name }}</div>
+                                    <div class="grade-line"><span class="grade-label">Componente:</span> {{ log.get_component_display }}</div>
+                                    <div class="grade-line"><span class="grade-label">Tipo de examen:</span> {{ log.get_test_type_display }}</div>
+                                </div>
+                                <div class="grade-right">
+                                    <div class="grade-line"><span class="grade-label">Nota:</span> <span class="grade-score">{{ log.grade }}</span></div>
+                                    <div class="grade-badge">Estado: <span class="badge {% if log.passed %}badge-passed{% else %}badge-failed{% endif %}">
+                                        {% if log.passed %}Aprobado{% else %}Reprobado{% endif %}
+                                    </span></div>
                                 </div>
                             </div>
-                        {% empty %}
-                            <div class="no-grades">No hay registros de calificaciones disponibles</div>
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% empty %}
+                        <div class="no-grades">No hay calificaciones para mostrar (revisa el filtro de materia).</div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

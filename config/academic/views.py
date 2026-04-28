@@ -5,6 +5,15 @@ from django.http import JsonResponse
 from decimal import Decimal
 
 from .forms import StudentGradeForm
+from .grading import (
+    DEFAULT_TOTAL_CURRICULUM_SUBJECTS,
+    compute_approved_and_pending,
+    compute_final_grade_average,
+    compute_final_grade_min_max,
+    filter_grade_rows_for_display,
+    load_student_grade_overview,
+    subject_options_for_overview,
+)
 from .models import SubjectEdition, StudentGrade
 from accounts.models import User
 
@@ -181,11 +190,47 @@ def load_grading_components(request):
 
 @login_required
 def grade_logs(request):
+    """Student grade history with summary stats and optional filter by subject type."""
     user = request.user
-    grade_logs = StudentGrade.objects.filter(student=user).select_related(
-        'subject_edition__subject_type', 'instructor'
-    ).order_by('-date')[:10]
-    return render(request, 'academic/grade_log.html', {'grade_logs': grade_logs, 'user': user})
+    overview = load_student_grade_overview(user)
+
+    subject_options = subject_options_for_overview(overview)
+    subject_type_ids = set(subject_options.values_list('pk', flat=True))
+
+    selected_subject_id = None
+    raw_subject = request.GET.get('subject', '').strip()
+    if raw_subject.isdigit():
+        sid = int(raw_subject)
+        if sid in subject_type_ids:
+            selected_subject_id = sid
+
+    grade_logs = filter_grade_rows_for_display(
+        overview, subject_type_id=selected_subject_id, limit=500
+    )
+
+    summary_passed, summary_remaining = compute_approved_and_pending(
+        overview, DEFAULT_TOTAL_CURRICULUM_SUBJECTS
+    )
+    summary_min, summary_max = compute_final_grade_min_max(overview)
+    summary_avg = compute_final_grade_average(overview)
+
+    return render(
+        request,
+        'academic/grade_log.html',
+        {
+            'user': user,
+            'grade_logs': grade_logs,
+            'subject_options': subject_options,
+            'selected_subject_id': selected_subject_id,
+            'summary_passed': summary_passed,
+            'summary_remaining': summary_remaining,
+            'summary_avg': summary_avg,
+            'summary_min': summary_min,
+            'summary_max': summary_max,
+            'enrolled_edition_count': len(overview.enrolled_editions),
+            'curriculum_subject_total': DEFAULT_TOTAL_CURRICULUM_SUBJECTS,
+        },
+    )
 
 
 @login_required

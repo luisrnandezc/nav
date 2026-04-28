@@ -6,10 +6,10 @@ from decimal import Decimal
 
 from .forms import StudentGradeForm
 from .grading import (
-    DEFAULT_TOTAL_CURRICULUM_SUBJECTS,
     compute_approved_and_pending,
     compute_final_grade_average,
     compute_final_grade_min_max,
+    curriculum_subject_total_for_student,
     filter_grade_rows_for_display,
     load_student_grade_overview,
     subject_options_for_overview,
@@ -207,9 +207,52 @@ def grade_logs(request):
     grade_logs = filter_grade_rows_for_display(
         overview, subject_type_id=selected_subject_id, limit=500
     )
+    for log in grade_logs:
+        weight = (
+            log.subject_edition.theory_weight
+            if log.component == 'theory'
+            else log.subject_edition.practical_weight
+        )
+        log.component_weight_percent = int(weight * Decimal('100'))
 
+    latest_grade_date_by_edition = {}
+    for row in overview.grades:
+        if row.subject_edition_id not in latest_grade_date_by_edition:
+            latest_grade_date_by_edition[row.subject_edition_id] = row.date
+
+    final_subject_grades = []
+    for edition in overview.enrolled_editions:
+        final_grade = overview.edition_final_grade.get(edition.pk)
+        latest_date = latest_grade_date_by_edition.get(edition.pk)
+        if final_grade is None or latest_date is None:
+            continue
+        recovered = any(
+            row.subject_edition_id == edition.pk
+            and row.component == 'theory'
+            and row.test_type == 'RECOVERY'
+            and row.grade >= Decimal('90')
+            for row in overview.grades
+        )
+        final_subject_grades.append(
+            {
+                'subject_name': edition.subject_type.name,
+                'time_slot': edition.get_time_slot_display(),
+                'instructor_name': (
+                    f'{edition.instructor.first_name} {edition.instructor.last_name}'
+                    if edition.instructor
+                    else 'No asignado'
+                ),
+                'final_grade': final_grade,
+                'passed': overview.edition_course_passed.get(edition.pk) is True,
+                'recovered': recovered,
+                'latest_grade_date': latest_date,
+            }
+        )
+    final_subject_grades.sort(key=lambda item: item['latest_grade_date'], reverse=True)
+
+    curriculum_subject_total = curriculum_subject_total_for_student(user)
     summary_passed, summary_remaining = compute_approved_and_pending(
-        overview, DEFAULT_TOTAL_CURRICULUM_SUBJECTS
+        overview, curriculum_subject_total
     )
     summary_min, summary_max = compute_final_grade_min_max(overview)
     summary_avg = compute_final_grade_average(overview)
@@ -228,7 +271,8 @@ def grade_logs(request):
             'summary_min': summary_min,
             'summary_max': summary_max,
             'enrolled_edition_count': len(overview.enrolled_editions),
-            'curriculum_subject_total': DEFAULT_TOTAL_CURRICULUM_SUBJECTS,
+            'curriculum_subject_total': curriculum_subject_total,
+            'final_subject_grades': final_subject_grades,
         },
     )
 

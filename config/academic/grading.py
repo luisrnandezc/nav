@@ -17,8 +17,16 @@ if TYPE_CHECKING:
 
 STANDARD_PASSING_GRADE = Decimal('80')
 RECOVERY_PASSING_GRADE = Decimal('90')
-DEFAULT_TOTAL_CURRICULUM_SUBJECTS = 10
+DEFAULT_TOTAL_CURRICULUM_SUBJECTS = 13
 _WEIGHT_EPS = Decimal('0.001')
+CURRICULUM_SUBJECT_TOTALS_BY_COURSE = {
+    'PPA-T': 13,
+    'HVI-T': 7,
+    'PCA-T': 9,
+    'TLA-T': 7,
+    'IVA': 2,
+    'IVS': 2,
+}
 
 
 def final_weighted_grade(subject_edition: SubjectEdition, student_id: int) -> Decimal | None:
@@ -178,6 +186,32 @@ def compute_approved_and_pending(
     )
     pending = max(0, total_curriculum_subjects - approved)
     return approved, pending
+
+
+def curriculum_subject_total_for_student(user: User) -> int:
+    """
+    Number of subjects expected for the student's current course.
+
+    Falls back to DEFAULT_TOTAL_CURRICULUM_SUBJECTS when the student has no
+    current course or when its code is not yet mapped.
+    """
+    course_code = (
+        user.student_profile.current_course_type
+        if hasattr(user, 'student_profile')
+        else None
+    )
+    if not course_code:
+        return DEFAULT_TOTAL_CURRICULUM_SUBJECTS
+
+    direct = CURRICULUM_SUBJECT_TOTALS_BY_COURSE.get(course_code)
+    if direct is not None:
+        return direct
+
+    normalized = course_code.replace('-P', '').replace('-T', '')
+    return CURRICULUM_SUBJECT_TOTALS_BY_COURSE.get(
+        normalized,
+        DEFAULT_TOTAL_CURRICULUM_SUBJECTS,
+    )
 
 
 def compute_final_grade_min_max(

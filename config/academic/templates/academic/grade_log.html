@@ -81,10 +81,11 @@
                                 <div class="grade-left">
                                     <div class="grade-line"><span class="grade-label">Fecha:</span> {{ log.date|date:"d/m/Y" }}</div>
                                     <div class="grade-line"><span class="grade-label">Instructor:</span> {{ log.instructor.first_name }} {{ log.instructor.last_name }}</div>
+                                    <div class="grade-line"><span class="grade-label">Materia:</span> {{ log.subject_edition.subject_type.name }}</div>
                                 </div>
                                 <div class="grade-center">
-                                    <div class="grade-line"><span class="grade-label">Materia:</span> {{ log.subject_edition.subject_type.name }}</div>
                                     <div class="grade-line"><span class="grade-label">Componente:</span> {{ log.get_component_display }}</div>
+                                    <div class="grade-line"><span class="grade-label">Peso:</span> {{ log.component_weight_percent }}%</div>
                                     <div class="grade-line"><span class="grade-label">Tipo de examen:</span> {{ log.get_test_type_display }}</div>
                                 </div>
                                 <div class="grade-right">
@@ -97,6 +98,37 @@
                         </div>
                     {% empty %}
                         <div class="no-grades">No hay calificaciones para mostrar (revisa el filtro de materia).</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="gl-cards-container">
+                <div class="gl-cards-header">
+                    <h2>Nota final por materia</h2>
+                </div>
+                <p class="gl-filter-hint">Ordenado por la evaluación más reciente de cada materia.</p>
+                <div class="gl-finals-list">
+                    {% for item in final_subject_grades %}
+                        <div class="grade-card gl-final-card {% if item.passed %}status-passed{% else %}status-failed{% endif %}">
+                            <div class="grade-top">
+                                <div class="grade-left">
+                                    <div class="grade-line"><span class="grade-label">Materia:</span> {{ item.subject_name }}</div>
+                                    <div class="grade-line"><span class="grade-label">Horario:</span> {{ item.time_slot }}</div>
+                                </div>
+                                <div class="grade-center">
+                                    <div class="grade-line"><span class="grade-label">Reparada:</span> {% if item.recovered %}Sí{% else %}No{% endif %}</div>
+                                    <div class="grade-line"><span class="grade-label">Instructor:</span> {{ item.instructor_name }}</div>
+                                </div>
+                                <div class="grade-right">
+                                    <div class="grade-line"><span class="grade-label">Nota final:</span> <span class="grade-score">{{ item.final_grade|floatformat:1 }}</span></div>
+                                    <div class="grade-badge">Estado: <span class="badge {% if item.passed %}badge-passed{% else %}badge-failed{% endif %}">
+                                        {% if item.passed %}Aprobado{% else %}Reprobado{% endif %}
+                                    </span></div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="no-grades">No hay materias con nota final completa todavía.</div>
                     {% endfor %}
                 </div>
             </div>

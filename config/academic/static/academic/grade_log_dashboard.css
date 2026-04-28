@@ -115,7 +115,7 @@
 }
 
 .gl-filter-bar select {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.75);
   border: 1px solid rgba(218, 225, 255, 0.4);
   color: #dae1ff;
   padding: 10px 14px;
@@ -124,6 +124,11 @@
   font-family: inherit;
   font-size: 0.85rem;
   text-transform: none;
+}
+
+.gl-filter-bar select option {
+  background-color: #111111;
+  color: #dae1ff;
 }
 
 .gl-filter-bar .gl-filter-submit {
@@ -182,6 +187,38 @@
 }
 
 .gl-report-card.grade-card {
+  margin-bottom: 0;
+}
+
+.gl-finals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-right: -6px;
+}
+
+.gl-finals-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.gl-finals-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+
+.gl-finals-list::-webkit-scrollbar-thumb {
+  background: rgba(218, 225, 255, 0.3);
+  border-radius: 4px;
+}
+
+.gl-finals-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(218, 225, 255, 0.5);
+}
+
+.gl-final-card.grade-card {
   margin-bottom: 0;
 }
 

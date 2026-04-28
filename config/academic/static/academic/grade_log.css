@@ -38,6 +38,13 @@ body {
   letter-spacing: 3px;
 }
 
+/* Title block with h1 + subtitle (grade log dashboard) */
+.main-header.gl-page-title {
+  font-size: inherit;
+  letter-spacing: normal;
+  margin: 40px 0 24px 0;
+}
+
 /* Grade logs list container */
 .grade-logs-list-container {
   display: flex;

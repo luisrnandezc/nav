@@ -116,7 +116,7 @@ class FinalWeightedGradeTests(GradingTestCase):
     def test_theory_only_missing_standard_returns_none(self):
         self.assertIsNone(final_weighted_grade(self.edition_theory_only, self.student.pk))
 
-    def test_theory_only_recovery_does_not_count_toward_final(self):
+    def test_theory_only_recovery_without_standard_returns_none(self):
         self._add_grade(self.edition_theory_only, 'theory', 50, test_type='RECOVERY')
         self.assertIsNone(final_weighted_grade(self.edition_theory_only, self.student.pk))
 
@@ -141,6 +141,16 @@ class FinalWeightedGradeTests(GradingTestCase):
         self._add_grade(self.edition_mixed, 'theory', 80)
         self._add_grade(self.edition_mixed, 'practical', 100)
         self.assertEqual(final_weighted_grade(self.edition_mixed, self.student.pk), Decimal('86.0'))
+
+    def test_recovery_pass_caps_final_to_eighty(self):
+        self._add_grade(self.edition_theory_only, 'theory', Decimal('79'))
+        self._add_grade(self.edition_theory_only, 'theory', Decimal('95'), test_type='RECOVERY')
+        self.assertEqual(final_weighted_grade(self.edition_theory_only, self.student.pk), Decimal('80.0'))
+
+    def test_failed_recovery_keeps_original_weighted_final(self):
+        self._add_grade(self.edition_theory_only, 'theory', Decimal('79'))
+        self._add_grade(self.edition_theory_only, 'theory', Decimal('89'), test_type='RECOVERY')
+        self.assertEqual(final_weighted_grade(self.edition_theory_only, self.student.pk), Decimal('79.0'))
 
 
 class SubjectEditionWeightPolicyTests(GradingTestCase):

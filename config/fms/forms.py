@@ -380,7 +380,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
         label='Descripción de la discrepancia',
         required=False,
         max_length=1000,
-        min_length=50
+        min_length=4
     )
 
     class Meta:
@@ -577,15 +577,15 @@ class FlightEvaluation0_100Form(forms.ModelForm):
         
         # Set student fields to empty to prevent preselection
         self.fields['student_license_type'].initial = ''
-        self.fields['course_type'].initial = ''
-        
+        # Default course (practical PPA); not filled from student profile / API on 0–100 form
+        self.fields['course_type'].initial = 'PPA-P'
+
         # Override the field choices to include empty option
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
-        self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
-        
+
         # Ensure discrepancy_type is set to empty by default
         self.fields['discrepancy_type'].initial = ''
-        
+
         if user:
             profile = user.instructor_profile
             self.fields['instructor_id'].initial = user.national_id
@@ -732,7 +732,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
         label='Descripción de la discrepancia',
         required=False,
         max_length=1000,
-        min_length=50
+        min_length=4
     )
     
     class Meta:
@@ -913,11 +913,10 @@ class FlightEvaluation100_120Form(forms.ModelForm):
         
         # Set student fields to empty to prevent preselection
         self.fields['student_license_type'].initial = ''
-        self.fields['course_type'].initial = ''
+        self.fields['course_type'].initial = 'HVI-P'
         
         # Override the field choices to include empty option
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
-        self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
         
         # Ensure discrepancy_type is set to empty by default
         self.fields['discrepancy_type'].initial = ''
@@ -1068,7 +1067,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
         label='Descripción de la discrepancia',
         required=False,
         max_length=1000,
-        min_length=50
+        min_length=4
     )
     
     class Meta:
@@ -1083,6 +1082,9 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6',
             'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6',
             'inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11',
+            'mvrs_1', 'mvrs_2', 'mvrs_3', 'mvrs_4', 'mvrs_5', 'mvrs_6', 'mvrs_7', 'mvrs_8',
+            'mvrs_9', 'mvrs_10', 'mvrs_11', 'mvrs_12', 'mvrs_13',
+            'nav_1', 'nav_2', 'nav_3', 'nav_4', 'nav_5', 'nav_6',
             'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7',
             'emer_1', 'emer_2', 'emer_3', 'emer_4',
             'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7',
@@ -1134,6 +1136,25 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'inst_9': 'Procedimientos de precisión',
             'inst_10': 'Procedimiento de aprox. frustrada',
             'inst_11': 'Circuitos de espera',
+            'mvrs_1': 'Virajes ascenso/descenso',
+            'mvrs_2': 'Vuelo lento',
+            'mvrs_3': 'Pérdida limpia',
+            'mvrs_4': 'Pérdida config. despegue y aterrizaje',
+            'mvrs_5': 'Pérdida secundaria',
+            'mvrs_6': 'Efecto del P-factor',
+            'mvrs_7': 'Chandelles',
+            'mvrs_8': '8 perezosos',
+            'mvrs_9': 'S sobre pilones',
+            'mvrs_10': 'S sobre carreteras',
+            'mvrs_11': 'Ubicación espacial',
+            'mvrs_12': 'Reconocimiento de actitud inusual (UPSET)',
+            'mvrs_13': 'Precisión de 090, 180, 360 y 720',
+            'nav_1': 'Briefing de pre-vuelo',
+            'nav_2': 'Planificación/Tablas de performance',
+            'nav_3': 'Plan de vuelo operacional (TOC-TOD)',
+            'nav_4': 'Comunicaciones en ruta (reportes)',
+            'nav_5': 'Orientación espacial',
+            'nav_6': 'Uso de radioayudas',
             'land_1': 'Aterrizaje normal',
             'land_2': 'Aproximación estabilizada',
             'land_3': 'Aproximación frustrada',
@@ -1193,6 +1214,25 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'inst_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'inst_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'inst_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_3': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_4': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_8': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_9': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_10': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_11': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_12': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'mvrs_13': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'nav_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'nav_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'nav_3': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'nav_4': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'nav_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'nav_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'inst_8': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'inst_9': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'inst_10': forms.RadioSelect(attrs={'class': 'radio-field'}),
@@ -1224,11 +1264,10 @@ class FlightEvaluation120_170Form(forms.ModelForm):
         
         # Set student fields to empty to prevent preselection
         self.fields['student_license_type'].initial = ''
-        self.fields['course_type'].initial = ''
+        self.fields['course_type'].initial = 'PCA-P'
         
         # Override the field choices to include empty option
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
-        self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
         
         # Ensure discrepancy_type is set to empty by default
         self.fields['discrepancy_type'].initial = ''
@@ -1379,7 +1418,7 @@ class FlightReportForm(forms.ModelForm):
         label='Descripción de la discrepancia',
         required=False,
         max_length=1000,
-        min_length=50
+        min_length=4
     )
     
     class Meta:

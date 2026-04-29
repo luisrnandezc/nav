@@ -18,7 +18,7 @@
         <a href="{% url 'fms:form_selection' %}" class="button">&larr; Volver</a>
       </div>
 
-      <h1 class="main-header">Evaluación de vuelo 120-170 horas</h1>
+      <h1 class="main-header">Evaluación de vuelo PCA (40-150 Hrs)</h1>
       <form class="form-container" method="post"  action="{% url 'fms:flight_evaluation_120_170' %}">
         {% csrf_token %}
         <h1 class="subsection-header">Sección 1: Datos del instructor</h1>
@@ -191,7 +191,7 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 6: Procedimientos IFR avanzados</h1>
+        <h1 class="subsection-header">Sección 6: Instrumentos avanzados</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
@@ -245,7 +245,103 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 7: Aproximación final y aterrizaje</h1>
+        <h1 class="subsection-header">Sección 7: Maniobras avanzadas</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.mvrs_1.label_tag }}
+                {{ form.mvrs_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_2.label_tag }}
+                {{ form.mvrs_2 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_3.label_tag }}
+                {{ form.mvrs_3 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_4.label_tag }}
+                {{ form.mvrs_4 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_5.label_tag }}
+                {{ form.mvrs_5 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_6.label_tag }}
+                {{ form.mvrs_6 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_7.label_tag }}
+                {{ form.mvrs_7 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.mvrs_8.label_tag }}
+                {{ form.mvrs_8}}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_9.label_tag }}
+                {{ form.mvrs_9 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_10.label_tag }}
+                {{ form.mvrs_10 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_11.label_tag }}
+                {{ form.mvrs_11 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_12.label_tag }}
+                {{ form.mvrs_12 }}
+              </div>
+              <div class="form-row">
+                {{ form.mvrs_13.label_tag }}
+                {{ form.mvrs_13 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 8: Navegación VFR</h1>
+        <details>
+          <summary>Ver sección</summary>
+          <div class="collapsible-section">
+            <div class="left-column">
+              <div class="form-row">
+                {{ form.nav_1.label_tag }}
+                {{ form.nav_1 }}
+              </div>
+              <div class="form-row">
+                {{ form.nav_2.label_tag }}
+                {{ form.nav_2 }}
+              </div>
+              <div class="form-row">
+                {{ form.nav_3.label_tag }}
+                {{ form.nav_3 }}
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="form-row">
+                {{ form.nav_4.label_tag }}
+                {{ form.nav_4 }}
+              </div>
+              <div class="form-row">
+                {{ form.nav_5.label_tag }}
+                {{ form.nav_5 }}
+              </div>
+              <div class="form-row">
+                {{ form.nav_6.label_tag }}
+                {{ form.nav_6 }}
+              </div>
+            </div>
+          </div>
+        </details>
+        <h1 class="subsection-header">Sección 9: Aproximación final y aterrizaje</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
@@ -283,7 +379,7 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 8: Emergencias situacionales</h1>
+        <h1 class="subsection-header">Sección 10: Emergencias situacionales (simuladas)</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
@@ -309,7 +405,7 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 9: General</h1>
+        <h1 class="subsection-header">Sección 11: Evaluación general</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section">
@@ -347,11 +443,11 @@
             </div>
           </div>
         </details>
-        <h1 class="subsection-header">Sección 11: Comentarios (opcional)</h1>
+        <h1 class="subsection-header">Sección 12: Comentarios (opcional)</h1>
         <div class="form-row comments-row">
           {{ form.comments }}
         </div>
-        <h1 class="subsection-header">Sección 12: Reporte de discrepancia</h1>
+        <h1 class="subsection-header">Sección 13: Reporte de discrepancia</h1>
         <details>
           <summary>Ver sección</summary>
           <div class="collapsible-section" id="discrepancy-section">

@@ -2171,7 +2171,7 @@ class FlightEvaluation120_170(models.Model):
     # Session number
     def generate_choices():
         choices = []
-        for i in range(1, 21):
+        for i in range(1, 34):
             choices.append((str(i), str(i)))
         return choices
     
@@ -2405,7 +2405,7 @@ class FlightEvaluation120_170(models.Model):
     )
     #endregion
 
-    #region ADVANCED IFR PROCEDURES
+    #region ADVANCED INSTRUMENTS
     inst_1 = models.CharField(
         max_length=2,
         choices=SESSION_GRADE_CHOICES,
@@ -2471,6 +2471,126 @@ class FlightEvaluation120_170(models.Model):
         choices=SESSION_GRADE_CHOICES,
         default=NOT_EVALUATED,
         verbose_name='Circuitos de espera'
+    )
+    #endregion
+
+    #region MANEUVERS
+    mvrs_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Virajes ascenso/descenso'
+    )
+    mvrs_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Vuelo lento'
+    )
+    mvrs_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Pérdida limpia'
+    )
+    mvrs_4 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Pérdida config. despegue y aterrizaje'
+    )
+    mvrs_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Pérdida secundaria'
+    )
+    mvrs_6 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Efecto del P-factor'
+    )
+    mvrs_7 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Chandelles'
+    )
+    mvrs_8 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='8 perezosos'
+    )
+    mvrs_9 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='S sobre pilones'
+    )
+    mvrs_10 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='S sobre carreteras'
+    )
+    mvrs_11 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Ubicación espacial'
+    )
+    mvrs_12 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Reconocimiento de actitud inusual (UPSET)'
+    )
+    mvrs_13 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Precisión de 090, 180, 360 y 720'
+    )
+    #endregion
+
+    #region NAVIGATION VFR
+    nav_1 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Briefing de pre-vuelo'
+    )
+    nav_2 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Planificación/Tablas de performance'
+    )
+    nav_3 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Plan de vuelo operacional (TOC-TOD)'
+    )
+    nav_4 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Comunicaciones en ruta (reportes)'
+    )
+    nav_5 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Orientación espacial'
+    )
+    nav_6 = models.CharField(
+        max_length=2,
+        choices=SESSION_GRADE_CHOICES,
+        default=NOT_EVALUATED,
+        verbose_name='Uso de radioayudas'
     )
     #endregion
 

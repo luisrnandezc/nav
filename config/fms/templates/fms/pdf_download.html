@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,19 +10,21 @@
 </head>
 <body>
     <div class="container">
-        <h2>Descargando evaluación de vuelo...</h2>
-        <div class="spinner"></div>
+        <h2>Evaluación guardada</h2>
         <div class="loading">
-            <p>El PDF se descargará automáticamente.</p>
-            <p>Serás redirigido al dashboard en <span id="countdown">3</span> segundos.</p>
+            <p>La planilla se descargará en breve. Si no se descarga sola, pulse el botón de abajo.</p>
         </div>
+        <p class="pdf-actions">
+            <a id="pdf-download-link" class="btn-primary" href="{{ pdf_url }}">Descargar / abrir PDF</a>
+        </p>
+        <p class="dashboard-link">
+            <a href="{{ dashboard_url }}">Volver al panel principal</a>
+        </p>
     </div>
 
     <!-- Pass Django variables to JavaScript -->
     <div id="pdf-data" 
          data-pdf-url="{{ pdf_url }}" 
-         data-filename="{{ filename }}" 
-         data-dashboard-url="{{ dashboard_url }}" 
          style="display: none;">
     </div>
 

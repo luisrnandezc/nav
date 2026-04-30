@@ -494,7 +494,6 @@ def pdf_download_waiting_page(request, form_type, evaluation_id):
         
         context = {
             'pdf_url': f'/fms/download_pdf/{form_type}/{evaluation_id}/',
-            'filename': f'flight_evaluation_{form_type}_{evaluation.student_id}_{evaluation.session_number}.pdf',
             'dashboard_url': '/dashboard/'
         }
         

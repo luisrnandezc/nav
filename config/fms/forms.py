@@ -376,7 +376,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
     )
 
     discrepancy_description = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Mínimo 50 caracteres, máximo 1000 caracteres'}),
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Máximo 1000 caracteres'}),
         label='Descripción de la discrepancia',
         required=False,
         max_length=1000,
@@ -728,7 +728,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
     )
 
     discrepancy_description = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Mínimo 50 caracteres, máximo 1000 caracteres'}),
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Máximo 1000 caracteres'}),
         label='Descripción de la discrepancia',
         required=False,
         max_length=1000,
@@ -1063,7 +1063,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
     )
 
     discrepancy_description = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Mínimo 50 caracteres, máximo 1000 caracteres'}),
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Máximo 1000 caracteres'}),
         label='Descripción de la discrepancia',
         required=False,
         max_length=1000,
@@ -1414,7 +1414,7 @@ class FlightReportForm(forms.ModelForm):
     )
 
     discrepancy_description = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Mínimo 50 caracteres, máximo 1000 caracteres'}),
+        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Por favor, proporcione una descripción de la discrepancia. Máximo 1000 caracteres'}),
         label='Descripción de la discrepancia',
         required=False,
         max_length=1000,

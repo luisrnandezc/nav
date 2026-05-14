@@ -56,7 +56,7 @@
                     <div class="flight-info">
                       <span class="session-grade {% if session.session_grade == 'S' or session.session_grade == 'SS' %}grade-s{% elif session.session_grade == 'NS' %}grade-ns{% elif session.session_grade == 'NE' %}grade-ne{% endif %}">{{ session.session_grade }}</span>
                       <span class="detail-value" style="font-size: 0.85rem; opacity: 0.8;">
-                        {% if form_type == '0_100' %}0-100h{% elif form_type == '100_120' %}100-120h{% else %}120-170h{% endif %}
+                        {% if form_type == '0_100' %}PPA (0-40h){% elif form_type == '100_120' %}HVI{% else %}PCA (40-150h){% endif %}
                       </span>
                     </div>
                     <div class="flight-details">

@@ -30,7 +30,7 @@
                 <!-- Evaluations 0-100 -->
                 <div class="section">
                     <div class="section-header">
-                        <h2>Evaluaciones 0-100h</h2>
+                        <h2>Evaluaciones PPA (0-40h)</h2>
                     </div>
                     <div class="flight-list" data-type="0_100" data-role="{{ user_role }}">
                         {% if latest_flight_0_100 %}
@@ -61,7 +61,7 @@
                                 </a>
                             {% endfor %}
                         {% else %}
-                            <div class="no-flights">No hay evaluaciones 0-100h registradas</div>
+                            <div class="no-flights">No hay evaluaciones PPA (0-40h) registradas</div>
                         {% endif %}
                     </div>
                     <button class="load-more-btn" data-type="0_100" data-role="{{ user_role }}" data-url="{% url 'fms:load_more_flights' %}">Cargar más</button>
@@ -70,7 +70,7 @@
                 <!-- Evaluations 100-120 -->
                 <div class="section">
                     <div class="section-header">
-                        <h2>Evaluaciones 100-120h</h2>
+                        <h2>Evaluaciones HVI</h2>
                     </div>
                     <div class="flight-list" data-type="100_120" data-role="{{ user_role }}">
                         {% if latest_flight_100_120 %}
@@ -101,7 +101,7 @@
                                 </a>
                             {% endfor %}
                         {% else %}
-                            <div class="no-flights">No hay evaluaciones 100-120h registradas</div>
+                            <div class="no-flights">No hay evaluaciones HVI registradas</div>
                         {% endif %}
                     </div>
                     <button class="load-more-btn" data-type="100_120" data-role="{{ user_role }}" data-url="{% url 'fms:load_more_flights' %}">Cargar más</button>
@@ -110,7 +110,7 @@
                 <!-- Evaluations 120-170 -->
                 <div class="section">
                     <div class="section-header">
-                        <h2>Evaluaciones 120-170h</h2>
+                        <h2>Evaluaciones PCA (40-150h)</h2>
                     </div>
                     <div class="flight-list" data-type="120_170" data-role="{{ user_role }}">
                         {% if latest_flight_120_170 %}
@@ -141,7 +141,7 @@
                                 </a>
                             {% endfor %}
                         {% else %}
-                            <div class="no-flights">No hay evaluaciones 120-170h registradas</div>
+                            <div class="no-flights">No hay evaluaciones PCA (40-150h) registradas</div>
                         {% endif %}
                     </div>
                     <button class="load-more-btn" data-type="120_170" data-role="{{ user_role }}" data-url="{% url 'fms:load_more_flights' %}">Cargar más</button>

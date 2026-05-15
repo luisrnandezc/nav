@@ -371,7 +371,7 @@ class StudentGrade(models.Model):
     student = models.ForeignKey(
         'accounts.User',
         on_delete=models.CASCADE,
-        limit_choices_to={'role': 'STUDENT'},
+        limit_choices_to=Q(student_profile__isnull=False),
         related_name='grades',
         verbose_name='Estudiante',
         null=False,

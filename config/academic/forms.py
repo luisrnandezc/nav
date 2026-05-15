@@ -22,9 +22,10 @@ class StudentGradeForm(forms.ModelForm):
             self.fields['subject_edition'].queryset = SubjectEdition.objects.filter(
                 instructor=self.instructor
             ).order_by('subject_type__name')
-            self.fields['student'].queryset = User.objects.filter(role='STUDENT').order_by(
-                'first_name', 'last_name'
-            )
+            # Enrolled users only; includes dual-role users (not always role=STUDENT).
+            self.fields['student'].queryset = User.objects.filter(
+                enrolled_subjects__instructor=self.instructor
+            ).distinct().order_by('first_name', 'last_name')
 
             self.fields['subject_edition'].widget.attrs.update({
                 'class': 'form-field subject-edition-select',

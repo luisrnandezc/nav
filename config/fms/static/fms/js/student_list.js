@@ -2,6 +2,8 @@
 // Handles toggle permission functionality for directors
 
 document.addEventListener('DOMContentLoaded', function() {
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
   // Handle toggle permission buttons
   const toggleButtons = document.querySelectorAll('.toggle-permission-btn');
   
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
       fetch('/fms/api/toggle_temp_permission/', {
         method: 'POST',
         headers: {
-          'X-CSRFToken': window.csrfToken,
+          'X-CSRFToken': csrfToken,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: `student_id=${studentId}`

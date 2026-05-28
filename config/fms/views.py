@@ -506,8 +506,11 @@ def pdf_download_waiting_page(request, form_type, evaluation_id):
 @login_required
 def student_list(request):
     """Display a list of all students with their information."""
+    search_term = request.GET.get('q', '').strip()
+
     # Get all students with their profiles
     students = User.objects.filter(role='STUDENT').select_related('student_profile').order_by('first_name', 'last_name')
+    total_students = students.count()
     
     # Check if user is in director group
     is_director = request.user.groups.filter(name='director').exists()
@@ -536,10 +539,28 @@ def student_list(request):
         except Exception as e:
             # Handle students without profiles
             continue
+
+    if search_term:
+        normalized_search = search_term.lower()
+        student_data = [
+            student
+            for student in student_data
+            if normalized_search in ' '.join([
+                str(student['first_name']),
+                str(student['last_name']),
+                str(student['username']),
+                str(student['student_id']),
+                str(student['student_phase']),
+                str(student['student_license_type']),
+                str(student['course_type']),
+                str(student['course_edition']),
+            ]).lower()
+        ]
     
     context = {
         'students': student_data,
-        'total_students': len(student_data),
+        'total_students': total_students,
+        'search_term': search_term,
         'is_director': is_director,
     }
     

@@ -9,10 +9,8 @@
     <link href="{% static 'fms/fms_dashboard.css' %}" rel="stylesheet" />
     <link href="{% static 'fms/shared_components.css' %}" rel="stylesheet" />
     <link href="{% static 'fms/student_list.css' %}" rel="stylesheet" />
-    <script>
-      window.csrfToken = '{{ csrf_token }}';
-    </script>
-    <script src="{% static 'fms/js/student_list.js' %}"></script>
+    <meta name="csrf-token" content="{{ csrf_token }}" />
+    <script src="{% static 'fms/js/student_list.js' %}?v=2" defer></script>
   </head>
 
   <body>
@@ -22,6 +20,24 @@
       </div>
 
       <h1 class="main-header">Lista de Estudiantes</h1>
+
+      <form class="buttons-container student-search-form" id="student-search-form" method="get">
+        <div class="student-search-field">
+          <label for="student-search-input" class="visually-hidden">Buscar Estudiante</label>
+          <input
+            type="text"
+            name="q"
+            id="student-search-input"
+            class="student-search-input"
+            placeholder="Nombre, usuario o ID"
+            value="{{ search_term }}"
+            autocomplete="off"
+          />
+        </div>
+        <div class="main-button">
+          <button type="submit" id="student-search-button" class="button">Buscar Estudiante</button>
+        </div>
+      </form>
 
       <div class="sections-container">
         <!-- Students List Section -->
@@ -95,7 +111,13 @@
                 </div>
               {% endfor %}
             {% else %}
-              <div class="no-flights">No hay estudiantes registrados</div>
+              <div class="no-flights">
+                {% if search_term %}
+                  No se encontraron estudiantes
+                {% else %}
+                  No hay estudiantes registrados
+                {% endif %}
+              </div>
             {% endif %}
           </div>
         </div>

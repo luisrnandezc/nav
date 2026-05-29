@@ -47,6 +47,8 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
+    'ui',
+    'maintenance',
     'academic',
     'accounts',
     'website',

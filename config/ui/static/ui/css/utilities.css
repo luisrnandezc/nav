@@ -1,0 +1,41 @@
+.ui-sr-only,
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ui-text-muted {
+  color: var(--ui-color-text-muted);
+}
+
+.ui-text-success {
+  color: var(--ui-color-success);
+}
+
+.ui-text-warning {
+  color: var(--ui-color-warning);
+}
+
+.ui-text-danger {
+  color: var(--ui-color-danger);
+}
+
+.ui-no-margin {
+  margin: 0;
+}
+
+.ui-no-margin-bottom,
+.no-margin-bottom {
+  margin-bottom: 0;
+}
+
+.ui-full-width {
+  width: 100%;
+}

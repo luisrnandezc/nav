@@ -3,7 +3,6 @@ from django.db import transaction
 from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation, FlightReport, DiscrepancyReport
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
-import decimal
 
 class SimEvaluationForm(forms.ModelForm):
     # Add a custom simulator field that uses ModelChoiceField
@@ -267,7 +266,7 @@ class SimEvaluationForm(forms.ModelForm):
             'app_24': forms.TextInput(attrs={'class': 'form-field'}),
             'go_1': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'go_2': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -568,7 +567,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -904,7 +903,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -1255,7 +1254,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 75 caracteres, máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):

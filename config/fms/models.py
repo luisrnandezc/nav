@@ -5,7 +5,6 @@ from accounts.models import StudentProfile
 from django.utils import timezone
 from fleet.models import Simulator, Aircraft
 from constants import COURSE_TYPES
-import decimal
 
 
 # Custom validators with Spanish messages
@@ -765,7 +764,7 @@ class SimEvaluation(models.Model):
     comments = models.TextField(
         blank=True,
         verbose_name='Comentarios',
-        validators=[MinLengthValidator(75), MaxLengthValidator(1000)],
+        validators=[MinLengthValidator(15), MaxLengthValidator(1000)],
     )
     aura_processed = models.BooleanField(
         default=False,
@@ -1411,7 +1410,7 @@ class FlightEvaluation0_100(models.Model):
     comments = models.TextField(
         blank=True,
         verbose_name='Comentarios',
-        validators=[MinLengthValidator(75), MaxLengthValidator(1000)],
+        validators=[MinLengthValidator(15), MaxLengthValidator(1000)],
     )
     aura_processed = models.BooleanField(
         default=False,
@@ -2040,7 +2039,7 @@ class FlightEvaluation100_120(models.Model):
     comments = models.TextField(
         blank=True,
         verbose_name='Comentarios',
-        validators=[MinLengthValidator(75), MaxLengthValidator(1000)],
+        validators=[MinLengthValidator(15), MaxLengthValidator(1000)],
     )
     aura_processed = models.BooleanField(
         default=False,
@@ -2714,7 +2713,7 @@ class FlightEvaluation120_170(models.Model):
     comments = models.TextField(
         blank=True,
         verbose_name='Comentarios',
-        validators=[MinLengthValidator(75), MaxLengthValidator(1000)],
+        validators=[MinLengthValidator(15), MaxLengthValidator(1000)],
     )
     aura_processed = models.BooleanField(
         default=False,

@@ -1,0 +1,121 @@
+html {
+  background: linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.58)), url("../../dashboard/img/background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+body {
+  background: transparent;
+}
+
+.maintenance-summary {
+  text-align: center;
+}
+
+.maintenance-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.maintenance-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0;
+}
+
+.maintenance-stat-value {
+  color: var(--ui-color-text);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.maintenance-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  align-items: end;
+}
+
+.maintenance-filter-actions {
+  display: flex;
+  gap: 10px;
+  grid-column: 1 / -1;
+  justify-content: center;
+}
+
+.maintenance-report-list {
+  max-height: 620px;
+}
+
+.maintenance-report-card {
+  cursor: default;
+}
+
+.maintenance-report-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.maintenance-report-header h3 {
+  color: var(--ui-color-text);
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  margin: 0 0 4px;
+}
+
+.maintenance-report-header p {
+  color: var(--ui-color-text-muted);
+  margin: 0;
+}
+
+.maintenance-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.maintenance-report-details {
+  margin-bottom: 12px;
+}
+
+.maintenance-report-description {
+  color: var(--ui-color-text);
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media screen and (max-width: 900px) {
+  .maintenance-stats,
+  .maintenance-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .maintenance-stats,
+  .maintenance-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .maintenance-filter-actions,
+  .maintenance-report-header {
+    flex-direction: column;
+  }
+
+  .maintenance-filter-actions {
+    align-items: center;
+  }
+
+  .maintenance-badges {
+    justify-content: flex-start;
+  }
+}

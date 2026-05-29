@@ -1,0 +1,139 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Reportes de Discrepancia</title>
+    {% include "ui/includes/core_css.html" %}
+    <link href="{% static 'maintenance/css/discrepancy_reports.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="back-button">
+        <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+      </div>
+
+      <h1 class="main-header">Mantenimiento</h1>
+
+      <div class="sections-container">
+        <section class="section maintenance-summary">
+          <div class="section-header">
+            <h2>Reportes de Discrepancia</h2>
+          </div>
+
+          <div class="maintenance-stats">
+            <div class="ui-card maintenance-stat">
+              <span class="detail-label">Actuales</span>
+              <span class="maintenance-stat-value">{{ current_count }}</span>
+            </div>
+            <div class="ui-card maintenance-stat">
+              <span class="detail-label">Pendientes</span>
+              <span class="maintenance-stat-value">{{ pending_count }}</span>
+            </div>
+            <div class="ui-card maintenance-stat">
+              <span class="detail-label">En proceso</span>
+              <span class="maintenance-stat-value">{{ in_progress_count }}</span>
+            </div>
+            <div class="ui-card maintenance-stat">
+              <span class="detail-label">Completados</span>
+              <span class="maintenance-stat-value">{{ completed_count }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Filtro</h2>
+          </div>
+
+          <form method="get" class="maintenance-filters">
+            <div class="ui-form-row">
+              <label for="status" class="ui-form-label">Estado</label>
+              <select id="status" name="status" class="form-field">
+                <option value="current" {% if selected_status == 'current' %}selected{% endif %}>Actuales</option>
+                <option value="" {% if selected_status == '' %}selected{% endif %}>Todos</option>
+                {% for value, label in status_choices %}
+                  <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="ui-form-row">
+              <label for="type" class="ui-form-label">Tipo</label>
+              <select id="type" name="type" class="form-field">
+                <option value="">Todos</option>
+                {% for value, label in type_choices %}
+                  <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="ui-form-row">
+              <label for="aircraft" class="ui-form-label">Aeronave</label>
+              <select id="aircraft" name="aircraft" class="form-field">
+                <option value="">Todas</option>
+                {% for aircraft in aircraft_list %}
+                  <option value="{{ aircraft.id }}" {% if selected_aircraft == aircraft.id|stringformat:'s' %}selected{% endif %}>{{ aircraft.registration }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="maintenance-filter-actions">
+              <button type="submit" class="button">Aplicar</button>
+              <a href="{% url 'maintenance:discrepancy_reports_panel' %}" class="button">Limpiar</a>
+            </div>
+          </form>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Reportes</h2>
+            <p>{{ reports|length }} resultado{% if reports|length != 1 %}s{% endif %}</p>
+          </div>
+
+          <div class="ui-list maintenance-report-list">
+            {% if reports %}
+              {% for report in reports %}
+                <article class="ui-card maintenance-report-card">
+                  <div class="maintenance-report-header">
+                    <div>
+                      <h3>{{ report.aircraft.registration }}</h3>
+                      <p>{{ report.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                    <div class="maintenance-badges">
+                      <span class="badge {% if report.status == 'PENDING' %}badge-warning{% elif report.status == 'IN_PROGRESS' %}badge-info{% elif report.status == 'COMPLETED' %}badge-success{% else %}badge-muted{% endif %}">
+                        {{ report.get_status_display }}
+                      </span>
+                      {% if report.discrepancy_type %}
+                        <span class="badge badge-orange">{{ report.get_discrepancy_type_display }}</span>
+                      {% else %}
+                        <span class="badge badge-muted">Sin tipo</span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="detail-grid maintenance-report-details">
+                    <div class="detail-item">
+                      <span class="detail-label">Reportado por:</span>
+                      <span class="detail-value">{{ report.reportee_first_name }} {{ report.reportee_last_name }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Actualizado:</span>
+                      <span class="detail-value">{{ report.updated_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                  </div>
+
+                  <p class="maintenance-report-description">{{ report.discrepancy_description }}</p>
+                </article>
+              {% endfor %}
+            {% else %}
+              <div class="ui-empty">No hay reportes de discrepancia para los filtros seleccionados.</div>
+            {% endif %}
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

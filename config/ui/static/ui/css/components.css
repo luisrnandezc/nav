@@ -1,0 +1,212 @@
+.button,
+.main-button .button,
+.back-button .button,
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-space-sm);
+  background-color: rgba(218, 225, 255, 0.2);
+  border: 1px solid var(--ui-color-border);
+  border-radius: 5px;
+  color: var(--ui-color-text);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 180px;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.button:hover,
+.main-button .button:hover,
+.back-button .button:hover,
+.ui-button:hover {
+  background-color: var(--ui-color-accent);
+  border-color: var(--ui-color-accent);
+}
+
+.buttons-container,
+.ui-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ui-space-lg);
+  margin-bottom: var(--ui-space-xl);
+}
+
+.button-disabled,
+.main-button .button-disabled,
+.ui-button[disabled],
+.ui-button-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ui-list,
+.flight-list,
+.reports-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-right: -10px;
+  scrollbar-gutter: stable;
+}
+
+.ui-card,
+.flight-item,
+.flight-card,
+.report-card {
+  display: block;
+  background: var(--ui-color-surface-raised);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--ui-radius-lg);
+  color: inherit;
+  margin-bottom: 10px;
+  padding: var(--ui-space-md);
+  text-decoration: none;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.ui-card:hover,
+.flight-item:hover,
+.report-card:hover {
+  background: var(--ui-color-surface-hover);
+  border-color: var(--ui-color-border);
+}
+
+.ui-card:last-child,
+.flight-item:last-child,
+.flight-card:last-child,
+.report-card:last-child {
+  margin-bottom: 0;
+}
+
+.detail-grid,
+.flight-details,
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.detail-grid.three-columns,
+.flight-details.three-columns {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.detail-item,
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.detail-label,
+.info-label {
+  color: var(--ui-color-text);
+  font-weight: 700;
+}
+
+.detail-value,
+.info-value {
+  color: var(--ui-color-text);
+}
+
+.badge {
+  display: inline-block;
+  border: 1px solid currentColor;
+  border-radius: var(--ui-radius-md);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  text-transform: uppercase;
+}
+
+.badge-red,
+.badge-danger {
+  background: rgba(244, 67, 54, 0.2);
+  color: var(--ui-color-danger);
+}
+
+.badge-yellow,
+.badge-warning {
+  background: rgba(255, 193, 7, 0.2);
+  color: var(--ui-color-warning);
+}
+
+.badge-orange {
+  background: rgba(255, 152, 0, 0.2);
+  color: var(--ui-color-orange);
+}
+
+.badge-green,
+.badge-success {
+  background: rgba(76, 175, 80, 0.2);
+  color: var(--ui-color-success);
+}
+
+.badge-blue,
+.badge-info {
+  background: rgba(33, 150, 243, 0.2);
+  color: var(--ui-color-info);
+}
+
+.badge-gray,
+.badge-muted {
+  background: rgba(158, 158, 158, 0.2);
+  color: #9e9e9e;
+}
+
+.no-flights,
+.no-reports,
+.ui-empty {
+  color: var(--ui-color-text-muted);
+  font-style: italic;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+  .buttons-container,
+  .ui-actions {
+    gap: var(--ui-space-md);
+  }
+
+  .detail-grid,
+  .detail-grid.three-columns,
+  .flight-details,
+  .flight-details.three-columns,
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .buttons-container,
+  .ui-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .button,
+  .main-button .button,
+  .ui-button {
+    min-width: 250px;
+    max-width: 280px;
+    font-size: 0.8rem;
+    padding: 10px 15px;
+  }
+
+  .detail-item,
+  .info-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

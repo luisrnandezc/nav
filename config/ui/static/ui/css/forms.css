@@ -1,0 +1,65 @@
+.form-field,
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  background-color: var(--ui-color-surface-raised);
+  border: 1px solid var(--ui-color-border-muted);
+  border-radius: 5px;
+  color: var(--ui-color-text);
+  font-size: 1rem;
+  padding: 12px 14px;
+  outline: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.form-field:focus,
+.ui-input:focus,
+.ui-select:focus,
+.ui-textarea:focus {
+  background-color: rgba(218, 225, 255, 0.1);
+  border-color: var(--ui-color-border);
+}
+
+.form-field::placeholder,
+.ui-input::placeholder,
+.ui-textarea::placeholder {
+  color: var(--ui-color-text-muted);
+}
+
+.ui-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ui-space-md);
+  width: 100%;
+}
+
+.ui-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-sm);
+}
+
+.ui-form-label {
+  color: var(--ui-color-text);
+  font-weight: 700;
+}
+
+.ui-form-help,
+.ui-form-error {
+  font-size: 0.85rem;
+}
+
+.ui-form-help {
+  color: var(--ui-color-text-muted);
+}
+
+.ui-form-error {
+  color: var(--ui-color-danger);
+}
+
+@media screen and (max-width: 768px) {
+  .ui-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

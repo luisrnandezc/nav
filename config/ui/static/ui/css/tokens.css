@@ -1,0 +1,28 @@
+:root {
+  --ui-color-bg: #0a0e1a;
+  --ui-color-surface: rgba(0, 0, 0, 0.3);
+  --ui-color-surface-raised: rgba(255, 255, 255, 0.05);
+  --ui-color-surface-hover: rgba(218, 225, 255, 0.2);
+  --ui-color-text: #dae1ff;
+  --ui-color-text-muted: rgba(218, 225, 255, 0.72);
+  --ui-color-border: #dae1ff;
+  --ui-color-border-muted: rgba(218, 225, 255, 0.25);
+  --ui-color-accent: #d63e20;
+  --ui-color-success: #4caf50;
+  --ui-color-warning: #ffc107;
+  --ui-color-danger: #f44336;
+  --ui-color-info: #2196f3;
+  --ui-color-orange: #ff9800;
+  --ui-radius-sm: 4px;
+  --ui-radius-md: 6px;
+  --ui-radius-lg: 8px;
+  --ui-radius-panel: 15px;
+  --ui-shadow-panel: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --ui-max-width: 1200px;
+  --ui-max-width-wide: 1400px;
+  --ui-space-xs: 4px;
+  --ui-space-sm: 8px;
+  --ui-space-md: 15px;
+  --ui-space-lg: 20px;
+  --ui-space-xl: 30px;
+}

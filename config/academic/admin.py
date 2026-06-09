@@ -85,8 +85,6 @@ class StudentGradeAdmin(admin.ModelAdmin):
         'instructor__national_id',
     )
     readonly_fields = (
-        'student',
-        'instructor',
         'date',
         'student_national_id',
         'student_first_name',

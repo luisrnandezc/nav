@@ -143,13 +143,7 @@ class StudentGradeAdmin(admin.ModelAdmin):
 
     def subject_name(self, obj):
         if obj.subject_edition and obj.subject_edition.subject_type:
-            from .models import SUBJECTS_NAMES
-
-            subject_code = obj.subject_edition.subject_type.code
-            for code, name in SUBJECTS_NAMES:
-                if code == subject_code:
-                    return name
-            return subject_code
+            return obj.subject_edition.subject_type.name
         return '-'
 
     subject_name.short_description = 'Nombre de la Materia'

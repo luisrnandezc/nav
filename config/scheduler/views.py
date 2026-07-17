@@ -337,6 +337,7 @@ def cancel_flight_request(request, request_id):
             cancelled_by_name = f"{student.first_name or ''} {student.last_name or ''}".strip() or getattr(student, 'email', '') or str(student)
             CancellationsFee.objects.create(
                 flight_request=flight_request,
+                student_profile=student.student_profile,
                 cancelled_by_name=cancelled_by_name,
                 amount=flight_request.slot.flight_period.aircraft.hourly_rate
             )

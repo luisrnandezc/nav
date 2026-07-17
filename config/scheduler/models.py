@@ -1,4 +1,6 @@
 from django.db import models, transaction
+from django.db.models import F
+from django.utils import timezone
 from django.utils.timezone import localdate
 from datetime import timedelta
 from django.core.exceptions import ValidationError
@@ -503,6 +505,15 @@ class CancellationsFee(models.Model):
         null=True,
         blank=True,
     )
+    student_profile = models.ForeignKey(
+        'accounts.StudentProfile',
+        on_delete=models.SET_NULL,
+        related_name='cancellation_fees',
+        verbose_name='Estudiante',
+        help_text='Estudiante al que se aplicó la multa',
+        null=True,
+        blank=True,
+    )
     cancelled_by_name = models.CharField(
         max_length=255,
         blank=True,
@@ -519,25 +530,41 @@ class CancellationsFee(models.Model):
         default=localdate,
         verbose_name="Fecha de adición",
     )
+    reimbursed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Fecha de reembolso',
+    )
+    reimbursed_by = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.SET_NULL,
+        related_name='reimbursed_cancellation_fees',
+        verbose_name='Reembolsado por',
+        null=True,
+        blank=True,
+    )
     #endregion
 
-    def delete(self, *args, **kwargs):
-        """Delete the cancellation fee and reimburse the student."""
-        if self.flight_request and self.flight_request.student:
-            student = self.flight_request.student
-            reimbursement_amount = self.amount
-            
-            # Refund the fee back to the student's balance
-            try:
-                student.student_profile.balance += reimbursement_amount
-                student.student_profile.save()
-                
-            except Exception as e:
-                raise ValidationError(f"Error al reembolsar la multa: {str(e)}")
-        
-        # Delete the fee record
-        super().delete(*args, **kwargs)
-    
+    def reimburse(self, reimbursed_by=None):
+        """Reimburse this fee once while preserving it as an audit record."""
+        with transaction.atomic():
+            fee = CancellationsFee.objects.select_for_update().get(pk=self.pk)
+
+            if fee.reimbursed_at:
+                raise ValidationError('Esta multa ya fue reembolsada')
+            if not fee.student_profile_id:
+                raise ValidationError('No se pudo identificar al estudiante de esta multa')
+
+            StudentProfile.objects.filter(pk=fee.student_profile_id).update(
+                balance=F('balance') + fee.amount
+            )
+            fee.reimbursed_at = timezone.now()
+            fee.reimbursed_by = reimbursed_by
+            fee.save(update_fields=('reimbursed_at', 'reimbursed_by'))
+
+            self.reimbursed_at = fee.reimbursed_at
+            self.reimbursed_by = fee.reimbursed_by
+
     def __str__(self):
         who = self.cancelled_by_name or (self.flight_request.student.get_full_name() if self.flight_request and self.flight_request.student else "—")
         return f"Multa por cancelación extemporánea. Cancelado por: {who} - Monto: {self.amount}"
@@ -546,4 +573,3 @@ class CancellationsFee(models.Model):
         verbose_name = "Multa por cancelación"
         verbose_name_plural = "Multas por cancelación"
         ordering = ['-date_added']
-        

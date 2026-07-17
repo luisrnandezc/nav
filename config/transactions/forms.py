@@ -91,10 +91,9 @@ class FuelTransactionSearchForm(forms.Form):
     """Simple form to search for student evaluations with missing fuel data."""
     
     student_national_id = forms.IntegerField(
-        required=True,
+        required=False,
         widget=forms.NumberInput(attrs={
             'class': 'form-field',
-            'required': True,
             'placeholder': 'Ej: 12345678'
         }),
         label='ID del Estudiante'

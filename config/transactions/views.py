@@ -5,13 +5,52 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.core.cache import cache
+from django.db import transaction as db_transaction
 from django.db.models import Q
+from django.urls import reverse
+from urllib.parse import urlencode
 from decimal import Decimal
 from .models import StudentTransaction
 from .forms import StudentTransactionForm, FuelTransactionSearchForm
 from accounts.models import StudentProfile, User
 from fms.models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
-from fleet.models import Aircraft
+
+
+FUEL_EVALUATION_MODELS = (
+    (FlightEvaluation0_100, 'flightevaluation0_100', 'Evaluación 0-100'),
+    (FlightEvaluation100_120, 'flightevaluation100_120', 'Evaluación 100-120'),
+    (FlightEvaluation120_170, 'flightevaluation120_170', 'Evaluación 120-170'),
+)
+
+
+def get_evaluations_without_fuel(student_id=None):
+    """Return all evaluations without fuel, optionally filtered by student."""
+    evaluations = []
+
+    for model, model_type, model_name in FUEL_EVALUATION_MODELS:
+        queryset = model.objects.filter(fuel_consumed=Decimal('0')).select_related('aircraft')
+        if student_id is not None:
+            queryset = queryset.filter(student_id=student_id)
+
+        evaluations.extend({
+            'evaluation': evaluation,
+            'model_type': model_type,
+            'model_name': model_name,
+        } for evaluation in queryset)
+
+    return sorted(
+        evaluations,
+        key=lambda item: (item['evaluation'].session_date, item['evaluation'].pk),
+        reverse=True,
+    )
+
+
+def fuel_results_redirect(active_student_filter=None):
+    """Return to the fuel results while preserving an intentional filter."""
+    results_url = reverse('transactions:add_fuel_transaction')
+    if active_student_filter is not None:
+        results_url = f'{results_url}?{urlencode({"student_national_id": active_student_filter})}'
+    return redirect(results_url)
 
 
 @login_required
@@ -201,83 +240,30 @@ def transaction_detail(request, transaction_id):
 @login_required
 @permission_required('accounts.can_manage_transactions')
 def add_fuel_transaction(request):
-    """Search for student evaluations with missing fuel data and allow updates."""
-    from accounts.models import StudentProfile
-    from fms.models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
-    from decimal import Decimal
-    from django.db.models import Q
-    
-    evaluations = []
+    """List evaluations with missing fuel data, optionally filtered by student."""
     student_profile = None
-    
-    # Check if student_id is in query params (from redirect after update)
-    student_id_param = request.GET.get('student_id')
-    if student_id_param:
-        # Pre-populate form with student_id
-        search_form = FuelTransactionSearchForm({'student_national_id': student_id_param})
-        # Auto-search if form is valid
-        if search_form.is_valid():
-            student_id = search_form.cleaned_data['student_national_id']
-        else:
-            search_form = FuelTransactionSearchForm()
-            student_id = None
-    else:
-        search_form = FuelTransactionSearchForm(request.POST if request.method == 'POST' else None)
-        student_id = None
-    
-    # Perform search if form is valid (either from POST or GET with student_id)
-    if (request.method == 'POST' and search_form.is_valid()) or (student_id_param and search_form.is_valid()):
-        if not student_id:
-            student_id = search_form.cleaned_data['student_national_id']
-        
-        try:
-            student_profile = StudentProfile.objects.get(user__national_id=student_id)
-            
-            # Search all three evaluation types for evaluations with fuel_consumed = 0.0
-            fuel_filter = Q(fuel_consumed=Decimal('0.0')) | Q(fuel_consumed=0) | Q(fuel_consumed=Decimal('0'))
-            
-            # Get evaluations from all three models
-            evals_0_100 = FlightEvaluation0_100.objects.filter(
-                student_id=student_id
-            ).filter(fuel_filter).select_related('aircraft').order_by('-session_date', '-id')
-            
-            evals_100_120 = FlightEvaluation100_120.objects.filter(
-                student_id=student_id
-            ).filter(fuel_filter).select_related('aircraft').order_by('-session_date', '-id')
-            
-            evals_120_170 = FlightEvaluation120_170.objects.filter(
-                student_id=student_id
-            ).filter(fuel_filter).select_related('aircraft').order_by('-session_date', '-id')
-            
-            # Combine all evaluations with their model type
-            for eval_obj in evals_0_100:
-                evaluations.append({
-                    'evaluation': eval_obj,
-                    'model_type': 'flightevaluation0_100',
-                    'model_name': 'Evaluación 0-100'
-                })
-            
-            for eval_obj in evals_100_120:
-                evaluations.append({
-                    'evaluation': eval_obj,
-                    'model_type': 'flightevaluation100_120',
-                    'model_name': 'Evaluación 100-120'
-                })
-            
-            for eval_obj in evals_120_170:
-                evaluations.append({
-                    'evaluation': eval_obj,
-                    'model_type': 'flightevaluation120_170',
-                    'model_name': 'Evaluación 120-170'
-                })
-            
-        except StudentProfile.DoesNotExist:
-            pass
+    active_student_filter = None
+    form_data = request.GET.copy()
+
+    # Keep old bookmarked/redirected URLs working.
+    if 'student_id' in form_data and 'student_national_id' not in form_data:
+        form_data['student_national_id'] = form_data['student_id']
+
+    search_form = FuelTransactionSearchForm(form_data or None)
+    if form_data and search_form.is_valid():
+        active_student_filter = search_form.cleaned_data.get('student_national_id')
+        if active_student_filter is not None:
+            student_profile = StudentProfile.objects.select_related('user').get(
+                user__national_id=active_student_filter
+            )
+
+    evaluations = get_evaluations_without_fuel(active_student_filter)
     
     context = {
         'search_form': search_form,
         'evaluations': evaluations,
         'student_profile': student_profile,
+        'active_student_filter': active_student_filter,
     }
     
     return render(request, 'transactions/add_fuel_transaction.html', context)
@@ -287,22 +273,25 @@ def add_fuel_transaction(request):
 @permission_required('accounts.can_manage_transactions')
 def update_fuel_consumed(request):
     """Update fuel_consumed for a specific flight evaluation and create a StudentTransaction record."""
-    student_id = None
+    active_student_filter = None
     
     if request.method == 'POST':
         evaluation_id = request.POST.get('evaluation_id')
         model_type = request.POST.get('model_type')
         fuel_consumed = request.POST.get('fuel_consumed')
+        filter_value = (request.POST.get('active_student_filter') or '').strip()
+        if filter_value.isdigit():
+            active_student_filter = int(filter_value)
         
         if not all([evaluation_id, model_type, fuel_consumed]):
             messages.error(request, 'Faltan datos requeridos.')
-            return redirect('transactions:add_fuel_transaction')
+            return fuel_results_redirect(active_student_filter)
         
         try:
             fuel_consumed = Decimal(fuel_consumed)
             if fuel_consumed <= 0 or fuel_consumed > 1000:
                 messages.error(request, 'El volumen de combustible debe estar entre 0.1 y 1000 litros.')
-                return redirect('transactions:add_fuel_transaction')
+                return fuel_results_redirect(active_student_filter)
             
             # Map model type to model class
             model_map = {
@@ -314,42 +303,35 @@ def update_fuel_consumed(request):
             model_class = model_map.get(model_type)
             if not model_class:
                 messages.error(request, 'Tipo de evaluación inválido.')
-                return redirect('transactions:add_fuel_transaction')
+                return fuel_results_redirect(active_student_filter)
             
-            # Get the evaluation
-            evaluation = model_class.objects.get(pk=evaluation_id)
-            student_id = evaluation.student_id  # Store for redirect
-            
-            # Check that fuel_consumed is currently 0.0
-            if evaluation.fuel_consumed != Decimal('0.0') and evaluation.fuel_consumed != 0:
-                messages.error(request, f'Esta evaluación ya tiene combustible especificado: {evaluation.fuel_consumed} litros.')
-                return redirect('transactions:add_fuel_transaction')
-            
-            # Get student profile and aircraft
-            student_profile = StudentProfile.objects.get(user__national_id=evaluation.student_id)
-            aircraft = Aircraft.objects.get(registration=evaluation.aircraft.registration)
-            fuel_cost = aircraft.fuel_cost
-            
-            # Calculate transaction amount
-            transaction_amount = round(fuel_consumed * fuel_cost, 2)
-            
-            # Update the evaluation's fuel_consumed directly (bypassing save to avoid side effects)
-            model_class.objects.filter(pk=evaluation_id).update(fuel_consumed=fuel_consumed)
-            
-            # Create StudentTransaction record
-            # The save() method will automatically update the student balance since confirmed=True
-            StudentTransaction.objects.create(
-                student_profile=student_profile,
-                amount=transaction_amount,
-                type=StudentTransaction.DEBIT,
-                category=StudentTransaction.FLIGHT,
-                date_added=timezone.now().date(),
-                added_by=request.user,
-                confirmed=True,
-                confirmed_by=request.user,
-                confirmation_date=timezone.now(),
-                notes=f'Combustible: {fuel_consumed}L - {aircraft.registration} - {evaluation.instructor_first_name} {evaluation.instructor_last_name}',
-            )
+            with db_transaction.atomic():
+                evaluation = model_class.objects.select_for_update().select_related('aircraft').get(pk=evaluation_id)
+
+                if evaluation.fuel_consumed != Decimal('0'):
+                    raise ValidationError(
+                        f'Esta evaluación ya tiene combustible especificado: {evaluation.fuel_consumed} litros.'
+                    )
+
+                student_profile = StudentProfile.objects.select_for_update().get(
+                    user__national_id=evaluation.student_id
+                )
+                aircraft = evaluation.aircraft
+                transaction_amount = round(fuel_consumed * aircraft.fuel_cost, 2)
+
+                model_class.objects.filter(pk=evaluation_id).update(fuel_consumed=fuel_consumed)
+                StudentTransaction.objects.create(
+                    student_profile=student_profile,
+                    amount=transaction_amount,
+                    type=StudentTransaction.DEBIT,
+                    category=StudentTransaction.FLIGHT,
+                    date_added=timezone.now().date(),
+                    added_by=request.user,
+                    confirmed=True,
+                    confirmed_by=request.user,
+                    confirmation_date=timezone.now(),
+                    notes=f'Combustible: {fuel_consumed}L - {aircraft.registration} - {evaluation.instructor_first_name} {evaluation.instructor_last_name}',
+                )
             
             messages.success(request, f'Combustible actualizado exitosamente: {fuel_consumed} litros.')
             
@@ -359,13 +341,9 @@ def update_fuel_consumed(request):
             messages.error(request, 'Evaluación no encontrada.')
         except StudentProfile.DoesNotExist:
             messages.error(request, 'Perfil de estudiante no encontrado.')
+        except ValidationError as e:
+            messages.error(request, str(e))
         except Exception as e:
             messages.error(request, f'Error al actualizar: {str(e)}')
-    
-    # Redirect back to search page, preserving student_id if available
-    if student_id:
-        from django.http import HttpResponseRedirect
-        from django.urls import reverse
-        return HttpResponseRedirect(f"{reverse('transactions:add_fuel_transaction')}?student_id={student_id}")
-    
-    return redirect('transactions:add_fuel_transaction')
+
+    return fuel_results_redirect(active_student_filter)

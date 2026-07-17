@@ -25,14 +25,16 @@
 			<div class="fuel-transaction-container">
 				<!-- Search Section -->
 				<div class="search-section">
-					<form method="post" action="{% url 'transactions:add_fuel_transaction' %}" class="search-form">
-						{% csrf_token %}
+					<form method="get" action="{% url 'transactions:add_fuel_transaction' %}" class="search-form">
 						<div class="search-form-row">
 							<div class="form-row">
 								{{ search_form.student_national_id.label_tag }}
 								{{ search_form.student_national_id }}
 							</div>
 							<button type="submit" class="submit-button">Buscar</button>
+							{% if active_student_filter %}
+								<a href="{% url 'transactions:add_fuel_transaction' %}" class="submit-button">Resetear</a>
+							{% endif %}
 						</div>
 						{% if search_form.student_national_id.errors %}
 							<div class="field-error">{{ search_form.student_national_id.errors.0 }}</div>
@@ -41,11 +43,14 @@
 				</div>
 
 				<!-- Results Section -->
-				{% if student_profile %}
-					<div class="results-section">
-						<h2 class="subsection-header">
-							Evaluaciones de {{ student_profile.user.first_name }} {{ student_profile.user.last_name }} (ID: {{ student_profile.user.national_id }})
-						</h2>
+				<div class="results-section">
+					<h2 class="subsection-header">
+						{% if student_profile %}
+							{{ student_profile.user.first_name }} {{ student_profile.user.last_name }}
+						{% else %}
+							Evaluaciones sin combustible
+						{% endif %}
+					</h2>
 						
 						{% if evaluations %}
 							<div class="evaluations-container">
@@ -57,6 +62,14 @@
 										</div>
 										
 										<div class="evaluation-details">
+											<div class="detail-item">
+											<span class="detail-label">Estudiante:</span>
+											<span class="detail-value">{{ eval_data.evaluation.student_first_name }} {{ eval_data.evaluation.student_last_name }}</span>
+											</div>
+											<div class="detail-item">
+											<span class="detail-label">ID del estudiante:</span>
+											<span class="detail-value">{{ eval_data.evaluation.student_id }}</span>
+											</div>
 											<div class="detail-item">
 												<span class="detail-label">Aeronave:</span>
 												<span class="detail-value">{{ eval_data.evaluation.aircraft.registration }}</span>
@@ -75,10 +88,11 @@
 											</div>
 										</div>
 										
-										<form method="post" action="{% url 'transactions:update_fuel_consumed' %}" class="fuel-update-form">
-											{% csrf_token %}
-											<input type="hidden" name="evaluation_id" value="{{ eval_data.evaluation.id }}">
-											<input type="hidden" name="model_type" value="{{ eval_data.model_type }}">
+									<form method="post" action="{% url 'transactions:update_fuel_consumed' %}" class="fuel-update-form">
+										{% csrf_token %}
+										<input type="hidden" name="evaluation_id" value="{{ eval_data.evaluation.id }}">
+										<input type="hidden" name="model_type" value="{{ eval_data.model_type }}">
+										<input type="hidden" name="active_student_filter" value="{{ active_student_filter|default_if_none:'' }}">
 											
 											<div class="fuel-input-row">
 												<label for="fuel_consumed_{{ eval_data.evaluation.id }}" class="fuel-label">
@@ -103,11 +117,10 @@
 							</div>
 						{% else %}
 							<div class="no-evaluations">
-								<p>No se encontraron evaluaciones con combustible sin especificar para este estudiante.</p>
+								<p>No se encontraron evaluaciones con combustible sin especificar{% if student_profile %} para este estudiante{% endif %}.</p>
 							</div>
 						{% endif %}
-					</div>
-				{% endif %}
+				</div>
 			</div>
 
 			{% if messages %}

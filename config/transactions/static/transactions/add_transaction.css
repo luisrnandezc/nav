@@ -227,6 +227,7 @@ label {
   font-size: 1.25rem;
   width: 125px;
   height: 40px;
+  border: 1px solid #dae1ff;
   border-radius: 3px;
   color: #dae1ff;
   background-color: transparent;
@@ -241,7 +242,7 @@ label {
 .submit-button:hover {
   background-color: #e84728;
   color: #dae1ff;
-  border: 0px solid #dae1ff;
+  border: 1px solid #dae1ff;
   border-radius: 3px;
   cursor: pointer;
 }

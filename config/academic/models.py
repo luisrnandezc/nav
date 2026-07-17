@@ -9,111 +9,6 @@ import datetime
 
 #region Choices
 
-# Course Type Choices
-COURSE_CODES = (
-    ('PPA-T', 'PPA-T'),
-    ('PPA-P', 'PPA-P'),
-    ('HVI-T', 'HVI-T'),
-    ('HVI-P', 'HVI-P'),
-    ('PCA-T', 'PCA-T'),
-    ('PCA-P', 'PCA-P'),
-    ('IVA-T', 'IVA-T'),
-    ('IVA-P', 'IVA-P'),
-    ('IVS-T', 'IVS-T'),
-    ('IVS-P', 'IVS-P'),
-    ('RCL', 'RCL'),
-    ('PPA-REC', 'PPA-REC'),
-    ('HVI-REC', 'HVI-REC'),
-)
-COURSE_NAMES = (
-    ('Piloto Privado Avión Teórico', 'Piloto Privado Avión Teórico'),
-    ('Piloto Privado Avión Práctico', 'Piloto Privado Avión Práctico'),
-    ('Habilitación Vuelo Instrumental Avión Teórico', 'Habilitación Vuelo Instrumental Avión Teórico'),
-    ('Habilitación Vuelo Instrumental Avión Práctico', 'Habilitación Vuelo Instrumental Avión Práctico'),
-    ('Piloto Comercial Avión Teórico', 'Piloto Comercial Avión Teórico'),
-    ('Piloto Comercial Avión Práctico', 'Piloto Comercial Avión Práctico'),
-    ('Instructor de Vuelo Avión Teórico', 'Instructor de Vuelo Avión Teórico'),
-    ('Instructor de Vuelo Avión Práctico', 'Instructor de Vuelo Avión Práctico'),
-    ('Instructor de Vuelo Simulado Teórico', 'Instructor de Vuelo Simulado Teórico'),
-    ('Instructor de Vuelo Simulado Práctico', 'Instructor de Vuelo Simulado Práctico'),
-    ('Recalificación', 'Recalificación'),
-    ('Piloto Privado Avión Recurrente', 'Piloto Privado Avión Recurrente'),
-    ('Habilitación Vuelo Instrumental Avión Recurrente', 'Habilitación Vuelo Instrumental Avión Recurrente'),
-)
-
-# Subject Choices by Course Type
-SUBJECTS_CODES = (
-    ('PPA-AER-I', 'PPA-AER-I'),
-    ('PPA-SYE-I', 'PPA-SYE-I'),
-    ('PPA-MET-I', 'PPA-MET-I'),
-    ('PPA-DER-I', 'PPA-DER-I'),
-    ('PPA-NAV', 'PPA-NAV'),
-    ('PPA-UDM', 'PPA-UDM'),
-    ('PPA-MYC', 'PPA-MYC'),
-    ('PPA-PRF', 'PPA-PRF'),
-    ('PPA-RDC', 'PPA-RDC'),
-    ('PPA-FH-I', 'PPA-FH-I'),
-    ('PPA-SEG-I', 'PPA-SEG-I'),
-    ('PPA-SPV', 'PPA-SPV'),
-    ('PPA-PRO-I', 'PPA-PRO-I'),
-    ('HVI-DER', 'HVI-DER'),
-    ('HVI-SYE', 'HVI-SYE'),
-    ('HVI-PPV', 'HVI-PPV'),
-    ('HVI-MET', 'HVI-MET'),
-    ('HVI-RDN', 'HVI-RDN'),
-    ('HVI-PRO', 'HVI-PRO'),
-    ('HVI-CAR', 'HVI-CAR'),
-    ('PCA-AER-II', 'PCA-AER-II'),
-    ('PCA-SYE-II', 'PCA-SYE-II'),
-    ('PCA-MET-II', 'PCA-MET-II'),
-    ('PCA-DER-II', 'PCA-DER-II'),
-    ('PCA-FHH-II', 'PCA-FHH-II'),
-    ('PCA-INST-II', 'PCA-INST-II'),
-    ('PCA-RDN', 'PCA-RDN'),
-    ('PCA-PRO-II', 'PCA-PRO-II'),
-    ('PCA-SEG-II', 'PCA-SEG-II'),
-    ('IVA-PFD', 'IVA-PFD'),
-    ('IVA-ADE', 'IVA-ADE'),
-    ('IVS-PFD', 'IVS-PFD'),
-    ('IVS-ADE', 'IVS-ADE'),
-)
-
-SUBJECTS_NAMES = (
-    ('PPA-AER-I', 'PPA - Aeronáutica I'),
-    ('PPA-SYE-I', 'PPA - Sistemas y Equipos I'),
-    ('PPA-MET-I', 'PPA - Meteorología I'),
-    ('PPA-DER-I', 'PPA - Derecho Aeronáutico I'),
-    ('PPA-NAV', 'PPA - Navegación Visual'),
-    ('PPA-UDM', 'PPA - Unidades de Medida'),
-    ('PPA-MYC', 'PPA - Masa y Centrado'),
-    ('PPA-PRF', 'PPA - Performance'),
-    ('PPA-RDC', 'PPA - Radiocomunicaciones'),
-    ('PPA-FH-I', 'PPA - Factores Humanos I'),
-    ('PPA-SEG-I', 'PPA - Seguridad Aérea I'),
-    ('PPA-SPV', 'PPA - Supervivencia'),
-    ('PPA-PRO-I', 'PPA - Procedimientos Operacionales I'),
-    ('HVI-DER', 'HVI - Derecho Aeronáutico'),
-    ('HVI-SYE', 'HVI - Sistemas y Equipos'),
-    ('HVI-PPV', 'HVI - Performance y Planificación de Vuelo'),
-    ('HVI-MET', 'HVI - Meteorología'),
-    ('HVI-RDN', 'HVI - Radionavegación'),
-    ('HVI-PRO', 'HVI - Procedimientos Operacionales'),
-    ('HVI-CAR', 'HVI - Comunicaciones Aeronáuticas'),
-    ('PCA-AER-II', 'PCA - Aerodinámica II'),
-    ('PCA-SYE-II', 'PCA - Sistemas y Equipos II'),
-    ('PCA-MET-II', 'PCA - Meteorología II'),
-    ('PCA-DER-II', 'PCA - Derecho Aeronáutico II'),
-    ('PCA-FHH-II', 'PCA - Factores Humanos II'),
-    ('PCA-INST-II', 'PCA - Instrumentos II'),
-    ('PCA-RDN', 'PCA - Radionavegación'),
-    ('PCA-PRO-II', 'PCA - Procedimientos Operacionales II'),
-    ('PCA-SEG-II', 'PCA - Seguridad Aérea II'),
-    ('IVA-PFD', 'IVA - Peligros Durante la Simulación de Fallas'),
-    ('IVA-ADE', 'IVA - Administración de la Enseñanza'),
-    ('IVS-PFD', 'IVS - Peligros Durante la Simulación de Fallas'),
-    ('IVS-ADE', 'IVS - Administración de la Enseñanza'),
-)
-
 # Time Slots
 TIME_SLOTS = (
     ('M', 'Mañana'),
@@ -150,15 +45,11 @@ class CourseType(models.Model):
     """Course model for all permanent courses (Private Pilot, Commercial Pilot, etc.)"""
     code = models.CharField(
         max_length=10, unique=True,
-        choices=COURSE_CODES,
-        default='PPA-T',
         verbose_name='Código'
     )
     name = models.CharField(
         max_length=100, 
         unique=True, 
-        choices=COURSE_NAMES, 
-        default='Piloto Privado Avión Teórico',
         verbose_name='Nombre'
     )
     credit_hours = models.PositiveIntegerField(
@@ -242,13 +133,11 @@ class SubjectType(models.Model):
     code = models.CharField(
         max_length=50, 
         unique=True, 
-        choices=SUBJECTS_CODES,
         verbose_name='Código'
     )
     name = models.CharField(
         max_length=100, 
         unique=True, 
-        choices=SUBJECTS_NAMES,
         verbose_name='Nombre'
     )
     credit_hours = models.PositiveIntegerField(

@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.finders import find
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -494,12 +495,23 @@ def _deny_aura_access(request, message: str):
     return redirect("dashboard:dashboard")
 
 
-def _get_all_student_profiles():
-    return (
+def _get_all_student_profiles(search_term=""):
+    students = (
         StudentProfile.objects.select_related("user")
         .filter(student_phase=StudentProfile.FLYING)
         .order_by("user__last_name", "user__first_name")
     )
+
+    if search_term:
+        if search_term.isdigit():
+            students = students.filter(user__national_id=int(search_term))
+        else:
+            students = students.filter(
+                Q(user__first_name__icontains=search_term)
+                | Q(user__last_name__icontains=search_term)
+            )
+
+    return students
 
 
 def _get_latest_global_review(student_user):
@@ -582,8 +594,10 @@ def student_review_list(request):
     if not capabilities["can_view_all_reviews"]:
         return _deny_aura_access(request, "No tiene permisos para acceder a las revisiones AURA.")
 
+    search_term = (request.GET.get("q") or "").strip()
     context = {
-        "students": _get_all_student_profiles(),
+        "students": _get_all_student_profiles(search_term),
+        "search_term": search_term,
         "active_role": capabilities["active_role"],
     }
     return render(request, "aura/staff_aura_dashboard.html", context)

@@ -21,6 +21,11 @@
         <p>Perfiles globales de alumnos en línea de vuelo</p>
       </div>
 
+      <form method="get" action="{% url 'aura:student_review_list' %}" class="transactions-search-form">
+        <input type="text" name="q" id="id_q" value="{{ search_term }}" placeholder="Nombre o cédula del estudiante" aria-label="Buscar estudiante" />
+        <button type="submit" class="button search-submit">Buscar</button>
+      </form>
+
       <div class="cards-container">
         <div class="cards-container-header">
           <h2>Alumnos en línea de vuelo</h2>
@@ -65,7 +70,11 @@
           </div>
         {% else %}
           <div class="no-reports">
-            <p>No hay alumnos activos en línea de vuelo.</p>
+            {% if search_term %}
+              <p>No se encontraron alumnos en línea de vuelo.</p>
+            {% else %}
+              <p>No hay alumnos activos en línea de vuelo.</p>
+            {% endif %}
           </div>
         {% endif %}
       </div>

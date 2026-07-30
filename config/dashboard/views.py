@@ -243,13 +243,16 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'visible': user.has_perm('fms.view_discrepancyreport'),
         },
         {
-            'key': 'staff_aura',
+            'key': 'aura',
             'label': 'AURA',
             'description': 'Acceder al panel de revisión AURA.',
             'icon': 'dashboard/img/aura.png',
             'url': reverse('aura:home'),
-            'roles': {'STAFF'},
-            'visible': True,
+            'roles': {'STUDENT', 'INSTRUCTOR', 'STAFF'},
+            'visible': (
+                active_role != 'STUDENT'
+                or user_profile.student_phase == user_profile.FLYING
+            ),
         },
     ]
 

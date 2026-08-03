@@ -3,7 +3,12 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
 from accounts.models import StudentProfile
-from sms.models import VoluntaryHazardReport, Risk, MitigationAction
+from sms.models import (
+    VoluntaryHazardReport,
+    Risk,
+    RiskEvaluationReport,
+    MitigationAction,
+)
 
 User = get_user_model()
 
@@ -67,6 +72,22 @@ class RiskFactory(factory.django.DjangoModelFactory):
     pre_evaluation_probability = '0'
     post_evaluation_severity = '0'
     post_evaluation_probability = '0'
+
+
+class RiskEvaluationReportFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = RiskEvaluationReport
+
+    report = factory.SubFactory(VoluntaryHazardReportFactory)
+    selected_risk = factory.LazyAttribute(lambda obj: RiskFactory(report=obj.report))
+    sms_user_fullname = factory.Faker('name')
+    dir_user_fullname = factory.Faker('name')
+    hazard_description = factory.Faker('paragraph', nb_sentences=2)
+    hazard_source = 'VHR'
+    hazard_type = 'ORG'
+    hazard_area = 'OPERATIONS'
+    hazard_causes = factory.Faker('paragraph', nb_sentences=2)
+    defenses = factory.Faker('paragraph', nb_sentences=2)
 
 
 class MitigationActionFactory(factory.django.DjangoModelFactory):

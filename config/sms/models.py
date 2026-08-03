@@ -287,6 +287,118 @@ class Risk(models.Model):
     pre_evaluation.short_description = "Pre-evaluación"
 
 
+class RiskEvaluationReport(models.Model):
+    """
+    Risk evaluation report associated with a processed voluntary hazard report.
+
+    A RER evaluates one of the consequences (Risk instances) identified for the
+    VHR. Risk evaluations, mitigation actions, responsible users, dates, and
+    evidence remain stored in their existing related models.
+    """
+
+    #region Choices
+    HAZARD_SOURCE_CHOICES = [
+        ('VHR', 'Reporte Voluntario de Peligro'),
+        ('ROS', 'Reporte Obligatorio de Suceso'),
+        ('INT_AUD', 'Auditoría Interna'),
+        ('EXT_AUD', 'Auditoría Externa'),
+    ]
+
+    HAZARD_TYPE_CHOICES = [
+        ('ENV', 'Ambiental'),
+        ('TEC', 'Técnico'),
+        ('ORG', 'Organizacional'),
+        ('HUM', 'Humano'),
+    ]
+    #endregion
+
+    #region Fields
+    report = models.OneToOneField(
+        VoluntaryHazardReport,
+        on_delete=models.CASCADE,
+        verbose_name="Reporte Voluntario de Peligro",
+        related_name="risk_evaluation_report",
+    )
+    selected_risk = models.ForeignKey(
+        Risk,
+        on_delete=models.RESTRICT,
+        verbose_name="Riesgo seleccionado",
+        related_name="risk_evaluation_reports",
+        help_text="Consecuencia seleccionada para evaluar y mitigar en el RER.",
+    )
+    registration_date = models.DateField(
+        default=timezone.now,
+        verbose_name="Fecha de registro",
+    )
+    sms_user_fullname = models.CharField(
+        max_length=200,
+        verbose_name="Coordinador de SMS",
+    )
+    dir_user_fullname = models.CharField(
+        max_length=200,
+        verbose_name="Director",
+    )
+    hazard_description = models.TextField(
+        max_length=300,
+        verbose_name="Descripción del peligro",
+    )
+    hazard_source = models.CharField(
+        max_length=10,
+        choices=HAZARD_SOURCE_CHOICES,
+        default='VHR',
+        verbose_name="Fuente del peligro",
+    )
+    hazard_type = models.CharField(
+        max_length=3,
+        choices=HAZARD_TYPE_CHOICES,
+        verbose_name="Tipo de peligro",
+    )
+    hazard_area = models.CharField(
+        max_length=20,
+        choices=VoluntaryHazardReport.AREA_CHOICES,
+        verbose_name="Área del peligro",
+    )
+    hazard_causes = models.TextField(
+        max_length=1000,
+        verbose_name="Posibles causas",
+    )
+    defenses = models.TextField(
+        max_length=500,
+        verbose_name="Defensas existentes",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de creación",
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Fecha de actualización",
+    )
+    #endregion
+
+    class Meta:
+        verbose_name = "Registro de Evaluación de Riesgos"
+        verbose_name_plural = "Registros de Evaluación de Riesgos"
+
+    def __str__(self):
+        report_code = self.report.code or f"RVP {self.report_id}"
+        return f"RER - {report_code}"
+
+    def clean(self):
+        super().clean()
+        if (
+            self.report_id
+            and self.selected_risk_id
+            and self.selected_risk.report_id != self.report_id
+        ):
+            raise ValidationError({
+                'selected_risk': (
+                    'El riesgo seleccionado debe pertenecer al reporte '
+                    'voluntario asociado con este RER.'
+                )
+            })
+
+
 class MitigationAction(models.Model):
     """
     Mitigation Action Model for Safety Management System (SMS)

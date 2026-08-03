@@ -1,6 +1,12 @@
 from django.contrib import admin
 from django.shortcuts import redirect
-from .models import VoluntaryHazardReport, Risk, MitigationAction, MitigationActionEvidence
+from .models import (
+    VoluntaryHazardReport,
+    Risk,
+    RiskEvaluationReport,
+    MitigationAction,
+    MitigationActionEvidence,
+)
 
 
 @admin.register(VoluntaryHazardReport)
@@ -54,6 +60,51 @@ class RiskAdmin(admin.ModelAdmin):
         }),
         ('Evaluación post-mitigación', {
             'fields': ('post_evaluation_severity', 'post_evaluation_probability')
+        }),
+        ('Metadatos', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(RiskEvaluationReport)
+class RiskEvaluationReportAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'report',
+        'selected_risk',
+        'registration_date',
+        'sms_user_fullname',
+        'dir_user_fullname',
+    )
+    list_filter = ('hazard_source', 'hazard_type', 'hazard_area', 'registration_date')
+    search_fields = (
+        'report__code',
+        'report__description',
+        'selected_risk__description',
+        'hazard_description',
+        'sms_user_fullname',
+        'dir_user_fullname',
+    )
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        ('Reporte y riesgo seleccionado', {
+            'fields': ('report', 'selected_risk', 'registration_date')
+        }),
+        ('Identificación del peligro', {
+            'fields': (
+                'hazard_description',
+                'hazard_source',
+                'hazard_type',
+                'hazard_area',
+            )
+        }),
+        ('Evaluación y defensas', {
+            'fields': ('hazard_causes', 'defenses')
+        }),
+        ('Responsables del documento', {
+            'fields': ('sms_user_fullname', 'dir_user_fullname')
         }),
         ('Metadatos', {
             'fields': ('created_at', 'updated_at'),

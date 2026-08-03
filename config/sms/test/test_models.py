@@ -2,12 +2,15 @@
 SMS app – model creation and relations.
 """
 from django.utils import timezone
-from django.test import TestCase
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
+from django.test import TestCase, TransactionTestCase
 
-from sms.models import VoluntaryHazardReport, Risk, MitigationAction
+from sms.models import VoluntaryHazardReport, Risk, RiskEvaluationReport, MitigationAction
 from sms.test.factories import (
     VoluntaryHazardReportFactory,
     RiskFactory,
+    RiskEvaluationReportFactory,
     MitigationActionFactory,
     StaffUserFactory,
     InstructorUserFactory,
@@ -76,6 +79,46 @@ class TestRiskCreation(TestCase):
         RiskFactory(report=vhr)
         RiskFactory(report=vhr)
         assert vhr.risks.count() == 2
+
+
+class TestRiskEvaluationReportCreation(TestCase):
+    """RER creation and relationships with its VHR and selected risk."""
+
+    def test_create_rer_for_selected_vhr_risk(self):
+        vhr = VoluntaryHazardReportFactory(code="SMS-RVP-42")
+        risk = RiskFactory(report=vhr)
+        rer = RiskEvaluationReportFactory(report=vhr, selected_risk=risk)
+
+        assert rer.id is not None
+        assert rer.report_id == vhr.id
+        assert rer.selected_risk_id == risk.id
+        assert vhr.risk_evaluation_report == rer
+        assert str(rer) == "RER - SMS-RVP-42"
+
+    def test_selected_risk_must_belong_to_rer_report(self):
+        vhr = VoluntaryHazardReportFactory()
+        unrelated_risk = RiskFactory()
+        rer = RiskEvaluationReportFactory.build(
+            report=vhr,
+            selected_risk=unrelated_risk,
+        )
+
+        with self.assertRaisesMessage(
+            ValidationError,
+            "El riesgo seleccionado debe pertenecer al reporte voluntario asociado",
+        ):
+            rer.full_clean()
+
+
+class TestRiskEvaluationReportUniqueness(TransactionTestCase):
+    """A VHR can have only one RER."""
+
+    def test_only_one_rer_can_exist_per_vhr(self):
+        vhr = VoluntaryHazardReportFactory()
+        RiskEvaluationReportFactory(report=vhr)
+
+        with self.assertRaises(IntegrityError):
+            RiskEvaluationReportFactory(report=vhr)
 
 
 class TestMitigationActionCreation(TestCase):

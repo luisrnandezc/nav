@@ -66,8 +66,8 @@
                     {{ form.report_code }}
                 </div>
                 <div class="form-row">
-                    {{ form.report_date.label_tag }}
-                    {{ form.report_date }}
+                    {{ form.registration_date.label_tag }}
+                    {{ form.registration_date }}
                 </div>
             </div>
             <div class="right-column">
@@ -127,16 +127,20 @@
         <h1 class="subsection-header">Sección 4: Riesgo residual</h1>
         <div class="form-row" id="risk-mitigation-container">
             {% for risk in risks %}
-              <div class="cards-container">
+              <div class="cards-container risk-mitigation-card" data-risk-id="{{ risk.id }}">
                 <div class="cards-container-header">
-                  <h2>MMR para el riesgo {{ forloop.counter }}</h2>
+                  <h2>MMR para el riesgo seleccionado</h2>
                 </div>
-                {% for action in risk.mitigation_actions %}
+                {% for action in risk.mitigation_actions.all %}
                   <div class="mitigation-action-text">
                     <p> > {{ action.description }}</p>
                   </div>
+                {% empty %}
+                  <div class="mitigation-action-text">
+                    <p>No hay MMR registradas para este riesgo.</p>
+                  </div>
                 {% endfor %}
-              </div>  
+              </div>
             {% endfor %}
         </div>
         <div class="fixed-fields-container">
@@ -169,9 +173,10 @@
         {% endif %}
 
         <div class="submit-button-container">
-          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar</button>
+          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Guardar RER</button>
         </div>
       </form>
+      {{ risk_evaluation_data|json_script:"risk-evaluation-data" }}
     </div>
   </body>
 </html>

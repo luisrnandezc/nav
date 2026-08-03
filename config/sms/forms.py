@@ -1,5 +1,5 @@
 from django import forms
-from .models import VoluntaryHazardReport
+from .models import Risk, RiskEvaluationReport, VoluntaryHazardReport
 
 class SMSVoluntaryHazardReportForm(forms.ModelForm):
     
@@ -52,116 +52,95 @@ class SMSVoluntaryHazardReportForm(forms.ModelForm):
         return cleaned_data
     
 
-class RiskEvaluationReportForm(forms.Form):
-    
+class RiskEvaluationReportForm(forms.ModelForm):
     report_code = forms.CharField(
         label='Código del RVP',
-        widget=forms.TextInput(attrs={'class': 'form-field', 'readonly': 'readonly'})
-    )
-    report_date = forms.DateField(
-        label='Fecha del reporte',
-        widget=forms.DateInput(attrs={'class': 'form-field', 'readonly': 'readonly'})
-    )
-    sms_user_fullname = forms.CharField(
-        label='Coordinador de SMS',
-        widget=forms.TextInput(attrs={'class': 'form-field'})
-    )
-    dir_user_fullname = forms.CharField(
-        label='Director',
-        widget=forms.TextInput(attrs={'class': 'form-field'})
-    )
-    hazard_description = forms.CharField(
-        label='Descripción del peligro',
-        widget=forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Descripción del peligro (máximo 300 caracteres)'}),
-        max_length=300
-    )
-    hazard_source = forms.ChoiceField(
-        label='Fuente del peligro',
-        choices=[
-            ('VHR', 'Reporte de Voluntario de Peligro'),
-            ('ROS', 'Reporte Obligatorio de Suceso'),
-            ('INT_AUD', 'Auditoría Interna'),
-            ('EXT_AUD', 'Auditoría Externa')
-        ],
-        widget=forms.Select(attrs={'class': 'form-field'})
-    )
-    hazard_type = forms.ChoiceField(
-        label='Tipo de peligro',
-        choices=[
-            ('ENV', 'Ambiental'),
-            ('TEC', 'Técnico'),
-            ('ORG', 'Organizacional'),
-            ('HUM', 'Humano')
-        ],
-        widget=forms.Select(attrs={'class': 'form-field'})
-    )
-    hazard_area = forms.ChoiceField(
-        label='Área del peligro',
-        choices=[
-            ('ADMIN', 'Sede administrativa'),
-            ('PLATFORM', 'Plataforma'),
-            ('AIRPORT_OFFICE', 'Ofic. Aeropuerto'),
-            ('OPERATIONS', 'Operaciones'),
-            ('OTHER', 'Otro'),
-        ],
-        widget=forms.Select(attrs={'class': 'form-field'})
-    )
-    selected_risk = forms.ModelChoiceField(
-        queryset=None,
-        widget=forms.RadioSelect(attrs={'class': 'risk-radio-input'}),
-        empty_label=None
-    )
-    hazard_causes = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Causas posibles (máximo 1000 caracteres)'}),
-        max_length=1000
-    )
-    defenses = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-field', 'placeholder': 'Máximo 500 caracteres'}),
-        max_length=500
+        disabled=True,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-field'}),
     )
     post_evaluation_severity = forms.ChoiceField(
         label='Severidad residual',
-        choices=[
-            ('0', '-'),
-            ('A', 'A - Catastrófico'),
-            ('B', 'B - Peligroso'),
-            ('C', 'C - Grave'),
-            ('D', 'D - Leve'),
-            ('E', 'E - Insignificante'),
-        ],
-        widget=forms.Select(attrs={'class': 'form-field'})
+        choices=Risk.SEVERITY_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-field'}),
     )
     post_evaluation_probability = forms.ChoiceField(
         label='Probabilidad residual',
-        choices=[
-            ('0', '-'),
-            ('1', '1 - Sumamente improbable'),
-            ('2', '2 - Improbable'),
-            ('3', '3 - Remota'),
-            ('4', '4 - Ocasional'),
-            ('5', '5 - Frecuente'),
-        ],
-        widget=forms.Select(attrs={'class': 'form-field'})
+        choices=Risk.PROBABILITY_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-field'}),
     )
 
+    class Meta:
+        model = RiskEvaluationReport
+        fields = [
+            'registration_date',
+            'sms_user_fullname',
+            'dir_user_fullname',
+            'hazard_description',
+            'hazard_source',
+            'hazard_type',
+            'hazard_area',
+            'selected_risk',
+            'hazard_causes',
+            'defenses',
+        ]
+        widgets = {
+            'registration_date': forms.DateInput(attrs={'class': 'form-field'}),
+            'sms_user_fullname': forms.TextInput(attrs={'class': 'form-field'}),
+            'dir_user_fullname': forms.TextInput(attrs={'class': 'form-field'}),
+            'hazard_description': forms.Textarea(attrs={
+                'class': 'form-field',
+                'rows': 10,
+                'placeholder': 'Descripción del peligro (máximo 300 caracteres)',
+            }),
+            'hazard_source': forms.Select(attrs={'class': 'form-field'}),
+            'hazard_type': forms.Select(attrs={'class': 'form-field'}),
+            'hazard_area': forms.Select(attrs={'class': 'form-field'}),
+            'selected_risk': forms.RadioSelect(attrs={'class': 'risk-radio-input'}),
+            'hazard_causes': forms.Textarea(attrs={
+                'class': 'form-field',
+                'placeholder': 'Causas posibles (máximo 1000 caracteres)',
+            }),
+            'defenses': forms.Textarea(attrs={
+                'class': 'form-field',
+                'placeholder': 'Máximo 500 caracteres',
+            }),
+        }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         report = kwargs.pop('report', None)
         super().__init__(*args, **kwargs)
-        
-        if user:
-            self.fields['sms_user_fullname'].initial = user.first_name + ' ' + user.last_name
-            self.fields['dir_user_fullname'].initial = 'Elías Detto'
-        
-        if report:
-            self.fields['report_code'].initial = report.id
-            self.fields['report_date'].initial = report.date
-            # Populate the queryset for the risks
-            self.fields['selected_risk'].queryset = report.risks.all()
-            # This tells Django to use the 'description' field as the label
-            self.fields['selected_risk'].label_from_instance = lambda obj: f"({obj.pre_evaluation_severity}{obj.pre_evaluation_probability}) {obj.description}"
 
-    def clean(self):
-        cleaned_data = super().clean()
-        return cleaned_data
+        if report is None:
+            raise ValueError('RiskEvaluationReportForm requires a VHR report.')
+
+        self.fields['report_code'].initial = report.code or f'RVP {report.id}'
+        self.fields['registration_date'].disabled = True
+        self.fields['selected_risk'].queryset = report.risks.all()
+        self.fields['selected_risk'].label_from_instance = (
+            lambda risk: (
+                f"({risk.pre_evaluation_severity}{risk.pre_evaluation_probability}) "
+                f"{risk.description}"
+            )
+        )
+
+        if self.instance.pk:
+            selected_risk = self.instance.selected_risk
+            self.fields['post_evaluation_severity'].initial = (
+                selected_risk.post_evaluation_severity
+            )
+            self.fields['post_evaluation_probability'].initial = (
+                selected_risk.post_evaluation_probability
+            )
+        else:
+            self.fields['registration_date'].initial = report.date
+            self.fields['hazard_description'].initial = report.description[:300]
+            self.fields['hazard_source'].initial = 'VHR'
+            self.fields['hazard_area'].initial = report.area
+
+            if user:
+                self.fields['sms_user_fullname'].initial = (
+                    f'{user.first_name} {user.last_name}'.strip()
+                )
+                self.fields['dir_user_fullname'].initial = 'Elías Detto'

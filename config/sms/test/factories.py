@@ -8,6 +8,7 @@ from sms.models import (
     Risk,
     RiskEvaluationReport,
     MitigationAction,
+    MitigationActionEvidence,
 )
 
 User = get_user_model()
@@ -99,3 +100,11 @@ class MitigationActionFactory(factory.django.DjangoModelFactory):
     status = 'PENDING'
     due_date = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=15))
     follow_date = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=7))
+
+
+class MitigationActionEvidenceFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = MitigationActionEvidence
+
+    mitigation_action = factory.SubFactory(MitigationActionFactory)
+    description = factory.Faker('paragraph', nb_sentences=2)

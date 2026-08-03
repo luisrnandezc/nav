@@ -13,7 +13,14 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
 from django.db import transaction
-from .models import VoluntaryHazardReport, Risk, MitigationAction, MitigationActionEvidence
+from .models import (
+    VoluntaryHazardReport,
+    Risk,
+    RiskEvaluationReport,
+    MitigationAction,
+    MitigationActionEvidence,
+)
+from .rer_readiness import evaluate_rer_readiness
 from django.conf import settings
 from accounts.models import User
 import logging
@@ -390,13 +397,9 @@ def vhr_processed_panel(request, report_id):
     pending_actions = all_actions.filter(status='PENDING')
     completed_actions = all_actions.filter(status='COMPLETED')
     expired_actions = all_actions.filter(status='EXPIRED')
+    rer = RiskEvaluationReport.objects.filter(report=report).first()
 
-    # Check if all actions have a responsible individual assigned
-    can_be_registered = True
-    for action in all_actions:
-        if not action.responsible or not action.due_date:
-            can_be_registered = False
-            break
+    rer_readiness = evaluate_rer_readiness(report)
 
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
@@ -415,7 +418,9 @@ def vhr_processed_panel(request, report_id):
         'expired_actions': expired_actions,
         'can_manage_sms': request.user.has_perm('accounts.can_manage_sms'),
         'back_url': back_url,
-        'can_be_registered': can_be_registered
+        'can_be_registered': rer_readiness.is_ready,
+        'rer_readiness_errors': rer_readiness.errors,
+        'rer': rer,
     }
 
     # Disable caching for the response to force refresh when coming back from action detail.
@@ -1295,35 +1300,86 @@ def delete_evidence(request, action_id, evidence_id):
 
 @login_required
 def rer_form(request, report_id):
-    report = get_object_or_404(VoluntaryHazardReport, id=report_id)
-    
+    report = get_object_or_404(
+        VoluntaryHazardReport,
+        id=report_id,
+        is_processed=True,
+    )
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para gestionar el RER.')
+        return redirect('sms:vhr_processed_panel', report_id=report.id)
+
+    rer_readiness = evaluate_rer_readiness(report)
+    if not rer_readiness.is_ready:
+        messages.error(
+            request,
+            'No se puede generar el RER porque el reporte está incompleto.',
+        )
+        for error in rer_readiness.errors:
+            messages.warning(request, error)
+        return redirect('sms:vhr_processed_panel', report_id=report.id)
+
+    rer = RiskEvaluationReport.objects.filter(report=report).first()
+    instance = rer or RiskEvaluationReport(report=report)
+
     if request.method == 'POST':
-        form = RiskEvaluationReportForm(request.POST)
+        form = RiskEvaluationReportForm(
+            request.POST,
+            user=request.user,
+            report=report,
+            instance=instance,
+        )
         if form.is_valid():
             try:
-                form.save()
-                # TODO: here comes the SARA Analysis and RER PDF generation
+                with transaction.atomic():
+                    rer = form.save(commit=False)
+                    rer.report = report
+                    rer.save()
+
+                    selected_risk = form.cleaned_data['selected_risk']
+                    selected_risk.post_evaluation_severity = form.cleaned_data[
+                        'post_evaluation_severity'
+                    ]
+                    selected_risk.post_evaluation_probability = form.cleaned_data[
+                        'post_evaluation_probability'
+                    ]
+                    selected_risk.updated_at = timezone.now().date()
+                    selected_risk.save(update_fields=[
+                        'post_evaluation_severity',
+                        'post_evaluation_probability',
+                        'updated_at',
+                    ])
+
+                messages.success(request, 'El RER se guardó correctamente.')
+                return redirect('sms:rer_form', report_id=report.id)
             except Exception as e:
-                messages.error(request, f'Error al guardar la forma: {str(e)}')
+                messages.error(request, f'Error al guardar el RER: {str(e)}')
         else:
             messages.error(request, 'Por favor corrija los errores en el formulario.')
     else:
-        if request.user.is_authenticated:
-            form = RiskEvaluationReportForm(user=request.user, report=report)
-        else:
-            form = RiskEvaluationReportForm(report=report)
-    
-    risks = []
-    for risk in report.risks.all():
-        risks.append({
-            'description': risk.description,
-            'pre_evaluation_severity': risk.pre_evaluation_severity,
-            'pre_evaluation_probability': risk.pre_evaluation_probability,
-            'status': risk.status,
-            'mitigation_actions': risk.mitigation_actions.all(),
-        })
+        form = RiskEvaluationReportForm(
+            user=request.user,
+            report=report,
+            instance=instance,
+        )
 
-    context={'report': report, 'form': form, 'risks': risks}    
+    risks = report.risks.prefetch_related('mitigation_actions').all()
+    risk_evaluation_data = {
+        str(risk.id): {
+            'severity': risk.post_evaluation_severity,
+            'probability': risk.post_evaluation_probability,
+        }
+        for risk in risks
+    }
+
+    context = {
+        'report': report,
+        'rer': rer,
+        'form': form,
+        'risks': risks,
+        'risk_evaluation_data': risk_evaluation_data,
+    }
 
     return render(request, 'sms/rer_form.html', context)
 

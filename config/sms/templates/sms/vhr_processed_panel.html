@@ -348,9 +348,20 @@
 					<div class="register-container">
 						<div class="register-text-container">
 							{% if can_be_registered %}
-								<p id="register-info-text">✅ Listo para generar el Registro de Evaluación de Riesgos.</p>
+								{% if rer %}
+									<p id="register-info-text">✅ El Registro de Evaluación de Riesgos fue creado y puede ser actualizado.</p>
+								{% else %}
+									<p id="register-info-text">✅ Listo para generar el Registro de Evaluación de Riesgos.</p>
+								{% endif %}
 							{% else %}
-								<p id="register-info-text">⚠️ Todas las MMR deben tener un responsable y fecha límite asignada.</p>
+								<p id="register-info-text">⚠️ El reporte todavía no cumple los requisitos para generar el RER.</p>
+								{% if rer_readiness_errors %}
+									<ul class="rer-readiness-errors">
+										{% for error in rer_readiness_errors %}
+											<li>{{ error }}</li>
+										{% endfor %}
+									</ul>
+								{% endif %}
 							{% endif %}
 						</div>
 						<div class="buttons-container">
@@ -358,9 +369,8 @@
 								{% if can_be_registered %}
 									<a 
 									href="{% url 'sms:rer_form' report.id %}" 
-									class="register-button" 
-									onclick="return confirm('⚠️ Esto enviará la solicitud del RER a SARA con toda la.');">
-										+Generar RER
+									class="register-button">
+										{% if rer %}Editar RER{% else %}+Generar RER{% endif %}
 									</a>
 								{% else %}
 									<a 

@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NAV | Evaluaciones externas</title>
+  <link href="{% static 'fms/fms_dashboard.css' %}" rel="stylesheet">
+</head>
+<body>
+  <div class="main-container">
+    <div class="back-button"><a href="{% url 'fms:fms_dashboard' %}" class="button">&larr; Volver</a></div>
+    <h1 class="main-header">Evaluaciones externas</h1>
+    <div class="buttons-container">
+      <div class="main-button"><a href="{% url 'fms:external_flight_evaluation' %}" class="button">+ Nueva evaluación externa</a></div>
+    </div>
+    <div class="sections-container">
+      <div class="section">
+        <div class="flight-list">
+          {% for session in evaluations %}
+          <a href="{% url 'fms:session_detail' 'external' session.id %}" class="flight-item">
+            <div class="flight-info">
+              <span class="student-name">{{ session.student_first_name }} {{ session.student_last_name }}</span>
+              <span class="session-grade">{{ session.get_evaluation_type_display }}</span>
+            </div>
+            <div class="flight-details">
+              <div class="detail-item"><span class="detail-label">Fecha:</span> <span class="detail-value">{{ session.session_date|date:"d/m/Y" }}</span></div>
+              <div class="detail-item"><span class="detail-label">Aeronave:</span> <span class="detail-value">{{ session.aircraft_registration }}</span></div>
+              <div class="detail-item"><span class="detail-label">Instructor:</span> <span class="detail-value">{{ session.instructor_first_name }} {{ session.instructor_last_name }}</span></div>
+              <div class="detail-item"><span class="detail-label">Horas:</span> <span class="detail-value">{{ session.session_flight_hours }}</span></div>
+            </div>
+          </a>
+          {% empty %}
+          <div class="no-flights">No hay evaluaciones externas registradas</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

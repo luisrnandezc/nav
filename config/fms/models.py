@@ -2779,6 +2779,174 @@ class FlightEvaluation120_170(models.Model):
         verbose_name = 'Evaluación de vuelo 120-170'
         verbose_name_plural = 'Evaluaciones de vuelo 120-170'
 
+
+class ExternalFlightEvaluation(models.Model):
+    """Documentary flight evaluation performed in a third-party aircraft.
+
+    This model deliberately has no relationship to ``Aircraft`` and no AURA
+    state. Saving or deleting it must never mutate school operational data.
+    """
+
+    EVALUATION_TYPE_CHOICES = [
+        ('MULTIMOTOR', 'Multimotor'),
+        ('OTRO', 'Otro'),
+    ]
+
+    instructor_id = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='ID instructor',
+    )
+    instructor_first_name = models.CharField(
+        max_length=50, 
+        verbose_name='Nombre'
+    )
+    instructor_last_name = models.CharField(
+        max_length=50, 
+        verbose_name='Apellido'
+    )
+    instructor_license_type = models.CharField(
+        max_length=3,
+        choices=FlightEvaluation120_170.INSTRUCTOR_LICENSE_CHOICES,
+        default=FlightEvaluation120_170.LICENSE_PCA,
+        verbose_name='Tipo de licencia',
+    )
+    instructor_license_number = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='Número de licencia',
+    )
+    student_id = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='ID alumno',
+    )
+    student_first_name = models.CharField(
+        max_length=50, 
+        verbose_name='Nombre'
+    )
+    student_last_name = models.CharField(
+        max_length=50, 
+        verbose_name='Apellido'
+    )
+    student_license_type = models.CharField(
+        max_length=3,
+        choices=FlightEvaluation120_170.STUDENT_LICENSE_CHOICES,
+        verbose_name='Tipo de licencia',
+    )
+    student_license_number = models.PositiveIntegerField(
+        validators=[MinValueValidator(1000000), MaxValueValidator(99999999)],
+        verbose_name='Número de licencia',
+    )
+    course_type = models.CharField(
+        max_length=10, 
+        choices=COURSE_TYPES, 
+        default='PCA-P', 
+        verbose_name='Tipo de curso'
+    )
+    evaluation_type = models.CharField(
+        max_length=20, 
+        choices=EVALUATION_TYPE_CHOICES, 
+        verbose_name='Tipo de evaluación'
+    )
+    session_date = models.DateField(
+        default=timezone.now, 
+        verbose_name='Fecha'
+    )
+    flight_rules = models.CharField(
+        max_length=4, 
+        choices=FlightEvaluation120_170.FLIGHT_RULES_CHOICES, 
+        default='VFR', 
+        verbose_name='Reglas de vuelo'
+    )
+    solo_flight = models.CharField(
+        max_length=3, 
+        choices=FlightEvaluation120_170.SOLO_FLIGHT_CHOICES, 
+        default='NO', 
+        verbose_name='Vuelo solo'
+    )
+    session_number = models.CharField(
+        max_length=3, 
+        choices=FlightEvaluation120_170.generate_choices(), 
+        default='1', 
+        verbose_name='Número'
+    )
+    session_letter = models.CharField(
+        max_length=1, 
+        choices=FlightEvaluation120_170.SESSION_LETTER_CHOICES, 
+        blank=True, 
+        default='', 
+        verbose_name='Repetición de la sesión'
+    )
+    accumulated_flight_hours = models.DecimalField(
+        max_digits=5, 
+        decimal_places=1, 
+        default=0, 
+        verbose_name='Horas de vuelo acumuladas'
+    )
+    initial_hourmeter = models.DecimalField(
+        max_digits=6, 
+        decimal_places=1, 
+        default=0, 
+        verbose_name='Horómetro inicial'
+    )
+    final_hourmeter = models.DecimalField(
+        max_digits=6, 
+        decimal_places=1, 
+        default=0, 
+        verbose_name='Horómetro final'
+    )
+    fuel_consumed = models.DecimalField(
+        max_digits=4, 
+        decimal_places=1, 
+        default=0, 
+        verbose_name='Combustible consumido (litros)'
+    )
+    session_flight_hours = models.DecimalField(
+        max_digits=3, 
+        decimal_places=1, 
+        default=0, 
+        verbose_name='Horas sesión'
+    )
+    aircraft_registration = models.CharField(
+        max_length=20, 
+        verbose_name='Matrícula de aeronave'
+    )
+    session_grade = models.CharField(
+        max_length=2, 
+        choices=FlightEvaluation120_170.SESSION_GRADE_CHOICES, 
+        default='S', 
+        verbose_name='Nota'
+    )
+    grades = models.JSONField(
+        default=dict, 
+        verbose_name='Calificaciones detalladas'
+    )
+    comments = models.TextField(
+        blank=True, 
+        validators=[MinLengthValidator(15), MaxLengthValidator(1000)], 
+        verbose_name='Comentarios'
+    )
+
+    @property
+    def total_flight_hours(self):
+        return self.accumulated_flight_hours + self.session_flight_hours
+
+    def __getattr__(self, name):
+        if name.startswith(('pre_', 'to_', 'inst_', 'mvrs_', 'nav_', 'land_', 'emer_', 'gen_')):
+            return self.grades.get(name, FlightEvaluation120_170.NOT_EVALUATED)
+        raise AttributeError(name)
+
+    def save(self, *args, **kwargs):
+        if self.initial_hourmeter is not None and self.final_hourmeter is not None:
+            self.session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.student_first_name} {self.student_last_name} - {self.get_evaluation_type_display()} - {self.session_date}'
+
+    class Meta:
+        verbose_name = 'Evaluación externa'
+        verbose_name_plural = 'Evaluaciones externas'
+        ordering = ['-session_date', '-id']
+
 class FlightReport(models.Model):
     """
     Flight Report Model

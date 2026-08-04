@@ -16,6 +16,7 @@
             
             <div class="back-button">
                 <a href="{{ back_url }}" class="button">&larr; Volver</a>
+                <a href="{% url 'fms:download_pdf' form_type evaluation.id %}" class="button">Descargar PDF</a>
             </div>
 
             <h1 class="main-header">Detalle de la sesión</h1>
@@ -29,6 +30,8 @@
                             Evaluación HVI
                         {% elif form_type == '120_170' %}
                             Evaluación PCA (40-150h)
+                        {% elif form_type == 'external' %}
+                            Evaluación externa — {{ evaluation.get_evaluation_type_display }}
                         {% elif form_type == 'sim' %}
                             Sesión de Simulador
                         {% endif %}
@@ -116,8 +119,14 @@
                                 </div>
                                 <div class="detail-field">
                                     <span class="detail-field-label">Aeronave:</span>
-                                    <span class="detail-field-value">{{ evaluation.aircraft.registration }}</span>
+                                    <span class="detail-field-value">{% if form_type == 'external' %}{{ evaluation.aircraft_registration }}{% else %}{{ evaluation.aircraft.registration }}{% endif %}</span>
                                 </div>
+                                {% if form_type == 'external' %}
+                                <div class="detail-field">
+                                    <span class="detail-field-label">Tipo de evaluación:</span>
+                                    <span class="detail-field-value">{{ evaluation.get_evaluation_type_display }}</span>
+                                </div>
+                                {% endif %}
                                 <div class="detail-field">
                                     <span class="detail-field-label">Vuelo solo:</span>
                                     <span class="detail-field-value">{{ evaluation.get_solo_flight_display }}</span>

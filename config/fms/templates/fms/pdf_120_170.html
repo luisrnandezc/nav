@@ -12,8 +12,8 @@
             <!-- Logo and form title -->
             <section class="header-container">
                 <img class="logo" src="{{ logo_path }}" alt="Logo">
-                <h1 class="title">Formulario de pruebas de pericia PCA</h1>
-                <h1 class="title">40-150 Hrs</h1>
+                <h1 class="title">FORMULARIO DE PRUEBAS DE PERICIA {% if evaluation.evaluation_type %}- {{ evaluation.get_evaluation_type_display|upper }}{% else %}PCA{% endif %}</h1>
+                <h1 class="title">{% if not evaluation.evaluation_type %}40-150 Hrs{% endif %}</h1>
             </section>
 
             <!-- Data table -->
@@ -34,7 +34,7 @@
                     <div class="data-cell" id="data-cell-9">Horas acumuladas: {{ evaluation.accumulated_flight_hours }}</div>
                 </div>
                 <div class="row" id="row-4">
-                    <div class="data-cell" id="data-cell-10">Matrícula de aeronave: {{ evaluation.aircraft.registration }}</div>
+                    <div class="data-cell" id="data-cell-10">Matrícula de aeronave: {% if evaluation.evaluation_type %}{{ evaluation.aircraft_registration }}{% else %}{{ evaluation.aircraft.registration }}{% endif %}</div>
                     <div class="data-cell" id="data-cell-11">Sesión: {{ evaluation.session_number }}{{ evaluation.session_letter }}</div>
                     <div class="data-cell" id="data-cell-12">Horas sesión: {{ evaluation.session_flight_hours }}</div>
                 </div>
@@ -372,8 +372,8 @@
             <!-- Logo and form title -->
             <section class="header-container">
                 <img class="logo" src="{{ logo_path }}" alt="Logo">
-                <h1 class="title">Formulario de pruebas de pericia PCA</h1>
-                <h1 class="title">40-150 Hrs</h1>
+                <h1 class="title">FORMULARIO DE PRUEBAS DE PERICIA {% if evaluation.evaluation_type %}- {{ evaluation.get_evaluation_type_display|upper }}{% else %}PCA{% endif %}</h1>
+                <h1 class="title">{% if not evaluation.evaluation_type %}40-150 Hrs{% endif %}</h1>
             </section>
 
             <!-- Data table -->
@@ -394,7 +394,7 @@
                     <div class="data-cell" id="data-cell-9">Horas acumuladas: {{ evaluation.accumulated_flight_hours }}</div>
                 </div>
                 <div class="row" id="row-4">
-                    <div class="data-cell" id="data-cell-10">Matrícula de aeronave: {{ evaluation.aircraft.registration }}</div>
+                    <div class="data-cell" id="data-cell-10">Matrícula de aeronave: {% if evaluation.evaluation_type %}{{ evaluation.aircraft_registration }}{% else %}{{ evaluation.aircraft.registration }}{% endif %}</div>
                     <div class="data-cell" id="data-cell-11">Sesión: {{ evaluation.session_number }}{{ evaluation.session_letter }}</div>
                     <div class="data-cell" id="data-cell-12">Horas sesión: {{ evaluation.session_flight_hours }}</div>
                 </div>

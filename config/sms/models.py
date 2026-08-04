@@ -291,9 +291,11 @@ class RiskEvaluationReport(models.Model):
     """
     Risk evaluation report associated with a processed voluntary hazard report.
 
-    A RER evaluates one of the consequences (Risk instances) identified for the
-    VHR. Risk evaluations, mitigation actions, responsible users, dates, and
-    evidence remain stored in their existing related models.
+    A RER documents every consequence (Risk instance) selected while processing
+    the VHR. One risk is selected as the worst consequence and supplies the
+    initial matrix index. Its initial and residual evaluations remain on that
+    selected Risk, while every mitigation action and its evidence is documented
+    by the RER.
     """
 
     #region Choices
@@ -322,9 +324,9 @@ class RiskEvaluationReport(models.Model):
     selected_risk = models.ForeignKey(
         Risk,
         on_delete=models.RESTRICT,
-        verbose_name="Riesgo seleccionado",
+        verbose_name="Riesgo de referencia",
         related_name="risk_evaluation_reports",
-        help_text="Consecuencia seleccionada para evaluar y mitigar en el RER.",
+        help_text="Peor consecuencia seleccionada para el índice de riesgo inicial.",
     )
     registration_date = models.DateField(
         default=timezone.now,

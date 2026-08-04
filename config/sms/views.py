@@ -1365,20 +1365,12 @@ def rer_form(request, report_id):
         )
 
     risks = report.risks.prefetch_related('mitigation_actions').all()
-    risk_evaluation_data = {
-        str(risk.id): {
-            'severity': risk.post_evaluation_severity,
-            'probability': risk.post_evaluation_probability,
-        }
-        for risk in risks
-    }
 
     context = {
         'report': report,
         'rer': rer,
         'form': form,
         'risks': risks,
-        'risk_evaluation_data': risk_evaluation_data,
     }
 
     return render(request, 'sms/rer_form.html', context)

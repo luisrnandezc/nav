@@ -106,7 +106,7 @@
         <h1 class="subsection-header">Sección 3: Evaluación y mitigación de Riesgos</h1>
         <div class="risk-selection-container">
           <div id="risk-selection-label">
-            <p>Seleccione el riesgo a evaluar:</p>
+            <p>Seleccione el riesgo de referencia para la evaluación inicial:</p>
           </div>
           <div class="risk-options-list">
               {% for radio in form.selected_risk %}
@@ -124,12 +124,12 @@
         <div class="form-row comments-row" id="hazard_causes">
             {{ form.hazard_causes }}
         </div>
-        <h1 class="subsection-header">Sección 4: Riesgo residual</h1>
+        <h1 class="subsection-header">Sección 4: Medidas de mitigación y riesgo residual</h1>
         <div class="form-row" id="risk-mitigation-container">
             {% for risk in risks %}
               <div class="cards-container risk-mitigation-card" data-risk-id="{{ risk.id }}">
                 <div class="cards-container-header">
-                  <h2>MMR para el riesgo seleccionado</h2>
+                  <h2>Riesgo {{ forloop.counter }}: {{ risk.description }}</h2>
                 </div>
                 {% for action in risk.mitigation_actions.all %}
                   <div class="mitigation-action-text">
@@ -176,7 +176,6 @@
           <button class="submit-button" type="submit" onclick="return confirmSubmission()">Guardar RER</button>
         </div>
       </form>
-      {{ risk_evaluation_data|json_script:"risk-evaluation-data" }}
     </div>
   </body>
 </html>

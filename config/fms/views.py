@@ -10,8 +10,8 @@ from django.contrib.auth.models import Group
 from django.db.models import Sum, Q
 from decimal import Decimal
 from accounts.models import User, StudentProfile, InstructorProfile
-from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm, FlightReportForm
-from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport
+from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, ExternalFlightEvaluationForm, SimEvaluationForm, FlightReportForm
+from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, ExternalFlightEvaluation, FlightReport
 import weasyprint
 from pathlib import Path
 from urllib.parse import urlparse, quote
@@ -388,6 +388,29 @@ def submit_flight_evaluation_120_170(request):
 
     return render(request, 'fms/flight_evaluation_120_170.html', {'form': form})
 
+
+@login_required
+def submit_external_flight_evaluation(request):
+    if request.method == 'POST':
+        form = ExternalFlightEvaluationForm(request.POST, user=request.user)
+        if form.is_valid():
+            try:
+                evaluation = form.save()
+                return redirect('fms:pdf_download_waiting_page', form_type='external', evaluation_id=evaluation.id)
+            except Exception as exc:
+                messages.error(request, f'Error al guardar la evaluación externa: {exc}')
+        else:
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
+    else:
+        form = ExternalFlightEvaluationForm(user=request.user)
+    return render(request, 'fms/flight_evaluation_120_170.html', {'form': form, 'external': True})
+
+
+@login_required
+def external_evaluations(request):
+    evaluations = ExternalFlightEvaluation.objects.all()
+    return render(request, 'fms/external_evaluations.html', {'evaluations': evaluations})
+
 @login_required
 def submit_flight_report(request):
     """Handle flight report form submission."""
@@ -476,6 +499,9 @@ def get_evaluation_and_template(form_type, evaluation_id):
     elif form_type == '120_170':
         from .models import FlightEvaluation120_170
         evaluation = FlightEvaluation120_170.objects.get(id=evaluation_id)
+        template_name = 'fms/pdf_120_170.html'
+    elif form_type == 'external':
+        evaluation = ExternalFlightEvaluation.objects.get(id=evaluation_id)
         template_name = 'fms/pdf_120_170.html'
     elif form_type == 'sim':
         from .models import SimEvaluation
@@ -653,7 +679,7 @@ def download_pdf(request, form_type, evaluation_id):
 
 def get_evaluation_fields(form_type):
     """Get field labels organized by category for each evaluation type."""
-    from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, SimEvaluationForm
+    from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, ExternalFlightEvaluationForm, SimEvaluationForm
     
     form = None
     if form_type == '0_100':
@@ -687,6 +713,18 @@ def get_evaluation_fields(form_type):
             'Aproximación final y aterrizaje': ['land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7'],
             'Emergencias situacionales (simuladas)': ['emer_1', 'emer_2', 'emer_3', 'emer_4'],
             'Evaluación general': ['gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7'],
+        }
+    elif form_type == 'external':
+        form = ExternalFlightEvaluationForm()
+        categories = {
+            'Pre-vuelo/encendido/taxeo': ['pre_1', 'pre_2', 'pre_3', 'pre_4', 'pre_5', 'pre_6'],
+            'Despegue/Salida VFR/IFR': ['to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6'],
+            'Instrumentos avanzados': ['inst_1', 'inst_2', 'inst_3', 'inst_4', 'inst_5', 'inst_6', 'inst_7', 'inst_8', 'inst_9', 'inst_10', 'inst_11'],
+            'Maniobras': [f'mvrs_{i}' for i in range(1, 14)],
+            'Navegación VFR': [f'nav_{i}' for i in range(1, 7)],
+            'Aproximación final y aterrizaje': [f'land_{i}' for i in range(1, 8)],
+            'Emergencias situacionales (simuladas)': [f'emer_{i}' for i in range(1, 5)],
+            'Evaluación general': [f'gen_{i}' for i in range(1, 8)],
         }
     elif form_type == 'sim':
         form = SimEvaluationForm()

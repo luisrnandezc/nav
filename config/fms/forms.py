@@ -1,6 +1,6 @@
 from django import forms
 from django.db import transaction
-from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, SimEvaluation, FlightReport, DiscrepancyReport
+from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, ExternalFlightEvaluation, SimEvaluation, FlightReport, DiscrepancyReport
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
 
@@ -1395,6 +1395,112 @@ class FlightEvaluation120_170Form(forms.ModelForm):
         
         return cleaned_data
     
+class ExternalFlightEvaluationForm(forms.ModelForm):
+    """120-170 evaluation fields stored without operational side effects."""
+
+    aircraft = forms.CharField(
+        max_length=20,
+        label='Matrícula de aeronave',
+        widget=forms.TextInput(attrs={'class': 'form-field', 'placeholder': 'Ej. YV1234'}),
+    )
+
+    GRADE_FIELDS = [
+        *(f'pre_{i}' for i in range(1, 7)),
+        *(f'to_{i}' for i in range(1, 7)),
+        *(f'inst_{i}' for i in range(1, 12)),
+        *(f'mvrs_{i}' for i in range(1, 14)),
+        *(f'nav_{i}' for i in range(1, 7)),
+        *(f'land_{i}' for i in range(1, 8)),
+        *(f'emer_{i}' for i in range(1, 5)),
+        *(f'gen_{i}' for i in range(1, 8)),
+    ]
+
+    class Meta:
+        model = ExternalFlightEvaluation
+        fields = [
+            'instructor_id', 'instructor_first_name', 'instructor_last_name',
+            'instructor_license_type', 'instructor_license_number',
+            'student_id', 'student_first_name', 'student_last_name',
+            'student_license_type', 'course_type', 'evaluation_type',
+            'flight_rules', 'solo_flight', 'session_number', 'session_letter', 'session_date',
+            'accumulated_flight_hours', 'initial_hourmeter', 'final_hourmeter',
+            'fuel_consumed', 'session_grade', 'comments',
+        ]
+        widgets = {
+            'instructor_id': forms.NumberInput(attrs={'class': 'form-field'}),
+            'instructor_first_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'instructor_last_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'instructor_license_type': forms.Select(attrs={'class': 'form-field'}),
+            'instructor_license_number': forms.NumberInput(attrs={'class': 'form-field'}),
+            'student_id': forms.NumberInput(attrs={'class': 'form-field'}),
+            'student_first_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'student_last_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'student_license_type': forms.Select(attrs={'class': 'form-field'}),
+            'course_type': forms.Select(attrs={'class': 'form-field'}),
+            'evaluation_type': forms.Select(attrs={'class': 'form-field'}),
+            'flight_rules': forms.Select(attrs={'class': 'form-field'}),
+            'solo_flight': forms.Select(attrs={'class': 'form-field'}),
+            'session_number': forms.Select(attrs={'class': 'form-field'}),
+            'session_letter': forms.Select(attrs={'class': 'form-field'}),
+            'session_date': forms.DateInput(attrs={'class': 'form-field', 'type': 'date'}),
+            'accumulated_flight_hours': forms.TextInput(attrs={'class': 'form-field disabled-field', 'readonly': 'readonly'}),
+            'initial_hourmeter': forms.NumberInput(attrs={'class': 'form-field', 'step': '0.1'}),
+            'final_hourmeter': forms.NumberInput(attrs={'class': 'form-field', 'step': '0.1'}),
+            'fuel_consumed': forms.NumberInput(attrs={'class': 'form-field', 'step': '0.1'}),
+            'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        reference_form = FlightEvaluation120_170Form()
+        stored_grades = self.instance.grades if self.instance and self.instance.pk else {}
+        for name in self.GRADE_FIELDS:
+            reference = reference_form.fields[name]
+            self.fields[name] = forms.ChoiceField(
+                choices=reference.choices,
+                label=reference.label,
+                initial=stored_grades.get(name, FlightEvaluation120_170.NOT_EVALUATED),
+                widget=forms.RadioSelect(attrs={'class': 'radio-field'}),
+            )
+        self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
+        if user:
+            profile = user.instructor_profile
+            self.fields['instructor_id'].initial = user.national_id
+            self.fields['instructor_first_name'].initial = user.first_name
+            self.fields['instructor_last_name'].initial = user.last_name
+            self.fields['instructor_license_type'].initial = profile.instructor_license_type
+            self.fields['instructor_license_number'].initial = user.national_id
+
+    def clean(self):
+        cleaned_data = super().clean()
+        initial = cleaned_data.get('initial_hourmeter')
+        final = cleaned_data.get('final_hourmeter')
+        student_id = cleaned_data.get('student_id')
+        if initial is None or final is None:
+            raise forms.ValidationError('El horómetro inicial y el horómetro final son requeridos.')
+        hours = round(final - initial, 1)
+        if hours < 0:
+            raise forms.ValidationError('El horómetro final no puede ser menor que el horómetro inicial.')
+        if hours > 14:
+            raise forms.ValidationError('Las horas de la sesión no pueden exceder 14 horas.')
+        if student_id and not StudentProfile.objects.filter(user__national_id=student_id).exists():
+            raise forms.ValidationError(f'No se encontró un perfil de estudiante con ID: {student_id}')
+        cleaned_data['session_flight_hours'] = hours
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.student_license_number = instance.student_id
+        instance.aircraft_registration = self.cleaned_data['aircraft'].strip().upper()
+        instance.session_flight_hours = self.cleaned_data['session_flight_hours']
+        instance.grades = {name: self.cleaned_data[name] for name in self.GRADE_FIELDS}
+        if commit:
+            instance.save()
+        return instance
+
+
 class FlightReportForm(forms.ModelForm):
     # Add a custom aircraft field that uses ModelChoiceField
     aircraft = forms.ModelChoiceField(

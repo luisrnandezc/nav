@@ -1,6 +1,22 @@
 from django.contrib import admin
 from django.shortcuts import redirect
-from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, FlightReport, DiscrepancyReport
+from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, ExternalFlightEvaluation, FlightReport, DiscrepancyReport
+
+
+def flight_evaluation_aircraft(obj):
+    return obj.aircraft
+
+
+flight_evaluation_aircraft.short_description = 'Aeronave'
+flight_evaluation_aircraft.admin_order_field = 'aircraft'
+
+
+def flight_evaluation_hours(obj):
+    return obj.session_flight_hours
+
+
+flight_evaluation_hours.short_description = 'Horas'
+flight_evaluation_hours.admin_order_field = 'session_flight_hours'
 
 @admin.register(SimEvaluation)
 class SimEvaluationAdmin(admin.ModelAdmin):
@@ -173,7 +189,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade',
+        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, 'session_grade',
         'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
@@ -315,7 +331,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade',
+        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, 'session_grade',
         'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
@@ -450,7 +466,7 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', 'aircraft', 'session_number', 'session_flight_hours', 'session_grade',
+        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, 'session_grade',
         'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
@@ -569,6 +585,151 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
     class Meta:
         verbose_name = 'Evaluación de vuelo 120-170'
         verbose_name_plural = 'Evaluaciones de vuelo 120-170'
+
+
+@admin.register(ExternalFlightEvaluation)
+class ExternalFlightEvaluationAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'student_full_name', 'student_id',
+        'instructor_full_name', 'instructor_id', 'session_date',
+        'aircraft_display', 'evaluation_type', 'session_number',
+        'session_hours', 'session_grade',
+    )
+    list_filter = ('session_date', 'student_id', 'instructor_id', 'evaluation_type', 'session_grade')
+    search_fields = (
+        'student_first_name', 'student_last_name', 'student_id',
+        'instructor_first_name', 'instructor_last_name', 'aircraft_registration',
+    )
+    readonly_fields = (
+        'student_id', 'student_first_name', 'student_last_name',
+        'student_license_type', 'student_license_number', 'session_flight_hours',
+        'initial_hourmeter', 'final_hourmeter', 'aircraft_registration',
+        'grades', 'comments',
+    )
+    ordering = ('-session_date', '-id')
+    actions = ('generate_pdf',)
+
+    fieldsets = (
+        ('Sección 1: Datos del alumno', {
+            'fields': (
+                'student_id', 'student_first_name', 'student_last_name',
+                'student_license_type', 'student_license_number', 'course_type',
+            ),
+        }),
+        ('Sección 2: Datos del instructor', {
+            'fields': (
+                'instructor_id', 'instructor_first_name', 'instructor_last_name',
+                'instructor_license_type', 'instructor_license_number',
+            ),
+        }),
+        ('Sección 3: Datos de la evaluación y sesión', {
+            'fields': (
+                'evaluation_type', 'session_date', 'flight_rules', 'solo_flight',
+                'session_number', 'session_letter', 'accumulated_flight_hours',
+                'session_flight_hours', 'initial_hourmeter', 'final_hourmeter',
+                'fuel_consumed', 'aircraft_registration', 'session_grade',
+            ),
+        }),
+        ('Sección 4: Prevuelo / Encendido / Taxeo', {
+            'fields': tuple(f'grade_pre_{i}' for i in range(1, 7)),
+            'classes': ('collapse',),
+        }),
+        ('Sección 5: Despegue / Salida VFR/IFR', {
+            'fields': tuple(f'grade_to_{i}' for i in range(1, 7)),
+            'classes': ('collapse',),
+        }),
+        ('Sección 6: Instrumentos avanzados', {
+            'fields': tuple(f'grade_inst_{i}' for i in range(1, 12)),
+            'classes': ('collapse',),
+        }),
+        ('Sección 7: Maniobras', {
+            'fields': tuple(f'grade_mvrs_{i}' for i in range(1, 14)),
+            'classes': ('collapse',),
+        }),
+        ('Sección 8: Navegación VFR', {
+            'fields': tuple(f'grade_nav_{i}' for i in range(1, 7)),
+            'classes': ('collapse',),
+        }),
+        ('Sección 9: Aproximación final y aterrizaje', {
+            'fields': tuple(f'grade_land_{i}' for i in range(1, 8)),
+            'classes': ('collapse',),
+        }),
+        ('Sección 10: Emergencias situacionales (simuladas)', {
+            'fields': tuple(f'grade_emer_{i}' for i in range(1, 5)),
+            'classes': ('collapse',),
+        }),
+        ('Sección 11: Evaluación general', {
+            'fields': tuple(f'grade_gen_{i}' for i in range(1, 8)),
+            'classes': ('collapse',),
+        }),
+        ('Sección 12: Comentarios', {'fields': ('comments',)}),
+    )
+
+    def get_readonly_fields(self, request, obj=None):
+        grade_fields = tuple(
+            f'grade_{name}' for name in (
+                *(f'pre_{i}' for i in range(1, 7)),
+                *(f'to_{i}' for i in range(1, 7)),
+                *(f'inst_{i}' for i in range(1, 12)),
+                *(f'mvrs_{i}' for i in range(1, 14)),
+                *(f'nav_{i}' for i in range(1, 7)),
+                *(f'land_{i}' for i in range(1, 8)),
+                *(f'emer_{i}' for i in range(1, 5)),
+                *(f'gen_{i}' for i in range(1, 8)),
+            )
+        )
+        return self.readonly_fields + grade_fields
+
+    def student_full_name(self, obj):
+        return f'{obj.student_first_name} {obj.student_last_name}'
+
+    student_full_name.short_description = 'Alumno'
+
+    def instructor_full_name(self, obj):
+        return f'{obj.instructor_first_name} {obj.instructor_last_name}'
+
+    instructor_full_name.short_description = 'Instructor'
+
+    def aircraft_display(self, obj):
+        return obj.aircraft_registration
+
+    aircraft_display.short_description = 'Aeronave'
+    aircraft_display.admin_order_field = 'aircraft_registration'
+
+    def session_hours(self, obj):
+        return obj.session_flight_hours
+
+    session_hours.short_description = 'Horas'
+
+    def generate_pdf(self, request, queryset):
+        if queryset.count() != 1:
+            self.message_user(request, 'Seleccione solo una evaluación para generar el PDF.')
+            return None
+        evaluation = queryset.first()
+        return redirect('fms:download_pdf', form_type='external', evaluation_id=evaluation.id)
+
+    generate_pdf.short_description = 'Generar PDF de la evaluación seleccionada'
+
+
+def _external_grade_admin_method(field_name):
+    def display_grade(self, obj):
+        return obj.grades.get(field_name, 'NE')
+
+    display_grade.short_description = FlightEvaluation120_170._meta.get_field(field_name).verbose_name
+    return display_grade
+
+
+for _grade_name in (
+    *(f'pre_{i}' for i in range(1, 7)),
+    *(f'to_{i}' for i in range(1, 7)),
+    *(f'inst_{i}' for i in range(1, 12)),
+    *(f'mvrs_{i}' for i in range(1, 14)),
+    *(f'nav_{i}' for i in range(1, 7)),
+    *(f'land_{i}' for i in range(1, 8)),
+    *(f'emer_{i}' for i in range(1, 5)),
+    *(f'gen_{i}' for i in range(1, 8)),
+):
+    setattr(ExternalFlightEvaluationAdmin, f'grade_{_grade_name}', _external_grade_admin_method(_grade_name))
 
 @admin.register(FlightReport)
 class FlightReportAdmin(admin.ModelAdmin):

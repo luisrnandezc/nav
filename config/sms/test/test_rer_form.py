@@ -120,6 +120,28 @@ class TestRiskEvaluationReportFormView(TestCase):
         rer.refresh_from_db()
         assert rer.defenses == 'Defensas actualizadas.'
 
+    def test_form_displays_actions_for_every_report_risk(self):
+        second_risk = RiskFactory(
+            report=self.report,
+            description='Segunda consecuencia considerada',
+            pre_evaluation_severity='C',
+            pre_evaluation_probability='2',
+        )
+        second_action = MitigationActionFactory(
+            risk=second_risk,
+            description='Segunda medida de mitigación',
+            responsible=self.user,
+        )
+        MitigationActionEvidenceFactory(mitigation_action=second_action)
+
+        response = self.client.get(self.url)
+
+        assert response.status_code == 200
+        self.assertContains(response, self.risk.description)
+        self.assertContains(response, self.action.description)
+        self.assertContains(response, second_risk.description)
+        self.assertContains(response, second_action.description)
+
     def test_get_redirects_when_report_is_not_ready(self):
         self.action.evidence.delete()
 

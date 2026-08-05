@@ -225,6 +225,20 @@ if SARA_HAZARD_ANALYSIS_PROMPT_PATH:
 else:
     raise RuntimeError("SARA_HAZARD_ANALYSIS_PROMPT_PATH is not set in the .env file")
 
+# RER residual-risk analysis
+SARA_RER_ANALYSIS_MODEL = os.getenv('SARA_RER_ANALYSIS_MODEL', 'gpt-5.6')
+SARA_RER_ANALYSIS_MAX_OUTPUT_TOKENS = int(
+    os.getenv('SARA_RER_ANALYSIS_MAX_OUTPUT_TOKENS', '4000')
+)
+SARA_RER_ANALYSIS_PROMPT_PATH = os.getenv(
+    'SARA_RER_ANALYSIS_PROMPT_PATH',
+    './sms/prompts/sara_rer_residual_analysis.txt',
+)
+
+rer_prompt_full_path = os.path.join(BASE_DIR, SARA_RER_ANALYSIS_PROMPT_PATH)
+with open(rer_prompt_full_path, 'r', encoding='utf-8') as f:
+    SARA_RER_ANALYSIS_PROMPT = f.read()
+
 # AURA Individual Review Prompt
 AURA_INDIVIDUAL_REVIEW_PROMPT_PATH = os.getenv('AURA_INDIVIDUAL_REVIEW_PROMPT_PATH')
 

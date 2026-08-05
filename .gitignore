@@ -8,6 +8,7 @@ config/db.sqlite3
 config/.env
 config/sms/prompts/*
 !config/sms/prompts/.gitkeep
+!config/sms/prompts/sara_rer_residual_analysis.txt
 config/sms/logs/*
 !config/sms/logs/.gitkeep
 config/sms_analysis.log

@@ -1,0 +1,77 @@
+<a href="{% url 'sms:vhr_processed_panel' report.id %}" class="report-card-link">
+	<div class="report-card">
+		<div class="status-container">
+			{% with rer=report.risk_evaluation_report %}
+				{% if not rer %}
+					<span class="badge badge-yellow badge-medium">No iniciado</span>
+				{% elif rer.analysis_status == 'DRAFT' %}
+					<span class="badge badge-yellow badge-medium">{{ rer.get_analysis_status_display }}</span>
+				{% elif rer.analysis_status == 'PENDING' %}
+					<span class="badge badge-yellow badge-medium">{{ rer.get_analysis_status_display }}</span>
+				{% elif rer.analysis_status == 'PROCESSING' %}
+					<span class="badge badge-blue badge-medium">{{ rer.get_analysis_status_display }}</span>
+				{% elif rer.analysis_status == 'FAILED' %}
+					<span class="badge badge-red badge-medium">{{ rer.get_analysis_status_display }}</span>
+				{% elif rer.analysis_status == 'READY_FOR_REVIEW' %}
+					<span class="badge badge-blue badge-medium">{{ rer.get_analysis_status_display }}</span>
+				{% elif rer.analysis_status == 'REVIEWED' %}
+					<span class="badge badge-green badge-medium">{{ rer.get_analysis_status_display }}</span>
+				{% endif %}
+			{% endwith %}
+		</div>
+
+		<div class="report-content">
+			<div class="report-data-section">
+				<div class="report-data">
+					<span class="report-label">Código RVP:</span>
+					<span class="report-value">{{ report.code|default:"No registrado" }}</span>
+				</div>
+				<div class="report-data">
+					<span class="report-label">Fecha del peligro:</span>
+					<span class="report-value">{{ report.date|date:"d/m/Y" }}</span>
+				</div>
+				<div class="report-data">
+					<span class="report-label">Área:</span>
+					<span class="report-value">{{ report.get_area_display }}</span>
+				</div>
+				<div class="report-data">
+					<span class="report-label">Riesgos:</span>
+					<span class="report-value">{{ report.risk_count }}</span>
+				</div>
+				<div class="report-data">
+					<span class="report-label">MMR:</span>
+					<span class="report-value">{{ report.mitigation_action_count }}</span>
+				</div>
+				{% with rer=report.risk_evaluation_report %}
+					<div class="report-data">
+						<span class="report-label">Fecha del RER:</span>
+						<span class="report-value">
+							{% if rer %}{{ rer.registration_date|date:"d/m/Y" }}{% else %}No iniciado{% endif %}
+						</span>
+					</div>
+				{% endwith %}
+			</div>
+
+			{% with rer=report.risk_evaluation_report %}
+				{% if rer and rer.selected_risk %}
+					<div class="report-description">
+						<span class="report-label">Riesgo prioritario:</span>
+						<p class="report-description-text">{{ rer.selected_risk.description|truncatewords:20 }}</p>
+					</div>
+				{% else %}
+					<div class="report-description">
+						<span class="report-label">Descripción del peligro:</span>
+						<p class="report-description-text">{{ report.description|truncatewords:30 }}</p>
+					</div>
+				{% endif %}
+
+				{% if rer and rer.analysis_status == 'FAILED' and rer.analysis_error %}
+					<div class="report-description">
+						<span class="report-label">Error de análisis:</span>
+						<p class="report-description-text">{{ rer.analysis_error|truncatewords:30 }}</p>
+					</div>
+				{% endif %}
+			{% endwith %}
+		</div>
+	</div>
+</a>

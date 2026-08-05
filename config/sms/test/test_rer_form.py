@@ -5,6 +5,7 @@ from sms.forms import RiskEvaluationReportForm
 from sms.models import RiskEvaluationReport
 from sms.test.factories import (
     RiskEvaluationReportFactory,
+    RiskResidualEvaluationFactory,
     RiskFactory,
     MitigationActionEvidenceFactory,
     MitigationActionFactory,
@@ -25,8 +26,6 @@ def rer_form_data(report, selected_risk):
         'selected_risk': selected_risk.id,
         'hazard_causes': 'Falta de coordinación y supervisión.',
         'defenses': 'Procedimientos y listas de verificación.',
-        'post_evaluation_severity': 'D',
-        'post_evaluation_probability': '2',
     }
 
 
@@ -57,18 +56,6 @@ class TestRiskEvaluationReportModelForm(TestCase):
         assert not form.is_valid()
         assert 'selected_risk' in form.errors
 
-    def test_existing_rer_populates_residual_evaluation(self):
-        rer = RiskEvaluationReportFactory()
-        rer.selected_risk.post_evaluation_severity = 'C'
-        rer.selected_risk.post_evaluation_probability = '3'
-        rer.selected_risk.save()
-
-        form = RiskEvaluationReportForm(report=rer.report, instance=rer)
-
-        assert form['post_evaluation_severity'].value() == 'C'
-        assert form['post_evaluation_probability'].value() == '3'
-
-
 class TestRiskEvaluationReportFormView(TestCase):
     def setUp(self):
         self.user = StaffUserFactory(is_staff=True, is_superuser=True)
@@ -91,19 +78,25 @@ class TestRiskEvaluationReportFormView(TestCase):
         MitigationActionEvidenceFactory(mitigation_action=self.action)
         self.url = reverse('sms:rer_form', args=[self.report.id])
 
-    def test_post_creates_rer_and_updates_selected_risk_residual_values(self):
+    def test_post_creates_rer_pending_sara_analysis(self):
         response = self.client.post(
             self.url,
             data=rer_form_data(self.report, self.risk),
         )
 
         assert response.status_code == 302
+        assert response.url == reverse(
+            'sms:vhr_processed_panel',
+            args=[self.report.id],
+        )
         rer = RiskEvaluationReport.objects.get(report=self.report)
         assert rer.selected_risk_id == self.risk.id
-
-        self.risk.refresh_from_db()
-        assert self.risk.post_evaluation_severity == 'D'
-        assert self.risk.post_evaluation_probability == '2'
+        assert rer.analysis_status == 'PENDING'
+        assert rer.analysis_error == ''
+        assert rer.analysis_started_at is None
+        assert rer.analysis_completed_at is None
+        assert rer.reviewed_by is None
+        assert rer.reviewed_at is None
 
     def test_post_updates_existing_rer_instead_of_creating_a_second_one(self):
         rer = RiskEvaluationReportFactory(
@@ -119,6 +112,25 @@ class TestRiskEvaluationReportFormView(TestCase):
         assert RiskEvaluationReport.objects.filter(report=self.report).count() == 1
         rer.refresh_from_db()
         assert rer.defenses == 'Defensas actualizadas.'
+        assert rer.analysis_status == 'PENDING'
+
+    def test_resubmission_removes_stale_ai_proposals(self):
+        rer = RiskEvaluationReportFactory(
+            report=self.report,
+            selected_risk=self.risk,
+            analysis_status='READY_FOR_REVIEW',
+        )
+        RiskResidualEvaluationFactory(rer=rer, risk=self.risk)
+
+        response = self.client.post(
+            self.url,
+            data=rer_form_data(self.report, self.risk),
+        )
+
+        assert response.status_code == 302
+        rer.refresh_from_db()
+        assert rer.analysis_status == 'PENDING'
+        assert not rer.residual_evaluations.exists()
 
     def test_form_displays_actions_for_every_report_risk(self):
         second_risk = RiskFactory(

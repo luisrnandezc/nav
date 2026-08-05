@@ -124,7 +124,7 @@
         <div class="form-row comments-row" id="hazard_causes">
             {{ form.hazard_causes }}
         </div>
-        <h1 class="subsection-header">Sección 4: Medidas de mitigación y riesgo residual</h1>
+        <h1 class="subsection-header">Sección 4: Medidas de mitigación</h1>
         <div class="form-row" id="risk-mitigation-container">
             {% for risk in risks %}
               <div class="cards-container risk-mitigation-card" data-risk-id="{{ risk.id }}">
@@ -143,20 +143,6 @@
               </div>
             {% endfor %}
         </div>
-        <div class="fixed-fields-container">
-          <div class="left-column">
-              <div class="form-row">
-                  {{ form.post_evaluation_severity.label_tag }}
-                  {{ form.post_evaluation_severity }}
-              </div>
-          </div>
-          <div class="right-column">
-              <div class="form-row">
-                  {{ form.post_evaluation_probability.label_tag }}
-                  {{ form.post_evaluation_probability }}
-              </div>
-          </div>
-        </div>
         <h1 class="subsection-header">Sección 5: Defensas existentes</h1>
         <div class="risk-selection-container">
           <div class="form-row comments-row" id="text_description">
@@ -173,7 +159,7 @@
         {% endif %}
 
         <div class="submit-button-container">
-          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Guardar RER</button>
+          <button class="submit-button" type="submit" onclick="return confirmSubmission()">Enviar a SARA</button>
         </div>
       </form>
     </div>

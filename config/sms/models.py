@@ -312,6 +312,15 @@ class RiskEvaluationReport(models.Model):
         ('ORG', 'Organizacional'),
         ('HUM', 'Humano'),
     ]
+
+    ANALYSIS_STATUS_CHOICES = [
+        ('DRAFT', 'Borrador'),
+        ('PENDING', 'Pendiente de análisis'),
+        ('PROCESSING', 'Analizando'),
+        ('READY_FOR_REVIEW', 'Listo para revisión'),
+        ('FAILED', 'Error en el análisis'),
+        ('REVIEWED', 'Revisado'),
+    ]
     #endregion
 
     #region Fields
@@ -368,6 +377,40 @@ class RiskEvaluationReport(models.Model):
         max_length=500,
         verbose_name="Defensas existentes",
     )
+    analysis_status = models.CharField(
+        max_length=20,
+        choices=ANALYSIS_STATUS_CHOICES,
+        default='DRAFT',
+        verbose_name="Estado del análisis residual",
+        db_index=True,
+    )
+    analysis_error = models.TextField(
+        blank=True,
+        verbose_name="Error del análisis residual",
+    )
+    analysis_started_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Inicio del análisis residual",
+    )
+    analysis_completed_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Finalización del análisis residual",
+    )
+    reviewed_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Fecha de revisión",
+    )
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="reviewed_risk_evaluation_reports",
+        verbose_name="Revisado por",
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación",
@@ -397,6 +440,78 @@ class RiskEvaluationReport(models.Model):
                 'selected_risk': (
                     'El riesgo seleccionado debe pertenecer al reporte '
                     'voluntario asociado con este RER.'
+                )
+            })
+
+
+class RiskResidualEvaluation(models.Model):
+    """SARA's residual-risk proposal for one risk included in a RER."""
+
+    rer = models.ForeignKey(
+        RiskEvaluationReport,
+        on_delete=models.CASCADE,
+        related_name="residual_evaluations",
+        verbose_name="Registro de Evaluación de Riesgos",
+    )
+    risk = models.OneToOneField(
+        Risk,
+        on_delete=models.CASCADE,
+        related_name="residual_evaluation",
+        verbose_name="Riesgo",
+    )
+    proposed_severity = models.CharField(
+        max_length=1,
+        choices=Risk.SEVERITY_CHOICES[1:],
+        verbose_name="Severidad residual propuesta",
+    )
+    proposed_probability = models.CharField(
+        max_length=1,
+        choices=Risk.PROBABILITY_CHOICES[1:],
+        verbose_name="Probabilidad residual propuesta",
+    )
+    justification = models.TextField(
+        verbose_name="Justificación de SARA",
+    )
+    reviewed_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Fecha de revisión",
+    )
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="reviewed_residual_evaluations",
+        verbose_name="Revisado por",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de creación",
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Fecha de actualización",
+    )
+
+    class Meta:
+        verbose_name = "Evaluación de Riesgo Residual"
+        verbose_name_plural = "Evaluaciones de Riesgo Residual"
+
+    def __str__(self):
+        return f"{self.rer} - Riesgo {self.risk_id}"
+
+    def clean(self):
+        super().clean()
+        if (
+            self.rer_id
+            and self.risk_id
+            and self.risk.report_id != self.rer.report_id
+        ):
+            raise ValidationError({
+                'risk': (
+                    'El riesgo debe pertenecer al reporte voluntario asociado '
+                    'con este RER.'
                 )
             })
 

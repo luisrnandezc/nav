@@ -4,6 +4,7 @@ from .models import (
     VoluntaryHazardReport,
     Risk,
     RiskEvaluationReport,
+    RiskResidualEvaluation,
     MitigationAction,
     MitigationActionEvidence,
 )
@@ -77,8 +78,15 @@ class RiskEvaluationReportAdmin(admin.ModelAdmin):
         'registration_date',
         'sms_user_fullname',
         'dir_user_fullname',
+        'analysis_status',
     )
-    list_filter = ('hazard_source', 'hazard_type', 'hazard_area', 'registration_date')
+    list_filter = (
+        'analysis_status',
+        'hazard_source',
+        'hazard_type',
+        'hazard_area',
+        'registration_date',
+    )
     search_fields = (
         'report__code',
         'report__description',
@@ -106,11 +114,45 @@ class RiskEvaluationReportAdmin(admin.ModelAdmin):
         ('Responsables del documento', {
             'fields': ('sms_user_fullname', 'dir_user_fullname')
         }),
+        ('Análisis residual', {
+            'fields': (
+                'analysis_status',
+                'analysis_error',
+                'analysis_started_at',
+                'analysis_completed_at',
+                'reviewed_by',
+                'reviewed_at',
+            )
+        }),
         ('Metadatos', {
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(RiskResidualEvaluation)
+class RiskResidualEvaluationAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'rer',
+        'risk',
+        'proposed_severity',
+        'proposed_probability',
+        'reviewed_by',
+        'reviewed_at',
+    )
+    list_filter = (
+        'proposed_severity',
+        'proposed_probability',
+        'reviewed_at',
+    )
+    search_fields = (
+        'rer__report__code',
+        'risk__description',
+        'justification',
+    )
+    readonly_fields = ('created_at', 'updated_at')
 
 
 @admin.register(MitigationAction)

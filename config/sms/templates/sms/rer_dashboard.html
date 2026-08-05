@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>NAV | RER Dashboard</title>
+		<link href="{% static 'sms/sms_base.css' %}" rel="stylesheet" />
+		<link href="{% static 'sms/sms_dashboard.css' %}" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="main-container">
+			<div class="back-button">
+				<a href="{% url 'sms:sms_dashboard' %}" class="button">&larr; Volver</a>
+			</div>
+
+			<div class="main-header">
+				<h1>RER Dashboard</h1>
+			</div>
+
+			<div class="cards-container">
+				<div class="cards-container-header">
+					<h2>RER pendientes</h2>
+				</div>
+
+				<div class="reports-list-container">
+					{% if pending_rer_reports %}
+						{% for report in pending_rer_reports %}
+							{% include 'sms/includes/rer_report_card.html' with report=report %}
+						{% endfor %}
+					{% else %}
+						<div class="no-reports">
+							<p>No hay Registros de Evaluación de Riesgos pendientes.</p>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+
+			<div class="cards-container">
+				<div class="cards-container-header">
+					<h2>RER completados</h2>
+				</div>
+
+				<div class="reports-list-container">
+					{% if completed_rer_reports %}
+						{% for report in completed_rer_reports %}
+							{% include 'sms/includes/rer_report_card.html' with report=report %}
+						{% endfor %}
+					{% else %}
+						<div class="no-reports">
+							<p>No hay Registros de Evaluación de Riesgos completados.</p>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

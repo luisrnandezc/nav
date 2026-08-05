@@ -13,6 +13,7 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
 from django.db import transaction
+from django.db.models import Count
 from .models import (
     VoluntaryHazardReport,
     Risk,
@@ -266,6 +267,38 @@ def vhr_dashboard(request):
 
     return render(request, 'sms/vhr_dashboard.html', context)
 
+
+@login_required
+def rer_dashboard(request):
+    """Display processed VHRs grouped by pending and completed RER status."""
+    processed_reports = (
+        VoluntaryHazardReport.objects
+        .filter(is_processed=True)
+        .select_related('risk_evaluation_report__selected_risk')
+        .annotate(
+            risk_count=Count('risks', distinct=True),
+            mitigation_action_count=Count(
+                'risks__mitigation_actions',
+                distinct=True,
+            ),
+        )
+        .order_by('-created_at')
+    )
+
+    pending_rer_reports = processed_reports.exclude(
+        risk_evaluation_report__analysis_status='REVIEWED'
+    )
+    completed_rer_reports = processed_reports.filter(
+        risk_evaluation_report__analysis_status='REVIEWED'
+    )
+
+    context = {
+        'pending_rer_reports': pending_rer_reports,
+        'completed_rer_reports': completed_rer_reports,
+    }
+
+    return render(request, 'sms/rer_dashboard.html', context)
+
 ########################################################################################
 #endregion Dashboard Views
 ########################################################################################
@@ -403,7 +436,9 @@ def vhr_processed_panel(request, report_id):
 
     # Determine the back URL based on the referrer
     referer = request.META.get('HTTP_REFERER', '')
-    if '/vhr_dashboard/' in referer:
+    if '/rer_dashboard/' in referer:
+        back_url = reverse('sms:rer_dashboard')
+    elif '/vhr_dashboard/' in referer:
         back_url = reverse('sms:vhr_dashboard')
     elif '/sms_dashboard/' in referer or '/sms/' in referer:
         back_url = reverse('sms:sms_dashboard')
@@ -1335,24 +1370,24 @@ def rer_form(request, report_id):
                 with transaction.atomic():
                     rer = form.save(commit=False)
                     rer.report = report
+                    rer.analysis_status = 'PENDING'
+                    rer.analysis_error = ''
+                    rer.analysis_started_at = None
+                    rer.analysis_completed_at = None
+                    rer.reviewed_by = None
+                    rer.reviewed_at = None
                     rer.save()
 
-                    selected_risk = form.cleaned_data['selected_risk']
-                    selected_risk.post_evaluation_severity = form.cleaned_data[
-                        'post_evaluation_severity'
-                    ]
-                    selected_risk.post_evaluation_probability = form.cleaned_data[
-                        'post_evaluation_probability'
-                    ]
-                    selected_risk.updated_at = timezone.now().date()
-                    selected_risk.save(update_fields=[
-                        'post_evaluation_severity',
-                        'post_evaluation_probability',
-                        'updated_at',
-                    ])
+                    # A resubmission invalidates previous SARA proposals. The
+                    # accepted values on Risk remain unchanged until a new
+                    # human review is completed.
+                    rer.residual_evaluations.all().delete()
 
-                messages.success(request, 'El RER se guardó correctamente.')
-                return redirect('sms:rer_form', report_id=report.id)
+                messages.success(
+                    request,
+                    'El RER fue enviado a SARA y está pendiente de análisis.',
+                )
+                return redirect('sms:vhr_processed_panel', report_id=report.id)
             except Exception as e:
                 messages.error(request, f'Error al guardar el RER: {str(e)}')
         else:

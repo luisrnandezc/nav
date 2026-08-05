@@ -6,6 +6,7 @@ app_name = 'sms'
 urlpatterns = [
     path('', views.sms_dashboard, name='sms_dashboard'),
     path('vhr_dashboard/', views.vhr_dashboard, name='vhr_dashboard'),
+    path('rer_dashboard/', views.rer_dashboard, name='rer_dashboard'),
     path('vhr_form/', views.vhr_form, name='vhr_form'),
     path('vhr_action_panel/<int:report_id>/', views.vhr_action_panel, name='vhr_action_panel'),
     path('voluntary_hazard_report/<int:report_id>/register/', views.register_vhr, name='register_vhr'),

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Risk, RiskEvaluationReport, VoluntaryHazardReport
+from .models import RiskEvaluationReport, VoluntaryHazardReport
 
 class SMSVoluntaryHazardReportForm(forms.ModelForm):
     
@@ -59,17 +59,6 @@ class RiskEvaluationReportForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-field'}),
     )
-    post_evaluation_severity = forms.ChoiceField(
-        label='Severidad residual',
-        choices=Risk.SEVERITY_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-field'}),
-    )
-    post_evaluation_probability = forms.ChoiceField(
-        label='Probabilidad residual',
-        choices=Risk.PROBABILITY_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-field'}),
-    )
-
     class Meta:
         model = RiskEvaluationReport
         fields = [
@@ -125,15 +114,7 @@ class RiskEvaluationReportForm(forms.ModelForm):
             )
         )
 
-        if self.instance.pk:
-            selected_risk = self.instance.selected_risk
-            self.fields['post_evaluation_severity'].initial = (
-                selected_risk.post_evaluation_severity
-            )
-            self.fields['post_evaluation_probability'].initial = (
-                selected_risk.post_evaluation_probability
-            )
-        else:
+        if not self.instance.pk:
             self.fields['registration_date'].initial = report.date
             self.fields['hazard_description'].initial = report.description[:300]
             self.fields['hazard_source'].initial = 'VHR'

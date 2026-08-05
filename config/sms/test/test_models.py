@@ -6,11 +6,18 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase, TransactionTestCase
 
-from sms.models import VoluntaryHazardReport, Risk, RiskEvaluationReport, MitigationAction
+from sms.models import (
+    VoluntaryHazardReport,
+    Risk,
+    RiskEvaluationReport,
+    RiskResidualEvaluation,
+    MitigationAction,
+)
 from sms.test.factories import (
     VoluntaryHazardReportFactory,
     RiskFactory,
     RiskEvaluationReportFactory,
+    RiskResidualEvaluationFactory,
     MitigationActionFactory,
     StaffUserFactory,
     InstructorUserFactory,
@@ -108,6 +115,56 @@ class TestRiskEvaluationReportCreation(TestCase):
             "El riesgo seleccionado debe pertenecer al reporte voluntario asociado",
         ):
             rer.full_clean()
+
+    def test_new_rer_starts_as_draft(self):
+        rer = RiskEvaluationReportFactory()
+
+        assert rer.analysis_status == 'DRAFT'
+        assert rer.analysis_error == ''
+        assert rer.analysis_started_at is None
+        assert rer.analysis_completed_at is None
+        assert rer.reviewed_at is None
+        assert rer.reviewed_by is None
+
+
+class TestRiskResidualEvaluationCreation(TestCase):
+    def test_create_ai_proposal_for_rer_risk(self):
+        residual = RiskResidualEvaluationFactory()
+
+        assert residual.id is not None
+        assert residual.risk.report_id == residual.rer.report_id
+        assert residual.proposed_severity == 'D'
+        assert residual.proposed_probability == '2'
+        assert residual.rer.residual_evaluations.get() == residual
+
+    def test_risk_can_have_only_one_ai_residual_proposal(self):
+        residual = RiskResidualEvaluationFactory()
+
+        with self.assertRaises(IntegrityError):
+            RiskResidualEvaluation.objects.create(
+                rer=residual.rer,
+                risk=residual.risk,
+                proposed_severity='C',
+                proposed_probability='1',
+                justification='Segunda propuesta no permitida.',
+            )
+
+    def test_residual_risk_must_belong_to_rer_report(self):
+        rer = RiskEvaluationReportFactory()
+        unrelated_risk = RiskFactory()
+        residual = RiskResidualEvaluation(
+            rer=rer,
+            risk=unrelated_risk,
+            proposed_severity='D',
+            proposed_probability='2',
+            justification='Propuesta de prueba.',
+        )
+
+        with self.assertRaisesMessage(
+            ValidationError,
+            'El riesgo debe pertenecer al reporte voluntario asociado',
+        ):
+            residual.full_clean()
 
 
 class TestRiskEvaluationReportUniqueness(TransactionTestCase):

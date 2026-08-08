@@ -5,7 +5,6 @@ from sms.forms import RiskEvaluationReportForm
 from sms.models import RiskEvaluationReport
 from sms.test.factories import (
     RiskEvaluationReportFactory,
-    RiskResidualEvaluationFactory,
     RiskFactory,
     MitigationActionEvidenceFactory,
     MitigationActionFactory,
@@ -114,13 +113,18 @@ class TestRiskEvaluationReportFormView(TestCase):
         assert rer.defenses == 'Defensas actualizadas.'
         assert rer.analysis_status == 'PENDING'
 
-    def test_resubmission_removes_stale_ai_proposals(self):
-        rer = RiskEvaluationReportFactory(
+    def test_resubmission_clears_stale_residual_values(self):
+        RiskEvaluationReportFactory(
             report=self.report,
             selected_risk=self.risk,
             analysis_status='READY_FOR_REVIEW',
         )
-        RiskResidualEvaluationFactory(rer=rer, risk=self.risk)
+        self.risk.post_evaluation_severity = 'D'
+        self.risk.post_evaluation_probability = '2'
+        self.risk.save(update_fields=[
+            'post_evaluation_severity',
+            'post_evaluation_probability',
+        ])
 
         response = self.client.post(
             self.url,
@@ -128,9 +132,9 @@ class TestRiskEvaluationReportFormView(TestCase):
         )
 
         assert response.status_code == 302
-        rer.refresh_from_db()
-        assert rer.analysis_status == 'PENDING'
-        assert not rer.residual_evaluations.exists()
+        self.risk.refresh_from_db()
+        assert self.risk.post_evaluation_severity == '0'
+        assert self.risk.post_evaluation_probability == '0'
 
     def test_form_displays_actions_for_every_report_risk(self):
         second_risk = RiskFactory(

@@ -27,5 +27,6 @@ urlpatterns = [
     path('action/<int:action_id>/evidence/add/', views.add_evidence, name='add_evidence'),
     path('action/<int:action_id>/evidence/<int:evidence_id>/delete/', views.delete_evidence, name='delete_evidence'),
     path('rer_form/<int:report_id>/', views.rer_form, name='rer_form'),
+    path('rer/<int:rer_id>/action_panel/', views.rer_action_panel, name='rer_action_panel'),
     path('rer/<int:report_id>/generate_rer_pdf/', views.generate_rer_pdf, name='generate_rer_pdf'),
 ]

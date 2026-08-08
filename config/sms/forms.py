@@ -1,5 +1,7 @@
 from django import forms
-from .models import RiskEvaluationReport, VoluntaryHazardReport
+from django.forms import modelformset_factory
+
+from .models import Risk, RiskEvaluationReport, VoluntaryHazardReport
 
 class SMSVoluntaryHazardReportForm(forms.ModelForm):
     
@@ -125,3 +127,47 @@ class RiskEvaluationReportForm(forms.ModelForm):
                     f'{user.first_name} {user.last_name}'.strip()
                 )
                 self.fields['dir_user_fullname'].initial = 'Elías Detto'
+
+
+class RiskResidualReviewForm(forms.ModelForm):
+    """Allow the SMS coordinator to review SARA's result for one risk."""
+
+    class Meta:
+        model = Risk
+        fields = [
+            'post_evaluation_severity',
+            'post_evaluation_probability',
+            'post_evaluation_justification',
+        ]
+        labels = {
+            'post_evaluation_severity': 'Severidad residual',
+            'post_evaluation_probability': 'Probabilidad residual',
+            'post_evaluation_justification': 'Justificación de SARA',
+        }
+        widgets = {
+            'post_evaluation_severity': forms.Select(attrs={
+                'class': 'risk-evaluation-select',
+            }),
+            'post_evaluation_probability': forms.Select(attrs={
+                'class': 'risk-evaluation-select',
+            }),
+            'post_evaluation_justification': forms.Textarea(attrs={
+                'class': 'action-form-textarea residual-justification',
+                'rows': 5,
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # A reviewed result must contain a real matrix value, never the "-" option.
+        self.fields['post_evaluation_severity'].choices = Risk.SEVERITY_CHOICES[1:]
+        self.fields['post_evaluation_probability'].choices = Risk.PROBABILITY_CHOICES[1:]
+        self.fields['post_evaluation_justification'].required = True
+
+
+RiskResidualReviewFormSet = modelformset_factory(
+    Risk,
+    form=RiskResidualReviewForm,
+    extra=0,
+)

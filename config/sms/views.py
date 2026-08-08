@@ -4,7 +4,11 @@ from types import SimpleNamespace
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from openai import OpenAI
-from .forms import SMSVoluntaryHazardReportForm, RiskEvaluationReportForm
+from .forms import (
+    RiskEvaluationReportForm,
+    RiskResidualReviewFormSet,
+    SMSVoluntaryHazardReportForm,
+)
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
@@ -270,7 +274,7 @@ def vhr_dashboard(request):
 
 @login_required
 def rer_dashboard(request):
-    """Display processed VHRs grouped by pending and completed RER status."""
+    """Display processed VHRs grouped by their current RER workflow stage."""
     processed_reports = (
         VoluntaryHazardReport.objects
         .filter(is_processed=True)
@@ -286,7 +290,13 @@ def rer_dashboard(request):
     )
 
     pending_rer_reports = processed_reports.exclude(
-        risk_evaluation_report__analysis_status='REVIEWED'
+        risk_evaluation_report__analysis_status__in=[
+            'READY_FOR_REVIEW',
+            'REVIEWED',
+        ]
+    )
+    pending_review_reports = processed_reports.filter(
+        risk_evaluation_report__analysis_status='READY_FOR_REVIEW'
     )
     completed_rer_reports = processed_reports.filter(
         risk_evaluation_report__analysis_status='REVIEWED'
@@ -294,6 +304,7 @@ def rer_dashboard(request):
 
     context = {
         'pending_rer_reports': pending_rer_reports,
+        'pending_review_reports': pending_review_reports,
         'completed_rer_reports': completed_rer_reports,
     }
 
@@ -1412,6 +1423,65 @@ def rer_form(request, report_id):
     }
 
     return render(request, 'sms/rer_form.html', context)
+
+
+@login_required
+def rer_action_panel(request, rer_id):
+    """Review and approve SARA's residual evaluation for every RER risk."""
+    rer = get_object_or_404(
+        RiskEvaluationReport.objects.select_related('report'),
+        id=rer_id,
+        report__is_processed=True,
+    )
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para revisar el RER.')
+        return redirect('sms:rer_dashboard')
+
+    if rer.analysis_status != 'READY_FOR_REVIEW':
+        messages.warning(request, 'Este RER no está pendiente de revisión.')
+        return redirect('sms:rer_dashboard')
+
+    risks = (
+        rer.report.risks
+        .prefetch_related('mitigation_actions__evidence')
+        .order_by('id')
+    )
+    formset = RiskResidualReviewFormSet(
+        request.POST or None,
+        queryset=risks,
+        prefix='risks',
+    )
+
+    if request.method == 'POST':
+        if formset.is_valid():
+            with transaction.atomic():
+                # Lock the report so two coordinators cannot approve it at once.
+                locked_rer = RiskEvaluationReport.objects.select_for_update().get(id=rer.id)
+                if locked_rer.analysis_status != 'READY_FOR_REVIEW':
+                    messages.warning(request, 'Este RER ya fue revisado.')
+                    return redirect('sms:rer_dashboard')
+
+                formset.save()
+                locked_rer.analysis_status = 'REVIEWED'
+                locked_rer.reviewed_by = request.user
+                locked_rer.reviewed_at = timezone.now()
+                locked_rer.save(update_fields=[
+                    'analysis_status',
+                    'reviewed_by',
+                    'reviewed_at',
+                ])
+
+            messages.success(request, 'La evaluación residual fue revisada y aprobada.')
+            return redirect('sms:rer_dashboard')
+
+        messages.error(request, 'Revise los valores residuales indicados.')
+
+    return render(request, 'sms/rer_action_panel.html', {
+        'rer': rer,
+        'report': rer.report,
+        'formset': formset,
+    })
 
 @login_required
 def generate_rer_pdf(request, report_id):

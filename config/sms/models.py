@@ -249,6 +249,10 @@ class Risk(models.Model):
         default='0',
         verbose_name="Probabilidad post-mitigación"
     )
+    post_evaluation_justification = models.TextField(
+        blank=True,
+        verbose_name="Justificación de la evaluación residual",
+    )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -285,6 +289,16 @@ class Risk(models.Model):
         """Return the risk evaluation before mitigation"""
         return f"{self.pre_evaluation_severity}{self.pre_evaluation_probability}"
     pre_evaluation.short_description = "Pre-evaluación"
+
+    def post_evaluation(self):
+        """Return the risk evaluation after mitigation, or '-' if unavailable."""
+        if (
+            self.post_evaluation_severity == '0'
+            or self.post_evaluation_probability == '0'
+        ):
+            return '-'
+        return f"{self.post_evaluation_severity}{self.post_evaluation_probability}"
+    post_evaluation.short_description = "Post-evaluación"
 
 
 class RiskEvaluationReport(models.Model):

@@ -85,6 +85,16 @@ class TestRiskCreation(TestCase):
         RiskFactory(report=vhr)
         assert vhr.risks.count() == 2
 
+    def test_post_evaluation_returns_index_or_placeholder(self):
+        risk = RiskFactory(
+            post_evaluation_severity='C',
+            post_evaluation_probability='2',
+        )
+        assert risk.post_evaluation() == 'C2'
+
+        risk.post_evaluation_probability = '0'
+        assert risk.post_evaluation() == '-'
+
 
 class TestRiskEvaluationReportCreation(TestCase):
     """RER creation and relationships with its VHR and selected risk."""

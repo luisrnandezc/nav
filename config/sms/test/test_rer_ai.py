@@ -78,11 +78,13 @@ class TestRERAI(TestCase):
                 'risk_id': self.first_risk.pk,
                 'residual_severity': 'B',
                 'residual_probability': '2',
+                'justification': 'La barrera reduce la probabilidad de exposición.',
             },
             {
                 'risk_id': self.second_risk.pk,
                 'residual_severity': 'D',
                 'residual_probability': '2',
+                'justification': 'La medida limita el posible daño al personal.',
             },
         ]
 
@@ -99,6 +101,9 @@ class TestRERAI(TestCase):
         assert self.rer.analysis_completed_at is not None
         assert self.first_risk.post_evaluation_severity == 'B'
         assert self.first_risk.post_evaluation_probability == '2'
+        assert 'reduce la probabilidad' in (
+            self.first_risk.post_evaluation_justification
+        )
         assert self.second_risk.post_evaluation_severity == 'D'
         assert self.second_risk.post_evaluation_probability == '2'
 

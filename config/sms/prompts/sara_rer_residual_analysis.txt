@@ -23,6 +23,7 @@ OBJETIVO DEL ANÁLISIS
 Para cada riesgo debes proponer:
 1. Una severidad residual entre A y E.
 2. Una probabilidad residual entre 1 y 5.
+3. Una justificación técnica breve para ambos valores.
 
 La evaluación es individual para cada riesgo. No generes un índice global para
 el RER y no uses un riesgo como sustituto de los demás.
@@ -107,11 +108,16 @@ REGLAS PARA LA EVALUACIÓN RESIDUAL
 - Considera únicamente las medidas pertenecientes al riesgo evaluado.
 - Determina si cada medida evita la condición, reduce la exposición, disminuye
   la probabilidad o limita la magnitud de la consecuencia.
-- La probabilidad puede disminuir cuando las medidas reducen de forma razonable
-  la exposición o la posibilidad de que ocurra la consecuencia.
-- La severidad normalmente permanece igual, porque describe la magnitud de la
-  consecuencia. Redúcela solamente cuando una medida limite directamente el
-  daño que podría producirse si el evento ocurre.
+- Como criterio general, las medidas de mitigación suelen actuar principalmente
+  sobre la probabilidad, al reducir la exposición o la posibilidad de que ocurra
+  la consecuencia.
+- La severidad normalmente permanece igual porque, aunque se apliquen medidas,
+  la naturaleza y magnitud posible de la consecuencia muchas veces no cambian.
+- Lo anterior es una orientación, no una regla absoluta. Puedes reducir la
+  severidad cuando exista una razón concreta y razonable para concluir que las
+  medidas limitan la magnitud del daño si la consecuencia llega a ocurrir.
+- Si reduces la severidad, explica específicamente en la justificación cómo las
+  medidas producen esa reducción.
 - Si las medidas no cambian de forma demostrable la severidad o la probabilidad,
   conserva el valor inicial correspondiente.
 - La evaluación residual no puede ser peor que la evaluación inicial: la
@@ -126,6 +132,7 @@ REGLAS DE INTEGRIDAD DE LA RESPUESTA
 - No omitas, dupliques ni agregues identificadores de riesgo.
 - Usa exclusivamente A, B, C, D o E para residual_severity.
 - Usa exclusivamente 1, 2, 3, 4 o 5 para residual_probability.
+- Incluye una justificación técnica no vacía para cada riesgo.
 - No incluyas recomendaciones nuevas, una evaluación global, comentarios fuera
   del esquema ni explicaciones adicionales.
 

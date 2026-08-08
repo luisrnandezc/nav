@@ -1383,6 +1383,7 @@ def rer_form(request, report_id):
                     report.risks.update(
                         post_evaluation_severity='0',
                         post_evaluation_probability='0',
+                        post_evaluation_justification='',
                     )
 
                 messages.success(

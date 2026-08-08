@@ -1378,10 +1378,12 @@ def rer_form(request, report_id):
                     rer.reviewed_at = None
                     rer.save()
 
-                    # A resubmission invalidates previous SARA proposals. The
-                    # accepted values on Risk remain unchanged until a new
-                    # human review is completed.
-                    rer.residual_evaluations.all().delete()
+                    # A new request invalidates residual values from an earlier
+                    # analysis. SARA will repopulate these same Risk fields.
+                    report.risks.update(
+                        post_evaluation_severity='0',
+                        post_evaluation_probability='0',
+                    )
 
                 messages.success(
                     request,

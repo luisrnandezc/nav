@@ -7,7 +7,6 @@ from sms.models import (
     VoluntaryHazardReport,
     Risk,
     RiskEvaluationReport,
-    RiskResidualEvaluation,
     MitigationAction,
     MitigationActionEvidence,
 )
@@ -90,17 +89,6 @@ class RiskEvaluationReportFactory(factory.django.DjangoModelFactory):
     hazard_area = 'OPERATIONS'
     hazard_causes = factory.Faker('paragraph', nb_sentences=2)
     defenses = factory.Faker('paragraph', nb_sentences=2)
-
-
-class RiskResidualEvaluationFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = RiskResidualEvaluation
-
-    rer = factory.SubFactory(RiskEvaluationReportFactory)
-    risk = factory.LazyAttribute(lambda obj: obj.rer.selected_risk)
-    proposed_severity = 'D'
-    proposed_probability = '2'
-    justification = factory.Faker('paragraph', nb_sentences=3)
 
 
 class MitigationActionFactory(factory.django.DjangoModelFactory):

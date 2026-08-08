@@ -1,10 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from sms.models import RiskEvaluationReport
-from sms.services.rer_analysis_workflow import (
-    RERAnalysisStateError,
-    process_pending_rer_analysis,
-)
+from sms.rer_ai import process_rer_analysis
 
 
 class Command(BaseCommand):
@@ -25,18 +22,10 @@ class Command(BaseCommand):
 
         completed = 0
         failed = 0
-        skipped = 0
 
         for rer_id in pending_ids:
             try:
-                process_pending_rer_analysis(rer_id)
-            except RERAnalysisStateError as exc:
-                # Another command or a user action may have changed the state
-                # after the initial query. The workflow safely rejects it.
-                skipped += 1
-                self.stdout.write(
-                    self.style.WARNING(f'RER {rer_id} skipped: {exc}')
-                )
+                process_rer_analysis(rer_id)
             except Exception as exc:
                 # One failed report must not block the remaining lightweight
                 # queue. The workflow records FAILED and its safe error message.
@@ -52,5 +41,5 @@ class Command(BaseCommand):
 
         self.stdout.write(
             f'RER analysis summary: {completed} completed, '
-            f'{failed} failed, {skipped} skipped.'
+            f'{failed} failed.'
         )

@@ -23,8 +23,6 @@ OBJETIVO DEL ANÁLISIS
 Para cada riesgo debes proponer:
 1. Una severidad residual entre A y E.
 2. Una probabilidad residual entre 1 y 5.
-3. Una justificación técnica breve que explique el efecto de las medidas sobre
-   la severidad y la probabilidad.
 
 La evaluación es individual para cada riesgo. No generes un índice global para
 el RER y no uses un riesgo como sustituto de los demás.
@@ -34,7 +32,8 @@ INTERPRETACIÓN DE LOS DATOS RECIBIDOS
 -----------------------------------------------------------------------
 - "hazard" describe el peligro identificado y su contexto.
 - Cada elemento de "risks" representa una consecuencia distinta del peligro.
-- "initial_evaluation" contiene la evaluación anterior a las mitigaciones.
+- "initial_severity" e "initial_probability" contienen la evaluación anterior
+  a las mitigaciones.
 - "mitigation_actions" contiene únicamente las medidas asociadas con ese riesgo.
 - "evidence" documenta la ejecución de una medida.
 - "is_priority" identifica el riesgo considerado más importante por el usuario,
@@ -121,24 +120,12 @@ REGLAS PARA LA EVALUACIÓN RESIDUAL
   Evalúa su pertinencia y efecto conjunto sobre el riesgo específico.
 
 -----------------------------------------------------------------------
-JUSTIFICACIÓN TÉCNICA
------------------------------------------------------------------------
-La justificación de cada riesgo debe:
-- mencionar las medidas relevantes por su contenido, sin inventar información;
-- explicar separadamente su efecto sobre probabilidad y severidad;
-- indicar las limitaciones importantes que justifican conservar algún valor;
-- ser breve, concreta y comprensible para la revisión del gerente de SMS;
-- evitar afirmaciones absolutas como "riesgo eliminado" salvo que los datos lo
-  demuestren inequívocamente.
-
------------------------------------------------------------------------
 REGLAS DE INTEGRIDAD DE LA RESPUESTA
 -----------------------------------------------------------------------
 - Devuelve exactamente un resultado por cada risk_id recibido.
 - No omitas, dupliques ni agregues identificadores de riesgo.
 - Usa exclusivamente A, B, C, D o E para residual_severity.
 - Usa exclusivamente 1, 2, 3, 4 o 5 para residual_probability.
-- Incluye una justificación no vacía para cada riesgo.
 - No incluyas recomendaciones nuevas, una evaluación global, comentarios fuera
   del esquema ni explicaciones adicionales.
 

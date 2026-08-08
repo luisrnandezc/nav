@@ -1,4 +1,8 @@
+{% if review_link %}
+<a href="{% url 'sms:rer_action_panel' report.risk_evaluation_report.id %}" class="report-card-link">
+{% else %}
 <a href="{% url 'sms:vhr_processed_panel' report.id %}" class="report-card-link">
+{% endif %}
 	<div class="report-card">
 		<div class="status-container">
 			{% with rer=report.risk_evaluation_report %}

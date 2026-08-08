@@ -40,13 +40,12 @@ class TestRERDashboard(TestCase):
         assert report in response.context['pending_rer_reports']
         assert report not in response.context['completed_rer_reports']
 
-    def test_non_reviewed_rer_statuses_are_pending(self):
+    def test_pre_review_rer_statuses_are_pending_analysis(self):
         statuses = [
             'DRAFT',
             'PENDING',
             'PROCESSING',
             'FAILED',
-            'READY_FOR_REVIEW',
         ]
         reports = []
         for index, status in enumerate(statuses):
@@ -67,6 +66,19 @@ class TestRERDashboard(TestCase):
 
         assert pending_ids == {report.id for report in reports}
 
+    def test_ready_rer_is_pending_human_review(self):
+        report = VoluntaryHazardReportFactory(is_processed=True)
+        rer = RiskEvaluationReportFactory(
+            report=report,
+            analysis_status='READY_FOR_REVIEW',
+        )
+
+        response = self.client.get(self.url)
+
+        assert report in response.context['pending_review_reports']
+        assert report not in response.context['pending_rer_reports']
+        self.assertContains(response, reverse('sms:rer_action_panel', args=[rer.id]))
+
     def test_reviewed_rer_is_completed(self):
         report = VoluntaryHazardReportFactory(
             code='SMS-RVP-COMPLETED',
@@ -81,6 +93,7 @@ class TestRERDashboard(TestCase):
 
         assert report in response.context['completed_rer_reports']
         assert report not in response.context['pending_rer_reports']
+        assert report not in response.context['pending_review_reports']
 
     def test_card_contains_risk_and_mitigation_action_counts(self):
         report = VoluntaryHazardReportFactory(is_processed=True)

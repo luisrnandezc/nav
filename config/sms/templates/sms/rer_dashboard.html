@@ -22,7 +22,7 @@
 
 			<div class="cards-container">
 				<div class="cards-container-header">
-					<h2>RER pendientes</h2>
+					<h2>Pendientes de análisis</h2>
 				</div>
 
 				<div class="reports-list-container">
@@ -32,7 +32,25 @@
 						{% endfor %}
 					{% else %}
 						<div class="no-reports">
-							<p>No hay Registros de Evaluación de Riesgos pendientes.</p>
+							<p>No hay RER pendientes de preparación o análisis.</p>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+
+			<div class="cards-container">
+				<div class="cards-container-header">
+					<h2>Pendientes de revisión</h2>
+				</div>
+
+				<div class="reports-list-container">
+					{% if pending_review_reports %}
+						{% for report in pending_review_reports %}
+							{% include 'sms/includes/rer_report_card.html' with report=report review_link=True %}
+						{% endfor %}
+					{% else %}
+						<div class="no-reports">
+							<p>No hay RER pendientes de revisión humana.</p>
 						</div>
 					{% endif %}
 				</div>

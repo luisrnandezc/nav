@@ -1,0 +1,104 @@
+.rer-review-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.panel-help-text {
+  color: #b0b0b0;
+  line-height: 1.6;
+  margin: 0 0 20px;
+  text-align: center;
+  text-transform: none;
+}
+
+.evaluation-summary {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mitigation-list {
+  margin-top: 15px;
+}
+
+.mitigation-metadata {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.mitigation-metadata .info-value,
+.evidence-box .action-text {
+  font-size: 0.9rem;
+}
+
+.evidence-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 15px;
+  padding: 12px;
+  border-left: 3px solid #4caf50;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.residual-review-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.risk-evaluation-select-group {
+  flex: 1;
+  max-width: 350px;
+}
+
+.justification-group {
+  margin-top: 15px;
+}
+
+.residual-justification {
+  box-sizing: border-box;
+}
+
+.form-errors,
+.form-errors li {
+  color: #ff8a80;
+  text-transform: none;
+}
+
+.approval-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.approval-section p {
+  color: #ffff00;
+  font-size: 0.9rem;
+  text-align: center;
+  text-transform: none;
+}
+
+.approval-section .risk-submit-button {
+  align-self: center;
+}
+
+@media screen and (max-width: 768px) {
+  .mitigation-metadata {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-evaluation-select-group {
+    width: 100%;
+    max-width: none;
+  }
+}

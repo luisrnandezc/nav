@@ -59,7 +59,11 @@ class RiskAdmin(admin.ModelAdmin):
             'fields': ('pre_evaluation_severity', 'pre_evaluation_probability')
         }),
         ('Evaluación post-mitigación', {
-            'fields': ('post_evaluation_severity', 'post_evaluation_probability')
+            'fields': (
+                'post_evaluation_severity',
+                'post_evaluation_probability',
+                'post_evaluation_justification',
+            )
         }),
         ('Metadatos', {
             'fields': ('created_at', 'updated_at'),

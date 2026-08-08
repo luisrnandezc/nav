@@ -121,9 +121,11 @@ class TestRiskEvaluationReportFormView(TestCase):
         )
         self.risk.post_evaluation_severity = 'D'
         self.risk.post_evaluation_probability = '2'
+        self.risk.post_evaluation_justification = 'Justificación anterior.'
         self.risk.save(update_fields=[
             'post_evaluation_severity',
             'post_evaluation_probability',
+            'post_evaluation_justification',
         ])
 
         response = self.client.post(
@@ -135,6 +137,7 @@ class TestRiskEvaluationReportFormView(TestCase):
         self.risk.refresh_from_db()
         assert self.risk.post_evaluation_severity == '0'
         assert self.risk.post_evaluation_probability == '0'
+        assert self.risk.post_evaluation_justification == ''
 
     def test_form_displays_actions_for_every_report_risk(self):
         second_risk = RiskFactory(

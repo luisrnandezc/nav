@@ -36,11 +36,13 @@ RESPONSE_SCHEMA = {
                         'type': 'string',
                         'enum': sorted(VALID_PROBABILITIES),
                     },
+                    'justification': {'type': 'string', 'minLength': 1},
                 },
                 'required': [
                     'risk_id',
                     'residual_severity',
                     'residual_probability',
+                    'justification',
                 ],
                 'additionalProperties': False,
             },
@@ -201,6 +203,7 @@ def _validate_results(response, payload):
         'risk_id',
         'residual_severity',
         'residual_probability',
+        'justification',
     }
 
     for result in response['risks']:
@@ -220,6 +223,10 @@ def _validate_results(response, payload):
             or probability not in VALID_PROBABILITIES
         ):
             raise RERAIError(f'SARA returned invalid probability for risk {risk_id}.')
+        justification = result['justification']
+        if not isinstance(justification, str) or not justification.strip():
+            raise RERAIError(f'SARA omitted the justification for risk {risk_id}.')
+        result['justification'] = justification.strip()
         results[risk_id] = result
 
     if set(results) != expected_ids:
@@ -243,9 +250,14 @@ def _save_results(rer_id, results):
         result = results[risk.pk]
         risk.post_evaluation_severity = result['residual_severity']
         risk.post_evaluation_probability = result['residual_probability']
+        risk.post_evaluation_justification = result['justification']
     Risk.objects.bulk_update(
         risks,
-        ['post_evaluation_severity', 'post_evaluation_probability'],
+        [
+            'post_evaluation_severity',
+            'post_evaluation_probability',
+            'post_evaluation_justification',
+        ],
     )
 
     rer.analysis_status = 'READY_FOR_REVIEW'

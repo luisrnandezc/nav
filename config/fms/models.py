@@ -2943,8 +2943,8 @@ class ExternalFlightEvaluation(models.Model):
         return f'{self.student_first_name} {self.student_last_name} - {self.get_evaluation_type_display()} - {self.session_date}'
 
     class Meta:
-        verbose_name = 'Evaluación externa'
-        verbose_name_plural = 'Evaluaciones externas'
+        verbose_name = 'Multimotor / Otro'
+        verbose_name_plural = 'Multimotor / Otro'
         ordering = ['-session_date', '-id']
 
 class FlightReport(models.Model):

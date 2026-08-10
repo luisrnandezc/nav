@@ -1012,6 +1012,18 @@ class FlightEvaluation0_100(models.Model):
         default=0.0,
         verbose_name='Combustible consumido (litros)'
     )
+    hourly_rate_applied = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        editable=False,
+        verbose_name='Tarifa de vuelo aplicada ($/h)'
+    )
+    fuel_rate_applied = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        editable=False,
+        verbose_name='Tarifa de combustible aplicada ($/litro)'
+    )
     session_flight_hours = models.DecimalField(
         max_digits=3, 
         decimal_places=1,
@@ -1442,6 +1454,14 @@ class FlightEvaluation0_100(models.Model):
     
     def save(self, *args, **kwargs):
         """Override save method to calculate session flight hours."""
+        if self._state.adding:
+            student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
+            self.hourly_rate_applied = (
+                student_profile.flight_rate
+                if student_profile.flight_rate != self.aircraft.hourly_rate
+                else self.aircraft.hourly_rate
+            )
+            self.fuel_rate_applied = self.aircraft.fuel_cost
         if self.initial_hourmeter and self.final_hourmeter:
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only
@@ -1456,7 +1476,7 @@ class FlightEvaluation0_100(models.Model):
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
             student_profile.nav_flight_hours -= self.session_flight_hours
-            student_profile.balance += round(self.session_flight_hours*self.aircraft.hourly_rate + self.aircraft.fuel_cost*self.fuel_consumed, 2)
+            student_profile.balance += round(self.session_flight_hours*self.hourly_rate_applied + self.fuel_rate_applied*self.fuel_consumed, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
                 student_profile.flight_hours = 0
@@ -1676,6 +1696,18 @@ class FlightEvaluation100_120(models.Model):
         decimal_places=1,
         default=0.0,
         verbose_name='Combustible consumido (litros)'
+    )
+    hourly_rate_applied = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        editable=False,
+        verbose_name='Tarifa de vuelo aplicada ($/h)'
+    )
+    fuel_rate_applied = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        editable=False,
+        verbose_name='Tarifa de combustible aplicada ($/litro)'
     )
     session_flight_hours = models.DecimalField(
         max_digits=3,
@@ -2071,6 +2103,14 @@ class FlightEvaluation100_120(models.Model):
     
     def save(self, *args, **kwargs):
         """Override save method to calculate session flight hours."""
+        if self._state.adding:
+            student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
+            self.hourly_rate_applied = (
+                student_profile.flight_rate
+                if student_profile.flight_rate != self.aircraft.hourly_rate
+                else self.aircraft.hourly_rate
+            )
+            self.fuel_rate_applied = self.aircraft.fuel_cost
         if self.initial_hourmeter and self.final_hourmeter:
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only
@@ -2085,7 +2125,7 @@ class FlightEvaluation100_120(models.Model):
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
             student_profile.nav_flight_hours -= self.session_flight_hours
-            student_profile.balance += round(self.session_flight_hours*self.aircraft.hourly_rate + self.aircraft.fuel_cost*self.fuel_consumed, 2)
+            student_profile.balance += round(self.session_flight_hours*self.hourly_rate_applied + self.fuel_rate_applied*self.fuel_consumed, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
                 student_profile.flight_hours = 0
@@ -2305,6 +2345,18 @@ class FlightEvaluation120_170(models.Model):
         decimal_places=1,
         default=0.0,
         verbose_name='Combustible consumido (litros)'
+    )
+    hourly_rate_applied = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        editable=False,
+        verbose_name='Tarifa de vuelo aplicada ($/h)'
+    )
+    fuel_rate_applied = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        editable=False,
+        verbose_name='Tarifa de combustible aplicada ($/litro)'
     )
     session_flight_hours = models.DecimalField(
         max_digits=3, 
@@ -2745,6 +2797,14 @@ class FlightEvaluation120_170(models.Model):
 
     def save(self, *args, **kwargs):
         """Override save method to calculate session flight hours."""
+        if self._state.adding:
+            student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
+            self.hourly_rate_applied = (
+                student_profile.flight_rate
+                if student_profile.flight_rate != self.aircraft.hourly_rate
+                else self.aircraft.hourly_rate
+            )
+            self.fuel_rate_applied = self.aircraft.fuel_cost
         if self.initial_hourmeter and self.final_hourmeter:
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
             # Add 40% to the flight hours for the YV206E only
@@ -2759,7 +2819,7 @@ class FlightEvaluation120_170(models.Model):
             student_profile = StudentProfile.objects.get(user__national_id=self.student_id)
             student_profile.flight_hours -= self.session_flight_hours
             student_profile.nav_flight_hours -= self.session_flight_hours
-            student_profile.balance += round(self.session_flight_hours*self.aircraft.hourly_rate + self.aircraft.fuel_cost*self.fuel_consumed, 2)
+            student_profile.balance += round(self.session_flight_hours*self.hourly_rate_applied + self.fuel_rate_applied*self.fuel_consumed, 2)
             # Ensure hours don't go negative
             if student_profile.flight_hours < 0:
                 student_profile.flight_hours = 0

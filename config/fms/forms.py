@@ -615,20 +615,17 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             fuel_consumed = self.cleaned_data.get('fuel_consumed')
             
             if aircraft:
-                fuel_cost = aircraft.fuel_cost
-
                 if student_id and session_flight_hours:
                     student_profile = StudentProfile.objects.get(user__national_id=student_id)
                     # Update student's accumulated flight hours and flight balance
                     student_profile.flight_hours += session_flight_hours
                     student_profile.nav_flight_hours += session_flight_hours
 
-                    if student_profile.flight_rate != 130.0:
-                        hourly_rate = student_profile.flight_rate
-                    else:
-                        hourly_rate = aircraft.hourly_rate
-
-                    student_profile.balance -= round(session_flight_hours*hourly_rate + fuel_cost*fuel_consumed, 2)
+                    student_profile.balance -= round(
+                        session_flight_hours * instance.hourly_rate_applied
+                        + instance.fuel_rate_applied * fuel_consumed,
+                        2,
+                    )
                     student_profile.save()
                     # Update aircraft's total hours
                     aircraft.total_hours += session_flight_hours
@@ -950,20 +947,17 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             fuel_consumed = self.cleaned_data.get('fuel_consumed')
 
             if aircraft:
-                fuel_cost = aircraft.fuel_cost
-
                 if student_id and session_flight_hours:
                     student_profile = StudentProfile.objects.get(user__national_id=student_id)
                     # Update student's accumulated flight hours and flight balance
                     student_profile.flight_hours += session_flight_hours
                     student_profile.nav_flight_hours += session_flight_hours
 
-                    if student_profile.flight_rate != 130.0:
-                        hourly_rate = student_profile.flight_rate
-                    else:
-                        hourly_rate = aircraft.hourly_rate
-
-                    student_profile.balance -= round(session_flight_hours*aircraft.hourly_rate + fuel_cost*fuel_consumed, 2)
+                    student_profile.balance -= round(
+                        session_flight_hours * instance.hourly_rate_applied
+                        + instance.fuel_rate_applied * fuel_consumed,
+                        2,
+                    )
                     student_profile.save()
                     # Update aircraft's total hours
                     aircraft.total_hours += session_flight_hours
@@ -1301,20 +1295,17 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             fuel_consumed = self.cleaned_data.get('fuel_consumed')
 
             if aircraft:
-                fuel_cost = aircraft.fuel_cost
-
                 if student_id and session_flight_hours:
                     student_profile = StudentProfile.objects.get(user__national_id=student_id)
                     # Update student's accumulated flight hours and flight balance
                     student_profile.flight_hours += session_flight_hours
                     student_profile.nav_flight_hours += session_flight_hours
 
-                    if student_profile.flight_rate != 130.0:
-                        hourly_rate = student_profile.flight_rate
-                    else:
-                        hourly_rate = aircraft.hourly_rate
-
-                    student_profile.balance -= round(session_flight_hours*hourly_rate + fuel_cost*fuel_consumed, 2)
+                    student_profile.balance -= round(
+                        session_flight_hours * instance.hourly_rate_applied
+                        + instance.fuel_rate_applied * fuel_consumed,
+                        2,
+                    )
                     student_profile.save()
                     # Update aircraft's total hours
                     aircraft.total_hours += session_flight_hours

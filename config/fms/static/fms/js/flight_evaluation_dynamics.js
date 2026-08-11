@@ -21,11 +21,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Only text/number fields — do not set <select> values from the API here (invalid
-                        // option values can break the control; Curso stays whatever the server rendered).
                         document.getElementById('id_student_first_name').value = data.data.student_first_name;
                         document.getElementById('id_student_last_name').value = data.data.student_last_name;
                         document.getElementById('id_student_license_type').value = data.data.student_license_type;
+
+                        const courseTypeField = document.getElementById('id_course_type');
+                        if (courseTypeField) {
+                            courseTypeField.value = data.data.course_type;
+                        }
 
                         // Determine form type and update only relevant field
                         const isFlightForm = document.getElementById('id_accumulated_flight_hours') !== null;

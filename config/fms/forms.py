@@ -4,6 +4,22 @@ from .models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvalua
 from accounts.models import StudentProfile
 from fleet.models import Simulator, Aircraft
 
+
+def set_course_type_choices(field, include_empty=False):
+    """Include course codes managed in Academic in every evaluation form."""
+    from academic.models import CourseType
+
+    choices = list(field.choices)
+    known_codes = {value for value, _label in choices}
+    for code in CourseType.objects.order_by('code').values_list('code', flat=True):
+        if code not in known_codes:
+            choices.append((code, code))
+            known_codes.add(code)
+
+    if include_empty and '' not in known_codes:
+        choices.insert(0, ('', '---------'))
+    field.choices = choices
+
 class SimEvaluationForm(forms.ModelForm):
     # Add a custom simulator field that uses ModelChoiceField
     simulator = forms.ModelChoiceField(
@@ -279,7 +295,7 @@ class SimEvaluationForm(forms.ModelForm):
         
         # Override the field choices to include empty option
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
-        self.fields['course_type'].choices = [('', '---------')] + list(self.fields['course_type'].choices)
+        set_course_type_choices(self.fields['course_type'], include_empty=True)
         
         if user:
             profile = user.instructor_profile
@@ -578,6 +594,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
         self.fields['student_license_type'].initial = ''
         # Default course (practical PPA); not filled from student profile / API on 0–100 form
         self.fields['course_type'].initial = 'PPA-P'
+        set_course_type_choices(self.fields['course_type'])
 
         # Override the field choices to include empty option
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
@@ -910,6 +927,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
         # Set student fields to empty to prevent preselection
         self.fields['student_license_type'].initial = ''
         self.fields['course_type'].initial = 'HVI-P'
+        set_course_type_choices(self.fields['course_type'])
         
         # Override the field choices to include empty option
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
@@ -1258,6 +1276,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
         # Set student fields to empty to prevent preselection
         self.fields['student_license_type'].initial = ''
         self.fields['course_type'].initial = 'PCA-P'
+        set_course_type_choices(self.fields['course_type'])
         
         # Override the field choices to include empty option
         self.fields['student_license_type'].choices = [('', '---------')] + list(self.fields['student_license_type'].choices)
@@ -1445,6 +1464,7 @@ class ExternalFlightEvaluationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        set_course_type_choices(self.fields['course_type'])
         reference_form = FlightEvaluation120_170Form()
         stored_grades = self.instance.grades if self.instance and self.instance.pk else {}
         for name in self.GRADE_FIELDS:

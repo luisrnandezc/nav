@@ -9,11 +9,20 @@ from fms.forms import (
     FlightEvaluation120_170Form,
     SimEvaluationForm,
 )
+from fms.models import SimEvaluation
 
 from .factories import StudentProfileFactory, UserFactory
 
 
 class CourseTypeSelectionTests(TestCase):
+    form_classes = (
+        SimEvaluationForm,
+        FlightEvaluation0_100Form,
+        FlightEvaluation100_120Form,
+        FlightEvaluation120_170Form,
+        ExternalFlightEvaluationForm,
+    )
+
     def setUp(self):
         self.course_type = CourseType.objects.create(
             code='MM-P',
@@ -26,18 +35,35 @@ class CourseTypeSelectionTests(TestCase):
         )
 
     def test_all_evaluation_forms_include_academic_course_codes(self):
-        form_classes = (
-            SimEvaluationForm,
-            FlightEvaluation0_100Form,
-            FlightEvaluation100_120Form,
-            FlightEvaluation120_170Form,
-            ExternalFlightEvaluationForm,
-        )
-
-        for form_class in form_classes:
+        for form_class in self.form_classes:
             with self.subTest(form=form_class.__name__):
                 choices = dict(form_class().fields['course_type'].choices)
                 self.assertEqual(choices['MM-P'], 'MM-P')
+
+    def test_evaluation_forms_only_offer_academic_course_types(self):
+        for form_class in self.form_classes:
+            with self.subTest(form=form_class.__name__):
+                choices = dict(form_class().fields['course_type'].choices)
+                self.assertNotIn('PPA-P', choices)
+
+    def test_deleted_course_type_is_removed_from_new_evaluation_forms(self):
+        self.course_edition.delete()
+        self.course_type.delete()
+
+        for form_class in self.form_classes:
+            with self.subTest(form=form_class.__name__):
+                choices = dict(form_class().fields['course_type'].choices)
+                self.assertNotIn('MM-P', choices)
+
+    def test_existing_evaluation_keeps_deleted_course_type_when_editing(self):
+        evaluation = SimEvaluation(course_type='OLD-P')
+        evaluation.pk = 1
+
+        choices = dict(
+            SimEvaluationForm(instance=evaluation).fields['course_type'].choices
+        )
+
+        self.assertEqual(choices['OLD-P'], 'OLD-P')
 
     def test_student_lookup_returns_current_enrolled_course_code(self):
         student = UserFactory(role='STUDENT')

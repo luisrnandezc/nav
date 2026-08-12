@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from accounts.models import StudentProfile
 from django.utils import timezone
 from fleet.models import Simulator, Aircraft
-from constants import COURSE_TYPES
 
 
 # Custom validators with Spanish messages
@@ -129,7 +128,6 @@ class SimEvaluation(models.Model):
     )
     course_type = models.CharField(
         max_length=10,
-        choices=COURSE_TYPES,
         default='PPA-P',
         verbose_name='Tipo de curso'
     )
@@ -925,7 +923,6 @@ class FlightEvaluation0_100(models.Model):
     )
     course_type = models.CharField(
         max_length=10,
-        choices=COURSE_TYPES,
         default='PPA-P',
         verbose_name='Tipo de curso'
     )
@@ -1610,7 +1607,6 @@ class FlightEvaluation100_120(models.Model):
     )
     course_type = models.CharField(
         max_length=10,
-        choices=COURSE_TYPES,
         default='HVI-P',
         verbose_name='Tipo de curso'
     )
@@ -2259,7 +2255,6 @@ class FlightEvaluation120_170(models.Model):
     )
     course_type = models.CharField(
         max_length=10,
-        choices=COURSE_TYPES,
         default='PCA-P',
         verbose_name='Tipo de curso'
     )
@@ -2897,7 +2892,6 @@ class ExternalFlightEvaluation(models.Model):
     )
     course_type = models.CharField(
         max_length=10, 
-        choices=COURSE_TYPES, 
         default='PCA-P', 
         verbose_name='Tipo de curso'
     )

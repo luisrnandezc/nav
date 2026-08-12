@@ -1,7 +1,9 @@
 from decimal import Decimal
 from unittest.mock import patch
 
+from django.contrib import admin
 from django.db import DatabaseError
+from django.forms import modelform_factory
 from django.test import TestCase
 from django.utils import timezone
 
@@ -12,6 +14,7 @@ from fms.forms import (
     FlightEvaluation100_120Form,
     FlightEvaluation120_170Form,
 )
+from fms.admin import FlightEvaluationCorrectionForm
 
 from .factories import StudentProfileFactory, UserFactory
 
@@ -103,6 +106,14 @@ class FlightEvaluationAccountingTests(TestCase):
         self.assertEqual(self.student_profile.nav_flight_hours, Decimal(nav_hours))
         self.assertEqual(self.aircraft.total_hours, Decimal(aircraft_hours))
 
+    def correct_evaluation(self, evaluation, **changes):
+        for field, value in changes.items():
+            setattr(evaluation, field, Decimal(value))
+        model_admin = admin.site._registry[type(evaluation)]
+        model_admin.save_model(None, evaluation, None, True)
+        evaluation.refresh_from_db()
+        return evaluation
+
     def test_all_evaluation_types_use_aircraft_rates_and_update_totals(self):
         self.student_profile.flight_rate = self.aircraft.hourly_rate
         self.student_profile.save(update_fields=['flight_rate'])
@@ -189,3 +200,98 @@ class FlightEvaluationAccountingTests(TestCase):
         self.assertEqual(self.student_profile.flight_hours, Decimal('50.0'))
         self.assertEqual(self.student_profile.nav_flight_hours, Decimal('20.0'))
         self.assertEqual(self.aircraft.total_hours, Decimal('1000.0'))
+
+    def test_admin_correction_updates_hours_fuel_balance_and_totals_for_all_types(self):
+        self.student_profile.flight_rate = self.aircraft.hourly_rate
+        self.student_profile.save(update_fields=['flight_rate'])
+
+        for label, form_class, course_type in self.FORM_CASES:
+            with self.subTest(evaluation=label):
+                evaluation = self.save_evaluation(form_class, course_type)
+                evaluation = self.correct_evaluation(
+                    evaluation,
+                    final_hourmeter='101.5',
+                    fuel_consumed='7.0',
+                )
+
+                self.assertEqual(evaluation.session_flight_hours, Decimal('1.5'))
+                self.assertEqual(evaluation.fuel_consumed, Decimal('7.0'))
+                self.assert_current_totals('777.00', '51.5', '21.5', '1001.5')
+
+                evaluation.delete()
+                self.assert_current_totals('1000.00', '50.0', '20.0', '1000.0')
+
+    def test_admin_exposes_only_correction_inputs_and_keeps_hours_calculated(self):
+        evaluation = self.save_evaluation(FlightEvaluation100_120Form, 'HVI-P')
+        model_admin = admin.site._registry[type(evaluation)]
+        readonly_fields = model_admin.get_readonly_fields(None, evaluation)
+
+        self.assertNotIn('initial_hourmeter', readonly_fields)
+        self.assertNotIn('final_hourmeter', readonly_fields)
+        self.assertNotIn('fuel_consumed', readonly_fields)
+        self.assertIn('session_flight_hours', readonly_fields)
+
+    def test_admin_fuel_only_correction_uses_stored_fuel_rate(self):
+        evaluation = self.save_evaluation(FlightEvaluation100_120Form, 'HVI-P')
+        self.aircraft.fuel_cost = Decimal('9.00')
+        self.aircraft.save(update_fields=['fuel_cost'])
+
+        evaluation = self.correct_evaluation(evaluation, fuel_consumed='5.0')
+
+        self.assertEqual(evaluation.fuel_rate_applied, Decimal('4.00'))
+        self.assert_current_totals('850.00', '51.0', '21.0', '1001.0')
+
+    def test_admin_correction_applies_yv206e_factor(self):
+        self.aircraft = Aircraft.objects.get(registration='YV206E')
+        self.aircraft.hourly_rate = Decimal('130.0')
+        self.aircraft.fuel_cost = Decimal('4.00')
+        self.aircraft.hour_correction_factor = Decimal('1.3')
+        self.aircraft.total_hours = Decimal('1000.0')
+        self.aircraft.save(update_fields=[
+            'hourly_rate', 'fuel_cost', 'hour_correction_factor', 'total_hours',
+        ])
+        self.student_profile.flight_rate = self.aircraft.hourly_rate
+        self.student_profile.save(update_fields=['flight_rate'])
+        evaluation = self.save_evaluation(FlightEvaluation0_100Form, 'PPA-P')
+
+        evaluation = self.correct_evaluation(evaluation, final_hourmeter='102.0')
+
+        self.assertEqual(evaluation.session_flight_hours, Decimal('2.6'))
+        self.assert_current_totals('622.00', '52.6', '22.6', '1002.6')
+
+    def test_admin_correction_form_rejects_invalid_hourmeters_and_fuel(self):
+        model = FlightEvaluation100_120Form._meta.model
+        correction_form = modelform_factory(
+            model,
+            form=FlightEvaluationCorrectionForm,
+            fields=('initial_hourmeter', 'final_hourmeter', 'fuel_consumed'),
+        )
+        evaluation = self.save_evaluation(FlightEvaluation100_120Form, 'HVI-P')
+
+        form = correction_form(
+            data={
+                'initial_hourmeter': '102.0',
+                'final_hourmeter': '101.0',
+                'fuel_consumed': '-1.0',
+            },
+            instance=evaluation,
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('fuel_consumed', form.errors)
+        self.assertIn('__all__', form.errors)
+
+    def test_admin_correction_rolls_back_all_changes_on_failure(self):
+        evaluation = self.save_evaluation(FlightEvaluation100_120Form, 'HVI-P')
+        evaluation.final_hourmeter = Decimal('101.5')
+        evaluation.fuel_consumed = Decimal('7.0')
+        model_admin = admin.site._registry[type(evaluation)]
+
+        with patch.object(Aircraft, 'save', side_effect=DatabaseError('fleet update failed')):
+            with self.assertRaises(DatabaseError):
+                model_admin.save_model(None, evaluation, None, True)
+
+        evaluation.refresh_from_db()
+        self.assertEqual(evaluation.session_flight_hours, Decimal('1.0'))
+        self.assertEqual(evaluation.fuel_consumed, Decimal('10.0'))
+        self.assert_current_totals('830.00', '51.0', '21.0', '1001.0')

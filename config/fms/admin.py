@@ -1,5 +1,9 @@
 from django.contrib import admin
+from django import forms
+from django.db import transaction
 from django.shortcuts import redirect
+from accounts.models import StudentProfile
+from fleet.models import Aircraft
 from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, ExternalFlightEvaluation, FlightReport, DiscrepancyReport
 
 
@@ -17,6 +21,87 @@ def flight_evaluation_hours(obj):
 
 flight_evaluation_hours.short_description = 'Horas'
 flight_evaluation_hours.admin_order_field = 'session_flight_hours'
+
+
+def corrected_flight_hours(aircraft, initial_hourmeter, final_hourmeter):
+    if initial_hourmeter is None or final_hourmeter is None:
+        raise forms.ValidationError('El horómetro inicial y final son requeridos.')
+    if final_hourmeter < initial_hourmeter:
+        raise forms.ValidationError('El horómetro final no puede ser menor que el inicial.')
+
+    hours = round(final_hourmeter - initial_hourmeter, 1)
+    if aircraft.registration == 'YV206E':
+        hours = round(hours * aircraft.hour_correction_factor, 1)
+    if hours > 14:
+        raise forms.ValidationError('Las horas corregidas no pueden exceder 14 horas.')
+    return hours
+
+
+class FlightEvaluationCorrectionForm(forms.ModelForm):
+    def clean(self):
+        cleaned_data = super().clean()
+        fuel_consumed = cleaned_data.get('fuel_consumed')
+        if fuel_consumed is not None and fuel_consumed < 0:
+            self.add_error('fuel_consumed', 'El combustible consumido no puede ser negativo.')
+
+        try:
+            corrected_flight_hours(
+                self.instance.aircraft,
+                cleaned_data.get('initial_hourmeter'),
+                cleaned_data.get('final_hourmeter'),
+            )
+        except forms.ValidationError as error:
+            raise forms.ValidationError(error.messages)
+        return cleaned_data
+
+
+class FlightEvaluationCorrectionAdminMixin:
+    form = FlightEvaluationCorrectionForm
+
+    @transaction.atomic
+    def save_model(self, request, obj, form, change):
+        if not change:
+            return super().save_model(request, obj, form, change)
+
+        original = self.model.objects.select_for_update().get(pk=obj.pk)
+        student = StudentProfile.objects.select_for_update().get(
+            user__national_id=original.student_id
+        )
+        aircraft = Aircraft.objects.select_for_update().get(pk=original.aircraft_id)
+        new_hours = corrected_flight_hours(
+            aircraft, obj.initial_hourmeter, obj.final_hourmeter
+        )
+        hours_difference = new_hours - original.session_flight_hours
+
+        old_charge = round(
+            original.session_flight_hours * original.hourly_rate_applied
+            + original.fuel_consumed * original.fuel_rate_applied,
+            2,
+        )
+        new_charge = round(
+            new_hours * original.hourly_rate_applied
+            + obj.fuel_consumed * original.fuel_rate_applied,
+            2,
+        )
+
+        new_student_hours = student.flight_hours + hours_difference
+        new_nav_hours = student.nav_flight_hours + hours_difference
+        new_aircraft_hours = aircraft.total_hours + hours_difference
+        if new_student_hours < 0 or new_nav_hours < 0 or new_aircraft_hours < 0:
+            raise forms.ValidationError(
+                'La corrección produciría un total de horas negativo.'
+            )
+
+        obj.session_flight_hours = new_hours
+        super().save_model(request, obj, form, change)
+
+        student.flight_hours = new_student_hours
+        student.nav_flight_hours = new_nav_hours
+        student.balance += old_charge - new_charge
+        student.save(update_fields=['flight_hours', 'nav_flight_hours', 'balance'])
+
+        aircraft.total_hours = new_aircraft_hours
+        aircraft.save(update_fields=['total_hours'])
 
 @admin.register(SimEvaluation)
 class SimEvaluationAdmin(admin.ModelAdmin):
@@ -184,7 +269,7 @@ class SimEvaluationAdmin(admin.ModelAdmin):
         verbose_name_plural = 'Evaluaciones de simulador'
 
 @admin.register(FlightEvaluation0_100)
-class FlightEvaluation0_100Admin(admin.ModelAdmin):
+class FlightEvaluation0_100Admin(FlightEvaluationCorrectionAdminMixin, admin.ModelAdmin):
     list_display = [
         'id',
         'student_full_name', 'student_id',
@@ -283,7 +368,6 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         'student_id', 'student_first_name', 'student_last_name', 
         'student_license_type', 'student_license_number',
         'session_flight_hours',
-        'initial_hourmeter', 'final_hourmeter',
         'aircraft',
         'pre_1', 'pre_2', 'pre_3',
         'pre_4', 'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'mvrs_1', 'mvrs_2',
@@ -326,7 +410,7 @@ class FlightEvaluation0_100Admin(admin.ModelAdmin):
         verbose_name_plural = 'Evaluaciones de vuelo 0-100'
 
 @admin.register(FlightEvaluation100_120)
-class FlightEvaluation100_120Admin(admin.ModelAdmin):
+class FlightEvaluation100_120Admin(FlightEvaluationCorrectionAdminMixin, admin.ModelAdmin):
     list_display = [
         'id',
         'student_full_name', 'student_id',
@@ -424,7 +508,6 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         'student_id', 'student_first_name', 'student_last_name', 
         'student_license_type', 'student_license_number',
         'session_flight_hours',
-        'initial_hourmeter', 'final_hourmeter',
         'aircraft',
         'pre_1', 'pre_2', 'pre_3', 'pre_4',
         'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'b_ifr_1',
@@ -461,7 +544,7 @@ class FlightEvaluation100_120Admin(admin.ModelAdmin):
         verbose_name_plural = 'Evaluaciones de vuelo 100-120'
 
 @admin.register(FlightEvaluation120_170)
-class FlightEvaluation120_170Admin(admin.ModelAdmin):
+class FlightEvaluation120_170Admin(FlightEvaluationCorrectionAdminMixin, admin.ModelAdmin):
     list_display = [
         'id',
         'student_full_name', 'student_id',
@@ -552,7 +635,6 @@ class FlightEvaluation120_170Admin(admin.ModelAdmin):
         'student_id', 'student_first_name', 'student_last_name', 
         'student_license_type', 'student_license_number',
         'session_flight_hours', 
-        'initial_hourmeter', 'final_hourmeter',
         'aircraft',
         'pre_1', 'pre_2', 'pre_3', 'pre_4',
         'pre_5', 'pre_6', 'to_1', 'to_2', 'to_3', 'to_4', 'to_5', 'to_6', 'inst_1',

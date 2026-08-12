@@ -19,9 +19,14 @@ def flight_evaluation_hours(obj):
     return obj.session_flight_hours
 
 
+def flight_evaluation_fuel_consumed(obj):
+    return obj.fuel_consumed
+
+
 flight_evaluation_hours.short_description = 'Horas'
 flight_evaluation_hours.admin_order_field = 'session_flight_hours'
-
+flight_evaluation_fuel_consumed.short_description = 'FC (L)'
+flight_evaluation_fuel_consumed.admin_order_field = 'fuel_consumed'
 
 def corrected_flight_hours(aircraft, initial_hourmeter, final_hourmeter):
     if initial_hourmeter is None or final_hourmeter is None:
@@ -274,7 +279,7 @@ class FlightEvaluation0_100Admin(FlightEvaluationCorrectionAdminMixin, admin.Mod
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, 'session_grade',
+        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, flight_evaluation_fuel_consumed, 'session_grade',
         'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
@@ -415,7 +420,7 @@ class FlightEvaluation100_120Admin(FlightEvaluationCorrectionAdminMixin, admin.M
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, 'session_grade',
+        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, flight_evaluation_fuel_consumed, 'session_grade',
         'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
@@ -549,7 +554,7 @@ class FlightEvaluation120_170Admin(FlightEvaluationCorrectionAdminMixin, admin.M
         'id',
         'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id',
-        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, 'session_grade',
+        'session_date', flight_evaluation_aircraft, 'session_number', flight_evaluation_hours, flight_evaluation_fuel_consumed, 'session_grade',
         'aura_processed',
     ]
     list_filter = ['session_date', 'student_id', 'instructor_id', 'aircraft', 'session_grade']
@@ -675,7 +680,7 @@ class ExternalFlightEvaluationAdmin(admin.ModelAdmin):
         'id', 'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id', 'session_date',
         'aircraft_display', 'evaluation_type', 'session_number',
-        'session_hours', 'session_grade',
+        'session_hours', flight_evaluation_fuel_consumed, 'session_grade',
     )
     list_filter = ('session_date', 'student_id', 'instructor_id', 'evaluation_type', 'session_grade')
     search_fields = (
@@ -818,7 +823,7 @@ class FlightReportAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'pilot_full_name', 'pilot_id', 'flight_date', 'aircraft', 
-        'flight_reason', 'flight_hours', 'fuel_consumed'
+        'flight_reason', 'flight_hours', flight_evaluation_fuel_consumed
     ]
     list_filter = ['flight_date', 'pilot_id', 'aircraft', 'flight_reason']
     search_fields = ['pilot_id', 'pilot_first_name', 'pilot_last_name']

@@ -38,7 +38,10 @@ def submit_student_grade(request):
                     'component_label': label,
                     'student_id': form.cleaned_data['student'].id,
                     'instructor_id': request.user.id,
-                    'grade': float(form.cleaned_data['grade']),
+                    # Session data must be JSON serializable, but converting Decimal
+                    # to float introduces binary precision digits that fail the
+                    # model's one-decimal-place validation (for example, 98.8).
+                    'grade': str(form.cleaned_data['grade']),
                     'test_type': form.cleaned_data['test_type'],
                     'test_type_display': dict(StudentGrade._meta.get_field('test_type').choices)[
                         form.cleaned_data['test_type']

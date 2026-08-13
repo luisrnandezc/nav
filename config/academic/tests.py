@@ -6,6 +6,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import InstructorProfile, StudentProfile, User
@@ -195,6 +196,29 @@ class StudentPassedFinalTests(GradingTestCase):
 
 
 class StudentGradeValidationTests(GradingTestCase):
+    def test_submission_preserves_one_decimal_grade_precision(self):
+        self.client.force_login(self.instructor)
+        url = reverse('academic:submit_grade')
+        response = self.client.post(
+            url,
+            {
+                'action': 'add_temp',
+                'subject_edition': self.edition_theory_only.pk,
+                'component': 'theory',
+                'student': self.student.pk,
+                'grade': '98.8',
+                'test_type': 'STANDARD',
+            },
+        )
+
+        self.assertRedirects(response, url)
+        self.assertEqual(self.client.session['temp_grades'][0]['grade'], '98.8')
+
+        response = self.client.post(url, {'action': 'submit_all'})
+
+        self.assertRedirects(response, url)
+        self.assertEqual(StudentGrade.objects.get().grade, Decimal('98.8'))
+
     def test_practical_not_allowed_when_edition_has_no_practical_weight(self):
         with self.assertRaises(ValidationError):
             StudentGrade(

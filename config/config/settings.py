@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'transactions',
     'sms',
     'aura',
+    'prod',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

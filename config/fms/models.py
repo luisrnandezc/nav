@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
@@ -2953,6 +2955,12 @@ class ExternalFlightEvaluation(models.Model):
         default=0, 
         verbose_name='Combustible consumido (litros)'
     )
+    fuel_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=Decimal('3.11'),
+        verbose_name='Tarifa de combustible aplicada ($/litro)',
+    )
     session_flight_hours = models.DecimalField(
         max_digits=3, 
         decimal_places=1, 
@@ -3084,6 +3092,12 @@ class FlightReport(models.Model):
         default=0.0,
         verbose_name='Combustible consumido (litros)'
     )
+    fuel_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=Decimal('3.11'),
+        verbose_name='Tarifa de combustible aplicada ($/litro)',
+    )
     flight_hours = models.DecimalField(
         max_digits=2,
         decimal_places=1,
@@ -3112,6 +3126,8 @@ class FlightReport(models.Model):
     
     def save(self, *args, **kwargs):
         """Override save method to calculate flight hours."""
+        if self._state.adding:
+            self.fuel_rate_applied = self.aircraft.fuel_cost
         if self.initial_hourmeter and self.final_hourmeter:
             self.flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
         super().save(*args, **kwargs)

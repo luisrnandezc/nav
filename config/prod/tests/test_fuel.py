@@ -2,16 +2,20 @@ from datetime import date
 from decimal import Decimal
 from io import StringIO
 
+from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
 from fleet.models import Aircraft
+from fms.forms import ExternalFlightEvaluationForm, FlightReportForm
 from fms.models import (
+    ExternalFlightEvaluation,
     FlightEvaluation0_100,
     FlightEvaluation100_120,
     FlightEvaluation120_170,
+    FlightReport,
 )
 from prod.services import get_fuel_consumed
 
@@ -58,6 +62,40 @@ class FuelConsumptionTests(TestCase):
         # evaluation models' accounting side effects.
         return model.objects.bulk_create([model(**values)])[0]
 
+    def create_external_evaluation(self, **overrides):
+        values = {
+            'instructor_id': 2000001,
+            'instructor_first_name': 'Test',
+            'instructor_last_name': 'Instructor',
+            'instructor_license_number': 2000001,
+            'student_id': 1000001,
+            'student_first_name': 'Test',
+            'student_last_name': 'Student',
+            'student_license_type': 'PPA',
+            'student_license_number': 1000001,
+            'evaluation_type': 'OTRO',
+            'session_date': date(2026, 6, 10),
+            'session_flight_hours': Decimal('2.0'),
+            'fuel_consumed': Decimal('12.0'),
+            'aircraft_registration': 'N123EX',
+        }
+        values.update(overrides)
+        return ExternalFlightEvaluation.objects.bulk_create(
+            [ExternalFlightEvaluation(**values)]
+        )[0]
+
+    def create_flight_report(self, **overrides):
+        values = {
+            'pilot_id': 2000001,
+            'pilot_license_number': 2000001,
+            'flight_date': date(2026, 6, 10),
+            'flight_hours': Decimal('1.0'),
+            'fuel_consumed': Decimal('8.0'),
+            'aircraft': self.aircraft,
+        }
+        values.update(overrides)
+        return FlightReport.objects.bulk_create([FlightReport(**values)])[0]
+
     def test_combines_all_evaluation_types_using_historical_fuel_rates(self):
         self.create_evaluation(FlightEvaluation0_100, fuel_consumed=Decimal('10.0'))
         self.create_evaluation(
@@ -84,6 +122,53 @@ class FuelConsumptionTests(TestCase):
         self.assertEqual(report.flight_hours, Decimal('4.5'))
         self.assertEqual(report.fuel_liters, Decimal('35.0'))
         self.assertEqual(report.fuel_cost_usd, Decimal('135.00'))
+
+    def test_all_sources_include_external_evaluations_and_flight_reports(self):
+        self.create_evaluation(FlightEvaluation0_100)
+        external = self.create_external_evaluation()
+        flight_report = self.create_flight_report()
+
+        report = get_fuel_consumed(
+            start_date=date(2026, 6, 5),
+            end_date=date(2026, 8, 13),
+        )
+
+        self.assertEqual(report.evaluation_count, 3)
+        self.assertEqual(report.flight_hours, Decimal('4.5'))
+        self.assertEqual(report.fuel_liters, Decimal('30.0'))
+        self.assertEqual(report.fuel_cost_usd, Decimal('102.20'))
+        self.assertEqual(external.fuel_rate_applied, Decimal('3.11'))
+        self.assertEqual(flight_report.fuel_rate_applied, Decimal('3.11'))
+
+    def test_new_flight_report_captures_aircraft_fuel_rate(self):
+        self.aircraft.fuel_cost = Decimal('4.25')
+        self.aircraft.save(update_fields=['fuel_cost'])
+
+        report = FlightReport.objects.create(
+            pilot_id=2000001,
+            pilot_license_number=2000001,
+            flight_date=date(2026, 6, 10),
+            initial_hourmeter=Decimal('100.0'),
+            final_hourmeter=Decimal('101.0'),
+            fuel_consumed=Decimal('8.0'),
+            aircraft=self.aircraft,
+        )
+
+        self.assertEqual(report.fuel_rate_applied, Decimal('4.25'))
+
+    def test_fuel_rates_are_hidden_from_public_forms_but_editable_in_admin(self):
+        self.assertNotIn('fuel_rate_applied', ExternalFlightEvaluationForm().fields)
+        self.assertNotIn('fuel_rate_applied', FlightReportForm().fields)
+        self.assertNotIn(
+            'fuel_rate_applied',
+            admin.site._registry[ExternalFlightEvaluation].get_readonly_fields(
+                None,
+            ),
+        )
+        self.assertNotIn(
+            'fuel_rate_applied',
+            admin.site._registry[FlightReport].get_readonly_fields(None),
+        )
 
     def test_filters_inclusive_dates_aircraft_and_evaluation_types(self):
         self.create_evaluation(FlightEvaluation0_100)

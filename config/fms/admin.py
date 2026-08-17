@@ -680,7 +680,8 @@ class ExternalFlightEvaluationAdmin(admin.ModelAdmin):
         'id', 'student_full_name', 'student_id',
         'instructor_full_name', 'instructor_id', 'session_date',
         'aircraft_display', 'evaluation_type', 'session_number',
-        'session_hours', flight_evaluation_fuel_consumed, 'session_grade',
+        'session_hours', flight_evaluation_fuel_consumed, 'fuel_rate_applied',
+        'session_grade',
     )
     list_filter = ('session_date', 'student_id', 'instructor_id', 'evaluation_type', 'session_grade')
     search_fields = (
@@ -714,7 +715,8 @@ class ExternalFlightEvaluationAdmin(admin.ModelAdmin):
                 'evaluation_type', 'session_date', 'flight_rules', 'solo_flight',
                 'session_number', 'session_letter', 'accumulated_flight_hours',
                 'session_flight_hours', 'initial_hourmeter', 'final_hourmeter',
-                'fuel_consumed', 'aircraft_registration', 'session_grade',
+                'fuel_consumed', 'fuel_rate_applied', 'aircraft_registration',
+                'session_grade',
             ),
         }),
         ('Sección 4: Prevuelo / Encendido / Taxeo', {
@@ -823,7 +825,8 @@ class FlightReportAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'pilot_full_name', 'pilot_id', 'flight_date', 'aircraft', 
-        'flight_reason', 'flight_hours', flight_evaluation_fuel_consumed
+        'flight_reason', 'flight_hours', flight_evaluation_fuel_consumed,
+        'fuel_rate_applied',
     ]
     list_filter = ['flight_date', 'pilot_id', 'aircraft', 'flight_reason']
     search_fields = ['pilot_id', 'pilot_first_name', 'pilot_last_name']
@@ -847,7 +850,7 @@ class FlightReportAdmin(admin.ModelAdmin):
         ('Sección 2: Datos del vuelo', {
             'fields': (
                 'flight_date', 'flight_reason', 'aircraft', 'initial_hourmeter',
-                'final_hourmeter', 'fuel_consumed'
+                'final_hourmeter', 'fuel_consumed', 'fuel_rate_applied'
             )
         }),
         ('Sección 3: Comentarios', {

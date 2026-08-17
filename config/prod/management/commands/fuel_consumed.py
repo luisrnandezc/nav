@@ -5,7 +5,14 @@ from django.utils.dateparse import parse_date
 from prod.services import get_fuel_consumed
 
 
-EVALUATION_CHOICES = ('0-100', '100-120', '120-170', 'all')
+EVALUATION_CHOICES = (
+    '0-100',
+    '100-120',
+    '120-170',
+    'external',
+    'flight-reports',
+    'all',
+)
 
 
 class Command(BaseCommand):
@@ -27,7 +34,7 @@ class Command(BaseCommand):
             nargs='+',
             choices=EVALUATION_CHOICES,
             default=['all'],
-            help='Evaluation groups to include (default: all).',
+            help='Session sources to include (default: all).',
         )
         parser.add_argument(
             '--aircraft',

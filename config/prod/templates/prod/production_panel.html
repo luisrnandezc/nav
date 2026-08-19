@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAV | Panel de Producción</title>
+    {% include 'ui/includes/core_css.html' %}
+    <link href="{% static 'prod/production_panel.css' %}" rel="stylesheet" />
+  </head>
+  <body
+    class="production-body"
+    style="--production-background-image: url('{% static 'fms/img/background.jpg' %}');"
+  >
+    <main class="main-container production-panel">
+      <div class="back-button">
+        <a href="{% url 'dashboard:dashboard' %}" class="button">&larr; Volver</a>
+      </div>
+
+      <header class="main-header production-header">
+        <h1>Panel de Producción</h1>
+      </header>
+
+      <section class="ui-card filter-card">
+        <h2>Filtros</h2>
+        <p class="filter-help">Sin selección se incluyen todos los elementos de ese filtro.</p>
+        <form method="get">
+          {% if form.non_field_errors %}
+            <div class="ui-form-error">{{ form.non_field_errors }}</div>
+          {% endif %}
+          <div class="ui-form-grid production-filter-grid">
+            {% for field in form %}
+              <div class="ui-form-row">
+                <label class="ui-form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<span class="ui-form-error">{{ error }}</span>{% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+          <div class="ui-actions production-actions">
+            <button type="submit" class="button">Generar reporte</button>
+            <a href="{% url 'prod:production_panel' %}" class="button">Limpiar filtros</a>
+          </div>
+        </form>
+      </section>
+
+      {% if report %}
+        <section class="metrics-grid" aria-label="Resumen de producción">
+          <article class="ui-card metric-card"><span>Combustible</span><strong>{{ report.totals.fuel_liters|floatformat:1 }} L</strong><small>${{ report.totals.fuel_cost_usd|floatformat:2 }}</small></article>
+          <article class="ui-card metric-card"><span>Horas de vuelo</span><strong>{{ report.totals.flight_hours|floatformat:1 }} h</strong><small>Ingreso bruto ${{ report.totals.gross_flying_income_usd|floatformat:2 }}</small></article>
+          <article class="ui-card metric-card"><span>Ingreso de vuelo</span><strong>${{ report.totals.net_flying_revenue_usd|floatformat:2 }}</strong><small>Después de instructor</small></article>
+          <article class="ui-card metric-card"><span>Horas de simulador</span><strong>{{ report.totals.simulator_hours|floatformat:1 }} h</strong><small>Ingreso neto ${{ report.totals.net_simulator_revenue_usd|floatformat:2 }}</small></article>
+          <article class="ui-card metric-card"><span>Producción instructores</span><strong>${{ report.totals.instructor_production_usd|floatformat:2 }}</strong><small>Vuelo y simulador</small></article>
+        </section>
+
+        <section class="report-section ui-card">
+          <h2>Producción por aeronave</h2>
+          <div class="table-scroll"><table><thead><tr><th>Aeronave</th><th>Horas</th><th>Combustible</th><th>Costo combustible</th><th>Ingreso bruto</th><th>Ingreso vuelo</th></tr></thead><tbody>
+            {% for row in report.by_aircraft %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }}</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td><td>${{ row.totals.fuel_cost_usd|floatformat:2 }}</td><td>${{ row.totals.gross_flying_income_usd|floatformat:2 }}</td><td>${{ row.totals.net_flying_revenue_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="6">No hay datos.</td></tr>{% endfor %}
+          </tbody></table></div>
+        </section>
+
+        <section class="report-section ui-card">
+          <h2>Producción por simulador</h2>
+          <div class="table-scroll"><table><thead><tr><th>Simulador</th><th>Horas</th><th>Ingreso bruto</th><th>Instructor</th><th>Ingreso neto</th></tr></thead><tbody>
+            {% for row in report.by_simulator %}<tr><td>{{ row.label }}</td><td>{{ row.totals.simulator_hours|floatformat:1 }}</td><td>${{ row.totals.gross_simulator_income_usd|floatformat:2 }}</td><td>${{ row.totals.instructor_simulator_cost_usd|floatformat:2 }}</td><td>${{ row.totals.net_simulator_revenue_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="5">No hay datos.</td></tr>{% endfor %}
+          </tbody></table></div>
+        </section>
+
+        <section class="report-section ui-card">
+          <h2>Producción por instructor</h2>
+          <div class="table-scroll"><table><thead><tr><th>Instructor</th><th>Vuelo</th><th>Simulador</th><th>Combustible</th><th>Producción</th></tr></thead><tbody>
+            {% for row in report.by_instructor %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }} h</td><td>{{ row.totals.simulator_hours|floatformat:1 }} h</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td><td>${{ row.totals.instructor_production_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="5">No hay datos.</td></tr>{% endfor %}
+          </tbody></table></div>
+        </section>
+
+        <section class="report-section ui-card">
+          <h2>Producción por estudiante</h2>
+          <div class="table-scroll"><table><thead><tr><th>Estudiante</th><th>Vuelo</th><th>Valor vuelo</th><th>Simulador</th><th>Combustible</th></tr></thead><tbody>
+            {% for row in report.by_student %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }} h</td><td>${{ row.totals.student_flying_value_usd|floatformat:2 }}</td><td>{{ row.totals.simulator_hours|floatformat:1 }} h</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td></tr>{% empty %}<tr><td colspan="5">No hay datos.</td></tr>{% endfor %}
+          </tbody></table></div>
+        </section>
+
+        <section class="report-section ui-card">
+          <h2>Producción por fecha</h2>
+          <div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Vuelo</th><th>Simulador</th><th>Combustible</th><th>Ingreso vuelo</th><th>Ingreso simulador</th></tr></thead><tbody>
+            {% for row in report.by_date %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }} h</td><td>{{ row.totals.simulator_hours|floatformat:1 }} h</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td><td>${{ row.totals.net_flying_revenue_usd|floatformat:2 }}</td><td>${{ row.totals.net_simulator_revenue_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="6">No hay datos.</td></tr>{% endfor %}
+          </tbody></table></div>
+        </section>
+      {% elif request.GET %}
+        <div class="ui-empty">Corrige los filtros para generar el reporte.</div>
+      {% else %}
+        <div class="ui-empty">Selecciona un rango de fechas para generar el reporte.</div>
+      {% endif %}
+    </main>
+  </body>
+</html>

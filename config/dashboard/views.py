@@ -234,6 +234,15 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'visible': True,
         },
         {
+            'key': 'staff_production',
+            'label': 'Producción',
+            'description': 'Consultar producción y resultados operacionales.',
+            'icon': 'dashboard/img/plane.png',
+            'url': reverse('prod:production_panel'),
+            'roles': {'STAFF'},
+            'visible': user.has_perm('accounts.can_view_production'),
+        },
+        {
             'key': 'staff_maintenance',
             'label': 'Mantenimiento',
             'description': 'Monitorear reportes de discrepancia.',

@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.utils import timezone
 
 from fleet.models import Simulator
+from academic.models import CourseType
 from .factories import UserFactory, StudentProfileFactory
 from ..forms import SimEvaluationForm
 from accounts.models import InstructorProfile
@@ -17,6 +18,11 @@ class SimEvaluationModelTest(TestCase):
 
 	def setUp(self):
 		"""Set up a student, their profile, an instructor and an active simulator."""
+		CourseType.objects.get_or_create(
+			code='PPA-P',
+			defaults={'name': 'Piloto Privado - Práctico'},
+		)
+
 		# Create test users and profile using shared factories
 		self.student = UserFactory()
 		# Override profile values
@@ -25,10 +31,19 @@ class SimEvaluationModelTest(TestCase):
 		# Create an instructor user
 		self.instructor = UserFactory(role='INSTRUCTOR')
 		# Ensure instructor_profile exists because the form expects it
-		InstructorProfile.objects.create(user=self.instructor)
+		self.instructor_profile = InstructorProfile.objects.create(
+			user=self.instructor,
+			sim_instructor_hourly_rate=Decimal('15.0'),
+		)
 
 		# Create an active simulator
-		self.simulator = Simulator.objects.create(name='FPT', is_active=True, is_available=True)
+		self.simulator = Simulator.objects.create(
+			name='FPT',
+			is_active=True,
+			is_available=True,
+			hourly_rate_single=Decimal('35.0'),
+			hourly_rate_dual=Decimal('22.5'),
+		)
 
 	def test_sim_evaluation_does_not_change_student_balance(self):
 		"""Creating and deleting a SimEvaluation must not modify student `balance`."""
@@ -91,6 +106,8 @@ class SimEvaluationModelTest(TestCase):
 		self.assertTrue(form.is_valid(), msg=form.errors.as_json())
 
 		evaluation = form.save()
+		self.assertEqual(evaluation.simulator_rate_applied, Decimal('35.00'))
+		self.assertEqual(evaluation.instructor_rate_applied, Decimal('15.00'))
 
 		# Balance should remain unchanged after creation
 		self.student_profile.refresh_from_db()
@@ -100,4 +117,53 @@ class SimEvaluationModelTest(TestCase):
 		evaluation.delete()
 		self.student_profile.refresh_from_db()
 		self.assertEqual(self.student_profile.balance, initial_balance)
+
+	def test_sim_rate_snapshots_do_not_change_with_current_rates(self):
+		form_data = {
+			'instructor_id': self.instructor.national_id,
+			'instructor_first_name': self.instructor.first_name,
+			'instructor_last_name': self.instructor.last_name,
+			'instructor_license_type': 'PCA',
+			'instructor_license_number': self.instructor.national_id,
+			'student_id': self.student.national_id,
+			'student_first_name': self.student.first_name,
+			'student_last_name': self.student.last_name,
+			'student_license_type': 'AP',
+			'student_license_number': self.student.national_id,
+			'course_type': 'PPA-P',
+			'session_date': timezone.now().date(),
+			'accumulated_sim_hours': self.student_profile.sim_hours,
+			'session_sim_hours': Decimal('1.0'),
+			'simulator': self.simulator.id,
+			'session_type': 'Dual',
+			'session_grade': 'S',
+			'comments': 'C' * 80,
+		}
+		probe = SimEvaluationForm(user=self.instructor)
+		from django import forms as django_forms
+		for name, field in probe.fields.items():
+			if name in form_data or not field.required:
+				continue
+			if isinstance(field, django_forms.ChoiceField):
+				form_data[name] = next(
+					(value for value, _label in field.choices if value not in (None, '')),
+					'',
+				)
+			else:
+				form_data[name] = '0'
+
+		form = SimEvaluationForm(data=form_data, user=self.instructor)
+		self.assertTrue(form.is_valid(), msg=form.errors.as_json())
+		evaluation = form.save()
+
+		self.simulator.hourly_rate_dual = Decimal('50.0')
+		self.simulator.save(update_fields=['hourly_rate_dual'])
+		self.instructor_profile.sim_instructor_hourly_rate = Decimal('30.0')
+		self.instructor_profile.save(update_fields=['sim_instructor_hourly_rate'])
+		evaluation.comments = 'Comentario actualizado sin alterar las tarifas.'
+		evaluation.save(update_fields=['comments'])
+		evaluation.refresh_from_db()
+
+		self.assertEqual(evaluation.simulator_rate_applied, Decimal('22.50'))
+		self.assertEqual(evaluation.instructor_rate_applied, Decimal('15.00'))
 

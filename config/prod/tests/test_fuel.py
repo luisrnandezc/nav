@@ -54,6 +54,8 @@ class FuelConsumptionTests(TestCase):
             'session_flight_hours': Decimal('1.5'),
             'fuel_consumed': Decimal('10.0'),
             'hourly_rate_applied': Decimal('130.00'),
+            'aircraft_rate_applied': Decimal('130.00'),
+            'instructor_rate_applied': Decimal('20.00'),
             'fuel_rate_applied': Decimal('4.00'),
             'aircraft': self.aircraft,
         }

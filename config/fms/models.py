@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
-from accounts.models import StudentProfile
+from accounts.models import InstructorProfile, StudentProfile
 from django.utils import timezone
 from fleet.models import Simulator, Aircraft
 
@@ -210,6 +210,18 @@ class SimEvaluation(models.Model):
         default=0.0,
         validators=[MinValueValidator(0.0), SpanishMaxValueValidator(4.0, 'Las horas de la sesión no pueden exceder 4 horas.')],
         verbose_name='Horas sesión'
+    )
+    simulator_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        editable=False,
+        verbose_name='Tarifa de simulador aplicada ($/h)',
+    )
+    instructor_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        editable=False,
+        verbose_name='Tarifa de instructor aplicada ($/h)',
     )
     simulator = models.ForeignKey(
         Simulator,
@@ -786,6 +798,19 @@ class SimEvaluation(models.Model):
 
     def __str__(self):
         return f'{self.student_first_name} {self.student_last_name} - {self.session_date} - {self.simulator.name} - {self.session_sim_hours} hrs'
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            instructor = InstructorProfile.objects.get(
+                user__national_id=self.instructor_id,
+            )
+            self.instructor_rate_applied = instructor.sim_instructor_hourly_rate
+            self.simulator_rate_applied = (
+                self.simulator.hourly_rate_dual
+                if self.session_type == self.DUAL
+                else self.simulator.hourly_rate_single
+            )
+        super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
         # Subtract session hours from student's accumulated hours
@@ -1015,7 +1040,19 @@ class FlightEvaluation0_100(models.Model):
         max_digits=6, 
         decimal_places=2, 
         editable=False,
-        verbose_name='Tarifa de vuelo aplicada ($/h)'
+        verbose_name='Tarifa de estudiante aplicada ($/h)'
+    )
+    aircraft_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        editable=False,
+        verbose_name='Tarifa de aeronave aplicada ($/h)',
+    )
+    instructor_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        editable=False,
+        verbose_name='Tarifa de instructor aplicada ($/h)',
     )
     fuel_rate_applied = models.DecimalField(
         max_digits=6, 
@@ -1460,6 +1497,11 @@ class FlightEvaluation0_100(models.Model):
                 if student_profile.flight_rate != self.aircraft.hourly_rate
                 else self.aircraft.hourly_rate
             )
+            instructor = InstructorProfile.objects.get(
+                user__national_id=self.instructor_id,
+            )
+            self.aircraft_rate_applied = self.aircraft.hourly_rate
+            self.instructor_rate_applied = instructor.flight_instructor_hourly_rate
             self.fuel_rate_applied = self.aircraft.fuel_cost
         if self.initial_hourmeter and self.final_hourmeter:
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
@@ -1699,7 +1741,19 @@ class FlightEvaluation100_120(models.Model):
         max_digits=6, 
         decimal_places=2, 
         editable=False,
-        verbose_name='Tarifa de vuelo aplicada ($/h)'
+        verbose_name='Tarifa de estudiante aplicada ($/h)'
+    )
+    aircraft_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        editable=False,
+        verbose_name='Tarifa de aeronave aplicada ($/h)',
+    )
+    instructor_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        editable=False,
+        verbose_name='Tarifa de instructor aplicada ($/h)',
     )
     fuel_rate_applied = models.DecimalField(
         max_digits=6, 
@@ -2108,6 +2162,11 @@ class FlightEvaluation100_120(models.Model):
                 if student_profile.flight_rate != self.aircraft.hourly_rate
                 else self.aircraft.hourly_rate
             )
+            instructor = InstructorProfile.objects.get(
+                user__national_id=self.instructor_id,
+            )
+            self.aircraft_rate_applied = self.aircraft.hourly_rate
+            self.instructor_rate_applied = instructor.flight_instructor_hourly_rate
             self.fuel_rate_applied = self.aircraft.fuel_cost
         if self.initial_hourmeter and self.final_hourmeter:
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)
@@ -2347,7 +2406,19 @@ class FlightEvaluation120_170(models.Model):
         max_digits=6, 
         decimal_places=2, 
         editable=False,
-        verbose_name='Tarifa de vuelo aplicada ($/h)'
+        verbose_name='Tarifa de estudiante aplicada ($/h)'
+    )
+    aircraft_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        editable=False,
+        verbose_name='Tarifa de aeronave aplicada ($/h)',
+    )
+    instructor_rate_applied = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        editable=False,
+        verbose_name='Tarifa de instructor aplicada ($/h)',
     )
     fuel_rate_applied = models.DecimalField(
         max_digits=6, 
@@ -2801,6 +2872,11 @@ class FlightEvaluation120_170(models.Model):
                 if student_profile.flight_rate != self.aircraft.hourly_rate
                 else self.aircraft.hourly_rate
             )
+            instructor = InstructorProfile.objects.get(
+                user__national_id=self.instructor_id,
+            )
+            self.aircraft_rate_applied = self.aircraft.hourly_rate
+            self.instructor_rate_applied = instructor.flight_instructor_hourly_rate
             self.fuel_rate_applied = self.aircraft.fuel_cost
         if self.initial_hourmeter and self.final_hourmeter:
             calculated_session_flight_hours = round(self.final_hourmeter - self.initial_hourmeter, 1)

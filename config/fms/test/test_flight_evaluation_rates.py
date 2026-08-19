@@ -8,6 +8,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from accounts.models import InstructorProfile
+from academic.models import CourseType
 from fleet.models import Aircraft
 from fms.forms import (
     FlightEvaluation0_100Form,
@@ -27,6 +28,13 @@ class FlightEvaluationAccountingTests(TestCase):
     )
 
     def setUp(self):
+        for code, name in (
+            ('PPA-P', 'Piloto Privado - Práctico'),
+            ('HVI-P', 'Habilitación de Vuelo Instrumental - Práctico'),
+            ('PCA-P', 'Piloto Comercial - Práctico'),
+        ):
+            CourseType.objects.get_or_create(code=code, defaults={'name': name})
+
         self.student = UserFactory(role='STUDENT')
         self.student_profile = StudentProfileFactory(
             user=self.student,
@@ -35,10 +43,11 @@ class FlightEvaluationAccountingTests(TestCase):
             nav_flight_hours=Decimal('20.0'),
         )
         self.instructor = UserFactory(role='INSTRUCTOR')
-        InstructorProfile.objects.create(
+        self.instructor_profile = InstructorProfile.objects.create(
             user=self.instructor,
             instructor_type='VUELO',
             instructor_license_type='PCA',
+            flight_instructor_hourly_rate=Decimal('20.0'),
         )
         self.aircraft = Aircraft.objects.create(
             manufacturer='Piper',
@@ -123,6 +132,8 @@ class FlightEvaluationAccountingTests(TestCase):
                 evaluation = self.save_evaluation(form_class, course_type)
 
                 self.assertEqual(evaluation.hourly_rate_applied, Decimal('130.00'))
+                self.assertEqual(evaluation.aircraft_rate_applied, Decimal('130.00'))
+                self.assertEqual(evaluation.instructor_rate_applied, Decimal('20.00'))
                 self.assertEqual(evaluation.fuel_rate_applied, Decimal('4.00'))
                 self.assertEqual(evaluation.session_flight_hours, Decimal('1.0'))
                 self.assert_current_totals('830.00', '51.0', '21.0', '1001.0')
@@ -139,11 +150,31 @@ class FlightEvaluationAccountingTests(TestCase):
                 evaluation = self.save_evaluation(form_class, course_type)
 
                 self.assertEqual(evaluation.hourly_rate_applied, Decimal('95.00'))
+                self.assertEqual(evaluation.aircraft_rate_applied, Decimal('130.00'))
+                self.assertEqual(evaluation.instructor_rate_applied, Decimal('20.00'))
                 self.assertEqual(evaluation.fuel_rate_applied, Decimal('4.00'))
                 self.assert_current_totals('865.00', '51.0', '21.0', '1001.0')
 
                 evaluation.delete()
                 self.assert_current_totals('1000.00', '50.0', '20.0', '1000.0')
+
+    def test_rate_snapshots_do_not_change_when_current_rates_change(self):
+        evaluation = self.save_evaluation(FlightEvaluation0_100Form, 'PPA-P')
+
+        self.student_profile.flight_rate = Decimal('175.0')
+        self.student_profile.save(update_fields=['flight_rate'])
+        self.aircraft.hourly_rate = Decimal('190.0')
+        self.aircraft.save(update_fields=['hourly_rate'])
+        self.instructor_profile.flight_instructor_hourly_rate = Decimal('35.0')
+        self.instructor_profile.save(update_fields=['flight_instructor_hourly_rate'])
+
+        evaluation.comments = 'Comentario actualizado sin alterar las tarifas.'
+        evaluation.save(update_fields=['comments'])
+        evaluation.refresh_from_db()
+
+        self.assertEqual(evaluation.hourly_rate_applied, Decimal('130.00'))
+        self.assertEqual(evaluation.aircraft_rate_applied, Decimal('130.00'))
+        self.assertEqual(evaluation.instructor_rate_applied, Decimal('20.00'))
 
     def test_yv206e_correction_factor_affects_hours_charge_and_totals(self):
         self.aircraft = Aircraft.objects.get(registration='YV206E')

@@ -75,12 +75,12 @@
     options: commonOptions('USD', true),
   });
 
-  new Chart(document.getElementById('flight-profit-chart'), {
+  new Chart(document.getElementById('flight-operating-income-chart'), {
     type: 'line',
     data: {
       labels: report.labels,
       datasets: [
-        dataset('Utilidad operativa', report.operating_profit_usd, colors[2], 3),
+        dataset('Ingreso operativo', report.operating_income_usd, colors[2], 3),
       ],
     },
     options: commonOptions('USD', true),

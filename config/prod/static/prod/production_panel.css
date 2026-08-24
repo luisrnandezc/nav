@@ -119,11 +119,14 @@
   gap: var(--ui-space-xl);
   margin-bottom: var(--ui-space-xl);
   max-width: 1400px;
+  min-width: 0;
   width: 90%;
 }
 
 .chart-card {
   margin-bottom: 0;
+  min-width: 0;
+  overflow: hidden;
   width: 100%;
 }
 
@@ -139,9 +142,13 @@
 }
 
 .chart-scroll {
+  box-sizing: border-box;
   max-width: 100%;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
   padding-bottom: 6px;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
 }
 
@@ -149,7 +156,7 @@
   height: 360px;
   min-width: 720px;
   position: relative;
-  width: 100%;
+  width: max(100%, 720px);
 }
 
 .table-scroll {

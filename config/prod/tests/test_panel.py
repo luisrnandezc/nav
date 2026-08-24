@@ -65,7 +65,7 @@ class ProductionPanelTests(TestCase):
         )
         self.assertContains(response, 'Producción por aeronave')
         self.assertContains(response, 'Horas de Línea de Vuelo')
-        self.assertContains(response, 'Utilidad Operativa de Línea de Vuelo')
+        self.assertContains(response, 'Ingreso Operativo de Línea de Vuelo')
         self.assertContains(response, 'Excluye evaluaciones externas y reportes de vuelo.')
         self.assertNotContains(response, 'Producción por fecha')
         self.assertIsNotNone(response.context['chart_data'])

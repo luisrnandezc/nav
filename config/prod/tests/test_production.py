@@ -124,8 +124,8 @@ class ProductionReportTests(TestCase):
         self.assertEqual(report.totals.fuel_liters, Decimal('20.0'))
         self.assertEqual(report.totals.fuel_cost_usd, Decimal('62.20'))
         self.assertEqual(
-            report.totals.operating_flying_profit_usd,
-            Decimal('157.80'),
+            report.totals.operating_flying_income_usd,
+            Decimal('220.00'),
         )
 
     def test_external_evaluations_and_reports_are_ignored(self):
@@ -162,7 +162,7 @@ class ProductionReportTests(TestCase):
             [Decimal('2.0'), ZERO, ZERO],
         )
 
-    def test_daily_trend_fills_empty_days_and_calculates_income_and_profit(self):
+    def test_daily_trend_fills_empty_days_and_calculates_income(self):
         self.create_flight(session_date=date(2026, 6, 10))
         self.create_flight(
             session_date=date(2026, 6, 12),
@@ -185,8 +185,8 @@ class ProductionReportTests(TestCase):
             [Decimal('260.00'), ZERO, Decimal('130.00')],
         )
         self.assertEqual(
-            report.flight_trend.operating_profit_usd,
-            [Decimal('157.80'), Decimal('0.00'), Decimal('78.90')],
+            report.flight_trend.operating_income_usd,
+            [Decimal('220.00'), Decimal('0.00'), Decimal('110.00')],
         )
 
     def test_medium_range_uses_weekly_trend(self):

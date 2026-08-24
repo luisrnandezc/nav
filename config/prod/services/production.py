@@ -1,15 +1,13 @@
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 
 from fms.models import (
-    ExternalFlightEvaluation,
     FlightEvaluation0_100,
     FlightEvaluation100_120,
     FlightEvaluation120_170,
-    FlightReport,
     SimEvaluation,
 )
 
@@ -68,6 +66,16 @@ class ProductionTotals:
             + self.instructor_simulator_cost_usd
         ).quantize(MONEY_QUANTUM)
 
+    @property
+    def operating_flying_profit_usd(self) -> Decimal:
+        """Return flight income after instructor and fuel costs."""
+
+        return (
+            self.gross_flying_income_usd
+            - self.instructor_flying_cost_usd
+            - self.fuel_cost_usd
+        ).quantize(MONEY_QUANTUM)
+
     def add(self, other: 'ProductionTotals') -> None:
         """Add another set of production values into this accumulator."""
 
@@ -92,6 +100,18 @@ class ProductionBreakdown:
 
 
 @dataclass
+class FlightTrend:
+    """Plot-ready flight-line totals grouped across the selected period."""
+
+    grouping: str
+    labels: list[str]
+    flight_hours: list[Decimal]
+    income_usd: list[Decimal]
+    operating_profit_usd: list[Decimal]
+    aircraft_hours: dict[str, list[Decimal]]
+
+
+@dataclass
 class ProductionReport:
     """Complete production result consumed later by the panel and PDF."""
 
@@ -101,7 +121,7 @@ class ProductionReport:
     by_simulator: list[ProductionBreakdown]
     by_instructor: list[ProductionBreakdown]
     by_student: list[ProductionBreakdown]
-    by_date: list[ProductionBreakdown]
+    flight_trend: FlightTrend
 
 
 def get_production_report(filters: ProductionFilters) -> ProductionReport:
@@ -114,8 +134,9 @@ def get_production_report(filters: ProductionFilters) -> ProductionReport:
         'simulator': {},
         'instructor': {},
         'student': {},
-        'date': {},
     }
+    trend_totals = {}
+    trend_aircraft = {}
 
     for model in FLIGHT_EVALUATION_MODELS:
         queryset = model.objects.filter(
@@ -126,54 +147,13 @@ def get_production_report(filters: ProductionFilters) -> ProductionReport:
             values = _flight_values(evaluation)
             report_totals.add(values)
             _add_flight_breakdowns(breakdowns, evaluation, values)
-
-    external_queryset = ExternalFlightEvaluation.objects.filter(
-        session_date__range=(filters.start_date, filters.end_date),
-    )
-    if filters.aircraft_registrations:
-        external_queryset = external_queryset.filter(
-            aircraft_registration__in=filters.aircraft_registrations,
-        )
-    if filters.instructor_ids:
-        external_queryset = external_queryset.filter(instructor_id__in=filters.instructor_ids)
-    if filters.student_ids:
-        external_queryset = external_queryset.filter(student_id__in=filters.student_ids)
-    for evaluation in external_queryset.iterator():
-        values = _fuel_values(evaluation)
-        report_totals.add(values)
-        _add_fuel_breakdowns(
-            breakdowns,
-            evaluation.session_date,
-            evaluation.aircraft_registration,
-            values,
-            instructor=(
-                evaluation.instructor_id,
-                f'{evaluation.instructor_first_name} {evaluation.instructor_last_name}',
-            ),
-            student=(
-                evaluation.student_id,
-                f'{evaluation.student_first_name} {evaluation.student_last_name}',
-            ),
-        )
-
-    report_queryset = FlightReport.objects.filter(
-        flight_date__range=(filters.start_date, filters.end_date),
-    ).select_related('aircraft')
-    if filters.aircraft_registrations:
-        report_queryset = report_queryset.filter(
-            aircraft__registration__in=filters.aircraft_registrations,
-        )
-    if filters.instructor_ids or filters.student_ids:
-        report_queryset = report_queryset.none()
-    for flight_report in report_queryset.iterator():
-        values = _fuel_values(flight_report)
-        report_totals.add(values)
-        _add_fuel_breakdowns(
-            breakdowns,
-            flight_report.flight_date,
-            flight_report.aircraft.registration,
-            values,
-        )
+            _add_flight_trend_values(
+                trend_totals,
+                trend_aircraft,
+                evaluation,
+                values,
+                filters,
+            )
 
     sim_queryset = SimEvaluation.objects.filter(
         session_date__range=(filters.start_date, filters.end_date),
@@ -198,7 +178,11 @@ def get_production_report(filters: ProductionFilters) -> ProductionReport:
         by_simulator=_sorted_breakdowns(breakdowns['simulator']),
         by_instructor=_sorted_breakdowns(breakdowns['instructor']),
         by_student=_sorted_breakdowns(breakdowns['student']),
-        by_date=_sorted_breakdowns(breakdowns['date']),
+        flight_trend=_build_flight_trend(
+            filters,
+            trend_totals,
+            trend_aircraft,
+        ),
     )
 
 
@@ -247,17 +231,8 @@ def _simulator_values(evaluation) -> ProductionTotals:
     )
 
 
-def _fuel_values(record) -> ProductionTotals:
-    """Calculate the fuel-only contribution of an external flight or report."""
-
-    return ProductionTotals(
-        fuel_liters=record.fuel_consumed,
-        fuel_cost_usd=record.fuel_consumed * record.fuel_rate_applied,
-    )
-
-
 def _add_flight_breakdowns(breakdowns, evaluation, values):
-    """Add a training flight to its aircraft, people, and date rows."""
+    """Add a training flight to its aircraft and people rows."""
 
     _add_breakdown(
         breakdowns['aircraft'],
@@ -277,11 +252,10 @@ def _add_flight_breakdowns(breakdowns, evaluation, values):
         f'{evaluation.student_first_name} {evaluation.student_last_name}',
         values,
     )
-    _add_date_breakdown(breakdowns, evaluation.session_date, values)
 
 
 def _add_simulator_breakdowns(breakdowns, evaluation, values):
-    """Add a simulator session to its simulator, people, and date rows."""
+    """Add a simulator session to its simulator and people rows."""
 
     _add_breakdown(
         breakdowns['simulator'],
@@ -301,42 +275,95 @@ def _add_simulator_breakdowns(breakdowns, evaluation, values):
         f'{evaluation.student_first_name} {evaluation.student_last_name}',
         values,
     )
-    _add_date_breakdown(breakdowns, evaluation.session_date, values)
 
 
-def _add_fuel_breakdowns(
-    breakdowns,
-    session_date,
-    aircraft_registration,
-    values,
-    *,
-    instructor=None,
-    student=None,
-):
-    """Add fuel-only activity to every breakdown with known identifying data."""
+def _add_flight_trend_values(totals, aircraft, evaluation, values, filters):
+    """Accumulate one training flight in its chart period and aircraft series."""
 
-    _add_breakdown(
-        breakdowns['aircraft'],
-        aircraft_registration,
-        aircraft_registration,
-        values,
+    bucket = _trend_bucket(evaluation.session_date, filters)
+    totals.setdefault(bucket, ProductionTotals()).add(values)
+    registration = evaluation.aircraft.registration
+    aircraft.setdefault(registration, {})
+    aircraft[registration].setdefault(bucket, ZERO)
+    aircraft[registration][bucket] += values.flight_hours
+
+
+def _build_flight_trend(filters, totals, aircraft):
+    """Fill empty chart periods and return aligned flight-line series."""
+
+    grouping, buckets = _trend_buckets(filters)
+    return FlightTrend(
+        grouping=grouping,
+        labels=[_trend_label(bucket, grouping, filters.end_date) for bucket in buckets],
+        flight_hours=[totals.get(bucket, ProductionTotals()).flight_hours for bucket in buckets],
+        income_usd=[
+            totals.get(bucket, ProductionTotals()).gross_flying_income_usd
+            for bucket in buckets
+        ],
+        operating_profit_usd=[
+            (
+                totals.get(bucket, ProductionTotals()).gross_flying_income_usd
+                - totals.get(bucket, ProductionTotals()).instructor_flying_cost_usd
+                - totals.get(bucket, ProductionTotals()).fuel_cost_usd
+            ).quantize(MONEY_QUANTUM)
+            for bucket in buckets
+        ],
+        aircraft_hours={
+            registration: [values.get(bucket, ZERO) for bucket in buckets]
+            for registration, values in sorted(aircraft.items())
+        },
     )
-    if instructor:
-        _add_breakdown(breakdowns['instructor'], instructor[0], instructor[1], values)
-    if student:
-        _add_breakdown(breakdowns['student'], student[0], student[1], values)
-    _add_date_breakdown(breakdowns, session_date, values)
 
 
-def _add_date_breakdown(breakdowns, session_date, values):
-    """Add production values to the row for a calendar date."""
+def _trend_buckets(filters):
+    """Return daily, weekly, or monthly bucket starts for the selected range."""
 
-    _add_breakdown(
-        breakdowns['date'],
-        session_date.isoformat(),
-        session_date.isoformat(),
-        values,
-    )
+    day_count = (filters.end_date - filters.start_date).days + 1
+    if day_count <= 31:
+        return 'daily', [
+            filters.start_date + timedelta(days=offset)
+            for offset in range(day_count)
+        ]
+    if day_count <= 120:
+        return 'weekly', [
+            filters.start_date + timedelta(days=offset)
+            for offset in range(0, day_count, 7)
+        ]
+
+    buckets = []
+    current = filters.start_date.replace(day=1)
+    final = filters.end_date.replace(day=1)
+    while current <= final:
+        buckets.append(current)
+        current = date(
+            current.year + (current.month == 12),
+            1 if current.month == 12 else current.month + 1,
+            1,
+        )
+    return 'monthly', buckets
+
+
+def _trend_bucket(session_date, filters):
+    """Return the chart bucket start containing one session date."""
+
+    grouping, _ = _trend_buckets(filters)
+    if grouping == 'daily':
+        return session_date
+    if grouping == 'weekly':
+        offset = (session_date - filters.start_date).days
+        return filters.start_date + timedelta(days=(offset // 7) * 7)
+    return session_date.replace(day=1)
+
+
+def _trend_label(bucket, grouping, end_date):
+    """Format one compact Spanish chart-axis label."""
+
+    if grouping == 'daily':
+        return bucket.strftime('%d/%m')
+    if grouping == 'weekly':
+        bucket_end = min(bucket + timedelta(days=6), end_date)
+        return f'{bucket:%d/%m} - {bucket_end:%d/%m}'
+    return bucket.strftime('%m/%Y')
 
 
 def _add_breakdown(group, key, label, values):

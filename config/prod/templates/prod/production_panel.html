@@ -19,6 +19,9 @@
 
       <header class="main-header production-header">
         <h1>Panel de Producción</h1>
+        <p class="production-scope-note">
+          Excluye evaluaciones externas y reportes de vuelo
+        </p>
       </header>
 
       <section class="ui-card filter-card">
@@ -47,22 +50,39 @@
       {% if report %}
         <section class="metrics-grid" aria-label="Resumen de producción">
           <article class="ui-card metric-card"><span>Combustible</span><strong>{{ report.totals.fuel_liters|floatformat:1 }} L</strong><small>${{ report.totals.fuel_cost_usd|floatformat:2 }}</small></article>
-          <article class="ui-card metric-card"><span>Horas de vuelo</span><strong>{{ report.totals.flight_hours|floatformat:1 }} h</strong><small>Ingreso bruto ${{ report.totals.gross_flying_income_usd|floatformat:2 }}</small></article>
-          <article class="ui-card metric-card"><span>Ingreso de vuelo</span><strong>${{ report.totals.net_flying_revenue_usd|floatformat:2 }}</strong><small>Después de instructor</small></article>
-          <article class="ui-card metric-card"><span>Horas de simulador</span><strong>{{ report.totals.simulator_hours|floatformat:1 }} h</strong><small>Ingreso neto ${{ report.totals.net_simulator_revenue_usd|floatformat:2 }}</small></article>
-          <article class="ui-card metric-card"><span>Producción instructores</span><strong>${{ report.totals.instructor_production_usd|floatformat:2 }}</strong><small>Vuelo y simulador</small></article>
+          <article class="ui-card metric-card"><span>Horas de vuelo</span><strong>{{ report.totals.flight_hours|floatformat:1 }} h</strong><small>Ingreso ${{ report.totals.gross_flying_income_usd|floatformat:2 }}</small></article>
+          <article class="ui-card metric-card"><span>Utilidad operativa de línea de vuelo</span><strong>${{ report.totals.operating_flying_profit_usd|floatformat:2 }}</strong><small>Después de instructor y combustible</small></article>
+          <article class="ui-card metric-card"><span>Horas de simulador</span><strong>{{ report.totals.simulator_hours|floatformat:1 }} h</strong><small>Utilidad operativa ${{ report.totals.net_simulator_revenue_usd|floatformat:2 }}</small></article>
+          <article class="ui-card metric-card"><span>Costo de instructores</span><strong>${{ report.totals.instructor_production_usd|floatformat:2 }}</strong><small>Vuelo + simulador</small></article>
+        </section>
+
+        {{ chart_data|json_script:"production-chart-data" }}
+        <section class="charts-grid" aria-label="Tendencias de línea de vuelo">
+          <article class="report-section ui-card chart-card">
+            <h2>Horas de Línea de Vuelo</h2>
+            <div class="chart-scroll"><div class="chart-container"><canvas id="flight-hours-chart"></canvas></div></div>
+          </article>
+          <article class="report-section ui-card chart-card">
+            <h2>Ingreso de Línea de Vuelo</h2>
+            <div class="chart-scroll"><div class="chart-container"><canvas id="flight-income-chart"></canvas></div></div>
+          </article>
+          <article class="report-section ui-card chart-card">
+            <h2>Utilidad Operativa de Línea de Vuelo</h2>
+            <p class="chart-note">Ingreso menos costos de instructor y combustible.</p>
+            <div class="chart-scroll"><div class="chart-container"><canvas id="flight-profit-chart"></canvas></div></div>
+          </article>
         </section>
 
         <section class="report-section ui-card">
           <h2>Producción por aeronave</h2>
-          <div class="table-scroll"><table><thead><tr><th>Aeronave</th><th>Horas</th><th>Combustible</th><th>Costo combustible</th><th>Ingreso bruto</th><th>Ingreso vuelo</th></tr></thead><tbody>
-            {% for row in report.by_aircraft %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }}</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td><td>${{ row.totals.fuel_cost_usd|floatformat:2 }}</td><td>${{ row.totals.gross_flying_income_usd|floatformat:2 }}</td><td>${{ row.totals.net_flying_revenue_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="6">No hay datos.</td></tr>{% endfor %}
+          <div class="table-scroll"><table><thead><tr><th>Aeronave</th><th>Horas</th><th>Combustible</th><th>Costo combustible</th><th>Ingreso</th><th>Utilidad operativa</th></tr></thead><tbody>
+            {% for row in report.by_aircraft %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }}</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td><td>${{ row.totals.fuel_cost_usd|floatformat:2 }}</td><td>${{ row.totals.gross_flying_income_usd|floatformat:2 }}</td><td>${{ row.totals.operating_flying_profit_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="6">No hay datos.</td></tr>{% endfor %}
           </tbody></table></div>
         </section>
 
         <section class="report-section ui-card">
           <h2>Producción por simulador</h2>
-          <div class="table-scroll"><table><thead><tr><th>Simulador</th><th>Horas</th><th>Ingreso bruto</th><th>Instructor</th><th>Ingreso neto</th></tr></thead><tbody>
+          <div class="table-scroll"><table><thead><tr><th>Simulador</th><th>Horas</th><th>Ingreso</th><th>Costo de instructor</th><th>Utilidad operativa</th></tr></thead><tbody>
             {% for row in report.by_simulator %}<tr><td>{{ row.label }}</td><td>{{ row.totals.simulator_hours|floatformat:1 }}</td><td>${{ row.totals.gross_simulator_income_usd|floatformat:2 }}</td><td>${{ row.totals.instructor_simulator_cost_usd|floatformat:2 }}</td><td>${{ row.totals.net_simulator_revenue_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="5">No hay datos.</td></tr>{% endfor %}
           </tbody></table></div>
         </section>
@@ -81,17 +101,15 @@
           </tbody></table></div>
         </section>
 
-        <section class="report-section ui-card">
-          <h2>Producción por fecha</h2>
-          <div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Vuelo</th><th>Simulador</th><th>Combustible</th><th>Ingreso vuelo</th><th>Ingreso simulador</th></tr></thead><tbody>
-            {% for row in report.by_date %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }} h</td><td>{{ row.totals.simulator_hours|floatformat:1 }} h</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td><td>${{ row.totals.net_flying_revenue_usd|floatformat:2 }}</td><td>${{ row.totals.net_simulator_revenue_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="6">No hay datos.</td></tr>{% endfor %}
-          </tbody></table></div>
-        </section>
       {% elif request.GET %}
         <div class="ui-empty">Corrige los filtros para generar el reporte.</div>
       {% else %}
         <div class="ui-empty">Selecciona un rango de fechas para generar el reporte.</div>
       {% endif %}
     </main>
+    {% if report %}
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+      <script src="{% static 'prod/production_charts.js' %}"></script>
+    {% endif %}
   </body>
 </html>

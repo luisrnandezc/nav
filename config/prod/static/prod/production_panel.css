@@ -36,6 +36,15 @@
   margin-bottom: 10px;
 }
 
+.production-scope-note {
+  color: var(--ui-color-text-muted);
+  font-size: 1.25rem;
+  line-height: 1.4;
+  margin: 0 auto;
+  max-width: 700px;
+  text-transform: none;
+}
+
 .production-panel .back-button .button {
   min-width: 0;
   padding: 8px 15px;
@@ -105,6 +114,44 @@
   font-size: 1.6rem;
 }
 
+.charts-grid {
+  display: grid;
+  gap: var(--ui-space-xl);
+  margin-bottom: var(--ui-space-xl);
+  max-width: 1400px;
+  width: 90%;
+}
+
+.chart-card {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.chart-card h2 {
+  text-align: center;
+}
+
+.chart-note {
+  color: var(--ui-color-text-muted);
+  margin-top: 0;
+  text-align: center;
+  text-transform: none;
+}
+
+.chart-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  width: 100%;
+}
+
+.chart-container {
+  height: 360px;
+  min-width: 720px;
+  position: relative;
+  width: 100%;
+}
+
 .table-scroll {
   overflow-x: auto;
 }
@@ -141,7 +188,8 @@
   .production-header,
   .filter-card,
   .report-section,
-  .metrics-grid {
+  .metrics-grid,
+  .charts-grid {
     width: 100%;
   }
 }
@@ -154,5 +202,9 @@
   .production-header h1 {
     font-size: 1.5rem;
     letter-spacing: 2px;
+  }
+
+  .chart-container {
+    height: 300px;
   }
 }

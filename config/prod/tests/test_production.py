@@ -101,7 +101,7 @@ class ProductionReportTests(TestCase):
         values.update(overrides)
         return FlightReport.objects.bulk_create([FlightReport(**values)])[0]
 
-    def test_report_calculates_flight_simulator_and_fuel_totals(self):
+    def test_report_calculates_internal_flight_and_simulator_totals(self):
         self.create_flight()
         self.create_sim()
         self.create_external()
@@ -121,10 +121,14 @@ class ProductionReportTests(TestCase):
         self.assertEqual(report.totals.instructor_simulator_cost_usd, Decimal('30.00'))
         self.assertEqual(report.totals.net_simulator_revenue_usd, Decimal('40.00'))
         self.assertEqual(report.totals.instructor_production_usd, Decimal('70.00'))
-        self.assertEqual(report.totals.fuel_liters, Decimal('28.0'))
-        self.assertEqual(report.totals.fuel_cost_usd, Decimal('87.08'))
+        self.assertEqual(report.totals.fuel_liters, Decimal('20.0'))
+        self.assertEqual(report.totals.fuel_cost_usd, Decimal('62.20'))
+        self.assertEqual(
+            report.totals.operating_flying_profit_usd,
+            Decimal('157.80'),
+        )
 
-    def test_external_evaluations_and_reports_only_affect_fuel(self):
+    def test_external_evaluations_and_reports_are_ignored(self):
         self.create_external(fuel_consumed=Decimal('7.0'))
         self.create_flight_report(fuel_consumed=Decimal('4.0'))
 
@@ -132,8 +136,8 @@ class ProductionReportTests(TestCase):
             ProductionFilters(date(2026, 6, 5), date(2026, 8, 13))
         )
 
-        self.assertEqual(report.totals.fuel_liters, Decimal('11.0'))
-        self.assertEqual(report.totals.fuel_cost_usd, Decimal('34.21'))
+        self.assertEqual(report.totals.fuel_liters, ZERO)
+        self.assertEqual(report.totals.fuel_cost_usd, ZERO)
         self.assertEqual(report.totals.flight_hours, ZERO)
         self.assertEqual(report.totals.gross_flying_income_usd, ZERO)
         self.assertEqual(report.totals.instructor_production_usd, ZERO)
@@ -147,11 +151,54 @@ class ProductionReportTests(TestCase):
             ProductionFilters(date(2026, 6, 5), date(2026, 8, 13))
         )
 
-        self.assertEqual({row.key for row in report.by_aircraft}, {'YV204E', 'N123EX'})
+        self.assertEqual({row.key for row in report.by_aircraft}, {'YV204E'})
         self.assertEqual([row.label for row in report.by_simulator], ['FPT'])
         self.assertEqual([row.key for row in report.by_instructor], ['2000001'])
         self.assertEqual([row.key for row in report.by_student], ['1000001'])
-        self.assertEqual([row.key for row in report.by_date], ['2026-06-10'])
+        self.assertEqual(report.flight_trend.grouping, 'monthly')
+        self.assertEqual(report.flight_trend.labels, ['06/2026', '07/2026', '08/2026'])
+        self.assertEqual(
+            report.flight_trend.aircraft_hours['YV204E'],
+            [Decimal('2.0'), ZERO, ZERO],
+        )
+
+    def test_daily_trend_fills_empty_days_and_calculates_income_and_profit(self):
+        self.create_flight(session_date=date(2026, 6, 10))
+        self.create_flight(
+            session_date=date(2026, 6, 12),
+            session_flight_hours=Decimal('1.0'),
+            fuel_consumed=Decimal('10.0'),
+        )
+
+        report = get_production_report(
+            ProductionFilters(date(2026, 6, 10), date(2026, 6, 12))
+        )
+
+        self.assertEqual(report.flight_trend.grouping, 'daily')
+        self.assertEqual(report.flight_trend.labels, ['10/06', '11/06', '12/06'])
+        self.assertEqual(
+            report.flight_trend.flight_hours,
+            [Decimal('2.0'), ZERO, Decimal('1.0')],
+        )
+        self.assertEqual(
+            report.flight_trend.income_usd,
+            [Decimal('260.00'), ZERO, Decimal('130.00')],
+        )
+        self.assertEqual(
+            report.flight_trend.operating_profit_usd,
+            [Decimal('157.80'), Decimal('0.00'), Decimal('78.90')],
+        )
+
+    def test_medium_range_uses_weekly_trend(self):
+        self.create_flight(session_date=date(2026, 6, 12))
+
+        report = get_production_report(
+            ProductionFilters(date(2026, 6, 1), date(2026, 7, 10))
+        )
+
+        self.assertEqual(report.flight_trend.grouping, 'weekly')
+        self.assertEqual(report.flight_trend.labels[0], '01/06 - 07/06')
+        self.assertEqual(report.flight_trend.flight_hours[1], Decimal('2.0'))
 
     def test_filters_apply_to_people_aircraft_simulator_and_dates(self):
         self.create_flight()

@@ -52,7 +52,7 @@
           <article class="ui-card metric-card"><span>Combustible</span><strong>{{ report.totals.fuel_liters|floatformat:1 }} L</strong><small>${{ report.totals.fuel_cost_usd|floatformat:2 }}</small></article>
           <article class="ui-card metric-card"><span>Horas de vuelo</span><strong>{{ report.totals.flight_hours|floatformat:1 }} h</strong><small>Ingreso ${{ report.totals.gross_flying_income_usd|floatformat:2 }}</small></article>
           <article class="ui-card metric-card"><span>Ingreso operativo de línea de vuelo</span><strong>${{ report.totals.operating_flying_income_usd|floatformat:2 }}</strong><small>Después del costo de instructor</small></article>
-          <article class="ui-card metric-card"><span>Horas de simulador</span><strong>{{ report.totals.simulator_hours|floatformat:1 }} h</strong><small>Ingreso operativo ${{ report.totals.net_simulator_revenue_usd|floatformat:2 }}</small></article>
+          <article class="ui-card metric-card"><span>Horas de simulador</span><strong>{{ report.totals.simulator_hours|floatformat:1 }} h</strong><small>Utilidad operativa ${{ report.totals.net_simulator_revenue_usd|floatformat:2 }}</small></article>
           <article class="ui-card metric-card"><span>Costo de instructores</span><strong>${{ report.totals.instructor_production_usd|floatformat:2 }}</strong><small>Vuelo + simulador</small></article>
         </section>
 
@@ -82,7 +82,7 @@
 
         <section class="report-section ui-card">
           <h2>Producción por simulador</h2>
-          <div class="table-scroll"><table><thead><tr><th>Simulador</th><th>Horas</th><th>Ingreso</th><th>Costo de instructor</th><th>Ingreso operativo</th></tr></thead><tbody>
+          <div class="table-scroll"><table><thead><tr><th>Simulador</th><th>Horas</th><th>Ingreso</th><th>Costo de instructor</th><th>Utilidad operativa</th></tr></thead><tbody>
             {% for row in report.by_simulator %}<tr><td>{{ row.label }}</td><td>{{ row.totals.simulator_hours|floatformat:1 }}</td><td>${{ row.totals.gross_simulator_income_usd|floatformat:2 }}</td><td>${{ row.totals.instructor_simulator_cost_usd|floatformat:2 }}</td><td>${{ row.totals.net_simulator_revenue_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="5">No hay datos.</td></tr>{% endfor %}
           </tbody></table></div>
         </section>
@@ -109,7 +109,7 @@
     </main>
     {% if report %}
       <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
-      <script src="{% static 'prod/production_charts.js' %}"></script>
+      <script src="{% static 'prod/production_charts.js' %}?v=3"></script>
     {% endif %}
   </body>
 </html>

@@ -18,6 +18,7 @@ def production_panel(request):
     }
     form = ProductionFilterForm(request.GET or None, initial=initial)
     report = None
+    chart_data = None
 
     if request.GET and form.is_valid():
         report = get_production_report(
@@ -38,11 +39,12 @@ def production_panel(request):
                 student_ids=_profile_id_tuple(form.cleaned_data['students']),
             )
         )
+        chart_data = _flight_chart_data(report)
 
     return render(
         request,
         'prod/production_panel.html',
-        {'form': form, 'report': report},
+        {'form': form, 'report': report, 'chart_data': chart_data},
     )
 
 
@@ -58,3 +60,22 @@ def _profile_id_tuple(profile):
     if profile is None:
         return ()
     return (profile.user.national_id,)
+
+
+def _flight_chart_data(report):
+    """Convert decimal trend totals into browser-ready chart datasets."""
+
+    trend = report.flight_trend
+    return {
+        'labels': trend.labels,
+        'grouping': trend.grouping,
+        'flight_hours': [float(value) for value in trend.flight_hours],
+        'income_usd': [float(value) for value in trend.income_usd],
+        'operating_profit_usd': [
+            float(value) for value in trend.operating_profit_usd
+        ],
+        'aircraft_hours': {
+            registration: [float(value) for value in values]
+            for registration, values in trend.aircraft_hours.items()
+        },
+    }

@@ -1,5 +1,6 @@
 from .fuel import FuelConsumptionReport, get_fuel_consumed
 from .production import (
+    FlightTrend,
     ProductionBreakdown,
     ProductionFilters,
     ProductionReport,
@@ -9,6 +10,7 @@ from .production import (
 
 __all__ = [
     'FuelConsumptionReport',
+    'FlightTrend',
     'ProductionBreakdown',
     'ProductionFilters',
     'ProductionReport',

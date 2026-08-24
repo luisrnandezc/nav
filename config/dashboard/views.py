@@ -237,7 +237,7 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'key': 'staff_production',
             'label': 'Producción',
             'description': 'Consultar producción y resultados operacionales.',
-            'icon': 'dashboard/img/plane.png',
+            'icon': 'dashboard/img/prod.png',
             'url': reverse('prod:production_panel'),
             'roles': {'STAFF'},
             'visible': user.has_perm('accounts.can_view_production'),

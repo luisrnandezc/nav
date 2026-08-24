@@ -217,11 +217,13 @@ def _flight_values(evaluation) -> ProductionTotals:
 
 
 def _simulator_values(evaluation) -> ProductionTotals:
-    """Calculate production values contributed by one simulator session."""
+    """Calculate one student's simulator values, sharing DUAL instructor cost."""
 
     hours = evaluation.session_sim_hours
     gross_income = hours * evaluation.simulator_rate_applied
     instructor_cost = hours * evaluation.instructor_rate_applied
+    if evaluation.session_type == evaluation.DUAL:
+        instructor_cost /= Decimal('2')
     return ProductionTotals(
         simulator_hours=hours,
         gross_simulator_income_usd=gross_income,

@@ -38,16 +38,19 @@
     },
   });
 
-  const dataset = (label, values, color, width = 2) => ({
-    label,
-    data: values,
-    borderColor: color,
-    backgroundColor: color,
-    borderWidth: width,
-    pointRadius: values.length > 31 ? 1 : 3,
-    tension: 0.25,
-    fill: false,
-  });
+  const dataset = (label, values, color, width = 2) => {
+    const safeValues = Array.isArray(values) ? values : [];
+    return {
+      label,
+      data: safeValues,
+      borderColor: color,
+      backgroundColor: color,
+      borderWidth: width,
+      pointRadius: safeValues.length > 31 ? 1 : 3,
+      tension: 0.25,
+      fill: false,
+    };
+  };
 
   const aircraftDatasets = Object.entries(report.aircraft_hours).map(
     ([registration, values], index) =>
@@ -75,7 +78,12 @@
     options: commonOptions('USD', true),
   });
 
-  new Chart(document.getElementById('flight-operating-income-chart'), {
+  const operatingIncomeCanvas = document.getElementById(
+    'flight-operating-income-chart',
+  );
+  if (!operatingIncomeCanvas) return;
+
+  new Chart(operatingIncomeCanvas, {
     type: 'line',
     data: {
       labels: report.labels,

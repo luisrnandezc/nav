@@ -200,6 +200,35 @@ class ProductionReportTests(TestCase):
         self.assertEqual(report.flight_trend.labels[0], '01/06 - 07/06')
         self.assertEqual(report.flight_trend.flight_hours[1], Decimal('2.0'))
 
+    def test_dual_simulator_evaluations_share_one_instructor_cost(self):
+        self.create_sim(
+            student_id=1000001,
+            session_type=SimEvaluation.DUAL,
+            session_sim_hours=Decimal('1.0'),
+            simulator_rate_applied=Decimal('22.50'),
+            instructor_rate_applied=Decimal('15.00'),
+        )
+        self.create_sim(
+            student_id=1000002,
+            session_type=SimEvaluation.DUAL,
+            session_sim_hours=Decimal('1.0'),
+            simulator_rate_applied=Decimal('22.50'),
+            instructor_rate_applied=Decimal('15.00'),
+        )
+
+        report = get_production_report(
+            ProductionFilters(date(2026, 6, 10), date(2026, 6, 10))
+        )
+
+        self.assertEqual(report.totals.simulator_hours, Decimal('2.0'))
+        self.assertEqual(report.totals.gross_simulator_income_usd, Decimal('45.00'))
+        self.assertEqual(report.totals.instructor_simulator_cost_usd, Decimal('15.00'))
+        self.assertEqual(report.totals.net_simulator_revenue_usd, Decimal('30.00'))
+        self.assertEqual(
+            report.by_instructor[0].totals.instructor_simulator_cost_usd,
+            Decimal('15.00'),
+        )
+
     def test_filters_apply_to_people_aircraft_simulator_and_dates(self):
         self.create_flight()
         self.create_flight(student_id=1000002, session_date=date(2026, 6, 11))

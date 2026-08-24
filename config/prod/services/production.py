@@ -67,13 +67,12 @@ class ProductionTotals:
         ).quantize(MONEY_QUANTUM)
 
     @property
-    def operating_flying_profit_usd(self) -> Decimal:
-        """Return flight income after instructor and fuel costs."""
+    def operating_flying_income_usd(self) -> Decimal:
+        """Return flight income after instructor costs."""
 
         return (
             self.gross_flying_income_usd
             - self.instructor_flying_cost_usd
-            - self.fuel_cost_usd
         ).quantize(MONEY_QUANTUM)
 
     def add(self, other: 'ProductionTotals') -> None:
@@ -107,7 +106,7 @@ class FlightTrend:
     labels: list[str]
     flight_hours: list[Decimal]
     income_usd: list[Decimal]
-    operating_profit_usd: list[Decimal]
+    operating_income_usd: list[Decimal]
     aircraft_hours: dict[str, list[Decimal]]
 
 
@@ -300,11 +299,10 @@ def _build_flight_trend(filters, totals, aircraft):
             totals.get(bucket, ProductionTotals()).gross_flying_income_usd
             for bucket in buckets
         ],
-        operating_profit_usd=[
+        operating_income_usd=[
             (
                 totals.get(bucket, ProductionTotals()).gross_flying_income_usd
                 - totals.get(bucket, ProductionTotals()).instructor_flying_cost_usd
-                - totals.get(bucket, ProductionTotals()).fuel_cost_usd
             ).quantize(MONEY_QUANTUM)
             for bucket in buckets
         ],

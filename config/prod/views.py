@@ -71,8 +71,8 @@ def _flight_chart_data(report):
         'grouping': trend.grouping,
         'flight_hours': [float(value) for value in trend.flight_hours],
         'income_usd': [float(value) for value in trend.income_usd],
-        'operating_profit_usd': [
-            float(value) for value in trend.operating_profit_usd
+        'operating_income_usd': [
+            float(value) for value in trend.operating_income_usd
         ],
         'aircraft_hours': {
             registration: [float(value) for value in values]

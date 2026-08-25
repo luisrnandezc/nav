@@ -113,8 +113,9 @@ class StudentProfileAdmin(admin.ModelAdmin):
 @admin.register(InstructorProfile)
 class InstructorProfileAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'get_instructor_id', 'get_first_name', 'get_last_name',
-                    'instructor_license_type', 'instructor_type', 'flight_instructor_hourly_rate')
-    list_filter = ('instructor_type', 'instructor_license_type')
+                    'instructor_license_type', 'instructor_type',
+                    'flight_instructor_hourly_rate')
+    list_filter = ('instructor_type', 'instructor_license_type', 'is_chief_instructor')
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
 
     fieldsets = (
@@ -132,6 +133,7 @@ class InstructorProfileAdmin(admin.ModelAdmin):
                 'ground_instructor_hourly_rate',
                 'sim_instructor_hourly_rate',
                 'flight_instructor_hourly_rate',
+                'is_chief_instructor',
             )
         }),
     )

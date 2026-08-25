@@ -262,6 +262,23 @@ class FlightEvaluationAccountingTests(TestCase):
         self.assertNotIn('fuel_consumed', readonly_fields)
         self.assertIn('session_flight_hours', readonly_fields)
 
+    def test_admin_shows_historical_rates_only_on_each_object_page(self):
+        snapshot_fields = {
+            'hourly_rate_applied',
+            'aircraft_rate_applied',
+            'instructor_rate_applied',
+            'fuel_rate_applied',
+        }
+
+        for label, form_class, _course_type in self.FORM_CASES:
+            with self.subTest(evaluation=label):
+                model_admin = admin.site._registry[form_class._meta.model]
+                fieldset_titles = [title for title, _options in model_admin.fieldsets]
+
+                self.assertIn('Tarifas históricas', fieldset_titles)
+                self.assertTrue(snapshot_fields.issubset(model_admin.readonly_fields))
+                self.assertTrue(snapshot_fields.isdisjoint(model_admin.list_display))
+
     def test_admin_fuel_only_correction_uses_stored_fuel_rate(self):
         evaluation = self.save_evaluation(FlightEvaluation100_120Form, 'HVI-P')
         self.aircraft.fuel_cost = Decimal('9.00')

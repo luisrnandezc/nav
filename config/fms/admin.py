@@ -367,6 +367,12 @@ class FlightEvaluation0_100Admin(FlightEvaluationCorrectionAdminMixin, admin.Mod
         ('Sección 11: Comentarios', {
             'fields': ('comments', 'aura_processed', 'aura_review')
         }),
+        ('Tarifas históricas', {
+            'fields': (
+                'hourly_rate_applied', 'aircraft_rate_applied',
+                'instructor_rate_applied', 'fuel_rate_applied',
+            )
+        }),
     )
     
     readonly_fields = [
@@ -381,7 +387,9 @@ class FlightEvaluation0_100Admin(FlightEvaluationCorrectionAdminMixin, admin.Mod
         'emer_3', 'emer_4', 'emer_5', 'emer_6', 'nav_1', 'nav_2', 'nav_3', 'nav_4', 'nav_5', 'nav_6',
         'gen_1', 'gen_2', 'gen_3', 'gen_4', 'gen_5', 'gen_6', 'gen_7', 'land_1', 'land_2', 'land_3',
         'land_4', 'land_5', 'land_6', 'land_7', 'land_8', 'land_9', 'land_10', 
-        'comments', 'aura_processed', 'aura_review'
+        'comments', 'aura_processed', 'aura_review',
+        'hourly_rate_applied', 'aircraft_rate_applied',
+        'instructor_rate_applied', 'fuel_rate_applied'
     ]
     
     def has_add_permission(self, request):
@@ -507,6 +515,12 @@ class FlightEvaluation100_120Admin(FlightEvaluationCorrectionAdminMixin, admin.M
         ('Sección 11: Comentarios', {
             'fields': ('comments', 'aura_processed', 'aura_review')
         }),
+        ('Tarifas históricas', {
+            'fields': (
+                'hourly_rate_applied', 'aircraft_rate_applied',
+                'instructor_rate_applied', 'fuel_rate_applied',
+            )
+        }),
     )
     
     readonly_fields = [
@@ -522,7 +536,9 @@ class FlightEvaluation100_120Admin(FlightEvaluationCorrectionAdminMixin, admin.M
         'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6', 'land_7', 'emer_1',
         'emer_2', 'emer_3', 'emer_4', 'emer_5', 'gen_1', 'gen_2', 'gen_3', 'gen_4',
         'gen_5', 'gen_6', 'gen_7', 
-        'comments', 'aura_processed', 'aura_review'
+        'comments', 'aura_processed', 'aura_review',
+        'hourly_rate_applied', 'aircraft_rate_applied',
+        'instructor_rate_applied', 'fuel_rate_applied'
     ]
     
     def has_add_permission(self, request):
@@ -634,6 +650,12 @@ class FlightEvaluation120_170Admin(FlightEvaluationCorrectionAdminMixin, admin.M
         ('Sección 10: Comentarios', {
             'fields': ('comments', 'aura_processed', 'aura_review')
         }),
+        ('Tarifas históricas', {
+            'fields': (
+                'hourly_rate_applied', 'aircraft_rate_applied',
+                'instructor_rate_applied', 'fuel_rate_applied',
+            )
+        }),
     )
     
     readonly_fields = [
@@ -647,7 +669,9 @@ class FlightEvaluation120_170Admin(FlightEvaluationCorrectionAdminMixin, admin.M
         'inst_10', 'inst_11', 'land_1', 'land_2', 'land_3', 'land_4', 'land_5', 'land_6',
         'land_7', 'emer_1', 'emer_2', 'emer_3', 'emer_4', 'gen_1', 'gen_2', 'gen_3',
         'gen_4', 'gen_5', 'gen_6', 'gen_7',
-        'comments', 'aura_processed', 'aura_review'
+        'comments', 'aura_processed', 'aura_review',
+        'hourly_rate_applied', 'aircraft_rate_applied',
+        'instructor_rate_applied', 'fuel_rate_applied'
     ]
     
     def has_add_permission(self, request):

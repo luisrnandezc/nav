@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Panel de Producción</title>
     {% include 'ui/includes/core_css.html' %}
-    <link href="{% static 'prod/production_panel.css' %}" rel="stylesheet" />
+    <link href="{% static 'prod/production_panel.css' %}?v=6" rel="stylesheet" />
   </head>
   <body
     class="production-body"
@@ -20,10 +20,36 @@
       <header class="main-header production-header">
         <h1>Panel de Producción</h1>
         <p class="production-scope-note">
-          Excluye evaluaciones externas y reportes de vuelo
+          Excluye evaluaciones externas y reportes de vuelo.
         </p>
       </header>
 
+      <section class="current-balance-section" aria-labelledby="balance-section-title">
+        <article class="report-section ui-card balance-table-card">
+          <h2 id="balance-section-title">Estatus actual de balances en LV</h2>
+          <div class="balance-summary">
+            <span class="badge balance-total-badge {{ total_balance_badge }}">Balance LV: ${{ total_student_balance|floatformat:2 }}</span>
+          </div>
+          <div class="balance-table-scroll">
+            <table>
+              <thead><tr><th>Estudiante</th><th>Cédula</th><th>Balance actual</th></tr></thead>
+              <tbody>
+                {% for student in student_balances %}
+                  <tr>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.national_id }}</td>
+                    <td><span class="badge student-balance-badge {{ student.badge }}">${{ student.balance|floatformat:2 }}</span></td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="3">No hay estudiantes en fase de vuelo.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <h2 class="production-section-title report-title">Reporte de producción</h2>
       <section class="ui-card filter-card">
         <h2>Filtros</h2>
         <p class="filter-help">Sin selección se incluyen todos los elementos de ese filtro.</p>
@@ -91,13 +117,6 @@
           <h2>Producción por instructor</h2>
           <div class="table-scroll"><table><thead><tr><th>Instructor</th><th>Vuelo</th><th>Simulador</th><th>Combustible</th><th>Costo Instructor</th></tr></thead><tbody>
             {% for row in report.by_instructor %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }} h</td><td>{{ row.totals.simulator_hours|floatformat:1 }} h</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td><td>${{ row.totals.instructor_production_usd|floatformat:2 }}</td></tr>{% empty %}<tr><td colspan="5">No hay datos.</td></tr>{% endfor %}
-          </tbody></table></div>
-        </section>
-
-        <section class="report-section ui-card">
-          <h2>Producción por estudiante</h2>
-          <div class="table-scroll"><table><thead><tr><th>Estudiante</th><th>Vuelo</th><th>Valor vuelo</th><th>Simulador</th><th>Combustible</th></tr></thead><tbody>
-            {% for row in report.by_student %}<tr><td>{{ row.label }}</td><td>{{ row.totals.flight_hours|floatformat:1 }} h</td><td>${{ row.totals.student_flying_value_usd|floatformat:2 }}</td><td>{{ row.totals.simulator_hours|floatformat:1 }} h</td><td>{{ row.totals.fuel_liters|floatformat:1 }} L</td></tr>{% empty %}<tr><td colspan="5">No hay datos.</td></tr>{% endfor %}
           </tbody></table></div>
         </section>
 

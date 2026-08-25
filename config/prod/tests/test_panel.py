@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from decimal import Decimal
 
 from django.contrib.auth.models import Permission
 from django.test import TestCase
@@ -68,7 +69,71 @@ class ProductionPanelTests(TestCase):
         self.assertContains(response, 'Ingreso Operativo de Línea de Vuelo')
         self.assertContains(response, 'Excluye evaluaciones externas y reportes de vuelo.')
         self.assertNotContains(response, 'Producción por fecha')
+        self.assertNotContains(response, 'Producción por estudiante')
         self.assertIsNotNone(response.context['chart_data'])
+
+    def test_current_flying_student_balances_are_always_visible(self):
+        balances = (
+            ('high-balance', 9000030, StudentProfile.FLYING, '600.00'),
+            ('low-balance', 9000031, StudentProfile.FLYING, '250.00'),
+            ('zero-balance', 9000032, StudentProfile.FLYING, '0.00'),
+            ('negative-balance', 9000033, StudentProfile.FLYING, '-20.00'),
+            ('ground-balance', 9000034, StudentProfile.GROUND, '999.00'),
+        )
+        flying_profiles = []
+        for username, national_id, phase, balance in balances:
+            student = self.create_user(username, national_id, 'STUDENT')
+            profile = StudentProfile.objects.create(
+                user=student,
+                student_phase=phase,
+                student_age=18,
+                balance=Decimal(balance),
+            )
+            if phase == StudentProfile.FLYING:
+                flying_profiles.append(profile)
+        self.grant_permission()
+        self.client.force_login(self.user)
+
+        response = self.client.get(
+            self.url,
+            {
+                'start_date': '2026-06-05',
+                'end_date': '2026-08-13',
+                'students': flying_profiles[0].pk,
+            },
+        )
+
+        rows = {
+            row['national_id']: row
+            for row in response.context['student_balances']
+        }
+        self.assertEqual(set(rows), {9000030, 9000031, 9000032, 9000033})
+        self.assertEqual(response.context['total_student_balance'], Decimal('830.00'))
+        self.assertEqual(response.context['total_balance_badge'], 'badge-green')
+        self.assertEqual(rows[9000030]['badge'], 'badge-green')
+        self.assertEqual(rows[9000031]['badge'], 'badge-yellow')
+        self.assertEqual(rows[9000032]['badge'], 'badge-yellow')
+        self.assertEqual(rows[9000033]['badge'], 'badge-red')
+        self.assertContains(response, 'Estatus actual de balances en LV')
+        self.assertContains(response, 'Balance LV')
+        self.assertContains(response, 'balance-table-scroll')
+        self.assertNotContains(response, 'ground-balance')
+
+    def test_negative_total_balance_uses_red_badge(self):
+        student = self.create_user('student-in-debt', 9000040, 'STUDENT')
+        StudentProfile.objects.create(
+            user=student,
+            student_phase=StudentProfile.FLYING,
+            student_age=18,
+            balance=Decimal('-50.00'),
+        )
+        self.grant_permission()
+        self.client.force_login(self.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.context['total_student_balance'], Decimal('-50.00'))
+        self.assertEqual(response.context['total_balance_badge'], 'badge-red')
 
     def test_reversed_dates_show_validation_error(self):
         self.grant_permission()

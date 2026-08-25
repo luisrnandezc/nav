@@ -45,6 +45,71 @@
   text-transform: none;
 }
 
+.production-section-title {
+  letter-spacing: 2px;
+  margin: 0 0 var(--ui-space-lg);
+  text-align: center;
+}
+
+.current-balance-section {
+  margin-bottom: var(--ui-space-xl);
+  max-width: 1400px;
+  width: 90%;
+}
+
+.current-balance-section .balance-table-card {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.balance-table-card h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.balance-summary {
+  margin-bottom: var(--ui-space-lg);
+  text-align: center;
+}
+
+.balance-total-badge {
+  font-size: 1rem;
+}
+
+.balance-table-scroll {
+  max-height: 380px;
+  overflow: auto;
+}
+
+.balance-table-scroll thead th {
+  background-color: #4169e1;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.balance-table-scroll tbody td {
+  background-color: rgba(218, 225, 255, 0.05);
+  color: var(--ui-color-text);
+}
+
+.balance-table-scroll th:last-child,
+.balance-table-scroll td:last-child {
+  min-width: 160px;
+}
+
+.student-balance-badge {
+  box-sizing: border-box;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  width: 11ch;
+}
+
+.report-title {
+  max-width: 1400px;
+  width: 90%;
+}
+
 .production-panel .back-button .button {
   min-width: 0;
   padding: 8px 15px;
@@ -193,6 +258,7 @@
   }
 
   .production-header,
+  .current-balance-section,
   .filter-card,
   .report-section,
   .metrics-grid,
@@ -209,6 +275,10 @@
   .production-header h1 {
     font-size: 1.5rem;
     letter-spacing: 2px;
+  }
+
+  .production-section-title {
+    font-size: 1.25rem;
   }
 
   .chart-container {

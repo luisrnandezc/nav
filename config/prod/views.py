@@ -1,7 +1,10 @@
 from datetime import date, timedelta
+from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render
+
+from accounts.models import StudentProfile
 
 from .forms import ProductionFilterForm
 from .services import ProductionFilters, get_production_report
@@ -19,6 +22,7 @@ def production_panel(request):
     form = ProductionFilterForm(request.GET or None, initial=initial)
     report = None
     chart_data = None
+    student_balances, total_student_balance = _student_balance_status()
 
     if request.GET and form.is_valid():
         report = get_production_report(
@@ -44,7 +48,16 @@ def production_panel(request):
     return render(
         request,
         'prod/production_panel.html',
-        {'form': form, 'report': report, 'chart_data': chart_data},
+        {
+            'form': form,
+            'report': report,
+            'chart_data': chart_data,
+            'student_balances': student_balances,
+            'total_student_balance': total_student_balance,
+            'total_balance_badge': (
+                'badge-green' if total_student_balance >= 0 else 'badge-red'
+            ),
+        },
     )
 
 
@@ -60,6 +73,34 @@ def _profile_id_tuple(profile):
     if profile is None:
         return ()
     return (profile.user.national_id,)
+
+
+def _student_balance_status():
+    """Return current balances for every FLYING student and their total."""
+
+    profiles = StudentProfile.objects.filter(
+        student_phase=StudentProfile.FLYING,
+    ).select_related('user').order_by('user__first_name', 'user__last_name')
+    rows = []
+    total = Decimal('0.00')
+
+    for profile in profiles:
+        balance = profile.balance or Decimal('0.00')
+        total += balance
+        if balance >= Decimal('500.00'):
+            badge = 'badge-green'
+        elif balance >= 0:
+            badge = 'badge-yellow'
+        else:
+            badge = 'badge-red'
+        rows.append({
+            'name': profile.user.get_full_name() or profile.user.username,
+            'national_id': profile.user.national_id,
+            'balance': balance,
+            'badge': badge,
+        })
+
+    return rows, total
 
 
 def _flight_chart_data(report):

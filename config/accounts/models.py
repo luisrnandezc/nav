@@ -344,8 +344,12 @@ class InstructorProfile(models.Model):
     flight_instructor_hourly_rate = models.DecimalField(
         max_digits=3,
         decimal_places=1,
-        default=20.0,
+        default=25.0,
         verbose_name="Tasa instrucción vuelo ($/h)"
+    )
+    is_chief_instructor = models.BooleanField(
+        default=False,
+        verbose_name='Jefe de instrucción',
     )
     #endregion
 

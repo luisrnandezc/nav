@@ -878,7 +878,7 @@ class FlightReportAdmin(admin.ModelAdmin):
             )
         }),
         ('Sección 3: Comentarios', {
-            'fields': ('comments', 'aura_processed')
+            'fields': ('comments',)
         }),
     )
     readonly_fields = [

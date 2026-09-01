@@ -68,12 +68,20 @@
 }
 
 .balance-summary {
+  display: grid;
+  gap: var(--ui-space-md);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-bottom: var(--ui-space-lg);
   text-align: center;
 }
 
 .balance-total-badge {
+  align-items: center;
+  box-sizing: border-box;
+  display: inline-flex;
   font-size: 1rem;
+  justify-content: center;
+  width: 100%;
 }
 
 .balance-table-scroll {
@@ -268,6 +276,10 @@
 }
 
 @media screen and (max-width: 600px) {
+  .balance-summary {
+    grid-template-columns: 1fr;
+  }
+
   .production-filter-grid {
     grid-template-columns: 1fr;
   }

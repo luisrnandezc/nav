@@ -22,7 +22,12 @@ def production_panel(request):
     form = ProductionFilterForm(request.GET or None, initial=initial)
     report = None
     chart_data = None
-    student_balances, total_student_balance = _student_balance_status()
+    (
+        student_balances,
+        positive_student_balance,
+        negative_student_balance,
+        total_student_balance,
+    ) = _student_balance_status()
 
     if request.GET and form.is_valid():
         report = get_production_report(
@@ -53,6 +58,8 @@ def production_panel(request):
             'report': report,
             'chart_data': chart_data,
             'student_balances': student_balances,
+            'positive_student_balance': positive_student_balance,
+            'negative_student_balance': negative_student_balance,
             'total_student_balance': total_student_balance,
             'total_balance_badge': (
                 'badge-green' if total_student_balance >= 0 else 'badge-red'
@@ -76,17 +83,24 @@ def _profile_id_tuple(profile):
 
 
 def _student_balance_status():
-    """Return current balances for every FLYING student and their total."""
+    """Return FLYING student balances with positive, negative, and net totals."""
 
     profiles = StudentProfile.objects.filter(
         student_phase=StudentProfile.FLYING,
     ).select_related('user').order_by('user__first_name', 'user__last_name')
     rows = []
+    positive_total = Decimal('0.00')
+    negative_total = Decimal('0.00')
     total = Decimal('0.00')
 
     for profile in profiles:
         balance = profile.balance or Decimal('0.00')
         total += balance
+        if balance > 0:
+            positive_total += balance
+        elif balance < 0:
+            negative_total += balance
+
         if balance >= Decimal('500.00'):
             badge = 'badge-green'
         elif balance >= 0:
@@ -100,7 +114,7 @@ def _student_balance_status():
             'badge': badge,
         })
 
-    return rows, total
+    return rows, positive_total, negative_total, total
 
 
 def _flight_chart_data(report):

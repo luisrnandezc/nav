@@ -108,6 +108,14 @@ class ProductionPanelTests(TestCase):
             for row in response.context['student_balances']
         }
         self.assertEqual(set(rows), {9000030, 9000031, 9000032, 9000033})
+        self.assertEqual(
+            response.context['positive_student_balance'],
+            Decimal('850.00'),
+        )
+        self.assertEqual(
+            response.context['negative_student_balance'],
+            Decimal('-20.00'),
+        )
         self.assertEqual(response.context['total_student_balance'], Decimal('830.00'))
         self.assertEqual(response.context['total_balance_badge'], 'badge-green')
         self.assertEqual(rows[9000030]['badge'], 'badge-green')
@@ -115,6 +123,8 @@ class ProductionPanelTests(TestCase):
         self.assertEqual(rows[9000032]['badge'], 'badge-yellow')
         self.assertEqual(rows[9000033]['badge'], 'badge-red')
         self.assertContains(response, 'Estatus actual de balances en LV')
+        self.assertContains(response, 'Balances positivos')
+        self.assertContains(response, 'Balances negativos')
         self.assertContains(response, 'Balance LV')
         self.assertContains(response, 'balance-table-scroll')
         self.assertNotContains(response, 'ground-balance')
@@ -132,6 +142,11 @@ class ProductionPanelTests(TestCase):
 
         response = self.client.get(self.url)
 
+        self.assertEqual(response.context['positive_student_balance'], Decimal('0.00'))
+        self.assertEqual(
+            response.context['negative_student_balance'],
+            Decimal('-50.00'),
+        )
         self.assertEqual(response.context['total_student_balance'], Decimal('-50.00'))
         self.assertEqual(response.context['total_balance_badge'], 'badge-red')
 

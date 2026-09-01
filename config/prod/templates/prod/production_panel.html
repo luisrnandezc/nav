@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NAV | Panel de Producción</title>
     {% include 'ui/includes/core_css.html' %}
-    <link href="{% static 'prod/production_panel.css' %}?v=6" rel="stylesheet" />
+    <link href="{% static 'prod/production_panel.css' %}?v=7" rel="stylesheet" />
   </head>
   <body
     class="production-body"
@@ -28,6 +28,8 @@
         <article class="report-section ui-card balance-table-card">
           <h2 id="balance-section-title">Estatus actual de balances en LV</h2>
           <div class="balance-summary">
+            <span class="badge balance-total-badge badge-green">Balances positivos: ${{ positive_student_balance|floatformat:2 }}</span>
+            <span class="badge balance-total-badge badge-red">Balances negativos: ${{ negative_student_balance|floatformat:2 }}</span>
             <span class="badge balance-total-badge {{ total_balance_badge }}">Balance LV: ${{ total_student_balance|floatformat:2 }}</span>
           </div>
           <div class="balance-table-scroll">

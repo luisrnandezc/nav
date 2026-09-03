@@ -1,0 +1,297 @@
+@page {
+    size: letter portrait;
+    margin: 31mm 13mm 18mm;
+
+    @top-center {
+        content: element(document-header);
+    }
+
+    @bottom-center {
+        content: "Página " counter(page) " de " counter(pages);
+        color: #555;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 8pt;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    color: #20252b;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 9pt;
+    line-height: 1.4;
+}
+
+.document-header {
+    position: running(document-header);
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 3mm;
+    border-bottom: 1px solid #63717f;
+}
+
+.logo {
+    width: 21mm;
+    height: auto;
+}
+
+.header-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 5mm;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.header-title strong {
+    font-size: 13pt;
+}
+
+.header-title span,
+.header-reference span {
+    margin-top: 1mm;
+    color: #58636e;
+    font-size: 7.5pt;
+}
+
+.header-reference {
+    display: flex;
+    flex-direction: column;
+    min-width: 32mm;
+    text-align: right;
+}
+
+.report-section {
+    margin-bottom: 6mm;
+}
+
+.keep-together,
+.risk-card,
+.approval-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+h2 {
+    margin: 0 0 3mm;
+    padding: 2mm 3mm;
+    break-after: avoid;
+    page-break-after: avoid;
+    border-left: 4px solid #314b62;
+    background: #e8edf1;
+    color: #243746;
+    font-size: 11pt;
+    text-transform: uppercase;
+}
+
+h3,
+h4,
+p,
+dl,
+dd,
+dt {
+    margin: 0;
+}
+
+.field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2mm;
+    margin-bottom: 2mm;
+}
+
+.field-grid.three-columns {
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 2mm;
+}
+
+.field-grid > div,
+.text-field {
+    padding: 2.5mm 3mm;
+    border: 1px solid #c6ced5;
+    border-radius: 2px;
+}
+
+dt,
+.text-field h3,
+.justification h4 {
+    margin-bottom: 1mm;
+    color: #58636e;
+    font-size: 7.5pt;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.text-field + .text-field {
+    margin-top: 2mm;
+}
+
+.risk-card {
+    margin-bottom: 4mm;
+    padding: 3mm;
+    border: 1px solid #9eabb6;
+    border-radius: 3px;
+}
+
+.risk-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2mm;
+}
+
+.risk-heading h3 {
+    color: #243746;
+    font-size: 10pt;
+}
+
+.priority-label {
+    padding: 1mm 2mm;
+    border-radius: 2px;
+    background: #314b62;
+    color: #fff;
+    font-size: 7pt;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.risk-description {
+    margin-bottom: 3mm;
+}
+
+.evaluation-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3mm;
+}
+
+.evaluation-block {
+    border: 1px solid #c6ced5;
+}
+
+.evaluation-block h4 {
+    padding: 1.5mm 2mm;
+    background: #edf1f4;
+    color: #314b62;
+    font-size: 8.5pt;
+}
+
+.evaluation-block dl {
+    padding: 1.5mm 2mm;
+}
+
+.evaluation-block dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 3mm;
+    padding: 0.7mm 0;
+    border-bottom: 1px solid #e1e5e8;
+}
+
+.evaluation-block dl > div:last-child {
+    border-bottom: 0;
+}
+
+.evaluation-block dd {
+    text-align: right;
+}
+
+.risk-index {
+    font-weight: bold;
+}
+
+.justification {
+    margin-top: 3mm;
+    padding: 2.5mm 3mm;
+    background: #f5f7f8;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+thead {
+    display: table-header-group;
+}
+
+tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+th,
+td {
+    padding: 2mm;
+    border: 1px solid #9eabb6;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+th {
+    background: #dce3e8;
+    color: #243746;
+    font-size: 7.5pt;
+    text-transform: uppercase;
+}
+
+td {
+    font-size: 8pt;
+    text-align: center;
+}
+
+.text-column {
+    text-align: left;
+}
+
+.number-column {
+    width: 12mm;
+}
+
+.risk-column {
+    width: 15mm;
+}
+
+.person-column {
+    width: 31mm;
+}
+
+.date-column {
+    width: 25mm;
+}
+
+.approval-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8mm;
+    padding-top: 11mm;
+}
+
+.approval-grid > div {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.signature-line {
+    margin-bottom: 2mm;
+    border-top: 1px solid #20252b;
+}
+
+.approval-grid strong {
+    font-size: 8.5pt;
+}
+
+.approval-grid span:not(.signature-line) {
+    color: #58636e;
+    font-size: 7.5pt;
+}

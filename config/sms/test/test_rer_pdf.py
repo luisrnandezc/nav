@@ -1,7 +1,15 @@
+import sys
+from types import SimpleNamespace
+from unittest.mock import patch
+
 from django.test import TestCase
 from django.utils import timezone
 
-from sms.rer_pdf import build_rer_pdf_context, classify_risk_index
+from sms.rer_pdf import (
+    build_rer_pdf_context,
+    classify_risk_index,
+    render_rer_pdf,
+)
 from sms.test.factories import (
     MitigationActionEvidenceFactory,
     MitigationActionFactory,
@@ -146,3 +154,18 @@ class TestRERPDFContext(TestCase):
 
         with self.assertRaisesRegex(ValueError, 'Invalid risk matrix index'):
             classify_risk_index('-')
+
+    def test_render_returns_pdf_bytes_using_template_and_print_styles(self):
+        rendered_pdf = b'%PDF-1.7 test document'
+        html_document = SimpleNamespace(
+            write_pdf=lambda **kwargs: rendered_pdf,
+        )
+        fake_weasyprint = SimpleNamespace(
+            HTML=lambda **kwargs: html_document,
+            CSS=lambda **kwargs: kwargs,
+        )
+
+        with patch.dict(sys.modules, {'weasyprint': fake_weasyprint}):
+            pdf = render_rer_pdf(self.rer)
+
+        assert pdf.startswith(b'%PDF')

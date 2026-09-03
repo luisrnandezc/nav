@@ -1,10 +1,6 @@
 @page {
     size: letter portrait;
-    margin: 31mm 13mm 18mm;
-
-    @top-center {
-        content: element(document-header);
-    }
+    margin: 42mm 13mm 18mm;
 
     @bottom-center {
         content: "Página " counter(page) " de " counter(pages);
@@ -29,12 +25,13 @@ body {
 }
 
 .document-header {
-    position: running(document-header);
+    position: fixed;
+    top: -27mm;
+    right: 0;
+    left: 0;
     display: flex;
     align-items: center;
     width: 100%;
-    padding-bottom: 3mm;
-    border-bottom: 1px solid #63717f;
 }
 
 .logo {
@@ -43,10 +40,13 @@ body {
 }
 
 .header-title {
-    flex: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     display: flex;
     flex-direction: column;
-    padding: 0 5mm;
+    width: 125mm;
+    transform: translate(-50%, -50%);
     text-align: center;
     text-transform: uppercase;
 }
@@ -66,6 +66,7 @@ body {
     display: flex;
     flex-direction: column;
     min-width: 32mm;
+    margin-left: auto;
     text-align: right;
 }
 

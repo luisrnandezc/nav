@@ -1438,8 +1438,14 @@ def rer_action_panel(request, rer_id):
         messages.error(request, 'No tiene permisos para revisar el RER.')
         return redirect('sms:rer_dashboard')
 
-    if rer.analysis_status != 'READY_FOR_REVIEW':
-        messages.warning(request, 'Este RER no está pendiente de revisión.')
+    allowed_statuses = {'READY_FOR_REVIEW', 'REVIEWED'}
+    if rer.analysis_status not in allowed_statuses:
+        messages.warning(request, 'Este RER todavía no está disponible para revisión.')
+        return redirect('sms:rer_dashboard')
+
+    is_read_only = rer.analysis_status == 'REVIEWED'
+    if request.method == 'POST' and is_read_only:
+        messages.warning(request, 'Este RER ya fue revisado y no puede modificarse.')
         return redirect('sms:rer_dashboard')
 
     risks = (
@@ -1481,6 +1487,7 @@ def rer_action_panel(request, rer_id):
         'rer': rer,
         'report': rer.report,
         'formset': formset,
+        'is_read_only': is_read_only,
     })
 
 @login_required

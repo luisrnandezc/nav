@@ -63,8 +63,24 @@
           </div>
           <div class="info-item">
             <span class="info-label">Estatus</span>
-            <span class="info-value"><span class="badge badge-blue badge-medium">{{ rer.get_analysis_status_display }}</span></span>
+            <span class="info-value">
+              {% if is_read_only %}
+                <span class="badge badge-green badge-medium">{{ rer.get_analysis_status_display }}</span>
+              {% else %}
+                <span class="badge badge-blue badge-medium">{{ rer.get_analysis_status_display }}</span>
+              {% endif %}
+            </span>
           </div>
+          {% if is_read_only %}
+            <div class="info-item">
+              <span class="info-label">Revisado por</span>
+              <span class="info-value">{{ rer.reviewed_by.get_full_name|default:rer.reviewed_by }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha de revisión</span>
+              <span class="info-value">{{ rer.reviewed_at|date:"d/m/Y H:i" }}</span>
+            </div>
+          {% endif %}
         </div>
         <div class="info-item">
           <span class="info-label">Descripción del peligro</span>
@@ -72,27 +88,37 @@
         </div>
       </div>
 
-      <form method="post" class="rer-review-form">
-        {% csrf_token %}
-        {{ formset.management_form }}
+      {% if not is_read_only %}<form method="post" class="rer-review-form">{% endif %}
+        {% if not is_read_only %}
+          {% csrf_token %}
+          {{ formset.management_form }}
+        {% endif %}
 
         <div class="cards-container">
           <div class="cards-container-header">
             <h2>Evaluaciones Residuales</h2>
           </div>
           <p class="panel-help-text">
-            Revise la propuesta de SARA para cada riesgo. Los valores y su justificación pueden modificarse antes de aprobar el RER.
+            {% if is_read_only %}
+              Estos son los valores residuales finales aprobados por el Coordinador SMS.
+            {% else %}
+              Revise la propuesta de SARA para cada riesgo. Los valores y su justificación pueden modificarse antes de aprobar el RER.
+            {% endif %}
           </p>
 
           <div class="risk-analysis-list">
             {% for form in formset %}
-              {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+              {% if not is_read_only %}
+                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+              {% endif %}
               <div class="risk-item">
                 <div class="risk-header">
                   <span class="risk-key">RIESGO {{ forloop.counter }}</span>
                   <div class="evaluation-summary">
                     <span class="badge badge-yellow badge-medium">Inicial: {{ form.instance.pre_evaluation }}</span>
-                    <span class="badge badge-blue badge-medium">Residual SARA: {{ form.instance.post_evaluation }}</span>
+                    <span class="badge {% if is_read_only %}badge-green{% else %}badge-blue{% endif %} badge-medium">
+                      {% if is_read_only %}Residual aprobada{% else %}Residual SARA{% endif %}: {{ form.instance.post_evaluation }}
+                    </span>
                   </div>
                 </div>
                 <div class="risk-text">{{ form.instance.description }}</div>
@@ -125,34 +151,53 @@
                 </div>
 
                 <div class="residual-review-section">
-                  <div class="risk-evaluation-form-row">
-                    <div class="risk-evaluation-select-group">
-                      <label class="risk-evaluation-label" for="{{ form.post_evaluation_severity.id_for_label }}">{{ form.post_evaluation_severity.label }}</label>
-                      {{ form.post_evaluation_severity }}
+                  {% if is_read_only %}
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <span class="info-label">Severidad residual</span>
+                        <span class="info-value">{{ form.instance.get_post_evaluation_severity_display }}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="info-label">Probabilidad residual</span>
+                        <span class="info-value">{{ form.instance.get_post_evaluation_probability_display }}</span>
+                      </div>
                     </div>
-                    <div class="risk-evaluation-select-group">
-                      <label class="risk-evaluation-label" for="{{ form.post_evaluation_probability.id_for_label }}">{{ form.post_evaluation_probability.label }}</label>
-                      {{ form.post_evaluation_probability }}
+                    <div class="evidence-box">
+                      <span class="info-label">Justificación de la evaluación residual</span>
+                      <span class="action-text">{{ form.instance.post_evaluation_justification }}</span>
                     </div>
-                  </div>
-                  <div class="justification-group">
-                    <label class="action-form-label" for="{{ form.post_evaluation_justification.id_for_label }}">{{ form.post_evaluation_justification.label }}</label>
-                    {{ form.post_evaluation_justification }}
-                  </div>
-                  {% if form.errors %}<div class="form-errors">{{ form.errors }}</div>{% endif %}
+                  {% else %}
+                    <div class="risk-evaluation-form-row">
+                      <div class="risk-evaluation-select-group">
+                        <label class="risk-evaluation-label" for="{{ form.post_evaluation_severity.id_for_label }}">{{ form.post_evaluation_severity.label }}</label>
+                        {{ form.post_evaluation_severity }}
+                      </div>
+                      <div class="risk-evaluation-select-group">
+                        <label class="risk-evaluation-label" for="{{ form.post_evaluation_probability.id_for_label }}">{{ form.post_evaluation_probability.label }}</label>
+                        {{ form.post_evaluation_probability }}
+                      </div>
+                    </div>
+                    <div class="justification-group">
+                      <label class="action-form-label" for="{{ form.post_evaluation_justification.id_for_label }}">{{ form.post_evaluation_justification.label }}</label>
+                      {{ form.post_evaluation_justification }}
+                    </div>
+                    {% if form.errors %}<div class="form-errors">{{ form.errors }}</div>{% endif %}
+                  {% endif %}
                 </div>
               </div>
             {% endfor %}
           </div>
 
-          {% if formset.non_form_errors %}<div class="form-errors">{{ formset.non_form_errors }}</div>{% endif %}
+          {% if not is_read_only and formset.non_form_errors %}<div class="form-errors">{{ formset.non_form_errors }}</div>{% endif %}
 
-          <div class="approval-section">
-            <p>Al aprobar, los valores mostrados quedarán registrados como la evaluación residual revisada por el Coordinador SMS.</p>
-            <button type="submit" class="risk-submit-button">Aprobar RER</button>
-          </div>
+          {% if not is_read_only %}
+            <div class="approval-section">
+              <p>Al aprobar, los valores mostrados quedarán registrados como la evaluación residual revisada por el Coordinador SMS.</p>
+              <button type="submit" class="risk-submit-button">Aprobar RER</button>
+            </div>
+          {% endif %}
         </div>
-      </form>
+      {% if not is_read_only %}</form>{% endif %}
     </div>
   </body>
 </html>

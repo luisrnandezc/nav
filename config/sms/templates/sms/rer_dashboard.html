@@ -46,7 +46,7 @@
 				<div class="reports-list-container">
 					{% if pending_review_reports %}
 						{% for report in pending_review_reports %}
-							{% include 'sms/includes/rer_report_card.html' with report=report review_link=True %}
+							{% include 'sms/includes/rer_report_card.html' with report=report action_panel_link=True %}
 						{% endfor %}
 					{% else %}
 						<div class="no-reports">
@@ -64,7 +64,7 @@
 				<div class="reports-list-container">
 					{% if completed_rer_reports %}
 						{% for report in completed_rer_reports %}
-							{% include 'sms/includes/rer_report_card.html' with report=report %}
+							{% include 'sms/includes/rer_report_card.html' with report=report action_panel_link=True %}
 						{% endfor %}
 					{% else %}
 						<div class="no-reports">

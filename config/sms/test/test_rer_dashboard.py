@@ -84,7 +84,7 @@ class TestRERDashboard(TestCase):
             code='SMS-RVP-COMPLETED',
             is_processed=True,
         )
-        RiskEvaluationReportFactory(
+        rer = RiskEvaluationReportFactory(
             report=report,
             analysis_status='REVIEWED',
         )
@@ -94,6 +94,7 @@ class TestRERDashboard(TestCase):
         assert report in response.context['completed_rer_reports']
         assert report not in response.context['pending_rer_reports']
         assert report not in response.context['pending_review_reports']
+        self.assertContains(response, reverse('sms:rer_action_panel', args=[rer.id]))
 
     def test_card_contains_risk_and_mitigation_action_counts(self):
         report = VoluntaryHazardReportFactory(is_processed=True)

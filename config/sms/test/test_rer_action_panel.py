@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from sms.test.factories import (
     MitigationActionEvidenceFactory,
@@ -157,6 +158,26 @@ class TestRERActionPanel(TestCase):
         assert self.rer.reviewed_by == self.user
         assert self.risk.post_evaluation_severity == 'B'
         assert self.risk.post_evaluation_probability == '2'
+
+    def test_reviewed_rer_is_displayed_as_read_only(self):
+        self.rer.analysis_status = 'REVIEWED'
+        self.rer.reviewed_by = self.user
+        self.rer.reviewed_at = timezone.now()
+        self.rer.save(update_fields=[
+            'analysis_status',
+            'reviewed_by',
+            'reviewed_at',
+        ])
+
+        response = self.client.get(self.url)
+
+        assert response.status_code == 200
+        assert response.context['is_read_only'] is True
+        self.assertContains(response, self.risk.description)
+        self.assertContains(response, self.risk.post_evaluation_justification)
+        self.assertContains(response, self.user.get_full_name())
+        self.assertNotContains(response, 'Aprobar RER')
+        self.assertNotContains(response, '<form')
 
     def test_form_cannot_update_risk_from_another_report(self):
         unrelated_risk = RiskFactory(

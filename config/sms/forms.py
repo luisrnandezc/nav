@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import modelformset_factory
+from django.forms import BaseModelFormSet, modelformset_factory
 
 from .models import Risk, RiskEvaluationReport, VoluntaryHazardReport
 
@@ -166,8 +166,17 @@ class RiskResidualReviewForm(forms.ModelForm):
         self.fields['post_evaluation_justification'].required = True
 
 
+class RiskResidualReviewBaseFormSet(BaseModelFormSet):
+    """Restrict submitted risk IDs to the RER report's risk queryset."""
+
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        form.fields['id'].queryset = self.get_queryset()
+
+
 RiskResidualReviewFormSet = modelformset_factory(
     Risk,
     form=RiskResidualReviewForm,
+    formset=RiskResidualReviewBaseFormSet,
     extra=0,
 )

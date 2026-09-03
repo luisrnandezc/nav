@@ -75,6 +75,9 @@ class RiskEvaluationReportForm(forms.ModelForm):
             'hazard_causes',
             'defenses',
         ]
+        labels = {
+            'dir_user_fullname': 'Ejecutivo Responsable',
+        }
         widgets = {
             'registration_date': forms.DateInput(attrs={'class': 'form-field'}),
             'sms_user_fullname': forms.TextInput(attrs={'class': 'form-field'}),

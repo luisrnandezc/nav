@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from sms.models import RiskEvaluationReport
+from sms.rer_ai import RERAIError
 from sms.test.factories import (
     MitigationActionEvidenceFactory,
     MitigationActionFactory,
@@ -173,3 +174,53 @@ class TestRERJourney(TestCase):
         dashboard = self.client.get(reverse('sms:rer_dashboard'))
         assert self.report in dashboard.context['completed_rer_reports']
         assert self.report not in dashboard.context['pending_review_reports']
+
+    @patch('sms.rer_ai._request_sara_analysis')
+    def test_failed_analysis_can_be_resubmitted_and_completed(
+        self,
+        request_sara_analysis,
+    ):
+        rer_form_url = reverse('sms:rer_form', args=[self.report.pk])
+        self.client.post(rer_form_url, self._rer_form_data())
+        rer = RiskEvaluationReport.objects.get(report=self.report)
+
+        # A temporary external failure is recorded without saving residual values.
+        request_sara_analysis.side_effect = RERAIError('SARA is unavailable.')
+        call_command(
+            'process_pending_rer_analyses',
+            stdout=StringIO(),
+            stderr=StringIO(),
+        )
+
+        rer.refresh_from_db()
+        self.priority_risk.refresh_from_db()
+        self.second_risk.refresh_from_db()
+        assert rer.analysis_status == 'FAILED'
+        assert rer.analysis_error == 'SARA is unavailable.'
+        assert rer.analysis_started_at is not None
+        assert rer.analysis_completed_at is not None
+        assert self.priority_risk.post_evaluation() == '-'
+        assert self.second_risk.post_evaluation() == '-'
+
+        # Resubmitting the same RER resets failure metadata and queues a retry.
+        response = self.client.post(rer_form_url, self._rer_form_data())
+
+        assert response.status_code == 302
+        rer.refresh_from_db()
+        assert rer.analysis_status == 'PENDING'
+        assert rer.analysis_error == ''
+        assert rer.analysis_started_at is None
+        assert rer.analysis_completed_at is None
+
+        # The next command run can process the same RER successfully.
+        request_sara_analysis.side_effect = None
+        request_sara_analysis.return_value = self._sara_results()
+        call_command('process_pending_rer_analyses', stdout=StringIO())
+
+        rer.refresh_from_db()
+        self.priority_risk.refresh_from_db()
+        self.second_risk.refresh_from_db()
+        assert rer.analysis_status == 'READY_FOR_REVIEW'
+        assert rer.analysis_error == ''
+        assert self.priority_risk.post_evaluation() == 'B2'
+        assert self.second_risk.post_evaluation() == 'C1'

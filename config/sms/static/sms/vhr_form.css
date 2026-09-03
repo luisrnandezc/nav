@@ -120,6 +120,15 @@ label {
   margin-bottom: 50px;
 }
 
+.rer-submit-actions {
+  margin-top: 25px;
+}
+
+.rer-submit-actions .button {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
 .submit-button {
   text-transform: uppercase;
   font-size: 1.25rem;

@@ -1,9 +1,12 @@
-{% if action_panel_link %}
+{% if completed_card %}
+<div class="report-card">
+{% elif action_panel_link %}
 <a href="{% url 'sms:rer_action_panel' report.risk_evaluation_report.id %}" class="report-card-link">
+    <div class="report-card">
 {% else %}
 <a href="{% url 'sms:vhr_processed_panel' report.id %}" class="report-card-link">
+    <div class="report-card">
 {% endif %}
-	<div class="report-card">
 		<div class="status-container">
 			{% with rer=report.risk_evaluation_report %}
 				{% if not rer %}
@@ -77,5 +80,15 @@
 				{% endif %}
 			{% endwith %}
 		</div>
+		{% if completed_card %}
+			<div class="buttons-container">
+				<div class="main-button">
+					<a href="{% url 'sms:rer_action_panel' report.risk_evaluation_report.id %}" class="button">Ver RER</a>
+				</div>
+				<div class="main-button">
+					<a href="{% url 'sms:generate_rer_pdf' report.risk_evaluation_report.id %}" class="button">Descargar PDF</a>
+				</div>
+			</div>
+		{% endif %}
 	</div>
-</a>
+{% if not completed_card %}</a>{% endif %}

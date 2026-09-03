@@ -3,6 +3,7 @@ import json
 from types import SimpleNamespace
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.text import slugify
 from openai import OpenAI
 from .forms import (
     RiskEvaluationReportForm,
@@ -26,6 +27,7 @@ from .models import (
     MitigationActionEvidence,
 )
 from .rer_readiness import evaluate_rer_readiness
+from .rer_pdf import render_rer_pdf
 from django.conf import settings
 from accounts.models import User
 import logging
@@ -1491,5 +1493,40 @@ def rer_action_panel(request, rer_id):
     })
 
 @login_required
-def generate_rer_pdf(request, report_id):
-    return None
+def generate_rer_pdf(request, rer_id):
+    """Download the PDF for a completed Risk Evaluation Report."""
+    rer = get_object_or_404(
+        RiskEvaluationReport.objects.select_related('report'),
+        id=rer_id,
+        report__is_processed=True,
+    )
+
+    if not request.user.has_perm('accounts.can_manage_sms'):
+        messages.error(request, 'No tiene permisos para descargar el RER.')
+        return redirect('sms:rer_dashboard')
+
+    if rer.analysis_status != 'REVIEWED':
+        messages.warning(
+            request,
+            'El RER debe estar revisado y aprobado antes de generar el PDF.',
+        )
+        return redirect('sms:rer_dashboard')
+
+    try:
+        pdf = render_rer_pdf(rer)
+    except Exception:
+        logging.getLogger(__name__).exception(
+            'Error generating PDF for RER %s',
+            rer.id,
+        )
+        messages.error(
+            request,
+            'No se pudo generar el PDF del RER. Intente nuevamente.',
+        )
+        return redirect('sms:rer_dashboard')
+
+    report_reference = slugify(rer.report.code) or f'rvp-{rer.report_id}'
+    filename = f'rer_{report_reference}_{rer.registration_date:%Y%m%d}.pdf'
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response

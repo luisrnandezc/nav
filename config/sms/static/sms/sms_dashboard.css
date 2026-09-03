@@ -173,6 +173,11 @@
   border-color: #dae1ff;
 }
 
+.rer-card-actions {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
 .report-header {
   display: flex;
   justify-content: space-between;

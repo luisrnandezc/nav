@@ -306,10 +306,10 @@ class RiskEvaluationReport(models.Model):
     Risk evaluation report associated with a processed voluntary hazard report.
 
     A RER documents every consequence (Risk instance) selected while processing
-    the VHR. One risk is selected as the worst consequence and supplies the
-    initial matrix index. Its initial and residual evaluations remain on that
-    selected Risk, while every mitigation action and its evidence is documented
-    by the RER.
+    the VHR, together with all mitigation actions and their evidence. One risk
+    is identified as the priority consequence for reference, while SARA produces
+    an independent residual evaluation for every risk after considering its
+    mitigation actions.
     """
 
     #region Choices

@@ -78,6 +78,20 @@ class TestRERActionPanel(TestCase):
         assert self.rer.reviewed_by == self.user
         assert self.rer.reviewed_at is not None
 
+    def test_approval_message_appears_once_on_dashboard(self):
+        success_message = 'La evaluación residual fue revisada y aprobada.'
+
+        response = self.client.post(self.url, self.form_data(), follow=True)
+
+        assert response.redirect_chain == [(
+            reverse('sms:rer_dashboard'),
+            302,
+        )]
+        self.assertContains(response, success_message)
+
+        next_response = self.client.get(reverse('sms:rer_dashboard'))
+        self.assertNotContains(next_response, success_message)
+
     def test_justification_is_required_for_approval(self):
         response = self.client.post(self.url, self.form_data(justification=''))
 

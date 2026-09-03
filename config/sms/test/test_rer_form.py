@@ -97,6 +97,28 @@ class TestRiskEvaluationReportFormView(TestCase):
         assert rer.reviewed_by is None
         assert rer.reviewed_at is None
 
+    def test_sara_submission_message_appears_once_on_redirect_destination(self):
+        success_message = (
+            'El RER fue enviado a SARA y está pendiente de análisis.'
+        )
+
+        response = self.client.post(
+            self.url,
+            data=rer_form_data(self.report, self.risk),
+            follow=True,
+        )
+
+        assert response.redirect_chain == [(
+            reverse('sms:vhr_processed_panel', args=[self.report.id]),
+            302,
+        )]
+        self.assertContains(response, success_message)
+
+        next_response = self.client.get(
+            reverse('sms:vhr_processed_panel', args=[self.report.id])
+        )
+        self.assertNotContains(next_response, success_message)
+
     def test_post_updates_existing_rer_instead_of_creating_a_second_one(self):
         rer = RiskEvaluationReportFactory(
             report=self.report,

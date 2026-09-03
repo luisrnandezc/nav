@@ -1,6 +1,10 @@
 """Data preparation for the Risk Evaluation Report PDF."""
 
+from pathlib import Path
+
+from django.contrib.staticfiles import finders
 from django.db.models import Prefetch
+from django.template.loader import render_to_string
 
 from sms.models import MitigationAction, Risk, RiskEvaluationReport
 
@@ -144,3 +148,20 @@ def build_rer_pdf_context(rer):
             'reviewed_by': reviewer_name,
         },
     }
+
+
+def render_rer_pdf(rer):
+    """Render a reviewed RER and return the resulting PDF bytes."""
+    # Importing WeasyPrint here keeps data-only uses of this module lightweight.
+    from weasyprint import CSS, HTML
+
+    logo_path = finders.find('fms/img/evaluation_logo.png')
+    css_path = finders.find('sms/rer_pdf.css')
+    if not logo_path or not css_path:
+        raise ValueError('The RER PDF static assets could not be found.')
+
+    context = build_rer_pdf_context(rer)
+    context['logo_path'] = Path(logo_path).resolve().as_uri()
+    html = render_to_string('sms/rer_pdf.html', context)
+
+    return HTML(string=html).write_pdf(stylesheets=[CSS(filename=css_path)])

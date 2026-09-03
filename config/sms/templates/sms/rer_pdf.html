@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Registro de Evaluación de Riesgos</title>
+    </head>
+    <body>
+        <header class="document-header">
+            <img class="logo" src="{{ logo_path }}" alt="NAV Aviation">
+            <div class="header-title">
+                <strong>Registro de Evaluación de Riesgos</strong>
+                <span>Sistema de Gestión de la Seguridad Operacional</span>
+            </div>
+            <div class="header-reference">
+                <strong>{{ document.reference_code }}</strong>
+                <span>{{ document.registration_date|date:"d/m/Y" }}</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="report-section keep-together">
+                <h2>1. Identificación</h2>
+                <dl class="field-grid">
+                    <div><dt>Reporte de origen</dt><dd>{{ source_report.code }}</dd></div>
+                    <div><dt>Fecha del reporte</dt><dd>{{ source_report.date|date:"d/m/Y" }}</dd></div>
+                    <div><dt>Fecha del RER</dt><dd>{{ document.registration_date|date:"d/m/Y" }}</dd></div>
+                    <div><dt>Coordinador SMS</dt><dd>{{ approvals.sms_coordinator }}</dd></div>
+                    <div><dt>Director</dt><dd>{{ approvals.director }}</dd></div>
+                    <div><dt>Revisado por</dt><dd>{{ approvals.reviewed_by }}</dd></div>
+                </dl>
+                <div class="text-field">
+                    <h3>Descripción breve del reporte</h3>
+                    <p>{{ source_report.description }}</p>
+                </div>
+            </section>
+
+            <section class="report-section keep-together">
+                <h2>2. Identificación del peligro</h2>
+                <div class="text-field">
+                    <h3>Descripción del peligro</h3>
+                    <p>{{ hazard.description }}</p>
+                </div>
+                <dl class="field-grid three-columns">
+                    <div><dt>Fuente</dt><dd>{{ hazard.source }}</dd></div>
+                    <div><dt>Tipo</dt><dd>{{ hazard.type }}</dd></div>
+                    <div><dt>Área</dt><dd>{{ hazard.area }}</dd></div>
+                </dl>
+                <div class="text-field">
+                    <h3>Posibles causas</h3>
+                    <p>{{ hazard.possible_causes }}</p>
+                </div>
+            </section>
+
+            <section class="report-section">
+                <h2>3. Evaluación de los riesgos</h2>
+                {% for risk in risks %}
+                    <article class="risk-card">
+                        <div class="risk-heading">
+                            <h3>Riesgo {{ risk.number }}</h3>
+                            {% if risk.is_priority %}
+                                <span class="priority-label">Riesgo de referencia</span>
+                            {% endif %}
+                        </div>
+                        <p class="risk-description">{{ risk.description }}</p>
+
+                        <div class="evaluation-grid">
+                            <div class="evaluation-block">
+                                <h4>Evaluación inicial</h4>
+                                <dl>
+                                    <div><dt>Severidad</dt><dd>{{ risk.initial.severity_label }}</dd></div>
+                                    <div><dt>Probabilidad</dt><dd>{{ risk.initial.probability_label }}</dd></div>
+                                    <div><dt>Índice</dt><dd class="risk-index">{{ risk.initial.index }}</dd></div>
+                                    <div><dt>Tolerabilidad</dt><dd>{{ risk.initial.tolerability.label }}</dd></div>
+                                </dl>
+                            </div>
+                            <div class="evaluation-block">
+                                <h4>Evaluación residual</h4>
+                                <dl>
+                                    <div><dt>Severidad</dt><dd>{{ risk.residual.severity_label }}</dd></div>
+                                    <div><dt>Probabilidad</dt><dd>{{ risk.residual.probability_label }}</dd></div>
+                                    <div><dt>Índice</dt><dd class="risk-index">{{ risk.residual.index }}</dd></div>
+                                    <div><dt>Tolerabilidad</dt><dd>{{ risk.residual.tolerability.label }}</dd></div>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <div class="justification">
+                            <h4>Justificación de la evaluación residual</h4>
+                            <p>{{ risk.residual.justification }}</p>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
+
+            <section class="report-section flowing-section">
+                <h2>4. Medidas de mitigación</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="number-column">N.º</th>
+                            <th class="risk-column">Riesgo</th>
+                            <th>Medida de mitigación</th>
+                            <th class="person-column">Responsable</th>
+                            <th class="date-column">Cumplimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for action in mitigation_actions %}
+                            <tr>
+                                <td>{{ action.number }}</td>
+                                <td>{{ action.risk_number }}</td>
+                                <td class="text-column">{{ action.description }}</td>
+                                <td>{{ action.responsible }}</td>
+                                <td>{{ action.due_date|date:"d/m/Y" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="report-section flowing-section">
+                <h2>5. Evidencias y seguimiento</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="number-column">MMR</th>
+                            <th>Evidencia</th>
+                            <th class="date-column">Seguimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for action in mitigation_actions %}
+                            <tr>
+                                <td>{{ action.number }}</td>
+                                <td class="text-column">{{ action.evidence }}</td>
+                                <td>{{ action.follow_date|date:"d/m/Y" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="report-section keep-together">
+                <h2>6. Defensas existentes</h2>
+                <div class="text-field">
+                    <p>{{ hazard.existing_defenses }}</p>
+                </div>
+            </section>
+
+            <section class="report-section approval-section keep-together">
+                <h2>7. Revisión y aprobación</h2>
+                <div class="approval-grid">
+                    <div>
+                        <span class="signature-line"></span>
+                        <strong>{{ approvals.sms_coordinator }}</strong>
+                        <span>Coordinador SMS</span>
+                    </div>
+                    <div>
+                        <span class="signature-line"></span>
+                        <strong>{{ approvals.director }}</strong>
+                        <span>Director</span>
+                    </div>
+                    <div>
+                        <span class="signature-line"></span>
+                        <strong>{{ approvals.reviewed_by }}</strong>
+                        <span>Revisión del RER</span>
+                        <span>{{ document.reviewed_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>

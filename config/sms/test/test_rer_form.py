@@ -171,3 +171,23 @@ class TestRiskEvaluationReportFormView(TestCase):
             'sms:vhr_processed_panel',
             args=[self.report.id],
         )
+
+    def test_user_without_sms_permission_cannot_request_rer_analysis(self):
+        user_without_permission = StaffUserFactory(
+            is_staff=True,
+            is_superuser=False,
+        )
+        assert not user_without_permission.has_perm('accounts.can_manage_sms')
+        self.client.force_login(user_without_permission)
+
+        response = self.client.post(
+            self.url,
+            data=rer_form_data(self.report, self.risk),
+        )
+
+        assert response.status_code == 302
+        assert response.url == reverse(
+            'sms:vhr_processed_panel',
+            args=[self.report.id],
+        )
+        assert not RiskEvaluationReport.objects.filter(report=self.report).exists()

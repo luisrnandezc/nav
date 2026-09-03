@@ -98,28 +98,30 @@
                 <div class="risk-text">{{ form.instance.description }}</div>
 
                 <div class="recommendations-list mitigation-list">
-                  {% for action in form.instance.mitigation_actions.all %}
-                    <div class="recommendation-item">
-                      <div class="recommendation-header">
-                        <span class="recommendation-risk-label">Medida de mitigación {{ forloop.counter }}</span>
-                      </div>
-                      <div class="action-text">{{ action.description }}</div>
-                      <div class="mitigation-metadata">
-                        <div class="info-item">
-                          <span class="info-label">Responsable</span>
-                          <span class="info-value">{{ action.responsible.get_full_name|default:action.responsible }}</span>
+                  {% if form.instance.pk %}
+                    {% for action in form.instance.mitigation_actions.all %}
+                      <div class="recommendation-item">
+                        <div class="recommendation-header">
+                          <span class="recommendation-risk-label">Medida de mitigación {{ forloop.counter }}</span>
                         </div>
-                        <div class="info-item">
-                          <span class="info-label">Seguimiento</span>
-                          <span class="info-value">{{ action.follow_date|date:"d/m/Y" }}</span>
+                        <div class="action-text">{{ action.description }}</div>
+                        <div class="mitigation-metadata">
+                          <div class="info-item">
+                            <span class="info-label">Responsable</span>
+                            <span class="info-value">{{ action.responsible.get_full_name|default:action.responsible }}</span>
+                          </div>
+                          <div class="info-item">
+                            <span class="info-label">Seguimiento</span>
+                            <span class="info-value">{{ action.follow_date|date:"d/m/Y" }}</span>
+                          </div>
+                        </div>
+                        <div class="evidence-box">
+                          <span class="info-label">Evidencia</span>
+                          <span class="action-text">{{ action.evidence.description }}</span>
                         </div>
                       </div>
-                      <div class="evidence-box">
-                        <span class="info-label">Evidencia</span>
-                        <span class="action-text">{{ action.evidence.description }}</span>
-                      </div>
-                    </div>
-                  {% endfor %}
+                    {% endfor %}
+                  {% endif %}
                 </div>
 
                 <div class="residual-review-section">

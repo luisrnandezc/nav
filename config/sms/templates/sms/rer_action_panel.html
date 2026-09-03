@@ -21,20 +21,7 @@
         <h1>Evaluación de Riesgos</h1>
       </div>
 
-      {% if messages %}
-        <div class="messages-container">
-          {% for message in messages %}
-            <div class="message-card message-card-{{ message.tags }}">
-              <div class="message-icon">
-                {% if message.tags == 'success' %}✓{% elif message.tags == 'error' %}✕{% elif message.tags == 'warning' %}⚠{% else %}ℹ{% endif %}
-              </div>
-              <div class="message-content">
-                <div class="message-text">{{ message }}</div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      {% include 'sms/includes/messages.html' %}
 
       <div class="cards-container">
         <div class="cards-container-header">

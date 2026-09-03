@@ -64,13 +64,32 @@ class TestRERAI(TestCase):
         return risk
 
     def _client_with_results(self, results):
+        return self._client_with_response({'risks': results})
+
+    def _client_with_response(self, response):
         client = Mock()
         client.responses.create.return_value = SimpleNamespace(
             status='completed',
             output=[],
-            output_text=json.dumps({'risks': results}),
+            output_text=json.dumps(response),
         )
         return client
+
+    def _assert_response_fails_without_updates(self, response, error):
+        client = self._client_with_response(response)
+
+        with self.assertRaisesRegex(RERAIError, error):
+            process_rer_analysis(self.rer.pk, client=client)
+
+        self.rer.refresh_from_db()
+        self.first_risk.refresh_from_db()
+        self.second_risk.refresh_from_db()
+        assert self.rer.analysis_status == 'FAILED'
+        assert self.rer.analysis_error
+        assert self.first_risk.post_evaluation_severity == '0'
+        assert self.first_risk.post_evaluation_probability == '0'
+        assert self.second_risk.post_evaluation_severity == '0'
+        assert self.second_risk.post_evaluation_probability == '0'
 
     def _valid_results(self):
         return [
@@ -115,17 +134,61 @@ class TestRERAI(TestCase):
         assert request['store'] is False
 
     def test_incomplete_results_fail_without_updating_any_risk(self):
-        client = self._client_with_results(self._valid_results()[:1])
+        self._assert_response_fails_without_updates(
+            {'risks': self._valid_results()[:1]},
+            'exactly one result',
+        )
 
-        with self.assertRaisesRegex(RERAIError, 'exactly one result'):
-            process_rer_analysis(self.rer.pk, client=client)
+    def test_unknown_risk_id_is_rejected(self):
+        results = self._valid_results()
+        results[0]['risk_id'] = 999999
 
-        self.rer.refresh_from_db()
-        self.first_risk.refresh_from_db()
-        self.second_risk.refresh_from_db()
-        assert self.rer.analysis_status == 'FAILED'
-        assert self.first_risk.post_evaluation_severity == '0'
-        assert self.second_risk.post_evaluation_severity == '0'
+        self._assert_response_fails_without_updates(
+            {'risks': results},
+            'exactly one result',
+        )
+
+    def test_duplicate_risk_id_is_rejected(self):
+        results = self._valid_results()
+        results[1]['risk_id'] = self.first_risk.pk
+
+        self._assert_response_fails_without_updates(
+            {'risks': results},
+            'more than once',
+        )
+
+    def test_invalid_severity_is_rejected(self):
+        results = self._valid_results()
+        results[0]['residual_severity'] = 'F'
+
+        self._assert_response_fails_without_updates(
+            {'risks': results},
+            'invalid severity',
+        )
+
+    def test_invalid_probability_is_rejected(self):
+        results = self._valid_results()
+        results[0]['residual_probability'] = '6'
+
+        self._assert_response_fails_without_updates(
+            {'risks': results},
+            'invalid probability',
+        )
+
+    def test_empty_justification_is_rejected(self):
+        results = self._valid_results()
+        results[0]['justification'] = '   '
+
+        self._assert_response_fails_without_updates(
+            {'risks': results},
+            'omitted the justification',
+        )
+
+    def test_malformed_response_structure_is_rejected(self):
+        self._assert_response_fails_without_updates(
+            {'unexpected': self._valid_results()},
+            'invalid response structure',
+        )
 
     def test_non_pending_rer_is_not_sent_to_sara(self):
         self.rer.analysis_status = 'READY_FOR_REVIEW'

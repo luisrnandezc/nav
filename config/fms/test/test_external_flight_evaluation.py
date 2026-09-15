@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import InstructorProfile
+from academic.models import CourseType
 from fleet.models import Aircraft
 from fms.admin import ExternalFlightEvaluationAdmin
 from fms.forms import ExternalFlightEvaluationForm
@@ -19,6 +20,10 @@ from .factories import StudentProfileFactory, UserFactory
 
 class ExternalEvaluationTestMixin:
     def setUp(self):
+        self.course_type = CourseType.objects.create(
+            code='PCA-P',
+            name='Piloto Comercial Avión Práctico',
+        )
         self.student = UserFactory(
             first_name='Alumno',
             last_name='NAV',

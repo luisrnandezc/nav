@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
 
-from accounts.models import StudentProfile, User
+from accounts.models import InstructorProfile, StudentProfile, User
 from fleet.models import Aircraft
 from fms.models import FlightEvaluation0_100, FlightEvaluation100_120
 
@@ -27,6 +27,20 @@ class MissingFuelEvaluationsTest(TestCase):
         )
         self.student = self.create_student('fuel_student_1', 30_000_002, 'Ana')
         self.other_student = self.create_student('fuel_student_2', 30_000_003, 'Luis')
+        self.instructor = User.objects.create_user(
+            username='fuel_instructor',
+            email='fuel_instructor@test.nav',
+            national_id=40_000_001,
+            password='x',
+            role=User.Role.INSTRUCTOR,
+            first_name='Test',
+            last_name='Instructor',
+        )
+        InstructorProfile.objects.create(
+            user=self.instructor,
+            instructor_type=InstructorProfile.FLYING,
+            instructor_license_type=InstructorProfile.LICENSE_PCA,
+        )
         self.aircraft = Aircraft.objects.create(
             manufacturer='Piper',
             model='PA-28',
@@ -77,10 +91,10 @@ class MissingFuelEvaluationsTest(TestCase):
             student_last_name=student.last_name,
             student_license_type='PPA',
             student_license_number=student.national_id,
-            instructor_id=40_000_001,
-            instructor_first_name='Test',
-            instructor_last_name='Instructor',
-            instructor_license_number=40_000_001,
+            instructor_id=self.instructor.national_id,
+            instructor_first_name=self.instructor.first_name,
+            instructor_last_name=self.instructor.last_name,
+            instructor_license_number=self.instructor.national_id,
             session_date=session_date,
             aircraft=self.aircraft,
             fuel_consumed=fuel_consumed,

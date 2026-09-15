@@ -884,7 +884,7 @@ class FlightReportAdmin(admin.ModelAdmin):
     readonly_fields = [
         'pilot_id', 'pilot_first_name', 'pilot_last_name', 
         'pilot_license_number', 'flight_date', 'flight_reason', 'aircraft', 
-        'initial_hourmeter', 'final_hourmeter', 'fuel_consumed', 'comments'
+        'initial_hourmeter', 'final_hourmeter', 'fuel_consumed'
     ]
     
     def has_add_permission(self, request):

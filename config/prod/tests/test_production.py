@@ -155,11 +155,25 @@ class ProductionReportTests(TestCase):
         self.assertEqual([row.label for row in report.by_simulator], ['FPT'])
         self.assertEqual([row.key for row in report.by_instructor], ['2000001'])
         self.assertEqual([row.key for row in report.by_student], ['1000001'])
-        self.assertEqual(report.flight_trend.grouping, 'monthly')
-        self.assertEqual(report.flight_trend.labels, ['06/2026', '07/2026', '08/2026'])
+        self.assertEqual(report.flight_trend.grouping, 'weekly')
+        self.assertEqual(
+            report.flight_trend.labels,
+            [
+                '05/06 - 11/06',
+                '12/06 - 18/06',
+                '19/06 - 25/06',
+                '26/06 - 02/07',
+                '03/07 - 09/07',
+                '10/07 - 16/07',
+                '17/07 - 23/07',
+                '24/07 - 30/07',
+                '31/07 - 06/08',
+                '07/08 - 13/08',
+            ],
+        )
         self.assertEqual(
             report.flight_trend.aircraft_hours['YV204E'],
-            [Decimal('2.0'), ZERO, ZERO],
+            [Decimal('2.0'), ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO],
         )
 
     def test_daily_trend_fills_empty_days_and_calculates_income(self):

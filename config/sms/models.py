@@ -352,7 +352,7 @@ class RiskEvaluationReport(models.Model):
         help_text="Peor consecuencia seleccionada para el índice de riesgo inicial.",
     )
     registration_date = models.DateField(
-        default=timezone.now,
+        default=timezone.localdate,
         verbose_name="Fecha de registro",
     )
     sms_user_fullname = models.CharField(

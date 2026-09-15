@@ -1,79 +1,108 @@
-# NAV Aviation - Flight School Management System
+# NAV Aviation
 
-NAV Aviation is a comprehensive web-based management system designed specifically for flight training institutions. The platform integrates all aspects of flight school operations into a single, unified system that streamlines administrative tasks, enhances student tracking, and improves operational efficiency.
+NAV Aviation is a production web platform built for a flight training organization. It brings academic records, flight operations, scheduling, fleet information, student finances, and safety management into a single role-based system.
 
-## System Overview
+I designed, developed, deployed, and currently maintain the platform as its sole developer. The application was created for one school's operational requirements and is presented here as an engineering portfolio project—not as a general-purpose product or an open-source package.
 
-The NAV Aviation platform provides complete management capabilities for flight schools, covering academic programs, flight training operations, financial transactions, safety management, and administrative functions. The system is accessible through any web browser and works seamlessly on desktop computers, tablets, and mobile devices.
+[Visit the public website](https://www.navaviation.org/)
 
-## Core Applications
+## The problem
 
-### Academic Management
+Running a flight school requires information to move reliably between students, instructors, and administrative staff. Training progress, aircraft availability, evaluations, schedules, payments, and safety actions are closely related, but are often handled through disconnected tools and manual processes.
 
-Manages course catalogs including various aviation programs such as Private Pilot License (PPA), Commercial Pilot License (PCA), and specialized training programs. Tracks individual subjects with credit hours and passing grade requirements, maintains comprehensive grade records with multiple test types and recovery options, and provides real-time monitoring of student academic performance. Instructors can submit grades and assessments, while students can view their academic progress and course materials.
+NAV Aviation provides one source of truth for those workflows while giving each user access only to the information and actions relevant to their role.
 
-### Flight Management System
+## What the platform covers
 
-Records detailed flight session logs with comprehensive evaluation criteria and tracks simulator training sessions for all simulator types used by the school. Manages structured evaluation forms that can be customized for different training phases and requirements. Each evaluation form includes specific criteria covering pre-flight procedures, flight maneuvers, emergency procedures, and advanced operational skills. Schools can create and configure their own evaluation forms to match their specific training programs and requirements. Manages aircraft fleet information and automatically pairs students with qualified instructors. All flight records can be exported as professional PDF reports.
+- **Flight training:** Flight and simulator session records, structured evaluations for different training phases, instructor assignments, student flight logs, and downloadable PDF reports.
+- **Academic management:** Course editions, subjects, grading components, instructor grade submission, and student progress tracking.
+- **Scheduling:** Flight periods, reservable slots, requests, approvals, resource coordination, and cancellation-fee tracking.
+- **Fleet and maintenance:** Aircraft and simulator records, availability, operating hours, utilization information, and discrepancy reporting.
+- **Student finances:** Categorized transactions, approval workflows, balances, rate snapshots, and audit-friendly transaction histories.
+- **Safety management:** Voluntary hazard reports, risk evaluations, mitigation actions, supporting evidence, follow-up dates, and resolution tracking.
+- **Operational reporting:** Role-specific dashboards, production and fuel reporting, and document generation for operational records.
 
-### User Management
+## Selected engineering highlights
 
-Provides secure access control and profile management for all system users. Supports three distinct user roles: students, instructors, and administrative staff, each with specific permissions and access levels. Maintains detailed profiles including aviation-specific information such as certifications, qualifications, and training records. Secure authentication ensures users can only access information relevant to their role.
+### Domain-specific workflows
 
-### Transaction Management
+The system models the relationships between academic training, flight sessions, instructors, aircraft, student accounts, and safety processes. Business rules are implemented around real operational workflows rather than generic CRUD screens—for example, staged flight evaluations, approval-based transactions, scheduling states, and mitigation follow-up.
 
-Handles all financial operations for student accounts. Records all student transactions including payments, refunds, course fees, and material costs, organized by category: flight training, simulator training, materials, and other expenses. Maintains real-time account balances that update automatically when transactions are confirmed. All transactions require staff approval before being finalized. Provides complete transaction history and audit trails. Students can view their transaction history and current account balance through their personal dashboard.
+### Role-based access
 
-### Safety Management System
+NAV Aviation uses a custom Django user model with separate student, instructor, and staff profiles. Authentication, permissions, and role-specific views restrict access to sensitive academic, financial, operational, and safety information.
 
-Enables flight schools to maintain comprehensive safety records and compliance documentation. Manages voluntary hazard reports submitted by students, instructors, and staff. Includes automated risk analysis capabilities that evaluate reported hazards and identify potential risks. Each hazard report can be associated with multiple risks, and each risk can have multiple mitigation actions. Tracks the status of all mitigation actions and automatically updates report resolution status when all associated risks are mitigated. Generates detailed safety reports and maintains complete documentation for regulatory compliance and safety audits.
+### AI-assisted analysis
 
-### Fleet Management
+The AURA and SARA subsystems use the OpenAI Responses API to assist with training reviews and safety-risk analysis. Processing is handled through dedicated service logic and background workers, with validation and human-facing workflows around generated results. AI output supports staff decision-making; it does not replace operational oversight.
 
-Tracks all aircraft in the school's inventory. Maintains detailed records for each aircraft including registration information, maintenance schedules, and operational status. Supports aircraft assignment to training sessions and tracks utilization rates. Integrates with the Flight Management System to ensure proper aircraft allocation for training activities.
+### Reporting and traceability
 
-### Scheduling System
+The platform produces styled PDF records with WeasyPrint and preserves important operational context such as approval state, applied rates, evaluation history, mitigation evidence, and responsible users.
 
-Manages flight training session scheduling, instructor assignments, and resource allocation. Coordinates flight training schedules and helps prevent scheduling conflicts. Ensures optimal utilization of aircraft and instructor time. Students and instructors can view their flight schedules, and administrators can manage and adjust schedules as needed.
+### Long-term ownership
 
-### Dashboard and Reporting
+Beyond initial development, I am responsible for requirements discovery, architecture, database design, backend and frontend implementation, deployment, production maintenance, feature development, and test upkeep. The project has evolved continuously as the school's processes have matured.
 
-Provides role-specific overviews and reporting capabilities. Students have access to personal dashboards showing their academic progress, flight hours, grades, and account balance. Instructors can view their assigned students, track teaching assignments, and access evaluation tools. Administrative staff have comprehensive dashboards showing system-wide statistics, transaction monitoring, and management tools. The system generates automated PDF reports for flight logs, evaluations, and academic records.
+## Architecture
 
+```mermaid
+flowchart LR
+    users[Students, instructors, and staff] --> web[Django web application]
+    web --> modules[Domain modules]
+    modules --> academic[Academic and flight training]
+    modules --> operations[Scheduling, fleet, and production]
+    modules --> business[Transactions and safety]
+    academic --> database[(PostgreSQL)]
+    operations --> database
+    business --> database
+    web --> pdf[WeasyPrint PDF generation]
+    web --> workers[Background analysis workers]
+    workers --> openai[OpenAI API]
+    web --> email[Email notifications]
+```
 
-## Technology Platform
+The application follows Django's server-rendered architecture, with domain-focused apps sharing a central authentication and permissions model. PostgreSQL is used in production, while SQLite supports local development.
 
-The NAV Aviation system is built on modern, reliable web technologies that ensure security, performance, and ease of use. The platform operates entirely through web browsers, requiring no special software installation on user devices. The system uses industry-standard security measures to protect sensitive information and ensure data privacy.
+## Technology
 
-The platform is built using Django, a professional web development framework that powers many enterprise-level applications. This technology ensures the system is secure, scalable, and maintainable. The system uses a robust database system to store all information safely and efficiently. The platform generates professional PDF documents automatically for reports and records. The system is hosted on secure, reliable servers with regular backups and monitoring to ensure continuous availability.
+- Python and Django 5.2
+- PostgreSQL in production and SQLite for local development
+- Django templates, HTML, CSS, and JavaScript
+- WeasyPrint for PDF generation
+- OpenAI Responses API for assisted analysis
+- SMTP email notifications
+- Django's test framework and Factory Boy
 
-All system features are accessible through standard web browsers, and the interface is designed to work seamlessly on desktop computers, tablets, and mobile devices. No special technical knowledge is required to use the system, as the interface is intuitive and user-friendly.
+## Screenshots
 
-## User Roles and Access
+Sanitized screenshots of the main role-based workflows will be added here. All portfolio media uses demonstration data and excludes student, staff, financial, and operationally sensitive information.
 
-### Students
+Suggested views include:
 
-Students can access their personal dashboard to view academic progress, grades, and flight training records. They can track their flight hours, view course materials, and monitor their account balance and transaction history. Students can submit voluntary hazard reports through the Safety Management System.
+- Role-based launchpad or dashboard
+- Flight evaluation and student progress views
+- Scheduling workflow
+- Safety report and mitigation workflow
+- Production or operational reporting
+- Example generated PDF with synthetic data
 
-### Instructors
+## Quality and data protection
 
-Instructors have access to their assigned students and can record flight evaluations, submit grades, and track student progress. They can access teaching materials and evaluation tools. Instructors can also submit safety reports and view relevant safety information.
+- Automated tests cover core models, forms, views, permissions, workflows, reports, and background-processing behavior.
+- Secrets and environment-specific configuration are kept outside version control.
+- Runtime databases, logs, user uploads, and generated artifacts are excluded from the repository.
+- Public screenshots and examples use synthetic or anonymized data.
 
-### Administrative Staff
+## Project scope
 
-Administrative staff have comprehensive access to all system functions. They can manage user accounts, confirm financial transactions, oversee academic programs, and access all reporting and analytics tools. Staff members can manage the Safety Management System, approve hazard reports, and track mitigation actions.
+This repository documents a custom, actively maintained production system developed for a single organization. It is not intended for third-party installation, redistribution, or external contributions, so public deployment instructions and contribution guidelines are intentionally omitted.
 
-## System Benefits
+The source code is provided for portfolio review. All rights are reserved unless stated otherwise.
 
-The NAV Aviation platform provides significant benefits for flight training institutions. The system centralizes all operations in a single platform, eliminating the need for multiple disconnected systems. Real-time data updates ensure that all users have access to current information. Automated processes reduce administrative workload and minimize errors. Comprehensive reporting capabilities provide valuable insights into operations, student progress, and financial performance. The system ensures regulatory compliance through proper documentation and audit trails. Mobile accessibility allows users to access the system from any location with internet connectivity.
+## Contact
 
-## Support and Contact
+For professional inquiries:
 
-For inquiries, support, or additional information about the NAV Aviation Flight School Management System, please contact:
-
-Email: luisrnandezc@gmail.com  
-Website: www.navaviation.org
-
----
-
-NAV Aviation - Empowering the next generation of pilots through innovative technology and comprehensive training management.
+- **Email:** [luisrnandezc@gmail.com](mailto:luisrnandezc@gmail.com)
+- **Website:** [navaviation.org](https://www.navaviation.org/)

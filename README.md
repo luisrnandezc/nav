@@ -26,7 +26,7 @@ NAV Aviation provides one source of truth for those workflows while giving each 
 
 ### Domain-specific workflows
 
-The system models the relationships between academic training, flight sessions, instructors, aircraft, student accounts, and safety processes. Business rules are implemented around real operational workflows rather than generic CRUD screens—for example, staged flight evaluations, approval-based transactions, scheduling states, and mitigation follow-up.
+The system models the relationships between academic training, flight sessions, instructors, aircraft, student accounts, and safety processes. Business rules are implemented around real operational workflows rather than generic CRUD screens—for example, staged flight evaluations, approval-based transactions, scheduling states, and risks mitigation follow-up.
 
 ### Role-based access
 

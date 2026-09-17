@@ -1,5 +1,7 @@
 # NAV Aviation
 
+[![Django tests](https://github.com/luisrnandezc/nav/actions/workflows/tests.yml/badge.svg)](https://github.com/luisrnandezc/nav/actions/workflows/tests.yml)
+
 NAV Aviation is a production web platform built for a flight training organization. It brings academic records, flight operations, scheduling, fleet information, student finances, and safety management into a single role-based system.
 
 I designed, developed, deployed, and currently maintain the platform as its sole developer. The application was created for one school's operational requirements and is presented here as an engineering portfolio project—not as a general-purpose product or an open-source package.

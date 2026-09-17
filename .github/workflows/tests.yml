@@ -1,0 +1,74 @@
+name: Django tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      SECRET_KEY: ci-only-dummy-secret-key-not-used-in-production
+      IS_PRODUCTION: 'false'
+      DB_ENGINE: sqlite
+      SARA_HAZARD_ANALYSIS_PROMPT_PATH: ci_prompts/sara_hazard.txt
+      SARA_RER_ANALYSIS_PROMPT_PATH: ci_prompts/sara_rer.txt
+      AURA_INDIVIDUAL_REVIEW_PROMPT_PATH: ci_prompts/aura_individual.txt
+      AURA_GLOBAL_REVIEW_PROMPT_PATH: ci_prompts/aura_global.txt
+      AURA_INCREMENTAL_GLOBAL_REVIEW_PROMPT_PATH: ci_prompts/aura_incremental.txt
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install WeasyPrint system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            libpango-1.0-0 \
+            libpangoft2-1.0-0 \
+            libharfbuzz-subset0
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip check
+
+      - name: Create CI prompt fixtures
+        run: |
+          mkdir -p config/ci_prompts
+          printf 'CI hazard-analysis prompt fixture.\n' > config/ci_prompts/sara_hazard.txt
+          printf 'CI residual-risk prompt fixture.\n' > config/ci_prompts/sara_rer.txt
+          printf 'CI individual-review prompt fixture.\n' > config/ci_prompts/aura_individual.txt
+          printf 'CI global-review prompt fixture.\n' > config/ci_prompts/aura_global.txt
+          printf 'CI incremental-review prompt fixture.\n' > config/ci_prompts/aura_incremental.txt
+
+      - name: Run Django system check
+        run: python config/manage.py check
+
+      - name: Check for missing migrations
+        run: python config/manage.py makemigrations --check --dry-run
+
+      - name: Run test suite
+        run: python config/manage.py test --noinput

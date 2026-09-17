@@ -65,10 +65,13 @@ jobs:
           printf 'CI incremental-review prompt fixture.\n' > config/ci_prompts/aura_incremental.txt
 
       - name: Run Django system check
-        run: python config/manage.py check
+        working-directory: config
+        run: python manage.py check
 
       - name: Check for missing migrations
-        run: python config/manage.py makemigrations --check --dry-run
+        working-directory: config
+        run: python manage.py makemigrations --check --dry-run
 
       - name: Run test suite
-        run: python config/manage.py test --noinput
+        working-directory: config
+        run: python manage.py test --noinput

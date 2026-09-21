@@ -1,7 +1,8 @@
 from decimal import Decimal
 
+from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from accounts.models import StudentProfile, User
 
@@ -13,6 +14,54 @@ from .test.test_model_flight_slot import FlightSlotModelTest
 from .test.test_model_flight_request import FlightRequestModelTest
 from .test.test_views import FlightRequestViewTest, FlightPeriodViewTest, ChangeSlotStatusViewTest
 from .test.test_forms import CreateFlightPeriodFormTest
+from .test.factories import FlightSlotFactory, UserFactory
+from . import domain_signals
+from .models import FlightSlot
+
+
+@override_settings(
+    EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+    DEFAULT_FROM_EMAIL='scheduler-from@test.com',
+)
+class InstructorAssignmentEmailTest(TestCase):
+    def setUp(self):
+        self.instructor = UserFactory(role='INSTRUCTOR')
+        self.slot = FlightSlotFactory(instructor=self.instructor)
+
+    def assert_student_line(self, expected):
+        with self.captureOnCommitCallbacks(execute=True):
+            domain_signals.instructor_assigned_to_slot.send(
+                sender=FlightSlot, slot=self.slot, instructor=self.instructor,
+            )
+            self.assertEqual(len(mail.outbox), 0)
+
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+        self.assertEqual(message.to, [self.instructor.email])
+        self.assertEqual(
+            message.subject,
+            f'Asignado a sesión – {self.slot.date:%Y-%m-%d} {self.slot.block}',
+        )
+        self.assertIn(f'\nAlumno: {expected}\n', message.body)
+        self.assertIn(f'Aeronave: {self.slot.aircraft.registration}\n', message.body)
+
+    def test_assignment_email_includes_student_full_name(self):
+        self.slot.student = UserFactory(first_name='María', last_name='Pérez')
+        self.slot.save()
+        self.assert_student_line('María Pérez')
+
+    def test_assignment_email_without_student(self):
+        self.assert_student_line('no asignado')
+
+    def test_assignment_email_with_blank_student_name(self):
+        self.slot.student = UserFactory(first_name=' ', last_name=' ')
+        self.slot.save()
+        self.assert_student_line('no asignado')
+
+    def test_assignment_email_with_partial_student_name(self):
+        self.slot.student = UserFactory(first_name='María', last_name='')
+        self.slot.save()
+        self.assert_student_line('María')
 
 
 class CancellationsFeeReimbursementTest(TestCase):

@@ -152,10 +152,13 @@ def notify_instructor_assigned(sender, slot, instructor, **kwargs):
         date_str = date_val.strftime('%Y-%m-%d') if date_val else 'N/A'
         block_str = getattr(slot, 'block', None) or 'N/A'
 
+        student_name = slot.student.get_full_name().strip() if slot.student else ''
+
         subject = f"Asignado a sesión – {date_str} {block_str}"
         body = (
             f"Hola {getattr(instructor, 'first_name', '') or ''} {getattr(instructor, 'last_name', '') or ''},\n\n"
             "Usted ha sido asignado a una sesión de vuelo.\n\n"
+            f"Alumno: {student_name or 'no asignado'}\n"
             f"Aeronave: {aircraft_reg}\n"
             f"Fecha: {date_str}\n"
             f"Bloque: {block_str}\n"

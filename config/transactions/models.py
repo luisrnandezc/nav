@@ -36,6 +36,21 @@ class StudentTransaction(models.Model):
     #endregion
 
     #region MODEL FIELDS
+    fuel_flight_0_100 = models.ForeignKey(
+        'fms.FlightEvaluation0_100', null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='late_fuel_transactions',
+    )
+    fuel_flight_100_120 = models.ForeignKey(
+        'fms.FlightEvaluation100_120', null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='late_fuel_transactions',
+    )
+    fuel_flight_120_170 = models.ForeignKey(
+        'fms.FlightEvaluation120_170', null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='late_fuel_transactions',
+    )
+    fuel_liters = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    fuel_unit_price = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+
     student_profile = models.ForeignKey(
         'accounts.StudentProfile', 
         on_delete=models.CASCADE, 

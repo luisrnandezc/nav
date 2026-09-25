@@ -1,0 +1,40 @@
+.student-activity-page {
+  font-family: 'Renogare-Regular', 'Arial', sans-serif;
+  text-transform: uppercase;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./img/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+.student-overview .main-header { margin: 50px 0 var(--ui-space-xl); }
+.student-overview .back-button .button { font-weight: 400; }
+.overview-heading, .movement-heading, .overview-pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ui-space-md); flex-wrap: wrap;
+}
+.balance-value { display: block; font-size: 2rem; margin: 8px 0 20px; }
+.stats-banner { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ui-space-md); }
+.stats-banner .ui-card { margin: 0; }
+.stats-banner strong { display: block; font-size: 1.5rem; margin-top: 8px; }
+.overview-hint { color: var(--ui-color-text-muted); font-size: .9rem; line-height: 1.5; }
+.movement-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin: 20px 0; }
+.movement-filters label { display: grid; gap: 6px; }
+.movement-filters input, .movement-filters select { min-height: 44px; color-scheme: dark; }
+.movement-card { overflow-wrap: anywhere; scroll-margin-top: 20px; }
+.movement-card:target { border-color: var(--ui-color-accent); }
+.movement-heading h3 { margin: 0; font-size: 1.1rem; }
+.movement-amount { font-size: 1.3rem; white-space: nowrap; }
+.student-overview a:not(.button) { color: var(--ui-color-text); text-underline-offset: 3px; }
+.student-overview .button { white-space: normal; }
+.student-overview a:focus-visible, .student-overview button:focus-visible {
+  outline: 2px solid var(--ui-color-text); outline-offset: 3px;
+}
+@media (max-width: 768px) {
+  .student-overview .main-header { margin-top: var(--ui-space-lg); }
+  .stats-banner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats-banner strong { font-size: 1.25rem; }
+  .overview-heading { margin-bottom: 20px; }
+  .movement-filters label { flex: 1 1 130px; }
+  .movement-filters input, .movement-filters select { width: 100%; min-width: 0; }
+}

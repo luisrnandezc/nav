@@ -999,9 +999,9 @@ def calculate_user_stats(user_id, role_type='student', flight_instructor_hourly_
 @login_required
 def student_stats_page(request, student_id=None):
     """Display statistics page for a student."""
-    from fleet.models import Aircraft
     from accounts.models import StudentProfile
     from transactions.models import StudentTransaction
+    from transactions.student_activity import student_activity
     
     user = request.user
     
@@ -1013,8 +1013,6 @@ def student_stats_page(request, student_id=None):
         try:
             student = User.objects.get(national_id=student_id, role='STUDENT')
             student_profile = StudentProfile.objects.get(user=student)
-            student_hourly_rate = student_profile.flight_rate
-            user_id = student_id
         except User.DoesNotExist:
             messages.error(request, 'Estudiante no encontrado')
             return redirect('fms:user_stats_page')
@@ -1023,12 +1021,10 @@ def student_stats_page(request, student_id=None):
             return redirect('fms:user_stats_page')
     else:
         # User viewing their own stats
-        user_id = user.national_id
         student = None
 
         try:
             student_profile = StudentProfile.objects.get(user=user)
-            student_hourly_rate = student_profile.flight_rate
         except StudentProfile.DoesNotExist:
             messages.error(request, 'Perfil de estudiante no encontrado')
             return redirect('dashboard:dashboard')
@@ -1043,21 +1039,14 @@ def student_stats_page(request, student_id=None):
             return redirect('dashboard:dashboard')
     
     balance = student_profile.balance
-    total_paid = student_profile.transactions.filter(type=StudentTransaction.CREDIT).aggregate(total=Sum('amount'))['total'] or Decimal('0.0')
+    total_paid = student_profile.transactions.filter(type=StudentTransaction.CREDIT, confirmed=True).aggregate(total=Sum('amount'))['total'] or Decimal('0.0')
         
-    # Take into the account all the extra debits of type FLIGHT.
-    debit_corrections = student_profile.transactions.filter(type=StudentTransaction.DEBIT, category=StudentTransaction.FLIGHT).aggregate(total=Sum('amount'))['total'] or Decimal('0.0')
-
-    try:
-        stats = calculate_user_stats(user_id, 'student', None, student_hourly_rate)
-    except Aircraft.DoesNotExist:
-        messages.error(request, 'Aeronave no encontrada')
-        if student_id:
-            return redirect('fms:user_stats_page')
-        return redirect('dashboard:dashboard')
+    activity = student_activity(student_profile)
+    stats = activity['stats']
 
     context = {
         'student': student,
+        'unresolved_fuel': activity['unresolved_fuel'],
         'balance': balance,
         'total_paid': round(total_paid, 2),
         'total_flight_hours_yv204e': round(stats['total_flight_hours_yv204e'], 1),
@@ -1079,7 +1068,7 @@ def student_stats_page(request, student_id=None):
         'fuel_rate_liters_yv206e': round(stats['fuel_rate_liters_yv206e'], 1),
         'fuel_rate_gallons_yv204e': round(stats['fuel_rate_gallons_yv204e'], 1),
         'fuel_rate_gallons_yv206e': round(stats['fuel_rate_gallons_yv206e'], 1),
-        'total_cost': round(stats['total_cost'] + debit_corrections, 1),
+        'total_cost': round(stats['total_cost'], 1),
         'flight_hour_cost_yv204e': round(stats['flight_hour_cost_yv204e'], 1),
         'flight_hour_cost_yv206e': round(stats['flight_hour_cost_yv206e'], 1),
     }

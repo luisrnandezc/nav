@@ -1,0 +1,69 @@
+# Student balance and statistics
+
+The student launchpad links to `/transactions/student/`. The page uses the shared
+`ui` CSS and shows the existing profile balance, total hours, NAV hours, weighted
+fuel/cost averages, and a paginated history. Filters only affect the history.
+Access is scoped to the authenticated student's profile, including staff using
+their student role; a supplied student ID cannot select another account.
+
+## Accounting sources
+
+Manual movements come from StudentTransaction. Unconfirmed transactions are shown
+as pending and do not affect the balance or cost statistics. Automatic flight
+charges are derived from the three school evaluation types and their saved applied
+rates. External flights and simulator sessions do not automatically debit the
+student and are not represented as flight charges here.
+
+Later fuel transactions retain a nullable foreign key to their evaluation, liters,
+unit price, charged amount, and a generated description with flight date, aircraft,
+hours, instructor, and reference. Staff may append observations. Linked fuel is
+excluded from the original flight charge and shown as a separate dated debit.
+The full student statistics page shares this calculation; instructor statistics
+are unchanged.
+
+## Migration and historical limits
+
+Run `python manage.py migrate` from `config` before using the new tile.
+Migration 0012 adds fuel references and snapshots. Migration 0013 links legacy
+fuel notes only when student, aircraft, instructor, liters, and date identify one
+candidate flight and only one transaction matches it. It does not change balances.
+Ambiguous or missing flight references remain unlinked and generate a warning;
+the overview suppresses the USD/hour average until those records are reconciled.
+
+The history reflects currently retained flight and transaction records. Existing
+data does not provide an immutable audit of deleted records, prior edits, starting
+balances, or confirmation reversals. This implementation does not invent such
+events or historical running balances. Exact reconciliation of older accounts
+requires reviewing those records; a permanent event ledger is separate work.
+
+The detailed statistics template retains its existing two named aircraft sections;
+overall totals and overview averages include all school aircraft.
+
+## Reading the activity code
+
+Start with `student_activity()` at the bottom of `student_activity.py`. It is the
+entry point used by both views and coordinates the helpers in this order:
+
+1. Load the student's transactions and call `group_fuel_transactions_by_flight()`.
+   `get_fuel_flight_key()` identifies a flight by both its table kind and ID.
+2. Call `summarize_student_flights()`. It loads flights through
+   `iter_student_flights()`, calculates each charge with
+   `calculate_flight_charges()`, and formats it with `build_flight_movement()`.
+3. Add `calculate_extra_flight_debits()` to the flight costs, then pass the
+   aircraft totals to `build_detailed_statistics()` for totals and averages.
+4. Use `is_late_fuel_transaction()` to flag unresolved fuel and
+   `build_transaction_movement()` to format manual movements. Merge those rows
+   with the flight rows and sort newest first.
+
+`FlightCharges` names the amounts passed between calculation and presentation:
+original flight cost, original fuel cost, combined original debit, and later
+confirmed fuel cost. The view handles filters and pagination after this module
+returns its result. All helpers are read-only.
+
+## Verification
+
+`python manage.py test transactions dashboard fms.test.test_flight_evaluation_rates --noinput`
+
+Covers student isolation, pending credits, date/filter/pagination handling, saved
+rates, delayed fuel linkage and duplicate submission, atomic rollback, invalid
+fuel input, legacy matching, and existing flight accounting behavior.

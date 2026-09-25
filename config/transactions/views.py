@@ -5,12 +5,12 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.core.cache import cache
-from django.db import transaction as db_transaction
 from django.db.models import Q
 from django.urls import reverse
 from urllib.parse import urlencode
 from decimal import Decimal
 from .models import StudentTransaction
+from .services import record_late_fuel
 from .forms import StudentTransactionForm, FuelTransactionSearchForm
 from accounts.models import StudentProfile, User
 from fms.models import FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170
@@ -21,6 +21,45 @@ FUEL_EVALUATION_MODELS = (
     (FlightEvaluation100_120, 'flightevaluation100_120', 'Evaluación 100-120'),
     (FlightEvaluation120_170, 'flightevaluation120_170', 'Evaluación 120-170'),
 )
+
+
+@login_required
+def student_overview(request):
+    from django.core.paginator import Paginator
+    from django.http import HttpResponseForbidden
+    from django.utils.dateparse import parse_date
+    from .student_activity import student_activity
+
+    role = request.session.get('selected_role') or request.user.role
+    if role != User.Role.STUDENT:
+        return HttpResponseForbidden('Acceso exclusivo para estudiantes.')
+    profile = get_object_or_404(StudentProfile, user=request.user)
+    context = student_activity(profile)
+    rows = context.pop('movements')
+    kind = request.GET.get('type', '')
+    if kind == 'credits':
+        rows = [row for row in rows if row['credit']]
+    elif kind == 'debits':
+        rows = [row for row in rows if not row['credit']]
+    elif kind == 'flights':
+        rows = [row for row in rows if row['flight']]
+    for key in ('start', 'end'):
+        try:
+            value = parse_date(request.GET.get(key, ''))
+        except ValueError:
+            value = None
+        if value:
+            rows = [row for row in rows if (row['date'] >= value if key == 'start' else row['date'] <= value)]
+        context[key] = value.isoformat() if value else ''
+    if request.GET.get('movement', '').isdigit():
+        rows = [row for row in rows if row['id'] == f'transaction-{request.GET["movement"]}']
+    params = request.GET.copy()
+    params.pop('page', None)
+    context.update({
+        'profile': profile, 'page_obj': Paginator(rows, 25).get_page(request.GET.get('page')),
+        'filter_type': kind, 'query': params.urlencode(),
+    })
+    return render(request, 'transactions/student_overview.html', context)
 
 
 def get_evaluations_without_fuel(student_id=None):
@@ -289,7 +328,7 @@ def update_fuel_consumed(request):
         
         try:
             fuel_consumed = Decimal(fuel_consumed)
-            if fuel_consumed <= 0 or fuel_consumed > 1000:
+            if not fuel_consumed.is_finite() or fuel_consumed < Decimal('0.1') or fuel_consumed > 1000 or fuel_consumed != fuel_consumed.quantize(Decimal('0.1')):
                 messages.error(request, 'El volumen de combustible debe estar entre 0.1 y 1000 litros.')
                 return fuel_results_redirect(active_student_filter)
             
@@ -305,33 +344,10 @@ def update_fuel_consumed(request):
                 messages.error(request, 'Tipo de evaluación inválido.')
                 return fuel_results_redirect(active_student_filter)
             
-            with db_transaction.atomic():
-                evaluation = model_class.objects.select_for_update().select_related('aircraft').get(pk=evaluation_id)
-
-                if evaluation.fuel_consumed != Decimal('0'):
-                    raise ValidationError(
-                        f'Esta evaluación ya tiene combustible especificado: {evaluation.fuel_consumed} litros.'
-                    )
-
-                student_profile = StudentProfile.objects.select_for_update().get(
-                    user__national_id=evaluation.student_id
-                )
-                aircraft = evaluation.aircraft
-                transaction_amount = round(fuel_consumed * aircraft.fuel_cost, 2)
-
-                model_class.objects.filter(pk=evaluation_id).update(fuel_consumed=fuel_consumed)
-                StudentTransaction.objects.create(
-                    student_profile=student_profile,
-                    amount=transaction_amount,
-                    type=StudentTransaction.DEBIT,
-                    category=StudentTransaction.FLIGHT,
-                    date_added=timezone.now().date(),
-                    added_by=request.user,
-                    confirmed=True,
-                    confirmed_by=request.user,
-                    confirmation_date=timezone.now(),
-                    notes=f'Combustible: {fuel_consumed}L - {aircraft.registration} - {evaluation.instructor_first_name} {evaluation.instructor_last_name}',
-                )
+            record_late_fuel(
+                model_class, evaluation_id, fuel_consumed, request.user,
+                observations=request.POST.get('observations', ''),
+            )
             
             messages.success(request, f'Combustible actualizado exitosamente: {fuel_consumed} litros.')
             

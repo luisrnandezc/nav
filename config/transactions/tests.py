@@ -167,3 +167,125 @@ class MissingFuelEvaluationsTest(TestCase):
 
         self.older_evaluation.refresh_from_db()
         self.assertEqual(self.older_evaluation.fuel_consumed, Decimal('0.0'))
+
+    def test_late_fuel_snapshot_and_overview_do_not_double_count(self):
+        from .student_activity import student_activity
+
+        self.client.post(reverse('transactions:update_fuel_consumed'), {
+            'evaluation_id': self.older_evaluation.pk,
+            'model_type': 'flightevaluation0_100',
+            'fuel_consumed': '10.0',
+            'observations': 'Recibo verificado.',
+        })
+        debit = StudentTransaction.objects.get(student_profile=self.student.student_profile)
+        self.assertEqual(debit.fuel_flight_0_100, self.older_evaluation)
+        self.assertEqual(debit.fuel_liters, Decimal('10.0'))
+        self.assertEqual(debit.fuel_unit_price, Decimal('3.00'))
+        self.assertIn(self.older_evaluation.session_date.strftime('%d/%m/%Y'), debit.notes)
+        self.assertIn('Recibo verificado.', debit.notes)
+        self.aircraft.fuel_cost = Decimal('9.00')
+        self.aircraft.save()
+        activity = student_activity(self.student.student_profile)
+        original = next(row for row in activity['movements'] if row['id'] == f'flight-0_100-{self.older_evaluation.pk}')
+        self.assertEqual(original['amount'], Decimal('0.00'))
+        self.assertEqual(len(original['fuel_transactions']), 1)
+        fuel = next(row for row in activity['movements'] if row['id'] == f'transaction-{debit.pk}')
+        self.assertEqual(fuel['amount'], Decimal('30.00'))
+        self.assertEqual(fuel['url'], reverse('fms:session_detail', args=('0_100', self.older_evaluation.pk)))
+        self.student.student_profile.refresh_from_db()
+        self.assertEqual(self.student.student_profile.balance, Decimal('470.00'))
+        # Re-submitting a completed flight must not debit twice.
+        self.client.post(reverse('transactions:update_fuel_consumed'), {
+            'evaluation_id': self.older_evaluation.pk, 'model_type': 'flightevaluation0_100',
+            'fuel_consumed': '10.0',
+        })
+        self.assertEqual(StudentTransaction.objects.count(), 1)
+
+    def test_student_overview_is_private_and_pending_credit_is_clear(self):
+        own = StudentTransaction.objects.create(
+            student_profile=self.student.student_profile, amount=Decimal('75'),
+            notes='Mi abono pendiente', confirmed=False,
+        )
+        StudentTransaction.objects.create(
+            student_profile=self.other_student.student_profile, amount=Decimal('999'),
+            notes='Privado de otro estudiante', confirmed=False,
+        )
+        url = reverse('transactions:student_overview')
+        self.assertEqual(self.client.get(url).status_code, 403)
+        self.client.force_login(self.student)
+        response = self.client.get(url, {'student_id': self.other_student.national_id})
+        self.assertContains(response, 'Mi abono pendiente')
+        self.assertContains(response, 'No afecta el saldo')
+        self.assertNotContains(response, 'Privado de otro estudiante')
+        self.assertContains(response, 'USD 500')
+        response = self.client.get(url, {'type': 'credits'})
+        self.assertEqual([row['id'] for row in response.context['page_obj']], [f'transaction-{own.pk}'])
+        response = self.client.get(url, {'start': 'invalid', 'end': '2026-99-99', 'page': 'invalid'})
+        self.assertEqual(response.status_code, 200)
+
+    def test_nonfinite_and_overprecise_fuel_are_rejected(self):
+        for value in ('NaN', 'Infinity', '0.01', '1.23'):
+            self.client.post(reverse('transactions:update_fuel_consumed'), {
+                'evaluation_id': self.older_evaluation.pk, 'model_type': 'flightevaluation0_100',
+                'fuel_consumed': value,
+            })
+        self.assertFalse(StudentTransaction.objects.exists())
+        self.older_evaluation.refresh_from_db()
+        self.assertEqual(self.older_evaluation.fuel_consumed, 0)
+
+    def test_legacy_fuel_backfill_links_only_unique_matches(self):
+        from importlib import import_module
+        from django.apps import apps
+        from django.db import connection
+
+        self.older_evaluation.fuel_consumed = Decimal('12')
+        self.older_evaluation.save()
+        debit = StudentTransaction.objects.create(
+            student_profile=self.student.student_profile, amount=Decimal('36'),
+            type=StudentTransaction.DEBIT, category=StudentTransaction.FLIGHT,
+            notes='Combustible: 12.0L - YVTEST - Test Instructor',
+        )
+        ambiguous = StudentTransaction.objects.create(
+            student_profile=self.other_student.student_profile, amount=Decimal('30'),
+            type=StudentTransaction.DEBIT, category=StudentTransaction.FLIGHT,
+            notes='Combustible: 10.0L - YVTEST - Test Instructor',
+        )
+        for model in (FlightEvaluation0_100, FlightEvaluation100_120):
+            self.create_evaluation(model, self.other_student, date.today(), Decimal('10'))
+        migration = import_module('transactions.migrations.0013_link_identifiable_historical_fuel')
+        from types import SimpleNamespace
+        migration.link_legacy_fuel(apps, SimpleNamespace(connection=connection))
+        debit.refresh_from_db()
+        ambiguous.refresh_from_db()
+        self.assertEqual(debit.fuel_flight_0_100_id, self.older_evaluation.pk)
+        self.assertEqual(debit.fuel_unit_price, Decimal('3'))
+        self.assertIsNone(ambiguous.fuel_liters)
+
+    def test_summary_uses_saved_rates_and_full_stats_works_without_named_fleet(self):
+        from .student_activity import student_activity
+
+        # Bulk update is deliberate: this test reads historical records without posting new charges.
+        FlightEvaluation0_100.objects.filter(pk=self.older_evaluation.pk).update(
+            session_flight_hours=Decimal('2'), hourly_rate_applied=Decimal('130'),
+        )
+        self.aircraft.hourly_rate = Decimal('200')
+        self.aircraft.save()
+        activity = student_activity(self.student.student_profile)
+        self.assertEqual(activity['stats']['total_flight_hours_dollars'], Decimal('260'))
+        self.assertEqual(activity['liters_per_hour'], Decimal('5'))
+        self.assertEqual(activity['dollars_per_hour'], Decimal('145'))
+        self.client.force_login(self.student)
+        response = self.client.get(reverse('fms:student_stats_page'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['total_cost'], Decimal('290'))
+
+    def test_pagination_preserves_filters_and_reaches_older_movements(self):
+        StudentTransaction.objects.bulk_create([
+            StudentTransaction(student_profile=self.student.student_profile, amount=1,
+                               notes=f'Abono {index}', confirmed=False)
+            for index in range(30)
+        ])
+        self.client.force_login(self.student)
+        response = self.client.get(reverse('transactions:student_overview'), {'type': 'credits', 'page': 2})
+        self.assertEqual(len(response.context['page_obj']), 5)
+        self.assertContains(response, 'type=credits')

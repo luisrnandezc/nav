@@ -150,6 +150,15 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'visible': True,
         },
         {
+            'key': 'student_balance_stats',
+            'label': 'Saldo y estadísticas',
+            'description': 'Consultar movimientos, horas de vuelo y costos.',
+            'icon': 'dashboard/img/money.png',
+            'url': reverse('transactions:student_overview'),
+            'roles': {'STUDENT'},
+            'visible': True,
+        },
+        {
             'key': 'student_scheduler',
             'label': 'Agenda tu vuelo',
             'description': 'Solicitar y revisar vuelos.',

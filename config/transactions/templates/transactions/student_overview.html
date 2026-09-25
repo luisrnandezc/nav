@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NAV | Saldo y estadísticas</title>
+  {% include 'ui/includes/core_css.html' %}
+  <link rel="stylesheet" href="{% static 'transactions/shared_components.css' %}">
+  <link rel="stylesheet" href="{% static 'transactions/student_overview.css' %}">
+</head>
+<body class="student-activity-page">
+<main class="ui-page student-overview">
+  <div class="back-button">
+    <a class="button" href="{% url 'dashboard:dashboard' %}">&larr; Volver</a>
+  </div>
+  <h1 class="main-header">Saldo y estadísticas</h1>
+  <div class="ui-stack">
+    <section class="ui-panel" aria-label="Resumen del estudiante">
+      <div class="overview-heading">
+        <div><span>Saldo actual</span><strong class="balance-value">USD {{ profile.balance|floatformat:2 }}</strong></div>
+        <a class="button" href="{% url 'fms:student_stats_page' %}">Ver estadísticas completas</a>
+      </div>
+      <div class="stats-banner">
+        <div class="ui-card"><span>Horas totales</span><strong>{{ profile.flight_hours|floatformat:1 }} h</strong></div>
+        <div class="ui-card"><span>Horas en NAV</span><strong>{{ profile.nav_flight_hours|floatformat:1 }} h</strong></div>
+        <div class="ui-card"><span>Consumo promedio NAV</span><strong>{% if liters_per_hour != None %}{{ liters_per_hour|floatformat:1 }} L/h{% else %}—{% endif %}</strong></div>
+        <div class="ui-card"><span>Costo promedio NAV</span><strong>{% if dollars_per_hour != None %}${{ dollars_per_hour|floatformat:2 }}/h{% else %}—{% endif %}</strong></div>
+      </div>
+      <p class="overview-hint">Promedios históricos de vuelos registrados en NAV. El costo incluye vuelo y combustible registrado. Los filtros solo afectan los movimientos.</p>
+      {% if missing_fuel %}<p class="overview-hint">Hay vuelos con combustible pendiente de registrar; los promedios se actualizarán al registrarlo.</p>{% endif %}
+    </section>
+    <section class="ui-panel" aria-labelledby="movements-title">
+      <h2 id="movements-title">Movimientos</h2>
+      {% if unresolved_fuel %}<p class="badge badge-warning">Hay cargos históricos de combustible sin vínculo al vuelo. Su desglose y los promedios pueden incluir combustible duplicado hasta conciliar esos registros.</p>{% endif %}
+      <form method="get" class="movement-filters">
+        <label>Tipo<select class="ui-select" name="type">
+          <option value="">Todos</option>
+          <option value="credits" {% if filter_type == 'credits' %}selected{% endif %}>Créditos</option>
+          <option value="debits" {% if filter_type == 'debits' %}selected{% endif %}>Débitos</option>
+          <option value="flights" {% if filter_type == 'flights' %}selected{% endif %}>Vuelos</option>
+        </select></label>
+        <label>Desde<input class="ui-input" type="date" name="start" value="{{ start }}"></label>
+        <label>Hasta<input class="ui-input" type="date" name="end" value="{{ end }}"></label>
+        <button class="button" type="submit">Filtrar</button>
+        <a href="{% url 'transactions:student_overview' %}">Ver todos</a>
+      </form>
+      {% for movement in page_obj %}
+        <article class="ui-card movement-card" id="{{ movement.id }}">
+          <div class="movement-heading">
+            <h3>{{ movement.title }}</h3>
+            <strong class="movement-amount">{% if movement.credit %}+{% else %}−{% endif %}${{ movement.amount|floatformat:2 }}</strong>
+          </div>
+          <p><time>{{ movement.date|date:'d/m/Y' }}</time> · <span class="badge {% if movement.credit %}badge-success{% else %}badge-info{% endif %}">{{ movement.label }}</span>
+          {% if movement.pending %}<span class="badge badge-warning">Pendiente · No afecta el saldo</span>{% else %}<span class="badge badge-gray">Aplicado</span>{% endif %}</p>
+          {% if movement.description %}<p>{{ movement.description }}</p>{% endif %}
+          {% if movement.applied_date %}<p class="overview-hint">Aplicado al saldo: {{ movement.applied_date|date:'d/m/Y H:i' }}</p>{% endif %}
+          {% if movement.fuel_pending %}<p class="overview-hint">Combustible pendiente de registrar.</p>{% endif %}
+          {% for fuel in movement.fuel_transactions %}<p><a href="{{ fuel.url }}">Combustible cobrado por separado · {{ fuel.date|date:'d/m/Y' }}</a></p>{% endfor %}
+          {% if movement.url %}<a href="{{ movement.url }}">Ver vuelo &rarr;</a>{% endif %}
+        </article>
+      {% empty %}<p class="ui-card">No hay movimientos para este período o filtro.</p>{% endfor %}
+      {% if page_obj.has_other_pages %}<nav class="overview-pagination" aria-label="Páginas de movimientos">
+        {% if page_obj.has_previous %}<a class="button" href="?{{ query }}&amp;page={{ page_obj.previous_page_number }}">Anterior</a>{% endif %}
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a class="button" href="?{{ query }}&amp;page={{ page_obj.next_page_number }}">Siguiente</a>{% endif %}
+      </nav>{% endif %}
+    </section>
+  </div>
+</main>
+</body>
+</html>

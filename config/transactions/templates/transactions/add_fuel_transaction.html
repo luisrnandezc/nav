@@ -88,20 +88,20 @@
 											</div>
 										</div>
 										
-									<form method="post" action="{% url 'transactions:update_fuel_consumed' %}" class="fuel-update-form">
+										<form method="post" action="{% url 'transactions:update_fuel_consumed' %}" class="fuel-update-form" data-fuel-price="{{ eval_data.evaluation.aircraft.fuel_cost|stringformat:'.2f' }}">
 										{% csrf_token %}
 										<input type="hidden" name="evaluation_id" value="{{ eval_data.evaluation.id }}">
 										<input type="hidden" name="model_type" value="{{ eval_data.model_type }}">
 										<input type="hidden" name="active_student_filter" value="{{ active_student_filter|default_if_none:'' }}">
 											
 											<div class="fuel-input-row">
-												<label for="fuel_consumed_{{ eval_data.evaluation.id }}" class="fuel-label">
+												<label for="fuel_consumed_{{ eval_data.model_type }}_{{ eval_data.evaluation.id }}" class="fuel-label">
 													Litros de Combustible:
 												</label>
 												<input 
 													type="number" 
 													name="fuel_consumed" 
-													id="fuel_consumed_{{ eval_data.evaluation.id }}"
+													id="fuel_consumed_{{ eval_data.model_type }}_{{ eval_data.evaluation.id }}"
 													class="fuel-input"
 													step="0.1"
 													min="0.1"
@@ -111,6 +111,11 @@
 												>
 												<button type="submit" class="update-button">Actualizar</button>
 											</div>
+                                            <p>Combustible registrado posteriormente · Vuelo del {{ eval_data.evaluation.session_date|date:'d/m/Y' }} · {{ eval_data.evaluation.aircraft.registration }} · {{ eval_data.evaluation.session_flight_hours }} h</p>
+                                            <p>Referencia: {{ eval_data.model_type }} #{{ eval_data.evaluation.pk }}. Esta información se incluirá automáticamente en el movimiento del estudiante.</p>
+                                            <p class="fuel-charge-preview" aria-live="polite">Tarifa: ${{ eval_data.evaluation.aircraft.fuel_cost }}/L. Ingrese los litros para ver el débito.</p>
+                                            <label for="observations_{{ eval_data.model_type }}_{{ eval_data.evaluation.pk }}">Observaciones (opcional)</label>
+                                            <textarea name="observations" id="observations_{{ eval_data.model_type }}_{{ eval_data.evaluation.pk }}" maxlength="1000" rows="2"></textarea>
 										</form>
 									</div>
 								{% endfor %}

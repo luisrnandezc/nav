@@ -17,11 +17,12 @@
                 {% if student %}
                     <a href="{% url 'fms:user_stats_page' %}" class="button">&larr; Volver</a>
                 {% else %}
-                    <a href="{% url 'fms:student_flightlog' %}" class="button">&larr; Volver</a>
+                    <a href="{% url 'transactions:student_overview' %}" class="button">&larr; Saldo y estadísticas</a>
                 {% endif %}
             </div>
 
-            <h1 class="main-header">Estadísticas de {{ student.username }}</h1>
+            <h1 class="main-header">{% if student %}Estadísticas de {{ student.username }}{% else %}Mis estadísticas de vuelo{% endif %}</h1>
+            {% if unresolved_fuel %}<p>Hay cargos históricos de combustible sin vínculo al vuelo. Los costos requieren conciliación para descartar duplicados.</p>{% endif %}
 
             <div class="sections-container">
                 <!-- Total Statistics -->

@@ -214,6 +214,29 @@ class ExternalFlightEvaluationViewTests(ExternalEvaluationTestMixin, TestCase):
             response = self.client.get(reverse(f'fms:{route_name}'))
             self.assertEqual(response.status_code, 302)
 
+    def test_students_can_access_only_their_own_external_evaluations(self):
+        """Apply the same ownership rule to external detail and PDF routes."""
+        evaluation = self.create_evaluation()
+        route_kwargs = {'form_type': 'external', 'evaluation_id': evaluation.pk}
+        route_names = ('session_detail', 'pdf_download_waiting_page', 'download_pdf')
+
+        other_student = UserFactory(role='STUDENT')
+        StudentProfileFactory(user=other_student)
+        self.client.force_login(other_student)
+        for route_name in route_names:
+            response = self.client.get(reverse(f'fms:{route_name}', kwargs=route_kwargs))
+            self.assertEqual(response.status_code, 404)
+
+        self.client.force_login(self.student)
+        self.assertEqual(
+            self.client.get(reverse('fms:session_detail', kwargs=route_kwargs)).status_code,
+            200,
+        )
+        self.assertEqual(
+            self.client.get(reverse('fms:pdf_download_waiting_page', kwargs=route_kwargs)).status_code,
+            200,
+        )
+
     def test_pdf_uses_external_template_title_and_blank_hours_heading(self):
         evaluation = self.create_evaluation()
         resolved, template_name = get_evaluation_and_template('external', evaluation.id)

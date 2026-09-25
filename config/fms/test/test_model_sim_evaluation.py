@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from decimal import Decimal
+from django.urls import reverse
 from django.utils import timezone
 
 from fleet.models import Simulator
@@ -44,6 +45,45 @@ class SimEvaluationModelTest(TestCase):
 			hourly_rate_single=Decimal('35.0'),
 			hourly_rate_dual=Decimal('22.5'),
 		)
+
+	def create_sim_evaluation(self):
+		"""Create a valid simulator evaluation for access and model tests."""
+		form_data = {
+			'instructor_id': self.instructor.national_id,
+			'instructor_first_name': self.instructor.first_name,
+			'instructor_last_name': self.instructor.last_name,
+			'instructor_license_type': 'PCA',
+			'instructor_license_number': self.instructor.national_id,
+			'student_id': self.student.national_id,
+			'student_first_name': self.student.first_name,
+			'student_last_name': self.student.last_name,
+			'student_license_type': 'AP',
+			'student_license_number': self.student.national_id,
+			'course_type': 'PPA-P',
+			'session_date': timezone.now().date(),
+			'accumulated_sim_hours': self.student_profile.sim_hours,
+			'session_sim_hours': Decimal('1.0'),
+			'simulator': self.simulator.id,
+			'session_type': 'Simple',
+			'session_grade': 'S',
+			'comments': 'C' * 80,
+		}
+		probe = SimEvaluationForm(user=self.instructor)
+		from django import forms as django_forms
+		for name, field in probe.fields.items():
+			if name in form_data or not field.required:
+				continue
+			if isinstance(field, django_forms.ChoiceField):
+				form_data[name] = next(
+					(value for value, _label in field.choices if value not in (None, '')),
+					'',
+				)
+			else:
+				form_data[name] = '0'
+
+		form = SimEvaluationForm(data=form_data, user=self.instructor)
+		self.assertTrue(form.is_valid(), msg=form.errors.as_json())
+		return form.save()
 
 	def test_sim_evaluation_does_not_change_student_balance(self):
 		"""Creating and deleting a SimEvaluation must not modify student `balance`."""
@@ -166,4 +206,27 @@ class SimEvaluationModelTest(TestCase):
 
 		self.assertEqual(evaluation.simulator_rate_applied, Decimal('22.50'))
 		self.assertEqual(evaluation.instructor_rate_applied, Decimal('15.00'))
+
+	def test_students_can_access_only_their_own_simulator_evaluations(self):
+		"""Protect simulator detail and PDF routes with the student ownership rule."""
+		evaluation = self.create_sim_evaluation()
+		route_kwargs = {'form_type': 'sim', 'evaluation_id': evaluation.pk}
+		route_names = ('session_detail', 'pdf_download_waiting_page', 'download_pdf')
+
+		other_student = UserFactory(role='STUDENT')
+		StudentProfileFactory(user=other_student)
+		self.client.force_login(other_student)
+		for route_name in route_names:
+			response = self.client.get(reverse(f'fms:{route_name}', kwargs=route_kwargs))
+			self.assertEqual(response.status_code, 404)
+
+		self.client.force_login(self.student)
+		self.assertEqual(
+			self.client.get(reverse('fms:session_detail', kwargs=route_kwargs)).status_code,
+			200,
+		)
+		self.assertEqual(
+			self.client.get(reverse('fms:pdf_download_waiting_page', kwargs=route_kwargs)).status_code,
+			200,
+		)
 

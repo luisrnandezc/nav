@@ -93,6 +93,45 @@ class SeedFmsDemoTests(TestCase):
         self.client.force_login(User.objects.get(username='demo_fms_staff'))
         self.assertEqual(self.client.get(reverse('transactions:add_fuel_transaction')).status_code, 200)
 
+    def test_evaluation_routes_restrict_students_to_their_own_flights(self):
+        """Students receive 404 from every evaluation route for another student's flight."""
+        outsider = User.objects.get(username='demo_fms_empty')
+        self.client.force_login(outsider)
+
+        for form_type, model in FLIGHT_MODELS:
+            evaluation = model.objects.first()
+            self.assertNotEqual(evaluation.student_id, outsider.national_id)
+            route_kwargs = {'form_type': form_type, 'evaluation_id': evaluation.pk}
+            for route_name in ('session_detail', 'pdf_download_waiting_page', 'download_pdf'):
+                response = self.client.get(reverse(f'fms:{route_name}', kwargs=route_kwargs))
+                self.assertEqual(response.status_code, 404)
+
+    def test_students_instructors_and_staff_keep_their_expected_flight_access(self):
+        """Owners can use all flight routes while instructors and staff retain detail access."""
+        student = User.objects.get(username='demo_fms_student')
+        _, model = FLIGHT_MODELS[0]
+        evaluation = model.objects.filter(student_id=student.national_id).first()
+        route_kwargs = {'form_type': '0_100', 'evaluation_id': evaluation.pk}
+
+        self.client.force_login(student)
+        self.assertEqual(
+            self.client.get(reverse('fms:session_detail', kwargs=route_kwargs)).status_code,
+            200,
+        )
+        self.assertEqual(
+            self.client.get(reverse('fms:pdf_download_waiting_page', kwargs=route_kwargs)).status_code,
+            200,
+        )
+        with patch('fms.views.weasyprint.HTML.write_pdf', return_value=b'%PDF-1.4'):
+            response = self.client.get(reverse('fms:download_pdf', kwargs=route_kwargs))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/pdf')
+
+        for username in ('demo_fms_instructor', 'demo_fms_staff'):
+            self.client.force_login(User.objects.get(username=username))
+            response = self.client.get(reverse('fms:session_detail', kwargs=route_kwargs))
+            self.assertEqual(response.status_code, 200)
+
     def test_reset_failure_rolls_back_existing_dataset(self):
         before = list(StudentTransaction.objects.values_list('pk', 'amount'))
         with patch.object(Command, 'seed_scenarios', side_effect=CommandError('example failure')):

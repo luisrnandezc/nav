@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.contrib.staticfiles.finders import find
@@ -10,6 +10,7 @@ from django.contrib.auth.models import Group
 from django.db.models import Sum, Q
 from decimal import Decimal
 from accounts.models import User, StudentProfile, InstructorProfile
+from accounts.role_utils import resolve_active_role
 from .forms import FlightEvaluation0_100Form, FlightEvaluation100_120Form, FlightEvaluation120_170Form, ExternalFlightEvaluationForm, SimEvaluationForm, FlightReportForm
 from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, ExternalFlightEvaluation, FlightReport
 import weasyprint
@@ -487,48 +488,57 @@ def get_student_data(request):
             'error': 'Ocurrió un error al obtener los datos del estudiante'
         }, status=500)
 
+def get_evaluation_model_and_template(form_type):
+    """Return the model and PDF template registered for an evaluation type."""
+    evaluation_types = {
+        '0_100': (FlightEvaluation0_100, 'fms/pdf_0_100.html'),
+        '100_120': (FlightEvaluation100_120, 'fms/pdf_100_120.html'),
+        '120_170': (FlightEvaluation120_170, 'fms/pdf_120_170.html'),
+        'external': (ExternalFlightEvaluation, 'fms/pdf_120_170.html'),
+        'sim': (SimEvaluation, 'fms/pdf_sim.html'),
+    }
+    try:
+        return evaluation_types[form_type]
+    except KeyError as exc:
+        raise ValueError(f'Invalid form_type: {form_type}') from exc
+
+
 def get_evaluation_and_template(form_type, evaluation_id):
-    """Helper function to get evaluation and template based on form_type."""
-    if form_type == '0_100':
-        from .models import FlightEvaluation0_100
-        evaluation = FlightEvaluation0_100.objects.get(id=evaluation_id)
-        template_name = 'fms/pdf_0_100.html'
-    elif form_type == '100_120':
-        from .models import FlightEvaluation100_120
-        evaluation = FlightEvaluation100_120.objects.get(id=evaluation_id)
-        template_name = 'fms/pdf_100_120.html'
-    elif form_type == '120_170':
-        from .models import FlightEvaluation120_170
-        evaluation = FlightEvaluation120_170.objects.get(id=evaluation_id)
-        template_name = 'fms/pdf_120_170.html'
-    elif form_type == 'external':
-        evaluation = ExternalFlightEvaluation.objects.get(id=evaluation_id)
-        template_name = 'fms/pdf_120_170.html'
-    elif form_type == 'sim':
-        from .models import SimEvaluation
-        evaluation = SimEvaluation.objects.get(id=evaluation_id)
-        template_name = 'fms/pdf_sim.html'
-    else:
-        raise ValueError(f'Invalid form_type: {form_type}')
-    
+    """Return an evaluation and its PDF template without applying request access rules."""
+    model, template_name = get_evaluation_model_and_template(form_type)
+    return model.objects.get(id=evaluation_id), template_name
+
+
+def get_authorized_evaluation_and_template(request, form_type, evaluation_id):
+    """Return an evaluation visible to the request's active role, or respond as not found."""
+    try:
+        model, template_name = get_evaluation_model_and_template(form_type)
+    except ValueError as exc:
+        raise Http404('Evaluación no encontrada.') from exc
+
+    active_role = resolve_active_role(
+        request.user,
+        request.session.get('selected_role'),
+    )
+    queryset = model.objects.all()
+
+    if active_role == User.Role.STUDENT:
+        queryset = queryset.filter(student_id=request.user.national_id)
+    elif active_role not in {User.Role.INSTRUCTOR, User.Role.STAFF}:
+        queryset = queryset.none()
+
+    evaluation = get_object_or_404(queryset, id=evaluation_id)
     return evaluation, template_name
 
 @login_required
 def pdf_download_waiting_page(request, form_type, evaluation_id):
     """Show intermediate page for PDF download."""
-    try:
-        evaluation, _ = get_evaluation_and_template(form_type, evaluation_id)
-        
-        context = {
-            'pdf_url': f'/fms/download_pdf/{form_type}/{evaluation_id}/',
-            'dashboard_url': '/dashboard/'
-        }
-        
-        return render(request, 'fms/pdf_download.html', context)
-        
-    except Exception as e:
-        messages.error(request, f'Error: {str(e)}')
-        return redirect('dashboard:dashboard')
+    get_authorized_evaluation_and_template(request, form_type, evaluation_id)
+    context = {
+        'pdf_url': reverse('fms:download_pdf', args=(form_type, evaluation_id)),
+        'dashboard_url': reverse('dashboard:dashboard'),
+    }
+    return render(request, 'fms/pdf_download.html', context)
 
 @login_required
 def student_list(request):
@@ -640,9 +650,12 @@ def toggle_temp_permission(request):
 @login_required
 def download_pdf(request, form_type, evaluation_id):
     """Download PDF for a specific evaluation."""
+    evaluation, template_name = get_authorized_evaluation_and_template(
+        request,
+        form_type,
+        evaluation_id,
+    )
     try:
-        evaluation, template_name = get_evaluation_and_template(form_type, evaluation_id)
-        
         # Find the static image path (logo)
         raw_logo_path = find('fms/img/evaluation_logo.png')
         if raw_logo_path:
@@ -765,9 +778,12 @@ def get_evaluation_fields(form_type):
 @login_required
 def session_detail(request, form_type, evaluation_id):
     """Display detailed view of a flight or simulator session."""
+    evaluation, _ = get_authorized_evaluation_and_template(
+        request,
+        form_type,
+        evaluation_id,
+    )
     try:
-        evaluation, _ = get_evaluation_and_template(form_type, evaluation_id)
-        
         selected_role = request.session.get('selected_role', None)
         user_role = selected_role if selected_role else request.user.role
         if user_role == 'STUDENT':

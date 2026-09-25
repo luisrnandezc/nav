@@ -6,6 +6,7 @@ media_kit/
 users/
 config/db.sqlite3
 config/.env
+config/superuser-backup.json
 config/sms/prompts/*
 !config/sms/prompts/.gitkeep
 config/sms/logs/*

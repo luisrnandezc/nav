@@ -126,6 +126,7 @@ def build_transaction_movement(transaction):
     """
     flight_key = get_fuel_flight_key(transaction)
     is_fuel = is_late_fuel_transaction(transaction)
+    linked_flight = getattr(transaction, f'fuel_flight_{flight_key[0]}') if flight_key else None
     credit = transaction.type == StudentTransaction.CREDIT
     title = transaction.get_category_display()
     if is_fuel:
@@ -141,6 +142,8 @@ def build_transaction_movement(transaction):
         'pending': not transaction.confirmed,
         'applied_date': transaction.confirmation_date if transaction.confirmed else None,
         'flight': is_fuel or transaction.category == StudentTransaction.FLIGHT,
+        'fuel_flight_date': linked_flight.session_date if linked_flight else None,
+        'fuel_aircraft': linked_flight.aircraft.registration if linked_flight else None,
         'url': reverse('fms:session_detail', args=flight_key) if flight_key else None,
         'sort': (transaction.date_added, 1, transaction.pk),
     }

@@ -216,6 +216,8 @@ class MissingFuelEvaluationsTest(TestCase):
         self.assertEqual(len(original['fuel_transactions']), 1)
         fuel = next(row for row in activity['movements'] if row['id'] == f'transaction-{debit.pk}')
         self.assertEqual(fuel['amount'], Decimal('30.00'))
+        self.assertEqual(fuel['fuel_flight_date'], self.older_evaluation.session_date)
+        self.assertEqual(fuel['fuel_aircraft'], 'YVTEST')
         self.assertEqual(fuel['description'], (
             'Combustible registrado posterior a la fecha del vuelo. '
             f'Vuelo del {self.older_evaluation.session_date:%d/%m/%Y} · YVTEST · '

@@ -8,6 +8,7 @@
   {% include 'ui/includes/core_css.html' %}
   <link rel="stylesheet" href="{% static 'transactions/shared_components.css' %}">
   <link rel="stylesheet" href="{% static 'transactions/student_overview.css' %}">
+  <script src="{% static 'transactions/js/student_overview.js' %}" defer></script>
 </head>
 <body class="student-activity-page">
 <main class="ui-page student-overview">
@@ -53,13 +54,27 @@
             <h3>{{ movement.title }}</h3>
             <strong class="movement-amount amount-badge {% if movement.credit %}amount-credit{% else %}amount-debit{% endif %}">{% if movement.credit %}+{% else %}−{% endif %}${{ movement.amount|floatformat:2 }}</strong>
           </div>
-          <p><time>{{ movement.date|date:'d/m/Y' }}</time> · <span class="badge {% if movement.credit %}badge-success{% else %}badge-info{% endif %}">{{ movement.label }}</span>
-          {% if movement.pending %}<span class="badge badge-warning">Pendiente · No afecta el saldo</span>{% else %}<span class="badge badge-gray">Aplicado</span>{% endif %}</p>
-          {% if movement.description %}<p>{{ movement.description }}</p>{% endif %}
-          {% if movement.applied_date %}<p class="overview-hint">Confirmado el: {{ movement.applied_date|date:'d/m/Y H:i' }}</p>{% endif %}
+          <p class="movement-meta"><time>{{ movement.date|date:'d/m/Y' }}</time>
+            {% if movement.label == 'Débito automático' %}
+              <span class="badge badge-info"><span class="movement-desktop">{{ movement.label }}</span><span class="movement-mobile">Automático</span></span>
+            {% else %}
+              <span class="badge movement-desktop {% if movement.credit %}badge-success{% else %}badge-info{% endif %}">{{ movement.label }}</span>
+            {% endif %}
+            {% if movement.pending %}<span class="badge badge-warning">Pendiente · No afecta el saldo</span>{% else %}<span class="badge badge-gray movement-desktop">Aplicado</span>{% endif %}
+          </p>
+          {% if movement.fuel_flight_date %}<p class="movement-mobile overview-hint">Vuelo del {{ movement.fuel_flight_date|date:'d/m/Y' }} · {{ movement.fuel_aircraft }}</p>{% endif %}
           {% if movement.fuel_pending %}<p class="overview-hint">Combustible pendiente de registrar.</p>{% endif %}
-          {% for fuel in movement.fuel_transactions %}<p><a href="{{ fuel.url }}">Combustible cobrado por separado · {{ fuel.date|date:'d/m/Y' }}</a></p>{% endfor %}
-          {% if movement.url %}<a class="button flight-detail-button" href="{{ movement.url }}">Ver vuelo &rarr;</a>{% endif %}
+          {% for fuel in movement.fuel_transactions %}<p><a href="{{ fuel.url }}"><span class="movement-desktop">Combustible cobrado por separado</span><span class="movement-mobile">Combustible aparte</span> · {{ fuel.date|date:'d/m/Y' }}</a></p>{% endfor %}
+          {% if movement.description or movement.applied_date or movement.url %}
+            <details class="movement-details" open>
+              <summary><span class="detail-show">Ver detalle</span><span class="detail-hide">Ocultar detalle</span><span class="movement-sr-only">: {{ movement.title }} · {{ movement.date|date:'d/m/Y' }}</span></summary>
+              <div class="movement-detail-content">
+                {% if movement.description %}<p>{{ movement.description }}</p>{% endif %}
+                {% if movement.applied_date %}<p class="overview-hint">Confirmado el: {{ movement.applied_date|date:'d/m/Y H:i' }}</p>{% endif %}
+                {% if movement.url %}<a class="button flight-detail-button" href="{{ movement.url }}">Ver vuelo &rarr;</a>{% endif %}
+              </div>
+            </details>
+          {% endif %}
         </article>
       {% empty %}<p class="ui-card">No hay movimientos para este período o filtro.</p>{% endfor %}
       {% if page_obj.has_other_pages %}<nav class="overview-pagination" aria-label="Páginas de movimientos">

@@ -87,10 +87,39 @@ def group_fuel_transactions_by_flight(transactions):
     return grouped
 
 
+def student_visible_notes(notes):
+    """Hide the exact demo ownership marker while keeping stored notes intact.
+
+    The seed reset command still needs this metadata in the database. Only its
+    student-facing presentation is cleaned; unrelated bracketed text is kept.
+    """
+    return notes.replace('[seed_fms_demo:v1]', '').strip()
+
+
+def late_fuel_description(transaction, flight_key):
+    """Describe linked fuel using flight date, aircraft and saved charge values.
+
+    Build the short student-facing text for existing and new transactions without
+    changing stored audit notes. Keep the available notes for legacy entries
+    whose flight or fuel snapshot is missing rather than inventing charge data.
+    """
+    if not flight_key or transaction.fuel_liters is None or transaction.fuel_unit_price is None:
+        return student_visible_notes(transaction.notes)
+    kind, _ = flight_key
+    flight = getattr(transaction, f'fuel_flight_{kind}')
+    liters = format(transaction.fuel_liters.normalize(), 'f')
+    price = format(transaction.fuel_unit_price.normalize(), 'f')
+    return (
+        'Combustible registrado posterior a la fecha del vuelo. '
+        f'Vuelo del {flight.session_date:%d/%m/%Y} · {flight.aircraft.registration} · '
+        f'{liters} L × ${price}/L = ${transaction.amount:.2f}.'
+    )
+
+
 def build_transaction_movement(transaction):
     """Convert one StudentTransaction into a movement dictionary for the UI.
 
-    Retain its amount, notes, transaction date and confirmation date. Pending
+    Retain its amount, transaction date and confirmation date; shorten fuel notes. Pending
     entries remain visible but are marked as not applied. ``flight`` supports
     filtering; ``sort`` puts transactions before automatic charges on the same
     day, with the primary key breaking ties within each source.
@@ -107,7 +136,8 @@ def build_transaction_movement(transaction):
         'id': f'transaction-{transaction.pk}', 'date': transaction.date_added,
         'title': title,
         'label': 'Crédito' if credit else 'Débito', 'credit': credit,
-        'amount': transaction.amount, 'description': transaction.notes,
+        'amount': transaction.amount,
+        'description': late_fuel_description(transaction, flight_key) if is_fuel else student_visible_notes(transaction.notes),
         'pending': not transaction.confirmed,
         'applied_date': transaction.confirmation_date if transaction.confirmed else None,
         'flight': is_fuel or transaction.category == StudentTransaction.FLIGHT,
@@ -268,7 +298,9 @@ def student_activity(profile):
     belong to the view. This function does not calculate or mutate the profile's
     current balance or accumulated flight-hour fields.
     """
-    transactions = list(profile.transactions.all())
+    transactions = list(profile.transactions.select_related(
+        *(f'fuel_flight_{kind}__aircraft' for kind, _ in FLIGHT_MODELS)
+    ))
     fuel_by_flight = group_fuel_transactions_by_flight(transactions)
     flights = summarize_student_flights(profile, fuel_by_flight)
     total_cost = flights['flight_cost'] + calculate_extra_flight_debits(transactions)

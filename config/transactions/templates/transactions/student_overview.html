@@ -18,8 +18,8 @@
   <div class="ui-stack">
     <section class="ui-panel" aria-label="Resumen del estudiante">
       <div class="overview-heading">
-        <div><span>Saldo actual</span><strong class="balance-value">USD {{ profile.balance|floatformat:2 }}</strong></div>
-        <a class="button" href="{% url 'fms:student_stats_page' %}">Ver estadísticas completas</a>
+        <div><span>Saldo actual</span><strong class="balance-value amount-badge {% if profile.balance >= 500 %}amount-credit{% elif profile.balance < 0 %}amount-debit{% else %}amount-warning{% endif %}">USD {{ profile.balance|floatformat:2 }}</strong></div>
+        <a class="button" href="{% url 'fms:student_stats_page' %}?origin=overview">Ver estadísticas completas</a>
       </div>
       <div class="stats-banner">
         <div class="ui-card"><span>Horas totales</span><strong>{{ profile.flight_hours|floatformat:1 }} h</strong></div>
@@ -42,22 +42,24 @@
         </select></label>
         <label>Desde<input class="ui-input" type="date" name="start" value="{{ start }}"></label>
         <label>Hasta<input class="ui-input" type="date" name="end" value="{{ end }}"></label>
-        <button class="button" type="submit">Filtrar</button>
-        <a href="{% url 'transactions:student_overview' %}">Ver todos</a>
+        <div class="movement-filter-actions">
+          <button class="button" type="submit">Filtrar</button>
+          <a class="button" href="{% url 'transactions:student_overview' %}">Ver todos</a>
+        </div>
       </form>
       {% for movement in page_obj %}
         <article class="ui-card movement-card" id="{{ movement.id }}">
           <div class="movement-heading">
             <h3>{{ movement.title }}</h3>
-            <strong class="movement-amount">{% if movement.credit %}+{% else %}−{% endif %}${{ movement.amount|floatformat:2 }}</strong>
+            <strong class="movement-amount amount-badge {% if movement.credit %}amount-credit{% else %}amount-debit{% endif %}">{% if movement.credit %}+{% else %}−{% endif %}${{ movement.amount|floatformat:2 }}</strong>
           </div>
           <p><time>{{ movement.date|date:'d/m/Y' }}</time> · <span class="badge {% if movement.credit %}badge-success{% else %}badge-info{% endif %}">{{ movement.label }}</span>
           {% if movement.pending %}<span class="badge badge-warning">Pendiente · No afecta el saldo</span>{% else %}<span class="badge badge-gray">Aplicado</span>{% endif %}</p>
           {% if movement.description %}<p>{{ movement.description }}</p>{% endif %}
-          {% if movement.applied_date %}<p class="overview-hint">Aplicado al saldo: {{ movement.applied_date|date:'d/m/Y H:i' }}</p>{% endif %}
+          {% if movement.applied_date %}<p class="overview-hint">Confirmado el: {{ movement.applied_date|date:'d/m/Y H:i' }}</p>{% endif %}
           {% if movement.fuel_pending %}<p class="overview-hint">Combustible pendiente de registrar.</p>{% endif %}
           {% for fuel in movement.fuel_transactions %}<p><a href="{{ fuel.url }}">Combustible cobrado por separado · {{ fuel.date|date:'d/m/Y' }}</a></p>{% endfor %}
-          {% if movement.url %}<a href="{{ movement.url }}">Ver vuelo &rarr;</a>{% endif %}
+          {% if movement.url %}<a class="button flight-detail-button" href="{{ movement.url }}">Ver vuelo &rarr;</a>{% endif %}
         </article>
       {% empty %}<p class="ui-card">No hay movimientos para este período o filtro.</p>{% endfor %}
       {% if page_obj.has_other_pages %}<nav class="overview-pagination" aria-label="Páginas de movimientos">

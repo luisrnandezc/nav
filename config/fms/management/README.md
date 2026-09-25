@@ -16,7 +16,7 @@ application's configured email backend. Use a local mail backend for UI testing.
 
 ## Demo logins
 
-The initial password for all accounts is **`NavDemo-2026!`**. These credentials are
+The initial password for all accounts is **`navdemo26%`**. These credentials are
 only for local development. Re-running the command without `--reset` preserves
 existing records and passwords.
 
@@ -62,7 +62,8 @@ by the staff fuel page. Student balances reconcile to the applied movement list;
 pending payments do not contribute. Carried-over hours are explicit starting
 profile values, not invented paid NAV flights.
 
-Aircraft `DEMO-FMS-01` and `DEMO-FMS-02` are separate from the real fleet. Overall
+Aircraft `DEMO-FMS-01` and `DEMO-FMS-02` are separate from the real fleet.
+Both use $3.11 per liter, including recreated flight and fuel charges. Overall
 student statistics include them. Existing views hardcoded to `YV204E`/`YV206E`
 (including per-aircraft student sections and instructor/fleet statistics) do not
 gain those aircraft's demo activity. This command does not modify real aircraft

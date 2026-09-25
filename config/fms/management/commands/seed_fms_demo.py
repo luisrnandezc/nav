@@ -22,7 +22,7 @@ from transactions.student_activity import FLIGHT_MODELS, student_activity
 
 MARKER = '[seed_fms_demo:v1]'
 GROUP = 'FMS demo dataset v1'
-PASSWORD = 'NavDemo-2026!'
+PASSWORD = 'navdemo26%'
 ACCOUNTS = (
     ('demo_fms_student', 99001001, 'STUDENT', 'Ana', 'Actividad'),
     ('demo_fms_advanced', 99001002, 'STUDENT', 'Luis', 'Avanzado'),
@@ -181,11 +181,11 @@ class Command(BaseCommand):
     def create_aircraft(self):
         """Create isolated demo aircraft without changing the school's fleet."""
         self.planes = []
-        for index, registration in enumerate(AIRCRAFT):
+        for registration in AIRCRAFT:
             plane, _ = Aircraft.objects.update_or_create(registration=registration, defaults={
                 'serial_number': registration, 'manufacturer': 'Piper', 'model': 'PA-28 DEMO',
                 'year_manufactured': 2000, 'hourly_rate': Decimal('130'),
-                'fuel_cost': Decimal('1.50') if index == 0 else Decimal('2.00'),
+                'fuel_cost': Decimal('3.11'),
                 'total_hours': Decimal('0'), 'notes': MARKER, 'is_active': True,
                 'is_available': True, 'maintenance_status': 'OPERATIONAL',
             })
@@ -249,7 +249,7 @@ class Command(BaseCommand):
         active = self.users['demo_fms_student']
         advanced = self.users['demo_fms_advanced']
         debt = self.users['demo_fms_debt']
-        self.add_movement(active, '6000', 'Abono inicial confirmado')
+        self.add_movement(active, '7000', 'Abono inicial confirmado')
         for index in range(28):
             flight = self.add_flight(active, 0, index + 1, 35 - index, fuel='0' if index >= 26 else '25')
             if index == 26:
@@ -262,7 +262,7 @@ class Command(BaseCommand):
         self.add_movement(advanced, '1500', 'Abono para entrenamiento avanzado')
         for index in range(4):
             self.add_flight(advanced, 2, index + 1, 12 - index, hours='2.0', fuel='35')
-        self.add_movement(debt, '100', 'Abono parcial')
+        self.add_movement(debt, '100', 'Abono para cubrir parte del costo de los vuelos')
         for index in range(2):
             self.add_flight(debt, 1, index + 1, 5 - index, hours='1.5', fuel='25')
 

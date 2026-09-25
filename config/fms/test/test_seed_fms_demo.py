@@ -43,10 +43,12 @@ class SeedFmsDemoTests(TestCase):
             self.assertEqual(profile.nav_flight_hours, activity['stats']['total_flight_hours'])
             self.assertFalse(activity['unresolved_fuel'])
         for aircraft in Aircraft.objects.filter(registration__in=AIRCRAFT):
+            self.assertEqual(aircraft.fuel_cost, Decimal('3.11'))
             hours = sum((flight.session_flight_hours for _, model in FLIGHT_MODELS
                          for flight in model.objects.filter(aircraft=aircraft)), Decimal('0'))
             self.assertEqual(aircraft.total_hours, hours)
         self.assertLess(User.objects.get(username='demo_fms_debt').student_profile.balance, 0)
+        self.assertGreater(User.objects.get(username='demo_fms_student').student_profile.balance, 0)
         self.assertEqual(User.objects.get(username='demo_fms_empty').student_profile.balance, 0)
         self.assertEqual(StudentTransaction.objects.filter(fuel_liters__isnull=False).count(), 1)
 

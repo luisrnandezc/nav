@@ -15,6 +15,31 @@ from .models import StudentTransaction
 class MissingFuelEvaluationsTest(TestCase):
     """The fuel page lists unresolved evaluations and preserves filter context."""
 
+    def test_full_statistics_returns_to_its_entry_point(self):
+        self.client.force_login(self.student)
+        url = reverse('fms:student_stats_page')
+        for origin, target in (
+            ('logbook', 'fms:student_flightlog'),
+            ('overview', 'transactions:student_overview'),
+            ('https://example.invalid', 'transactions:student_overview'),
+        ):
+            response = self.client.get(url, {'origin': origin})
+            self.assertEqual(response.context['back_url'], reverse(target))
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse('fms:student_stats_detail', args=[self.student.national_id]))
+        self.assertEqual(response.context['back_url'], reverse('fms:user_stats_page'))
+
+    def test_demo_marker_is_hidden_without_changing_saved_notes(self):
+        from .student_activity import build_transaction_movement
+
+        notes = '[seed_fms_demo:v1] Abono parcial [recibo 123]'
+        movement = StudentTransaction.objects.create(
+            student_profile=self.student.student_profile, amount=100, notes=notes,
+        )
+        self.assertEqual(build_transaction_movement(movement)['description'], 'Abono parcial [recibo 123]')
+        movement.refresh_from_db()
+        self.assertEqual(movement.notes, notes)
+
     def setUp(self):
         self.staff = User.objects.create_superuser(
             username='fuel_staff',
@@ -191,6 +216,11 @@ class MissingFuelEvaluationsTest(TestCase):
         self.assertEqual(len(original['fuel_transactions']), 1)
         fuel = next(row for row in activity['movements'] if row['id'] == f'transaction-{debit.pk}')
         self.assertEqual(fuel['amount'], Decimal('30.00'))
+        self.assertEqual(fuel['description'], (
+            'Combustible registrado posterior a la fecha del vuelo. '
+            f'Vuelo del {self.older_evaluation.session_date:%d/%m/%Y} · YVTEST · '
+            '10 L × $3/L = $30.00.'
+        ))
         self.assertEqual(fuel['url'], reverse('fms:session_detail', args=('0_100', self.older_evaluation.pk)))
         self.student.student_profile.refresh_from_db()
         self.assertEqual(self.student.student_profile.balance, Decimal('470.00'))

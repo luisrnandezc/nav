@@ -20,11 +20,36 @@
 .overview-hint { color: var(--ui-color-text-muted); font-size: .9rem; line-height: 1.5; }
 .movement-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin: 20px 0; }
 .movement-filters label { display: grid; gap: 6px; }
+.movement-filter-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .movement-filters input, .movement-filters select { min-height: 44px; color-scheme: dark; }
 .movement-card { overflow-wrap: anywhere; scroll-margin-top: 20px; }
 .movement-card:target { border-color: var(--ui-color-accent); }
 .movement-heading h3 { margin: 0; font-size: 1.1rem; }
 .movement-amount { font-size: 1.3rem; white-space: nowrap; }
+.amount-badge {
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid currentColor;
+  border-radius: var(--ui-radius-md);
+}
+@media (max-width: 768px) and (orientation: portrait) {
+  .movement-filter-actions { flex-basis: 100%; justify-content: center; }
+}
+.amount-credit { color: #a5e8ad; background: rgba(76, 175, 80, 0.16); }
+.amount-debit { color: #ffb4ae; background: rgba(244, 67, 54, 0.16); }
+.amount-warning { color: #ffe082; background: rgba(255, 193, 7, 0.16); }
+.student-overview .flight-detail-button {
+  min-width: auto;
+  padding: 8px 15px;
+  font-weight: 400;
+  background: transparent;
+  border-color: var(--ui-color-border-muted);
+}
+.student-overview .flight-detail-button:hover {
+  background: rgba(218, 225, 255, 0.1);
+  border-color: var(--ui-color-border);
+}
 .student-overview a:not(.button) { color: var(--ui-color-text); text-underline-offset: 3px; }
 .student-overview .button { white-space: normal; }
 .student-overview a:focus-visible, .student-overview button:focus-visible {

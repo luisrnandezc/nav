@@ -1044,8 +1044,15 @@ def student_stats_page(request, student_id=None):
     activity = student_activity(student_profile)
     stats = activity['stats']
 
+    # Use named entry points instead of accepting an arbitrary return URL.
+    back_routes = {'logbook': 'fms:student_flightlog', 'overview': 'transactions:student_overview'}
+    back_route = back_routes.get(request.GET.get('origin'), 'transactions:student_overview')
+    if student_id:
+        back_route = 'fms:user_stats_page'
+
     context = {
         'student': student,
+        'back_url': reverse(back_route),
         'unresolved_fuel': activity['unresolved_fuel'],
         'balance': balance,
         'total_paid': round(total_paid, 2),

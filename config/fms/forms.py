@@ -600,7 +600,7 @@ class FlightEvaluation0_100Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 5000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -938,7 +938,7 @@ class FlightEvaluation100_120Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 5000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -1291,7 +1291,7 @@ class FlightEvaluation120_170Form(forms.ModelForm):
             'gen_5': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_6': forms.RadioSelect(attrs={'class': 'radio-field'}),
             'gen_7': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 5000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -1487,7 +1487,7 @@ class ExternalFlightEvaluationForm(forms.ModelForm):
             'final_hourmeter': forms.NumberInput(attrs={'class': 'form-field', 'step': '0.1'}),
             'fuel_consumed': forms.NumberInput(attrs={'class': 'form-field', 'step': '0.1'}),
             'session_grade': forms.RadioSelect(attrs={'class': 'radio-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Mínimo 15 caracteres, máximo 5000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -1604,7 +1604,7 @@ class FlightReportForm(forms.ModelForm):
             'final_hourmeter': forms.NumberInput(attrs={'class': 'form-field'}),
             'fuel_consumed': forms.NumberInput(attrs={'class': 'form-field'}),
             'aircraft': forms.Select(attrs={'class': 'form-field'}),
-            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Máximo 1000 caracteres'}),
+            'comments': forms.Textarea(attrs={'class': 'form-field', 'rows': 10, 'placeholder': 'Máximo 5000 caracteres'}),
         }
 
     def __init__(self, *args, **kwargs):

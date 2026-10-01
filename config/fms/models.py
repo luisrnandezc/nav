@@ -1458,7 +1458,7 @@ class FlightEvaluation0_100(models.Model):
     comments = models.TextField(
         blank=True,
         verbose_name='Comentarios',
-        validators=[MinLengthValidator(15), MaxLengthValidator(1000)],
+        validators=[MinLengthValidator(15), MaxLengthValidator(5000)],
     )
     aura_processed = models.BooleanField(
         default=False,
@@ -2123,7 +2123,7 @@ class FlightEvaluation100_120(models.Model):
     comments = models.TextField(
         blank=True,
         verbose_name='Comentarios',
-        validators=[MinLengthValidator(15), MaxLengthValidator(1000)],
+        validators=[MinLengthValidator(15), MaxLengthValidator(5000)],
     )
     aura_processed = models.BooleanField(
         default=False,
@@ -2833,7 +2833,7 @@ class FlightEvaluation120_170(models.Model):
     comments = models.TextField(
         blank=True,
         verbose_name='Comentarios',
-        validators=[MinLengthValidator(15), MaxLengthValidator(1000)],
+        validators=[MinLengthValidator(15), MaxLengthValidator(5000)],
     )
     aura_processed = models.BooleanField(
         default=False,
@@ -3059,7 +3059,7 @@ class ExternalFlightEvaluation(models.Model):
     )
     comments = models.TextField(
         blank=True, 
-        validators=[MinLengthValidator(15), MaxLengthValidator(1000)], 
+        validators=[MinLengthValidator(15), MaxLengthValidator(5000)], 
         verbose_name='Comentarios'
     )
 
@@ -3188,7 +3188,7 @@ class FlightReport(models.Model):
     )
     #endregion
 
-    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MaxLengthValidator(1000)])
+    comments = models.TextField(blank=True, verbose_name='Comentarios', validators=[MaxLengthValidator(5000)])
 
     @property
     def calculated_flight_hours(self):

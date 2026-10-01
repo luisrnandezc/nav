@@ -33,6 +33,16 @@ class StudentTransaction(models.Model):
         (MATERIAL, 'Material'),
         (OTHER, 'Otro'),
     ]
+
+    LATE_FUEL = 'LATE_FUEL'
+    FUEL_CORRECTION = 'FUEL_CORRECTION'
+    HOURS_CORRECTION = 'HOURS_CORRECTION'
+
+    FLIGHT_ACTIVITY_TYPES = [
+        (LATE_FUEL, 'Combustible registrado posteriormente'),
+        (FUEL_CORRECTION, 'Corrección de combustible'),
+        (HOURS_CORRECTION, 'Corrección de tiempo de vuelo'),
+    ]
     #endregion
 
     #region MODEL FIELDS
@@ -50,6 +60,13 @@ class StudentTransaction(models.Model):
     )
     fuel_liters = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     fuel_unit_price = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    flight_hours = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    flight_activity_type = models.CharField(
+        max_length=24,
+        choices=FLIGHT_ACTIVITY_TYPES,
+        blank=True,
+        default='',
+    )
 
     student_profile = models.ForeignKey(
         'accounts.StudentProfile', 
@@ -126,6 +143,16 @@ class StudentTransaction(models.Model):
     get_student_full_name.short_description = 'Estudiante'
     get_student_full_name.admin_order_field = 'student_profile__user__last_name'
 
+    @property
+    def is_flight_accounting_movement(self):
+        """Return whether this entry is an applied movement tied to a school flight."""
+        return bool(
+            self.flight_activity_type
+            or self.fuel_flight_0_100_id
+            or self.fuel_flight_100_120_id
+            or self.fuel_flight_120_170_id
+        )
+
     def clean(self):
         """Validate transaction data"""
         
@@ -152,6 +179,11 @@ class StudentTransaction(models.Model):
     
     def unconfirm(self):
         """Call this method when a transaction is unconfirmed"""
+        if self.is_flight_accounting_movement:
+            raise ValidationError(
+                'Los movimientos contables de vuelo no pueden desconfirmarse. '
+                'Registre una nueva corrección desde la evaluación de vuelo.'
+            )
         self.confirmed = False
         self.confirmed_by = None
         self.confirmation_date = None
@@ -210,6 +242,11 @@ class StudentTransaction(models.Model):
     
     def delete(self, *args, **kwargs):
         """Override delete method to validate data before deleting a transaction"""
+        if self.is_flight_accounting_movement:
+            raise ValidationError(
+                'Los movimientos contables de vuelo no pueden eliminarse. '
+                'Registre una nueva corrección desde la evaluación de vuelo.'
+            )
         # Get the original object from the database before deletion
         if hasattr(self, 'pk') and self.pk:
             try:

@@ -18,6 +18,11 @@ Later fuel transactions retain a nullable foreign key to their evaluation, liter
 unit price, charged amount, and a generated description with flight date, aircraft,
 hours, instructor, and reference. Staff may append observations. Linked fuel is
 excluded from the original flight charge and shown as a separate dated debit.
+Changing fuel or hourmeters later through the flight admin creates confirmed,
+flight-linked correction movements. Reductions create credits; increases create
+debits. The correction uses the rates saved on the flight, and the flight update,
+hour totals, transaction, and balance change commit atomically. Applied movements
+cannot be changed or deleted through the transaction admin.
 The full student statistics page shares this calculation; instructor statistics
 are unchanged.
 
@@ -29,6 +34,8 @@ fuel notes only when student, aircraft, instructor, liters, and date identify on
 candidate flight and only one transaction matches it. It does not change balances.
 Ambiguous or missing flight references remain unlinked and generate a warning;
 the overview suppresses the USD/hour average until those records are reconciled.
+Migration 0014 adds the correction type and flight-hour snapshot fields and labels
+existing fuel snapshots as later-fuel movements. It does not change balances.
 
 The history reflects currently retained flight and transaction records. Existing
 data does not provide an immutable audit of deleted records, prior edits, starting
@@ -51,14 +58,14 @@ entry point used by both views and coordinates the helpers in this order:
    `calculate_flight_charges()`, and formats it with `build_flight_movement()`.
 3. Add `calculate_extra_flight_debits()` to the flight costs, then pass the
    aircraft totals to `build_detailed_statistics()` for totals and averages.
-4. Use `is_late_fuel_transaction()` to flag unresolved fuel and
+4. Use `is_fuel_transaction()` to flag unresolved fuel and
    `build_transaction_movement()` to format manual movements. Merge those rows
    with the flight rows and sort newest first.
 
 `FlightCharges` names the amounts passed between calculation and presentation:
-original flight cost, original fuel cost, combined original debit, and later
-confirmed fuel cost. The view handles filters and pagination after this module
-returns its result. All helpers are read-only.
+original hours and fuel, the combined original debit, and signed confirmed fuel
+and flight-time adjustments. The view handles filters and pagination after this
+module returns its result. All helpers are read-only.
 
 ## Verification
 

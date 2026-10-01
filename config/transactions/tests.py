@@ -2,6 +2,7 @@ from datetime import date, timedelta
 from decimal import Decimal
 from unittest.mock import patch
 
+from django.contrib import admin
 from django.test import TestCase
 from django.urls import reverse
 
@@ -39,6 +40,12 @@ class MissingFuelEvaluationsTest(TestCase):
         self.assertEqual(build_transaction_movement(movement)['description'], 'Abono parcial [recibo 123]')
         movement.refresh_from_db()
         self.assertEqual(movement.notes, notes)
+
+    def test_transaction_admin_keeps_accounting_movements_immutable(self):
+        model_admin = admin.site._registry[StudentTransaction]
+        self.assertFalse(model_admin.has_add_permission(None))
+        self.assertFalse(model_admin.has_change_permission(None))
+        self.assertFalse(model_admin.has_delete_permission(None))
 
     def setUp(self):
         self.staff = User.objects.create_superuser(

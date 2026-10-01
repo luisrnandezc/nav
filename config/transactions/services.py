@@ -9,6 +9,119 @@ from accounts.models import StudentProfile
 from .models import StudentTransaction
 
 
+def flight_link_kwargs(evaluation):
+    """Return the polymorphic flight link field for a school evaluation."""
+    model_name = type(evaluation)._meta.model_name
+    kind = model_name.removeprefix('flightevaluation')
+    field_name = f'fuel_flight_{kind}'
+    if not hasattr(StudentTransaction, f'{field_name}_id'):
+        raise ValidationError('El tipo de evaluación no admite movimientos contables.')
+    return {field_name: evaluation}
+
+
+def signed_movement_type(delta):
+    """Return debit for a positive charge delta and credit for a negative one."""
+    return StudentTransaction.DEBIT if delta > 0 else StudentTransaction.CREDIT
+
+
+def decimal_label(value):
+    """Format a Decimal without unnecessary trailing zeroes for audit notes."""
+    return format(Decimal(value).normalize(), 'f')
+
+
+def create_flight_adjustment(
+    *, profile, evaluation, amount, movement_type, activity_type, actor,
+    notes, recorded_at, fuel_liters=None, flight_hours=None,
+):
+    """Create one confirmed, flight-linked adjustment that applies its balance effect."""
+    return StudentTransaction.objects.create(
+        student_profile=profile,
+        amount=amount,
+        type=movement_type,
+        category=StudentTransaction.FLIGHT,
+        date_added=recorded_at.date(),
+        added_by=actor,
+        confirmed=True,
+        confirmed_by=actor,
+        confirmation_date=recorded_at,
+        fuel_liters=fuel_liters,
+        fuel_unit_price=evaluation.fuel_rate_applied if fuel_liters is not None else None,
+        flight_hours=flight_hours,
+        flight_activity_type=activity_type,
+        notes=notes,
+        **flight_link_kwargs(evaluation),
+    )
+
+
+@transaction.atomic
+def record_flight_corrections(original, corrected, actor=None, recorded_at=None):
+    """Record admin changes to flight hours and fuel as confirmed adjustments.
+
+    The corrected evaluation must already be saved inside the caller's atomic
+    operation. Each changed component creates its own immutable movement using
+    the rates captured by the original flight. Creating the transactions is the
+    only operation here that changes the student's balance.
+    """
+    if type(original) is not type(corrected) or original.pk != corrected.pk:
+        raise ValidationError('La evaluación original y la corregida no coinciden.')
+
+    recorded_at = recorded_at or timezone.now()
+    profile = StudentProfile.objects.select_for_update().get(
+        user__national_id=original.student_id,
+    )
+    common = (
+        f'Vuelo del {original.session_date:%d/%m/%Y} · '
+        f'{original.aircraft.registration} · Sesión {original.session_number}.'
+    )
+    movements = []
+
+    hours_delta = corrected.session_flight_hours - original.session_flight_hours
+    if hours_delta:
+        amount = round(abs(hours_delta) * original.hourly_rate_applied, 2)
+        notes = (
+            f'Corrección de tiempo de vuelo. {common} '
+            f'{decimal_label(original.session_flight_hours)} h → '
+            f'{decimal_label(corrected.session_flight_hours)} h · '
+            f'{decimal_label(abs(hours_delta))} h × '
+            f'${decimal_label(original.hourly_rate_applied)}/h = ${amount:.2f}.'
+        )
+        movements.append(create_flight_adjustment(
+            profile=profile,
+            evaluation=corrected,
+            amount=amount,
+            movement_type=signed_movement_type(hours_delta),
+            activity_type=StudentTransaction.HOURS_CORRECTION,
+            actor=actor,
+            notes=notes,
+            recorded_at=recorded_at,
+            flight_hours=abs(hours_delta),
+        ))
+
+    fuel_delta = corrected.fuel_consumed - original.fuel_consumed
+    if fuel_delta:
+        amount = round(abs(fuel_delta) * original.fuel_rate_applied, 2)
+        notes = (
+            f'Corrección de combustible. {common} '
+            f'{decimal_label(original.fuel_consumed)} L → '
+            f'{decimal_label(corrected.fuel_consumed)} L · '
+            f'{decimal_label(abs(fuel_delta))} L × '
+            f'${decimal_label(original.fuel_rate_applied)}/L = ${amount:.2f}.'
+        )
+        movements.append(create_flight_adjustment(
+            profile=profile,
+            evaluation=corrected,
+            amount=amount,
+            movement_type=signed_movement_type(fuel_delta),
+            activity_type=StudentTransaction.FUEL_CORRECTION,
+            actor=actor,
+            notes=notes,
+            recorded_at=recorded_at,
+            fuel_liters=abs(fuel_delta),
+        ))
+
+    return movements
+
+
 @transaction.atomic
 def record_late_fuel(model_class, evaluation_id, liters, staff, observations='', recorded_at=None):
     """Record missing fuel and its confirmed debit as one atomic operation.
@@ -49,5 +162,6 @@ def record_late_fuel(model_class, evaluation_id, liters, staff, observations='',
         category=StudentTransaction.FLIGHT, date_added=recorded_at.date(),
         added_by=staff, confirmed=True, confirmed_by=staff, confirmation_date=recorded_at,
         fuel_liters=liters, fuel_unit_price=aircraft.fuel_cost, notes=notes,
+        flight_activity_type=StudentTransaction.LATE_FUEL,
         **{f'fuel_flight_{model_type.removeprefix("flightevaluation")}': evaluation},
     )

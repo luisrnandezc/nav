@@ -2,6 +2,7 @@ from decimal import Decimal
 from unittest.mock import patch
 
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 from django.db import DatabaseError
 from django.forms import modelform_factory
 from django.test import TestCase
@@ -16,6 +17,9 @@ from fms.forms import (
     FlightEvaluation120_170Form,
 )
 from fms.admin import FlightEvaluationCorrectionForm
+from transactions.models import StudentTransaction
+from transactions.services import record_late_fuel
+from transactions.student_activity import student_activity
 
 from .factories import StudentProfileFactory, UserFactory
 
@@ -248,8 +252,27 @@ class FlightEvaluationAccountingTests(TestCase):
                 self.assertEqual(evaluation.session_flight_hours, Decimal('1.5'))
                 self.assertEqual(evaluation.fuel_consumed, Decimal('7.0'))
                 self.assert_current_totals('777.00', '51.5', '21.5', '1001.5')
+                movements = StudentTransaction.objects.filter(
+                    student_profile=self.student_profile,
+                ).order_by('flight_activity_type')
+                self.assertEqual(movements.count(), 2)
+                self.assertEqual(
+                    set(movements.values_list('flight_activity_type', 'type', 'amount')),
+                    {
+                        (StudentTransaction.FUEL_CORRECTION, StudentTransaction.CREDIT, Decimal('12.00')),
+                        (StudentTransaction.HOURS_CORRECTION, StudentTransaction.DEBIT, Decimal('65.00')),
+                    },
+                )
+                activity = student_activity(self.student_profile)
+                self.assertEqual(activity['stats']['total_cost'], Decimal('223.00'))
+                automatic = next(
+                    row for row in activity['movements']
+                    if row['id'] == f'flight-{type(evaluation)._meta.model_name.removeprefix("flightevaluation")}-{evaluation.pk}'
+                )
+                self.assertEqual(automatic['amount'], Decimal('170.00'))
 
                 evaluation.delete()
+                movements.delete()
                 self.assert_current_totals('1000.00', '50.0', '20.0', '1000.0')
 
     def test_admin_exposes_only_correction_inputs_and_keeps_hours_calculated(self):
@@ -288,6 +311,61 @@ class FlightEvaluationAccountingTests(TestCase):
 
         self.assertEqual(evaluation.fuel_rate_applied, Decimal('4.00'))
         self.assert_current_totals('850.00', '51.0', '21.0', '1001.0')
+        correction = StudentTransaction.objects.get(
+            flight_activity_type=StudentTransaction.FUEL_CORRECTION,
+        )
+        self.assertEqual(correction.type, StudentTransaction.CREDIT)
+        self.assertEqual(correction.amount, Decimal('20.00'))
+        self.assertEqual(correction.fuel_liters, Decimal('5.00'))
+        self.assertEqual(correction.fuel_unit_price, Decimal('4.0000'))
+        self.assertEqual(correction.fuel_flight_100_120_id, evaluation.pk)
+        activity = student_activity(self.student_profile)
+        self.assertEqual(activity['stats']['total_cost'], Decimal('150.00'))
+        self.assertEqual(
+            next(row for row in activity['movements'] if row['id'] == f'transaction-{correction.pk}')['title'],
+            'Corrección de combustible',
+        )
+        with self.assertRaises(ValidationError):
+            correction.unconfirm()
+        with self.assertRaises(ValidationError):
+            correction.delete()
+
+    def test_admin_correction_after_late_fuel_keeps_history_and_balance_aligned(self):
+        evaluation = self.save_evaluation(
+            FlightEvaluation0_100Form,
+            'PPA-P',
+            fuel_consumed='0.0',
+        )
+        late_fuel = record_late_fuel(type(evaluation), evaluation.pk, Decimal('10'), None)
+        evaluation.refresh_from_db()
+
+        evaluation = self.correct_evaluation(evaluation, fuel_consumed='7.0')
+
+        correction = StudentTransaction.objects.get(
+            flight_activity_type=StudentTransaction.FUEL_CORRECTION,
+        )
+        self.assertEqual(late_fuel.amount, Decimal('40.00'))
+        self.assertEqual(correction.type, StudentTransaction.CREDIT)
+        self.assertEqual(correction.amount, Decimal('12.00'))
+        self.assert_current_totals('842.00', '51.0', '21.0', '1001.0')
+
+        activity = student_activity(self.student_profile)
+        self.assertEqual(activity['stats']['total_cost'], Decimal('158.00'))
+        automatic = next(
+            row for row in activity['movements'] if row['id'] == f'flight-0_100-{evaluation.pk}'
+        )
+        self.assertEqual(automatic['amount'], Decimal('130.00'))
+        self.assertIn('Combustible: 0 L', automatic['description'])
+
+        evaluation = self.correct_evaluation(evaluation, fuel_consumed='9.0')
+        self.assert_current_totals('834.00', '51.0', '21.0', '1001.0')
+        activity = student_activity(self.student_profile)
+        self.assertEqual(activity['stats']['total_cost'], Decimal('166.00'))
+        automatic = next(
+            row for row in activity['movements'] if row['id'] == f'flight-0_100-{evaluation.pk}'
+        )
+        self.assertEqual(automatic['amount'], Decimal('130.00'))
+        self.assertIn('Combustible: 0 L', automatic['description'])
 
     def test_admin_correction_applies_yv206e_factor(self):
         self.aircraft = Aircraft.objects.get(registration='YV206E')
@@ -342,4 +420,19 @@ class FlightEvaluationAccountingTests(TestCase):
         evaluation.refresh_from_db()
         self.assertEqual(evaluation.session_flight_hours, Decimal('1.0'))
         self.assertEqual(evaluation.fuel_consumed, Decimal('10.0'))
+        self.assertFalse(StudentTransaction.objects.exists())
+        self.assert_current_totals('830.00', '51.0', '21.0', '1001.0')
+
+    def test_admin_correction_rolls_back_if_adjustment_cannot_be_recorded(self):
+        evaluation = self.save_evaluation(FlightEvaluation100_120Form, 'HVI-P')
+        evaluation.fuel_consumed = Decimal('7.0')
+        model_admin = admin.site._registry[type(evaluation)]
+
+        with patch('fms.admin.record_flight_corrections', side_effect=DatabaseError('ledger failed')):
+            with self.assertRaises(DatabaseError):
+                model_admin.save_model(None, evaluation, None, True)
+
+        evaluation.refresh_from_db()
+        self.assertEqual(evaluation.fuel_consumed, Decimal('10.0'))
+        self.assertFalse(StudentTransaction.objects.exists())
         self.assert_current_totals('830.00', '51.0', '21.0', '1001.0')

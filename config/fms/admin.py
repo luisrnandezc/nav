@@ -4,6 +4,7 @@ from django.db import transaction
 from django.shortcuts import redirect
 from accounts.models import StudentProfile
 from fleet.models import Aircraft
+from transactions.services import record_flight_corrections
 from .models import SimEvaluation, FlightEvaluation0_100, FlightEvaluation100_120, FlightEvaluation120_170, ExternalFlightEvaluation, FlightReport, DiscrepancyReport
 
 
@@ -78,17 +79,6 @@ class FlightEvaluationCorrectionAdminMixin:
         )
         hours_difference = new_hours - original.session_flight_hours
 
-        old_charge = round(
-            original.session_flight_hours * original.hourly_rate_applied
-            + original.fuel_consumed * original.fuel_rate_applied,
-            2,
-        )
-        new_charge = round(
-            new_hours * original.hourly_rate_applied
-            + obj.fuel_consumed * original.fuel_rate_applied,
-            2,
-        )
-
         new_student_hours = student.flight_hours + hours_difference
         new_nav_hours = student.nav_flight_hours + hours_difference
         new_aircraft_hours = aircraft.total_hours + hours_difference
@@ -102,11 +92,15 @@ class FlightEvaluationCorrectionAdminMixin:
 
         student.flight_hours = new_student_hours
         student.nav_flight_hours = new_nav_hours
-        student.balance += old_charge - new_charge
-        student.save(update_fields=['flight_hours', 'nav_flight_hours', 'balance'])
+        student.save(update_fields=['flight_hours', 'nav_flight_hours'])
 
         aircraft.total_hours = new_aircraft_hours
         aircraft.save(update_fields=['total_hours'])
+
+        actor = getattr(request, 'user', None)
+        if actor is not None and not actor.is_authenticated:
+            actor = None
+        record_flight_corrections(original, obj, actor=actor)
 
 @admin.register(SimEvaluation)
 class SimEvaluationAdmin(admin.ModelAdmin):

@@ -33,19 +33,21 @@ LITERS_PER_GALLON = Decimal('3.78541')
 
 @dataclass(frozen=True)
 class FlightCharges:
-    """Amounts for one flight, separating the original charge from later fuel.
+    """Amounts for one flight, separating its original charge from adjustments.
 
     ``original_amount`` is rounded after adding the unrounded flight and fuel
     costs, matching the original debit. Components are rounded separately for
-    display. ``late_fuel_cost`` includes only confirmed linked transactions and
-    must not be included in the original movement row.
+    display. Linked costs include only confirmed post-flight movements and must
+    not be included in the original movement row.
     """
 
+    original_hours: Decimal
     original_liters: Decimal
     hourly_cost: Decimal
     original_fuel_cost: Decimal
     original_amount: Decimal
-    late_fuel_cost: Decimal
+    linked_hours_cost: Decimal
+    linked_fuel_cost: Decimal
 
 
 def get_fuel_flight_key(transaction):
@@ -62,13 +64,18 @@ def get_fuel_flight_key(transaction):
     return None
 
 
-def is_late_fuel_transaction(transaction):
-    """Recognize new fuel snapshots and legacy generated fuel comments.
+def is_fuel_transaction(transaction):
+    """Recognize fuel movements and legacy generated fuel comments.
 
     Legacy transactions may have no flight link or liters snapshot. Their
     original ``Combustible:`` comment lets the page identify and flag them.
     """
     return transaction.fuel_liters is not None or transaction.notes.startswith('Combustible:')
+
+
+def signed_transaction_value(transaction, value):
+    """Apply the transaction's debit or credit direction to a value."""
+    return value if transaction.type == StudentTransaction.DEBIT else -value
 
 
 def group_fuel_transactions_by_flight(transactions):
@@ -125,11 +132,15 @@ def build_transaction_movement(transaction):
     day, with the primary key breaking ties within each source.
     """
     flight_key = get_fuel_flight_key(transaction)
-    is_fuel = is_late_fuel_transaction(transaction)
+    is_fuel = is_fuel_transaction(transaction)
     linked_flight = getattr(transaction, f'fuel_flight_{flight_key[0]}') if flight_key else None
     credit = transaction.type == StudentTransaction.CREDIT
     title = transaction.get_category_display()
-    if is_fuel:
+    if transaction.flight_activity_type == StudentTransaction.FUEL_CORRECTION:
+        title = 'Corrección de combustible'
+    elif transaction.flight_activity_type == StudentTransaction.HOURS_CORRECTION:
+        title = 'Corrección de tiempo de vuelo'
+    elif is_fuel:
         title = 'Combustible registrado posteriormente'
     elif transaction.category == StudentTransaction.NA:
         title = 'Abono' if credit else 'Débito'
@@ -138,7 +149,11 @@ def build_transaction_movement(transaction):
         'title': title,
         'label': 'Crédito' if credit else 'Débito', 'credit': credit,
         'amount': transaction.amount,
-        'description': late_fuel_description(transaction, flight_key) if is_fuel else student_visible_notes(transaction.notes),
+        'description': (
+            late_fuel_description(transaction, flight_key)
+            if is_fuel and transaction.flight_activity_type != StudentTransaction.FUEL_CORRECTION
+            else student_visible_notes(transaction.notes)
+        ),
         'pending': not transaction.confirmed,
         'applied_date': transaction.confirmation_date if transaction.confirmed else None,
         'flight': is_fuel or transaction.category == StudentTransaction.FLIGHT,
@@ -165,24 +180,39 @@ def iter_student_flights(profile):
 
 
 def calculate_flight_charges(flight, linked_fuel_transactions):
-    """Return FlightCharges for the original debit and confirmed later fuel.
+    """Return the original debit and signed post-flight adjustments.
 
-    The flight's fuel quantity includes fuel entered later. Subtract linked
-    transaction liters before pricing the original debit to prevent duplication;
-    clamp that quantity to zero for inconsistent historical records. Use saved
-    flight rates for the original charge and saved transaction amounts for later
-    fuel, so subsequent price changes cannot reprice either entry.
+    Current flight quantities include later additions and corrections. Reverse
+    their signed deltas to recover the quantities charged when the flight was
+    completed. Use saved rates and recorded adjustment amounts throughout.
     """
-    separate_liters = sum((t.fuel_liters or ZERO for t in linked_fuel_transactions), ZERO)
+    separate_liters = sum((
+        signed_transaction_value(t, t.fuel_liters)
+        for t in linked_fuel_transactions if t.fuel_liters is not None
+    ), ZERO)
+    separate_hours = sum((
+        signed_transaction_value(t, t.flight_hours)
+        for t in linked_fuel_transactions if t.flight_hours is not None
+    ), ZERO)
     original_liters = max(ZERO, flight.fuel_consumed - separate_liters)
-    unrounded_hourly_cost = flight.session_flight_hours * flight.hourly_rate_applied
+    original_hours = max(ZERO, flight.session_flight_hours - separate_hours)
+    unrounded_hourly_cost = original_hours * flight.hourly_rate_applied
     unrounded_fuel_cost = original_liters * flight.fuel_rate_applied
+    confirmed = [transaction for transaction in linked_fuel_transactions if transaction.confirmed]
     return FlightCharges(
+        original_hours=original_hours,
         original_liters=original_liters,
         hourly_cost=round(unrounded_hourly_cost, 2),
         original_fuel_cost=round(unrounded_fuel_cost, 2),
         original_amount=round(unrounded_hourly_cost + unrounded_fuel_cost, 2),
-        late_fuel_cost=sum((t.amount for t in linked_fuel_transactions if t.confirmed), ZERO),
+        linked_hours_cost=sum((
+            signed_transaction_value(t, t.amount)
+            for t in confirmed if t.flight_hours is not None
+        ), ZERO),
+        linked_fuel_cost=sum((
+            signed_transaction_value(t, t.amount)
+            for t in confirmed if t.fuel_liters is not None
+        ), ZERO),
     )
 
 
@@ -199,7 +229,7 @@ def build_flight_movement(kind, flight, charges, linked_fuel_transactions):
         'title': f'Cargo por vuelo · {flight.aircraft.registration}',
         'label': 'Débito automático', 'credit': False, 'amount': charges.original_amount,
         'description': (
-            f'{flight.session_flight_hours} h × ${flight.hourly_rate_applied}/h = ${charges.hourly_cost:.2f} · '
+            f'{charges.original_hours} h × ${flight.hourly_rate_applied}/h = ${charges.hourly_cost:.2f} · '
             f'Combustible: {charges.original_liters} L × ${flight.fuel_rate_applied}/L = ${charges.original_fuel_cost:.2f}'
         ),
         'pending': False, 'flight': True,
@@ -233,15 +263,19 @@ def summarize_student_flights(profile, fuel_by_flight):
         linked = fuel_by_flight.get((kind, flight.pk), [])
         charges = calculate_flight_charges(flight, linked)
         rows.append(build_flight_movement(kind, flight, charges, linked))
-        flight_cost += charges.original_amount + charges.late_fuel_cost
+        flight_cost += (
+            charges.original_amount
+            + charges.linked_hours_cost
+            + charges.linked_fuel_cost
+        )
         missing_fuel |= flight.fuel_consumed == 0
         totals = aircraft_totals.setdefault(
             flight.aircraft.registration.lower(), {key: ZERO for key in TOTAL_FIELDS},
         )
         totals['total_flight_hours'] += flight.session_flight_hours
         totals['total_consumed_liters'] += flight.fuel_consumed
-        totals['total_flight_hours_dollars'] += charges.hourly_cost
-        totals['total_fuel_cost'] += charges.original_fuel_cost + charges.late_fuel_cost
+        totals['total_flight_hours_dollars'] += charges.hourly_cost + charges.linked_hours_cost
+        totals['total_fuel_cost'] += charges.original_fuel_cost + charges.linked_fuel_cost
     return {
         'movements': rows, 'aircraft_totals': aircraft_totals,
         'flight_cost': flight_cost, 'missing_fuel': missing_fuel,
@@ -249,7 +283,7 @@ def summarize_student_flights(profile, fuel_by_flight):
 
 
 def calculate_extra_flight_debits(transactions):
-    """Sum confirmed flight-category debits without a later-fuel snapshot.
+    """Sum signed, unlinked flight-category adjustments.
 
     These adjustments contribute to overall cost but are not assigned to an
     aircraft. Snapshot-backed fuel is excluded because the flight summary
@@ -257,9 +291,9 @@ def calculate_extra_flight_debits(transactions):
     the caller flags that uncertainty and suppresses the overview's USD/h figure.
     """
     return sum((
-        t.amount for t in transactions
-        if t.confirmed and t.type == StudentTransaction.DEBIT
-        and t.category == StudentTransaction.FLIGHT and t.fuel_liters is None
+        signed_transaction_value(t, t.amount) for t in transactions
+        if t.confirmed and t.category == StudentTransaction.FLIGHT
+        and get_fuel_flight_key(t) is None and t.fuel_liters is None
     ), ZERO)
 
 
@@ -309,7 +343,7 @@ def student_activity(profile):
     total_cost = flights['flight_cost'] + calculate_extra_flight_debits(transactions)
     stats = build_detailed_statistics(flights['aircraft_totals'], total_cost)
     unresolved_fuel = any(
-        is_late_fuel_transaction(t) and get_fuel_flight_key(t) is None
+        is_fuel_transaction(t) and get_fuel_flight_key(t) is None
         for t in transactions
     )
     rows = [build_transaction_movement(t) for t in transactions] + flights['movements']

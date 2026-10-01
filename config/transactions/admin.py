@@ -7,7 +7,12 @@ class StudentTransactionAdmin(admin.ModelAdmin):
                      'get_added_by_username', 'confirmed', 'get_confirmed_by_username', 'get_confirmation_date')
     list_filter = ('confirmed', 'type', 'date_added', 'confirmation_date')
     search_fields = ('student_profile__user__username', 'student_profile__user__national_id')
-    readonly_fields = ('student_profile', 'amount', 'type', 'date_added', 'added_by', 'confirmed', 'confirmed_by', 'confirmation_date', 'notes')
+    readonly_fields = (
+        'student_profile', 'amount', 'type', 'date_added', 'added_by',
+        'confirmed', 'confirmed_by', 'confirmation_date', 'notes',
+        'flight_activity_type', 'fuel_liters', 'fuel_unit_price', 'flight_hours',
+        'fuel_flight_0_100', 'fuel_flight_100_120', 'fuel_flight_120_170',
+    )
     
     # Disable add and change functionality
     def has_add_permission(self, request):
@@ -15,6 +20,14 @@ class StudentTransactionAdmin(admin.ModelAdmin):
     
     def has_change_permission(self, request, obj=None):
         return False
+
+    def has_delete_permission(self, request, obj=None):
+        """Keep applied accounting movements immutable in the admin."""
+        return bool(
+            obj is not None
+            and not obj.confirmed
+            and not obj.is_flight_accounting_movement
+        )
     fieldsets = (
         ('Información del Estudiante', {
             'fields': ('student_profile',)
@@ -29,6 +42,14 @@ class StudentTransactionAdmin(admin.ModelAdmin):
         }),
         ('Notas de la Transacción', {
             'fields': ('notes',)
+        }),
+        ('Ajuste de vuelo', {
+            'fields': (
+                'flight_activity_type', 'flight_hours', 'fuel_liters',
+                'fuel_unit_price', 'fuel_flight_0_100',
+                'fuel_flight_100_120', 'fuel_flight_120_170',
+            ),
+            'classes': ('collapse',),
         }),
     )
 
@@ -60,15 +81,3 @@ class StudentTransactionAdmin(admin.ModelAdmin):
         return obj.confirmation_date.date() if obj.confirmation_date else '-'
     get_confirmation_date.short_description = 'Fecha de confirmación'
     get_confirmation_date.admin_order_field = 'confirmation_date'
-
-    
-    def delete_model(self, request, obj):
-        """Override delete_model to ensure balance updates"""
-        # Call the model's delete method to trigger balance updates
-        obj.delete()
-    
-    def delete_queryset(self, request, queryset):
-        """Override delete_queryset to ensure balance updates"""
-        # Call each object's delete method to trigger balance updates
-        for obj in queryset:
-            obj.delete()

@@ -282,21 +282,6 @@ def summarize_student_flights(profile, fuel_by_flight):
     }
 
 
-def calculate_extra_flight_debits(transactions):
-    """Sum signed, unlinked flight-category adjustments.
-
-    These adjustments contribute to overall cost but are not assigned to an
-    aircraft. Snapshot-backed fuel is excluded because the flight summary
-    already includes it. Unlinked legacy fuel still follows this existing rule;
-    the caller flags that uncertainty and suppresses the overview's USD/h figure.
-    """
-    return sum((
-        signed_transaction_value(t, t.amount) for t in transactions
-        if t.confirmed and t.category == StudentTransaction.FLIGHT
-        and get_fuel_flight_key(t) is None and t.fuel_liters is None
-    ), ZERO)
-
-
 def build_detailed_statistics(aircraft_totals, total_cost):
     """Produce the flat statistics dictionary consumed by the full stats page.
 
@@ -327,20 +312,21 @@ def student_activity(profile):
     """Return shared context for the student overview and full statistics page.
 
     Load transactions once, group later fuel by flight, summarize school flights,
-    then add confirmed flight adjustments. Return detailed ``stats``, newest-first
+    including confirmed linked adjustments. Return detailed ``stats``, newest-first
     ``movements``, two weighted overview averages, and missing/unlinked fuel flags.
 
-    Overview averages are None when no school hours exist. USD/h is also None
-    when unresolved fuel could duplicate a charge. Filtering and pagination
-    belong to the view. This function does not calculate or mutate the profile's
-    current balance or accumulated flight-hour fields.
+    Only evaluations and their explicitly linked accounting movements contribute
+    to cost statistics. Manual transactions affect the balance and movement list
+    only, even when categorized as a flight. Overview averages are None when no
+    school hours exist. Filtering and pagination belong to the view. This function
+    does not calculate or mutate the profile's current balance or hour fields.
     """
     transactions = list(profile.transactions.select_related(
         *(f'fuel_flight_{kind}__aircraft' for kind, _ in FLIGHT_MODELS)
     ))
     fuel_by_flight = group_fuel_transactions_by_flight(transactions)
     flights = summarize_student_flights(profile, fuel_by_flight)
-    total_cost = flights['flight_cost'] + calculate_extra_flight_debits(transactions)
+    total_cost = flights['flight_cost']
     stats = build_detailed_statistics(flights['aircraft_totals'], total_cost)
     unresolved_fuel = any(
         is_fuel_transaction(t) and get_fuel_flight_key(t) is None
@@ -353,7 +339,7 @@ def student_activity(profile):
         'stats': stats,
         'movements': sorted(rows, key=lambda row: row['sort'], reverse=True),
         'liters_per_hour': liters / hours if hours else None,
-        'dollars_per_hour': total_cost / hours if hours and not unresolved_fuel else None,
+        'dollars_per_hour': total_cost / hours if hours else None,
         'missing_fuel': flights['missing_fuel'],
         'unresolved_fuel': unresolved_fuel,
     }

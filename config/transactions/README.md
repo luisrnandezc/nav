@@ -1,15 +1,17 @@
 # Student balance and statistics
 
-The student launchpad links to `/transactions/student/`. The page uses the shared
-`ui` CSS and shows the existing profile balance, total hours, NAV hours, weighted
-fuel/cost averages, and a paginated history. Filters only affect the history.
-Access is scoped to the authenticated student's profile, including staff using
-their student role; a supplied student ID cannot select another account.
+Authorized staff can open `/transactions/student/` from the dashboard and search
+for a student. The page uses the shared `ui` CSS and shows the selected profile's
+balance, total hours, NAV hours, weighted fuel/cost averages, and paginated
+history. Filters only affect the history. Both the tile and view require the
+`accounts.can_manage_transactions` permission; students cannot open the page.
 
 ## Accounting sources
 
-Manual movements come from StudentTransaction. Unconfirmed transactions are shown
-as pending and do not affect the balance or cost statistics. Automatic flight
+Manual movements come from StudentTransaction. Confirmed manual transactions
+affect the balance, while all manual transactions appear in the history; neither
+credits nor debits contribute to flight cost statistics, even when their category
+is `VUELO`. Automatic flight
 charges are derived from the three school evaluation types and their saved applied
 rates. External flights and simulator sessions do not automatically debit the
 student and are not represented as flight charges here.
@@ -32,8 +34,8 @@ Run `python manage.py migrate` from `config` before using the new tile.
 Migration 0012 adds fuel references and snapshots. Migration 0013 links legacy
 fuel notes only when student, aircraft, instructor, liters, and date identify one
 candidate flight and only one transaction matches it. It does not change balances.
-Ambiguous or missing flight references remain unlinked and generate a warning;
-the overview suppresses the USD/hour average until those records are reconciled.
+Ambiguous or missing flight references remain unlinked and generate a warning.
+They appear in the history but do not contribute to the USD/hour average.
 Migration 0014 adds the correction type and flight-hour snapshot fields and labels
 existing fuel snapshots as later-fuel movements. It does not change balances.
 
@@ -56,8 +58,8 @@ entry point used by both views and coordinates the helpers in this order:
 2. Call `summarize_student_flights()`. It loads flights through
    `iter_student_flights()`, calculates each charge with
    `calculate_flight_charges()`, and formats it with `build_flight_movement()`.
-3. Add `calculate_extra_flight_debits()` to the flight costs, then pass the
-   aircraft totals to `build_detailed_statistics()` for totals and averages.
+3. Pass the flight totals to `build_detailed_statistics()` for totals and
+   averages. Manual movements never enter this calculation.
 4. Use `is_fuel_transaction()` to flag unresolved fuel and
    `build_transaction_movement()` to format manual movements. Merge those rows
    with the flight rows and sort newest first.

@@ -350,6 +350,20 @@ class MissingFuelEvaluationsTest(TestCase):
         self.assertEqual(activity['stats']['total_flight_hours_dollars'], Decimal('260'))
         self.assertEqual(activity['liters_per_hour'], Decimal('5'))
         self.assertEqual(activity['dollars_per_hour'], Decimal('145'))
+
+        for movement_type in (StudentTransaction.CREDIT, StudentTransaction.DEBIT):
+            StudentTransaction.objects.create(
+                student_profile=self.student.student_profile,
+                amount=Decimal('1000'),
+                type=movement_type,
+                category=StudentTransaction.FLIGHT,
+                notes='Movimiento manual sin vínculo a un vuelo',
+                confirmed=True,
+            )
+        activity = student_activity(self.student.student_profile)
+        self.assertEqual(activity['stats']['total_cost'], Decimal('290'))
+        self.assertEqual(activity['dollars_per_hour'], Decimal('145'))
+
         self.client.force_login(self.student)
         response = self.client.get(reverse('fms:student_stats_page'))
         self.assertEqual(response.status_code, 200)

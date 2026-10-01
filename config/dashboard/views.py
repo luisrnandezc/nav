@@ -255,7 +255,7 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'key': 'staff_maintenance',
             'label': 'Mantenimiento',
             'description': 'Monitorear reportes de discrepancia.',
-            'icon': 'dashboard/img/plane.png',
+            'icon': 'dashboard/img/mtn.png',
             'url': reverse('maintenance:discrepancy_reports_panel'),
             'roles': {'STAFF'},
             'visible': user.has_perm('fms.view_discrepancyreport'),

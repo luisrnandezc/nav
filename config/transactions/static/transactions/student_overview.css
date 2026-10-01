@@ -9,6 +9,20 @@
 }
 .student-overview .main-header { margin: 50px 0 var(--ui-space-xl); }
 .student-overview .back-button .button { font-weight: 400; }
+.student-search h2 { margin-top: 0; }
+.student-search-form { display: grid; gap: 8px; }
+.student-search-controls { display: flex; gap: 12px; }
+.student-search-controls .ui-input { flex: 1 1 auto; min-width: 0; }
+.student-search-results { display: grid; gap: 12px; margin-top: 20px; }
+.student-result {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ui-space-md); margin: 0;
+}
+.student-result strong, .student-result span { display: block; }
+.student-result span { color: var(--ui-color-text-muted); font-size: .85rem; margin-top: 6px; }
+.selected-student { display: grid; gap: 5px; margin-top: 0; }
+.selected-student strong { font-size: 1.35rem; }
+.selected-student small { color: var(--ui-color-text-muted); }
 .overview-heading, .movement-heading, .overview-pagination {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--ui-space-md); flex-wrap: wrap;
@@ -87,6 +101,8 @@
 }
 @media (max-width: 768px) {
   .student-overview .main-header { margin-top: var(--ui-space-lg); }
+  .student-search-controls, .student-result { align-items: stretch; flex-direction: column; }
+  .student-search-controls .button, .student-result .button { align-self: center; }
   .stats-banner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stats-banner strong { font-size: 1.25rem; }
   .overview-heading { margin-bottom: 20px; }

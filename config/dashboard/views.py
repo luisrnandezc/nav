@@ -151,12 +151,12 @@ def _build_launchpad_apps(request, active_role, user_profile):
         },
         {
             'key': 'student_balance_stats',
-            'label': 'Saldo y estadísticas',
-            'description': 'Consultar movimientos, horas de vuelo y costos.',
+            'label': 'Estadísticas y movimientos',
+            'description': 'Consultar el saldo, vuelos y movimientos de un estudiante.',
             'icon': 'dashboard/img/money.png',
             'url': reverse('transactions:student_overview'),
-            'roles': {'STUDENT'},
-            'visible': True,
+            'roles': {'STAFF'},
+            'visible': user.has_perm('accounts.can_manage_transactions'),
         },
         {
             'key': 'student_scheduler',

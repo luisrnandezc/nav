@@ -21,14 +21,22 @@ class MissingFuelEvaluationsTest(TestCase):
         url = reverse('fms:student_stats_page')
         for origin, target in (
             ('logbook', 'fms:student_flightlog'),
-            ('overview', 'transactions:student_overview'),
-            ('https://example.invalid', 'transactions:student_overview'),
+            ('overview', 'fms:student_flightlog'),
+            ('https://example.invalid', 'fms:student_flightlog'),
         ):
             response = self.client.get(url, {'origin': origin})
             self.assertEqual(response.context['back_url'], reverse(target))
         self.client.force_login(self.staff)
         response = self.client.get(reverse('fms:student_stats_detail', args=[self.student.national_id]))
         self.assertEqual(response.context['back_url'], reverse('fms:user_stats_page'))
+        response = self.client.get(
+            reverse('fms:student_stats_detail', args=[self.student.national_id]),
+            {'origin': 'overview'},
+        )
+        self.assertEqual(
+            response.context['back_url'],
+            f'{reverse("transactions:student_overview")}?student={self.student.national_id}',
+        )
 
     def test_demo_marker_is_hidden_without_changing_saved_notes(self):
         from .student_activity import build_transaction_movement
@@ -240,7 +248,7 @@ class MissingFuelEvaluationsTest(TestCase):
         })
         self.assertEqual(StudentTransaction.objects.count(), 1)
 
-    def test_student_overview_is_private_and_pending_credit_is_clear(self):
+    def test_staff_overview_searches_students_and_keeps_activity_private(self):
         own = StudentTransaction.objects.create(
             student_profile=self.student.student_profile, amount=Decimal('75'),
             notes='Mi abono pendiente', confirmed=False,
@@ -250,17 +258,46 @@ class MissingFuelEvaluationsTest(TestCase):
             notes='Privado de otro estudiante', confirmed=False,
         )
         url = reverse('transactions:student_overview')
-        self.assertEqual(self.client.get(url).status_code, 403)
-        self.client.force_login(self.student)
-        response = self.client.get(url, {'student_id': self.other_student.national_id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context['profile'])
+        self.assertNotContains(response, 'Mi abono pendiente')
+
+        response = self.client.get(url, {'q': 'Ana'})
+        self.assertEqual(list(response.context['student_results']), [self.student.student_profile])
+        self.assertContains(response, 'Ver actividad')
+
+        response = self.client.get(url, {'student': self.student.national_id})
         self.assertContains(response, 'Mi abono pendiente')
         self.assertContains(response, 'No afecta el saldo')
         self.assertNotContains(response, 'Privado de otro estudiante')
         self.assertContains(response, 'USD 500')
-        response = self.client.get(url, {'type': 'credits'})
+        response = self.client.get(url, {'student': self.student.national_id, 'type': 'credits'})
         self.assertEqual([row['id'] for row in response.context['page_obj']], [f'transaction-{own.pk}'])
-        response = self.client.get(url, {'start': 'invalid', 'end': '2026-99-99', 'page': 'invalid'})
+        response = self.client.get(url, {
+            'student': self.student.national_id,
+            'start': 'invalid', 'end': '2026-99-99', 'page': 'invalid',
+        })
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.client.get(url, {'student': 'invalid'}).status_code, 404)
+
+        self.client.force_login(self.student)
+        self.assertEqual(self.client.get(url, {'student': self.student.national_id}).status_code, 403)
+
+        unauthorized_staff = User.objects.create_user(
+            username='staff_without_transaction_permission',
+            email='staff_without_permission@test.nav',
+            national_id=30_000_004,
+            password='x',
+            role=User.Role.STAFF,
+        )
+        self.client.force_login(unauthorized_staff)
+        self.assertEqual(self.client.get(url).status_code, 403)
+        self.assertRedirects(
+            self.client.get(reverse('fms:student_stats_detail', args=[self.student.national_id])),
+            reverse('dashboard:dashboard'),
+            fetch_redirect_response=False,
+        )
 
     def test_nonfinite_and_overprecise_fuel_are_rejected(self):
         for value in ('NaN', 'Infinity', '0.01', '1.23'):
@@ -324,7 +361,11 @@ class MissingFuelEvaluationsTest(TestCase):
                                notes=f'Abono {index}', confirmed=False)
             for index in range(30)
         ])
-        self.client.force_login(self.student)
-        response = self.client.get(reverse('transactions:student_overview'), {'type': 'credits', 'page': 2})
+        response = self.client.get(reverse('transactions:student_overview'), {
+            'student': self.student.national_id,
+            'type': 'credits',
+            'page': 2,
+        })
         self.assertEqual(len(response.context['page_obj']), 5)
         self.assertContains(response, 'type=credits')
+        self.assertContains(response, f'student={self.student.national_id}')

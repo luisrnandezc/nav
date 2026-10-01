@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.paginator import Paginator
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 from django.core.cache import cache
 from django.db.models import Q
 from django.urls import reverse
@@ -24,16 +26,50 @@ FUEL_EVALUATION_MODELS = (
 
 
 @login_required
+@permission_required('accounts.can_manage_transactions', raise_exception=True)
 def student_overview(request):
-    from django.core.paginator import Paginator
-    from django.http import HttpResponseForbidden
-    from django.utils.dateparse import parse_date
+    """Let authorized staff search for a student and inspect their full activity."""
     from .student_activity import student_activity
 
-    role = request.session.get('selected_role') or request.user.role
-    if role != User.Role.STUDENT:
-        return HttpResponseForbidden('Acceso exclusivo para estudiantes.')
-    profile = get_object_or_404(StudentProfile, user=request.user)
+    active_role = request.session.get('selected_role') or request.user.role
+    if active_role != User.Role.STAFF:
+        raise PermissionDenied('Acceso exclusivo para personal autorizado.')
+
+    search_term = (request.GET.get('q') or '').strip()
+    student_results = StudentProfile.objects.none()
+    if search_term:
+        student_results = StudentProfile.objects.select_related('user').filter(
+            user__role=User.Role.STUDENT,
+        )
+        if search_term.isdigit():
+            student_results = student_results.filter(user__national_id=int(search_term))
+        else:
+            student_results = student_results.filter(
+                Q(user__first_name__icontains=search_term)
+                | Q(user__last_name__icontains=search_term)
+                | Q(user__username__icontains=search_term)
+            )
+        student_results = student_results.order_by('user__first_name', 'user__last_name')[:20]
+
+    selected_student = (request.GET.get('student') or '').strip()
+    profile = None
+    if selected_student:
+        if not selected_student.isdigit():
+            raise Http404('Estudiante no encontrado.')
+        profile = get_object_or_404(
+            StudentProfile.objects.select_related('user'),
+            user__role=User.Role.STUDENT,
+            user__national_id=selected_student,
+        )
+
+    context = {
+        'profile': profile,
+        'search_term': search_term,
+        'student_results': student_results,
+    }
+    if profile is None:
+        return render(request, 'transactions/student_overview.html', context)
+
     context = student_activity(profile)
     rows = context.pop('movements')
     kind = request.GET.get('type', '')
@@ -57,7 +93,8 @@ def student_overview(request):
     params.pop('page', None)
     context.update({
         'profile': profile, 'page_obj': Paginator(rows, 25).get_page(request.GET.get('page')),
-        'filter_type': kind, 'query': params.urlencode(),
+        'filter_type': kind, 'query': params.urlencode(), 'search_term': search_term,
+        'student_results': student_results,
     })
     return render(request, 'transactions/student_overview.html', context)
 

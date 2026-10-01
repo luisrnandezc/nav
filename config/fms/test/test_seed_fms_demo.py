@@ -81,16 +81,20 @@ class SeedFmsDemoTests(TestCase):
             self.run_seed(reset=True)
         self.assertTrue(model.objects.filter(pk=flight.pk, student_id=7654321).exists())
 
-    def test_students_can_open_overview_logbook_and_full_stats(self):
+    def test_staff_can_open_overview_while_students_keep_existing_flight_pages(self):
         for username in ('demo_fms_student', 'demo_fms_advanced', 'demo_fms_empty'):
             self.client.force_login(User.objects.get(username=username))
-            for route in ('transactions:student_overview', 'fms:student_flightlog', 'fms:student_stats_page'):
+            self.assertEqual(self.client.get(reverse('transactions:student_overview')).status_code, 403)
+            for route in ('fms:student_flightlog', 'fms:student_stats_page'):
                 self.assertEqual(self.client.get(reverse(route)).status_code, 200)
-        self.client.force_login(User.objects.get(username='demo_fms_student'))
-        page = self.client.get(reverse('transactions:student_overview'))
+        self.client.force_login(User.objects.get(username='demo_fms_staff'))
+        student = User.objects.get(username='demo_fms_student')
+        page = self.client.get(
+            reverse('transactions:student_overview'),
+            {'student': student.national_id},
+        )
         self.assertTrue(page.context['page_obj'].has_next())
         self.assertContains(page, 'Combustible registrado posteriormente')
-        self.client.force_login(User.objects.get(username='demo_fms_staff'))
         self.assertEqual(self.client.get(reverse('transactions:add_fuel_transaction')).status_code, 200)
 
     def test_evaluation_routes_restrict_students_to_their_own_flights(self):

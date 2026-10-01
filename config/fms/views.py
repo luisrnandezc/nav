@@ -1023,7 +1023,11 @@ def student_stats_page(request, student_id=None):
     
     # If student_id is provided, staff is viewing another student's stats
     if student_id:
-        if user.role != 'STAFF':
+        can_view_student_stats = (
+            user.has_perm('accounts.can_view_user_stats')
+            or user.has_perm('accounts.can_manage_transactions')
+        )
+        if user.role != 'STAFF' or not can_view_student_stats:
             messages.error(request, 'Acceso no autorizado')
             return redirect('dashboard:dashboard')
         try:
@@ -1060,15 +1064,17 @@ def student_stats_page(request, student_id=None):
     activity = student_activity(student_profile)
     stats = activity['stats']
 
-    # Use named entry points instead of accepting an arbitrary return URL.
-    back_routes = {'logbook': 'fms:student_flightlog', 'overview': 'transactions:student_overview'}
-    back_route = back_routes.get(request.GET.get('origin'), 'transactions:student_overview')
+    # Students return to their logbook while staff return to the page they used.
+    back_url = reverse('fms:student_flightlog')
     if student_id:
-        back_route = 'fms:user_stats_page'
+        if request.GET.get('origin') == 'overview':
+            back_url = f'{reverse("transactions:student_overview")}?student={student_id}'
+        else:
+            back_url = reverse('fms:user_stats_page')
 
     context = {
         'student': student,
-        'back_url': reverse(back_route),
+        'back_url': back_url,
         'unresolved_fuel': activity['unresolved_fuel'],
         'balance': balance,
         'total_paid': round(total_paid, 2),

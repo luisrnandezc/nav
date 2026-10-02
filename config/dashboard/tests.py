@@ -63,10 +63,10 @@ class AuraLaunchpadVisibilityTests(TestCase):
 
         self.assertFalse(self.aura_is_visible(user, "STUDENT", profile))
 
-    def test_student_activity_tile_is_only_visible_to_permitted_staff(self):
+    def test_student_activity_tile_is_visible_to_students_and_permitted_staff(self):
         student = self.create_user("activity_student", User.Role.STUDENT, 1000005)
         student_profile = StudentProfile.objects.create(user=student, student_age=20)
-        self.assertNotIn(
+        self.assertIn(
             "student_balance_stats",
             self.launchpad_keys(student, "STUDENT", student_profile),
         )

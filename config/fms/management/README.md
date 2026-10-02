@@ -29,9 +29,10 @@ existing records and passwords.
 | `demo_fms_instructor` | `99001005` | Carlos Instructor | Instructor | Instructor logbook, flight evaluations and entry forms |
 | `demo_fms_staff` | `99001006` | Sofia Administración | Staff | FMS dashboard, student statistics, transactions, pending-payment confirmation and missing-fuel entry; includes the required transaction permissions |
 
-For the staff preview, log in as `demo_fms_staff` and open **Estadísticas y
-movimientos**. For student-facing flight pages, use one of the student accounts
-and open **Bitácora**. The staff account is not a superuser.
+Log in as `demo_fms_staff` to test student search in **Estadísticas y
+movimientos**. Log in with any student account to test that student's own
+statistics and movements without a search field, or open **Bitácora** for the
+existing flight log. The staff account is not a superuser.
 
 ## Repeatability and reset
 

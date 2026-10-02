@@ -81,10 +81,17 @@ class SeedFmsDemoTests(TestCase):
             self.run_seed(reset=True)
         self.assertTrue(model.objects.filter(pk=flight.pk, student_id=7654321).exists())
 
-    def test_staff_can_open_overview_while_students_keep_existing_flight_pages(self):
+    def test_students_open_their_overview_and_staff_can_select_a_student(self):
         for username in ('demo_fms_student', 'demo_fms_advanced', 'demo_fms_empty'):
-            self.client.force_login(User.objects.get(username=username))
-            self.assertEqual(self.client.get(reverse('transactions:student_overview')).status_code, 403)
+            student = User.objects.get(username=username)
+            self.client.force_login(student)
+            overview = self.client.get(
+                reverse('transactions:student_overview'),
+                {'student': 99001001 if student.national_id != 99001001 else 99001002},
+            )
+            self.assertEqual(overview.status_code, 200)
+            self.assertEqual(overview.context['profile'].user, student)
+            self.assertNotContains(overview, 'Buscar estudiante')
             for route in ('fms:student_flightlog', 'fms:student_stats_page'):
                 self.assertEqual(self.client.get(reverse(route)).status_code, 200)
         self.client.force_login(User.objects.get(username='demo_fms_staff'))

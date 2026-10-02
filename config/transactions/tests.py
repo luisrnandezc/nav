@@ -21,7 +21,7 @@ class MissingFuelEvaluationsTest(TestCase):
         url = reverse('fms:student_stats_page')
         for origin, target in (
             ('logbook', 'fms:student_flightlog'),
-            ('overview', 'fms:student_flightlog'),
+            ('overview', 'transactions:student_overview'),
             ('https://example.invalid', 'fms:student_flightlog'),
         ):
             response = self.client.get(url, {'origin': origin})
@@ -282,7 +282,13 @@ class MissingFuelEvaluationsTest(TestCase):
         self.assertEqual(self.client.get(url, {'student': 'invalid'}).status_code, 404)
 
         self.client.force_login(self.student)
-        self.assertEqual(self.client.get(url, {'student': self.student.national_id}).status_code, 403)
+        response = self.client.get(url, {'student': self.other_student.national_id})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Mi abono pendiente')
+        self.assertNotContains(response, 'Privado de otro estudiante')
+        self.assertNotContains(response, 'Buscar estudiante')
+        self.assertEqual(response.context['profile'], self.student.student_profile)
+        self.assertFalse(response.context['is_staff_view'])
 
         unauthorized_staff = User.objects.create_user(
             username='staff_without_transaction_permission',

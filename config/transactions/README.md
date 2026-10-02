@@ -1,10 +1,10 @@
 # Student balance and statistics
 
-Authorized staff can open `/transactions/student/` from the dashboard and search
-for a student. The page uses the shared `ui` CSS and shows the selected profile's
-balance, total hours, NAV hours, weighted fuel/cost averages, and paginated
-history. Filters only affect the history. Both the tile and view require the
-`accounts.can_manage_transactions` permission; students cannot open the page.
+Students can open `/transactions/student/` from the dashboard to see only their
+own balance, total hours, NAV hours, weighted fuel/cost averages, and paginated
+history. The student view has no account search or selector. Staff using the same
+page can search and select a student only when they have the
+`accounts.can_manage_transactions` permission. Filters only affect the history.
 
 ## Accounting sources
 

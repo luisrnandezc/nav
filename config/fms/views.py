@@ -1066,7 +1066,11 @@ def student_stats_page(request, student_id=None):
     stats = calculate_student_stats(student_profile)
 
     # Students return to their logbook while staff return to the page they used.
-    back_url = reverse('fms:student_flightlog')
+    back_url = (
+        reverse('transactions:student_overview')
+        if request.GET.get('origin') == 'overview'
+        else reverse('fms:student_flightlog')
+    )
     if student_id:
         if request.GET.get('origin') == 'overview':
             back_url = f'{reverse("transactions:student_overview")}?student={student_id}'

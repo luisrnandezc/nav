@@ -17,7 +17,7 @@
   </div>
   <h1 class="main-header">Estadísticas y movimientos</h1>
   <div class="ui-stack">
-    <section class="ui-panel student-search" aria-labelledby="student-search-title">
+    {% if is_staff_view %}<section class="ui-panel student-search" aria-labelledby="student-search-title">
       <h2 id="student-search-title">Buscar estudiante</h2>
       <form method="get" class="student-search-form">
         <label for="student-query">Nombre, apellido, usuario o cédula</label>
@@ -45,13 +45,17 @@
       {% elif not profile %}
         <p class="overview-hint">Busca y selecciona un estudiante para consultar su saldo, estadísticas y movimientos.</p>
       {% endif %}
-    </section>
+    </section>{% endif %}
     {% if profile %}
     <section class="ui-panel" aria-label="Resumen del estudiante">
-      <p class="selected-student"><span>Estudiante</span><strong>{{ profile.user.get_full_name|default:profile.user.username }}</strong><small>Cédula {{ profile.user.national_id }}</small></p>
+      {% if is_staff_view %}<p class="selected-student"><span>Estudiante</span><strong>{{ profile.user.get_full_name|default:profile.user.username }}</strong><small>Cédula {{ profile.user.national_id }}</small></p>{% endif %}
       <div class="overview-heading">
         <div><span>Saldo actual</span><strong class="balance-value amount-badge {% if profile.balance >= 500 %}amount-credit{% elif profile.balance < 0 %}amount-debit{% else %}amount-warning{% endif %}">USD {{ profile.balance|floatformat:2 }}</strong></div>
-        <a class="button" href="{% url 'fms:student_stats_detail' profile.user.national_id %}?origin=overview">Ver estadísticas completas</a>
+        {% if is_staff_view %}
+          <a class="button" href="{% url 'fms:student_stats_detail' profile.user.national_id %}?origin=overview">Ver estadísticas completas</a>
+        {% else %}
+          <a class="button" href="{% url 'fms:student_stats_page' %}?origin=overview">Ver estadísticas completas</a>
+        {% endif %}
       </div>
       <div class="stats-group">
         <h3>Resumen general</h3>
@@ -79,7 +83,7 @@
       <h2 id="movements-title">Movimientos</h2>
       {% if unresolved_fuel %}<p class="badge badge-warning">Hay cargos históricos de combustible sin vínculo al vuelo. El historial requiere conciliación para asociar esos movimientos con su vuelo.</p>{% endif %}
       <form method="get" class="movement-filters">
-        <input type="hidden" name="student" value="{{ profile.user.national_id }}">
+        {% if is_staff_view %}<input type="hidden" name="student" value="{{ profile.user.national_id }}">{% endif %}
         <label>Tipo<select class="ui-select" name="type">
           <option value="">Todos</option>
           <option value="credits" {% if filter_type == 'credits' %}selected{% endif %}>Créditos</option>
@@ -90,7 +94,7 @@
         <label>Hasta<input class="ui-input" type="date" name="end" value="{{ end }}"></label>
         <div class="movement-filter-actions">
           <button class="button" type="submit">Filtrar</button>
-          <a class="button" href="{% url 'transactions:student_overview' %}?student={{ profile.user.national_id }}">Ver todos</a>
+          <a class="button" href="{% url 'transactions:student_overview' %}{% if is_staff_view %}?student={{ profile.user.national_id }}{% endif %}">Ver todos</a>
         </div>
       </form>
       {% for movement in page_obj %}

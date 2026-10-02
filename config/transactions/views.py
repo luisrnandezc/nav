@@ -26,17 +26,19 @@ FUEL_EVALUATION_MODELS = (
 
 
 @login_required
-@permission_required('accounts.can_manage_transactions', raise_exception=True)
 def student_overview(request):
-    """Let authorized staff search for a student and inspect their full activity."""
+    """Show a student's own activity or let authorized staff select a student."""
     from fms.statistics import calculate_student_stats
     from .student_activity import student_activity
 
     active_role = request.session.get('selected_role') or request.user.role
-    if active_role != User.Role.STAFF:
-        raise PermissionDenied('Acceso exclusivo para personal autorizado.')
+    is_staff_view = active_role == User.Role.STAFF
+    if active_role not in (User.Role.STUDENT, User.Role.STAFF):
+        raise PermissionDenied('Acceso exclusivo para estudiantes y personal autorizado.')
+    if is_staff_view and not request.user.has_perm('accounts.can_manage_transactions'):
+        raise PermissionDenied('No tiene permiso para administrar transacciones estudiantiles.')
 
-    search_term = (request.GET.get('q') or '').strip()
+    search_term = (request.GET.get('q') or '').strip() if is_staff_view else ''
     student_results = StudentProfile.objects.none()
     if search_term:
         student_results = StudentProfile.objects.select_related('user').filter(
@@ -52,21 +54,28 @@ def student_overview(request):
             )
         student_results = student_results.order_by('user__first_name', 'user__last_name')[:20]
 
-    selected_student = (request.GET.get('student') or '').strip()
-    profile = None
-    if selected_student:
-        if not selected_student.isdigit():
-            raise Http404('Estudiante no encontrado.')
+    if is_staff_view:
+        selected_student = (request.GET.get('student') or '').strip()
+        profile = None
+        if selected_student:
+            if not selected_student.isdigit():
+                raise Http404('Estudiante no encontrado.')
+            profile = get_object_or_404(
+                StudentProfile.objects.select_related('user'),
+                user__role=User.Role.STUDENT,
+                user__national_id=selected_student,
+            )
+    else:
         profile = get_object_or_404(
             StudentProfile.objects.select_related('user'),
-            user__role=User.Role.STUDENT,
-            user__national_id=selected_student,
+            user=request.user,
         )
 
     context = {
         'profile': profile,
         'search_term': search_term,
         'student_results': student_results,
+        'is_staff_view': is_staff_view,
     }
     if profile is None:
         return render(request, 'transactions/student_overview.html', context)
@@ -90,6 +99,12 @@ def student_overview(request):
         ],
     })
     rows = context.pop('movements')
+    if is_staff_view:
+        for row in rows:
+            for fuel in row.get('fuel_transactions', []):
+                fuel['url'] = fuel['url'].replace(
+                    '?', f'?student={profile.user.national_id}&', 1,
+                )
     kind = request.GET.get('type', '')
     if kind == 'credits':
         rows = [row for row in rows if row['credit']]
@@ -109,10 +124,13 @@ def student_overview(request):
         rows = [row for row in rows if row['id'] == f'transaction-{request.GET["movement"]}']
     params = request.GET.copy()
     params.pop('page', None)
+    if not is_staff_view:
+        params.pop('student', None)
+        params.pop('q', None)
     context.update({
         'profile': profile, 'page_obj': Paginator(rows, 25).get_page(request.GET.get('page')),
         'filter_type': kind, 'query': params.urlencode(), 'search_term': search_term,
-        'student_results': student_results,
+        'student_results': student_results, 'is_staff_view': is_staff_view,
     })
     return render(request, 'transactions/student_overview.html', context)
 

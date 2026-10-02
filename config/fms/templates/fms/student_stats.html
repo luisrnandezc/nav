@@ -18,7 +18,7 @@
             </div>
 
             <h1 class="main-header">{% if student %}Estadísticas de {{ student.username }}{% else %}Mis estadísticas de vuelo{% endif %}</h1>
-            {% if unresolved_fuel %}<p>Hay cargos históricos de combustible sin vínculo al vuelo. Los costos requieren conciliación para descartar duplicados.</p>{% endif %}
+            {% if unresolved_fuel %}<p>Hay cargos históricos de combustible sin vínculo al vuelo. El historial requiere conciliación para asociar esos movimientos con su vuelo.</p>{% endif %}
 
             <div class="sections-container">
                 <!-- Total Statistics -->

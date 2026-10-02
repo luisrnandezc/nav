@@ -29,6 +29,7 @@ FUEL_EVALUATION_MODELS = (
 @permission_required('accounts.can_manage_transactions', raise_exception=True)
 def student_overview(request):
     """Let authorized staff search for a student and inspect their full activity."""
+    from fms.statistics import calculate_student_stats
     from .student_activity import student_activity
 
     active_role = request.session.get('selected_role') or request.user.role
@@ -71,6 +72,23 @@ def student_overview(request):
         return render(request, 'transactions/student_overview.html', context)
 
     context = student_activity(profile)
+    flight_stats = calculate_student_stats(profile)
+    nav_hours = flight_stats['total_flight_hours']
+    context.update({
+        'nav_total_hours': nav_hours,
+        'liters_per_hour': flight_stats['fuel_rate_liters'] if nav_hours else None,
+        'dollars_per_hour': flight_stats['flight_hour_cost'] if nav_hours else None,
+        'aircraft_summaries': [
+            {
+                'registration': registration,
+                'has_hours': bool(flight_stats[f'total_flight_hours_{key}']),
+                'liters_per_hour': flight_stats[f'fuel_rate_liters_{key}'],
+                'fuel_cost_per_hour': flight_stats[f'fuel_hour_cost_{key}'],
+                'total_cost_per_hour': flight_stats[f'flight_hour_cost_{key}'],
+            }
+            for registration, key in (('YV204E', 'yv204e'), ('YV206E', 'yv206e'))
+        ],
+    })
     rows = context.pop('movements')
     kind = request.GET.get('type', '')
     if kind == 'credits':

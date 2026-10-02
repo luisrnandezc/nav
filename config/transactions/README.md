@@ -11,10 +11,11 @@ history. Filters only affect the history. Both the tile and view require the
 Manual movements come from StudentTransaction. Confirmed manual transactions
 affect the balance, while all manual transactions appear in the history; neither
 credits nor debits contribute to flight cost statistics, even when their category
-is `VUELO`. Automatic flight
-charges are derived from the three school evaluation types and their saved applied
-rates. External flights and simulator sessions do not automatically debit the
-student and are not represented as flight charges here.
+is `VUELO`. The summary banner and complete statistics page both use
+`fms.statistics.calculate_student_stats()`: it aggregates current hours and fuel
+directly from the three school evaluation types, applies each evaluation's saved
+hour and fuel rates, and includes every school aircraft. Later price changes do
+not rewrite historical costs. External flights and simulator sessions are excluded.
 
 Later fuel transactions retain a nullable foreign key to their evaluation, liters,
 unit price, charged amount, and a generated description with flight date, aircraft,
@@ -25,8 +26,9 @@ flight-linked correction movements. Reductions create credits; increases create
 debits. The correction uses the rates saved on the flight, and the flight update,
 hour totals, transaction, and balance change commit atomically. Applied movements
 cannot be changed or deleted through the transaction admin.
-The full student statistics page shares this calculation; instructor statistics
-are unchanged.
+The transaction history separately reconstructs each automatic debit using its
+saved historical rates. This preserves the accounting explanation without using
+ledger reconstruction as the source for current operational statistics.
 
 ## Migration and historical limits
 

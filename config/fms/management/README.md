@@ -16,21 +16,22 @@ application's configured email backend. Use a local mail backend for UI testing.
 
 ## Demo logins
 
-The initial password for all accounts is **`navdemo26%`**. These credentials are
+The password for every demo account is **`navdemo26%`**. These credentials are
 only for local development. Re-running the command without `--reset` preserves
 existing records and passwords.
 
-| Username | What to check |
-| --- | --- |
-| `demo_fms_student` | 28 PPA flights, more than 25 movements, filters/pagination, positive balance, confirmed credit, pending credit, materials debit, credit adjustment, and immediate/missing/later fuel |
-| `demo_fms_advanced` | Four PCA flights, $95/h student rate, 120 carried-over hours outside NAV |
-| `demo_fms_debt` | Two HVI flights, partial payment, negative balance, 100 carried-over hours outside NAV |
-| `demo_fms_empty` | Empty logbook, zero balance and hours, unavailable averages |
-| `demo_fms_instructor` | Instructor logbook, flight evaluations and entry forms |
-| `demo_fms_staff` | FMS dashboard, student statistics, transactions, pending-payment confirmation and missing-fuel entry |
+| Username | National ID | Name | Role | What to check |
+| --- | ---: | --- | --- | --- |
+| `demo_fms_student` | `99001001` | Ana Actividad | Student | 28 PPA flights, more than 25 movements, filters/pagination, positive balance, confirmed credit, pending credit, materials debit, credit adjustment, and immediate/missing/later fuel |
+| `demo_fms_advanced` | `99001002` | Luis Avanzado | Student | Four PCA flights, $95/h student rate, 120 carried-over hours outside NAV |
+| `demo_fms_debt` | `99001003` | Eva Saldo negativo | Student | Two HVI flights, partial payment, negative balance, 100 carried-over hours outside NAV |
+| `demo_fms_empty` | `99001004` | Leo Sin actividad | Student | Empty logbook, zero balance and hours, unavailable averages |
+| `demo_fms_instructor` | `99001005` | Carlos Instructor | Instructor | Instructor logbook, flight evaluations and entry forms |
+| `demo_fms_staff` | `99001006` | Sofia Administración | Staff | FMS dashboard, student statistics, transactions, pending-payment confirmation and missing-fuel entry; includes the required transaction permissions |
 
-After logging in, start with **Saldo y estadísticas** or **Bitácora**. The staff
-account has the three required account permissions, not superuser access.
+For the staff preview, log in as `demo_fms_staff` and open **Estadísticas y
+movimientos**. For student-facing flight pages, use one of the student accounts
+and open **Bitácora**. The staff account is not a superuser.
 
 ## Repeatability and reset
 

@@ -1016,6 +1016,7 @@ def calculate_user_stats(user_id, role_type='student', flight_instructor_hourly_
 def student_stats_page(request, student_id=None):
     """Display statistics page for a student."""
     from accounts.models import StudentProfile
+    from fms.statistics import calculate_student_stats
     from transactions.models import StudentTransaction
     from transactions.student_activity import student_activity
     
@@ -1062,7 +1063,7 @@ def student_stats_page(request, student_id=None):
     total_paid = student_profile.transactions.filter(type=StudentTransaction.CREDIT, confirmed=True).aggregate(total=Sum('amount'))['total'] or Decimal('0.0')
         
     activity = student_activity(student_profile)
-    stats = activity['stats']
+    stats = calculate_student_stats(student_profile)
 
     # Students return to their logbook while staff return to the page they used.
     back_url = reverse('fms:student_flightlog')

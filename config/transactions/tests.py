@@ -337,7 +337,8 @@ class MissingFuelEvaluationsTest(TestCase):
         self.assertEqual(debit.fuel_unit_price, Decimal('3'))
         self.assertIsNone(ambiguous.fuel_liters)
 
-    def test_summary_uses_saved_rates_and_full_stats_works_without_named_fleet(self):
+    def test_both_stats_views_use_rates_saved_on_each_flight(self):
+        from fms.statistics import calculate_student_stats
         from .student_activity import student_activity
 
         # Bulk update is deliberate: this test reads historical records without posting new charges.
@@ -346,6 +347,14 @@ class MissingFuelEvaluationsTest(TestCase):
         )
         self.aircraft.hourly_rate = Decimal('200')
         self.aircraft.save()
+        yv204e = Aircraft.objects.get(registration='YV204E')
+        yv204e.fuel_cost = Decimal('9')
+        yv204e.save(update_fields=['fuel_cost'])
+        self.student.student_profile.flight_rate = Decimal('250')
+        self.student.student_profile.save(update_fields=['flight_rate'])
+        FlightEvaluation0_100.objects.filter(
+            student_id=self.student.national_id,
+        ).update(aircraft=yv204e)
         activity = student_activity(self.student.student_profile)
         self.assertEqual(activity['stats']['total_flight_hours_dollars'], Decimal('260'))
         self.assertEqual(activity['liters_per_hour'], Decimal('5'))
@@ -363,6 +372,31 @@ class MissingFuelEvaluationsTest(TestCase):
         activity = student_activity(self.student.student_profile)
         self.assertEqual(activity['stats']['total_cost'], Decimal('290'))
         self.assertEqual(activity['dollars_per_hour'], Decimal('145'))
+
+        fms_stats = calculate_student_stats(self.student.student_profile)
+        self.assertEqual(fms_stats['total_consumed_liters'], Decimal('10'))
+        self.assertEqual(fms_stats['fuel_rate_liters'], Decimal('5'))
+        self.assertEqual(fms_stats['total_cost'], Decimal('290'))
+        self.assertEqual(fms_stats['flight_hour_cost'], Decimal('145'))
+        self.assertEqual(fms_stats['fuel_rate_liters_yv204e'], Decimal('5'))
+        self.assertEqual(fms_stats['fuel_hour_cost_yv204e'], Decimal('15'))
+        self.assertEqual(fms_stats['flight_hour_cost_yv204e'], Decimal('145'))
+
+        response = self.client.get(
+            reverse('transactions:student_overview'),
+            {'student': self.student.national_id},
+        )
+        self.assertEqual(response.context['nav_total_hours'], Decimal('2'))
+        self.assertEqual(response.context['liters_per_hour'], Decimal('5'))
+        self.assertEqual(response.context['dollars_per_hour'], Decimal('145'))
+        self.assertEqual(response.context['aircraft_summaries'][0], {
+            'registration': 'YV204E',
+            'has_hours': True,
+            'liters_per_hour': Decimal('5'),
+            'fuel_cost_per_hour': Decimal('15'),
+            'total_cost_per_hour': Decimal('145'),
+        })
+        self.assertContains(response, 'Combustible por hora')
 
         self.client.force_login(self.student)
         response = self.client.get(reverse('fms:student_stats_page'))

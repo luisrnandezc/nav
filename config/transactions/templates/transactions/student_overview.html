@@ -53,18 +53,31 @@
         <div><span>Saldo actual</span><strong class="balance-value amount-badge {% if profile.balance >= 500 %}amount-credit{% elif profile.balance < 0 %}amount-debit{% else %}amount-warning{% endif %}">USD {{ profile.balance|floatformat:2 }}</strong></div>
         <a class="button" href="{% url 'fms:student_stats_detail' profile.user.national_id %}?origin=overview">Ver estadísticas completas</a>
       </div>
-      <div class="stats-banner">
-        <div class="ui-card"><span>Horas totales</span><strong>{{ profile.flight_hours|floatformat:1 }} h</strong></div>
-        <div class="ui-card"><span>Horas en NAV</span><strong>{{ profile.nav_flight_hours|floatformat:1 }} h</strong></div>
-        <div class="ui-card"><span>Consumo promedio NAV</span><strong>{% if liters_per_hour != None %}{{ liters_per_hour|floatformat:1 }} L/h{% else %}—{% endif %}</strong></div>
-        <div class="ui-card"><span>Costo promedio NAV</span><strong>{% if dollars_per_hour != None %}${{ dollars_per_hour|floatformat:2 }}/h{% else %}—{% endif %}</strong></div>
+      <div class="stats-group">
+        <h3>Resumen general</h3>
+        <div class="stats-banner stats-banner-overall">
+          <div class="ui-card"><span>Horas totales</span><strong>{{ profile.flight_hours|floatformat:1 }} h</strong></div>
+          <div class="ui-card"><span>Horas en NAV</span><strong>{{ nav_total_hours|floatformat:1 }} h</strong></div>
+          <div class="ui-card"><span>Consumo promedio NAV</span><strong>{% if liters_per_hour != None %}{{ liters_per_hour|floatformat:1 }} L/h{% else %}—{% endif %}</strong></div>
+          <div class="ui-card"><span>Costo promedio NAV</span><strong>{% if dollars_per_hour != None %}${{ dollars_per_hour|floatformat:2 }}/h{% else %}—{% endif %}</strong></div>
+        </div>
       </div>
-      <p class="overview-hint">Promedios históricos de vuelos registrados en NAV. El costo incluye vuelo y combustible registrado. Los filtros solo afectan los movimientos.</p>
+      {% for aircraft in aircraft_summaries %}
+        <div class="stats-group">
+          <h3>{{ aircraft.registration }}</h3>
+          <div class="stats-banner stats-banner-aircraft">
+            <div class="ui-card"><span>Consumo promedio</span><strong>{% if aircraft.has_hours %}{{ aircraft.liters_per_hour|floatformat:1 }} L/h{% else %}—{% endif %}</strong></div>
+            <div class="ui-card"><span>Combustible por hora</span><strong>{% if aircraft.has_hours %}${{ aircraft.fuel_cost_per_hour|floatformat:2 }}/h{% else %}—{% endif %}</strong></div>
+            <div class="ui-card"><span>Costo total por hora</span><strong>{% if aircraft.has_hours %}${{ aircraft.total_cost_per_hour|floatformat:2 }}/h{% else %}—{% endif %}</strong></div>
+          </div>
+        </div>
+      {% endfor %}
+      <p class="overview-hint">Estadísticas calculadas con los vuelos registrados en NAV y las tarifas aplicadas en cada vuelo. Los filtros solo afectan los movimientos.</p>
       {% if missing_fuel %}<p class="overview-hint">Hay vuelos con combustible pendiente de registrar; los promedios se actualizarán al registrarlo.</p>{% endif %}
     </section>
     <section class="ui-panel" aria-labelledby="movements-title">
       <h2 id="movements-title">Movimientos</h2>
-      {% if unresolved_fuel %}<p class="badge badge-warning">Hay cargos históricos de combustible sin vínculo al vuelo. Su desglose y los promedios pueden incluir combustible duplicado hasta conciliar esos registros.</p>{% endif %}
+      {% if unresolved_fuel %}<p class="badge badge-warning">Hay cargos históricos de combustible sin vínculo al vuelo. El historial requiere conciliación para asociar esos movimientos con su vuelo.</p>{% endif %}
       <form method="get" class="movement-filters">
         <input type="hidden" name="student" value="{{ profile.user.national_id }}">
         <label>Tipo<select class="ui-select" name="type">

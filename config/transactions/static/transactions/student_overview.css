@@ -28,7 +28,10 @@
   gap: var(--ui-space-md); flex-wrap: wrap;
 }
 .balance-value { display: block; font-size: 2rem; margin: 8px 0 20px; }
+.stats-group + .stats-group { margin-top: var(--ui-space-lg); }
+.stats-group h3 { margin: 0 0 10px; font-size: 1rem; }
 .stats-banner { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ui-space-md); }
+.stats-banner-aircraft { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .stats-banner .ui-card { margin: 0; }
 .stats-banner strong { display: block; font-size: 1.5rem; margin-top: 8px; }
 .overview-hint { color: var(--ui-color-text-muted); font-size: .9rem; line-height: 1.5; }
@@ -104,6 +107,7 @@
   .student-search-controls, .student-result { align-items: stretch; flex-direction: column; }
   .student-search-controls .button, .student-result .button { align-self: center; }
   .stats-banner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats-banner-aircraft { grid-template-columns: 1fr; }
   .stats-banner strong { font-size: 1.25rem; }
   .overview-heading { margin-bottom: 20px; }
   .movement-filters label { flex: 1 1 130px; }

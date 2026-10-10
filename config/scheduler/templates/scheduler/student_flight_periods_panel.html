@@ -23,6 +23,9 @@
         </div>
 
         <h1 class="main-header">Períodos de Vuelo</h1>
+        {% if user.student_profile.flight_requests_blocked %}
+            <p role="status">No tienes permiso para solicitar vuelos. Contacta con administración.</p>
+        {% endif %}
 
         <div class="buttons-container">
             <div class="main-button">
@@ -78,8 +81,8 @@
                                                     <div class="block-label">{{ block }}</div>
                                                     {% for date in date_chunk %}
                                                         {% with slot=period_data.grid|getitem:date|getitem:block %}
-                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and slot.status == 'available' and user.role == 'STUDENT' %}clickable-slot{% endif %}" 
-                                                                 {% if slot and slot.status == 'available' and user.role == 'STUDENT' %}
+                                                            <div class="slot-{% if slot %}{{ slot.status }}{% else %}empty{% endif %} {% if slot and slot.status == 'available' and user.role == 'STUDENT' and not user.student_profile.flight_requests_blocked %}clickable-slot{% endif %}"
+                                                                 {% if slot and slot.status == 'available' and user.role == 'STUDENT' and not user.student_profile.flight_requests_blocked %}
                                                                  data-slot-id="{{ slot.id }}"
                                                                  data-date="{{ slot.date|date:'Y-m-d' }}"
                                                                  data-block="{{ slot.block }}"

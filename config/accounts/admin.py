@@ -33,7 +33,7 @@ class StudentProfileAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'get_student_id', 'student_phase', 'get_course_type',
                     'get_course_edition', 'student_license_type', 'balance', 'flight_rate',
                     'nav_flight_hours', 'flight_hours', 'sim_hours')
-    list_filter = ('student_phase', 'student_license_type', 'advanced_student', 'has_credit', 'has_temp_permission')
+    list_filter = ('student_phase', 'student_license_type', 'advanced_student', 'has_credit', 'has_temp_permission', 'flight_requests_blocked')
     search_fields = ('user__username', 'user__national_id', 'user__first_name', 'user__last_name')
     readonly_fields = ('get_course_type', 'get_course_edition')
     actions = ('run_aura_pending_for_students',)
@@ -49,6 +49,9 @@ class StudentProfileAdmin(admin.ModelAdmin):
         ('Información del curso', {
             'fields': ('get_course_type', 'get_course_edition'),
             'description': 'Esta información se actualiza automáticamente según la inscripción del estudiante en los cursos.'
+        }),
+        ('Solicitudes de vuelo', {
+            'fields': ('flight_requests_blocked',)
         }),
         ('Balance financiero', {
             'fields': ('balance', 'flight_rate', 'has_credit', 'has_temp_permission')

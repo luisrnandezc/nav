@@ -194,6 +194,11 @@ class StudentProfile(models.Model):
         verbose_name='Estudiante avanzado',
         default=False,
     )
+    flight_requests_blocked = models.BooleanField(
+        default=False,
+        verbose_name='Bloquear solicitudes de vuelo',
+        help_text='Impide crear nuevas solicitudes de vuelo, incluso desde staff. No modifica solicitudes existentes.',
+    )
     has_credit = models.BooleanField(
         verbose_name='Tiene crédito',
         default=False,

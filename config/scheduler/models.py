@@ -453,6 +453,8 @@ class FlightRequest(models.Model):
             profile = self.student.student_profile
         except StudentProfile.DoesNotExist:
             raise ValidationError("No se pudo verificar el balance del estudiante: Perfil de estudiante no encontrado")
+        if self._state.adding and profile.flight_requests_blocked:
+            raise ValidationError('No tienes permiso para solicitar vuelos. Contacta con administración.')
         balance = profile.balance
 
         if balance >= 500.00:

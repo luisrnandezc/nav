@@ -25,7 +25,10 @@
 
             <div class="buttons-container">
                 <div class="main-button">
-                    {% if has_active_periods %}
+                    {% if user.student_profile.flight_requests_blocked %}
+                        <button class="button" type="button" disabled>Agendar vuelo</button>
+                        <p role="status">No tienes permiso para solicitar vuelos. Contacta con administración.</p>
+                    {% elif has_active_periods %}
                         <a 
                             href="{% url 'scheduler:create_student_flight_period_grids' %}" 
                             class="button">+ Agendar vuelo

@@ -50,6 +50,13 @@
     flex-wrap: wrap;
   }
   
+  .main-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
   .main-button .button {
     background-color: rgba(218, 225, 255, 0.2);
     border: 1px solid #dae1ff;
@@ -65,7 +72,12 @@
     text-align: center;
   }
   
-  .main-button .button:hover {
+  .main-button .button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .main-button .button:hover:not(:disabled) {
     background-color: #d63e20;
     border-color: #d63e20;
   }

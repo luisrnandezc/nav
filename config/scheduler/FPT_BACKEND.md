@@ -1,7 +1,16 @@
 # FPT backend actions
 
 These routes use Django session authentication and CSRF protection, like the
-aircraft Scheduler. Responses are JSON; no frontend is included yet.
+aircraft Scheduler. Action responses are JSON. The calendar page at
+`/scheduler/fpt/` uses the shared `ui` styles and the Scheduler's calendar design.
+
+The dashboard tile uses the same view permission policy. Managers can click a
+free start to reserve or lock it, or click occupied hours to edit, reschedule,
+change payment status, or delete occupancy. Viewers can open read-only details.
+Period navigation includes open and closed periods. The calendar groups dates
+into seven-day tables, with horizontal scrolling on narrow screens, and shows
+both occupied hours of each session. A free hour which cannot accommodate a
+complete two-hour session is marked as having no available start.
 
 All paths below are under `/scheduler/fpt/`.
 

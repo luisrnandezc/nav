@@ -4,6 +4,7 @@ from . import fpt_views, views
 app_name = "scheduler"
 
 urlpatterns = [
+    path('fpt/', fpt_views.calendar, name='fpt_calendar'),
     path('fpt/periods/', fpt_views.periods, name='fpt_periods'),
     path('fpt/periods/<int:period_id>/', fpt_views.period_detail, name='fpt_period_detail'),
     path('fpt/periods/<int:period_id>/delete/', fpt_views.delete_period, name='fpt_delete_period'),

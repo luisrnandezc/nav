@@ -52,8 +52,25 @@ class FPTViewTests(TestCase):
         return data
 
     def read_routes(self):
-        return [('periods', ()), ('period_detail', (self.period.pk,)),
+        return [('calendar', ()), ('periods', ()), ('period_detail', (self.period.pk,)),
                 ('session_detail', (self.session.pk,))]
+
+    def test_calendar_uses_shared_ui_styles_and_only_managers_get_edit_forms(self):
+        response = self.client.get(self.url('calendar'))
+        self.assertTemplateUsed(response, 'scheduler/fpt_calendar.html')
+        self.assertContains(response, '/static/ui/css/core.css')
+        self.assertContains(response, '/static/scheduler/fpt_calendar.css')
+        self.assertContains(response, 'id="session-form"')
+        self.assertContains(response, 'id="period-form"')
+        self.assertContains(response, 'id="fpt-config"')
+        self.assertIn('csrftoken', response.cookies)
+        self.client.force_login(self.viewer)
+        response = self.client.get(self.url('calendar'))
+        self.assertContains(response, 'Solo lectura')
+        self.assertContains(response, 'id="detail-dialog"')
+        self.assertNotContains(response, 'id="session-form"')
+        self.assertNotContains(response, 'id="new-period"')
+        self.assertNotContains(response, 'id="delete-dialog"')
 
     def write_routes(self):
         return [

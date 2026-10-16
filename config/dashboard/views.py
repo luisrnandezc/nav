@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from scheduler.permissions import can_view_fpt_schedule
 from accounts.role_utils import (
     ROLE_LABELS,
     get_available_roles,
@@ -257,6 +258,15 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'url': reverse('prod:production_panel'),
             'roles': {'STAFF'},
             'visible': user.has_perm('accounts.can_view_production'),
+        },
+        {
+            'key': 'fpt_scheduler',
+            'label': 'Simulador FPT',
+            'description': 'Consultar y coordinar sesiones del simulador FPT.',
+            'icon': 'dashboard/img/calendar.png',
+            'url': reverse('scheduler:fpt_calendar'),
+            'roles': {'STAFF', 'INSTRUCTOR'},
+            'visible': can_view_fpt_schedule(user),
         },
         {
             'key': 'staff_maintenance',

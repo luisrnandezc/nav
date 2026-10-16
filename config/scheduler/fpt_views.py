@@ -11,7 +11,9 @@ from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models.deletion import ProtectedError
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
@@ -111,6 +113,29 @@ def session_data(session):
         'category': session.category, 'category_label': session.get_category_display(),
         'notes': session.notes,
     }
+
+
+@login_required
+@never_cache
+@ensure_csrf_cookie
+@require_GET
+@fpt_access()
+def calendar(request):
+    return render(request, 'scheduler/fpt_calendar.html', {
+        'can_manage': can_manage_fpt_schedule(request.user),
+        'fpt_config': {
+            'canManage': can_manage_fpt_schedule(request.user),
+            'urls': {
+                'periods': reverse('scheduler:fpt_periods'),
+                'period': reverse('scheduler:fpt_period_detail', args=[0]),
+                'deletePeriod': reverse('scheduler:fpt_delete_period', args=[0]),
+                'createSession': reverse('scheduler:fpt_create_session'),
+                'session': reverse('scheduler:fpt_session_detail', args=[0]),
+                'deleteSession': reverse('scheduler:fpt_delete_session', args=[0]),
+                'participants': reverse('scheduler:fpt_participants'),
+            },
+        },
+    })
 
 
 @login_required

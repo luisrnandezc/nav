@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NAV | Simulador FPT</title>
+    {% include "ui/includes/core_css.html" %}
+    <link rel="stylesheet" href="{% static 'scheduler/fpt_calendar.css' %}?v=1">
+    <script src="{% static 'scheduler/js/fpt_calendar.js' %}?v=1" defer></script>
+</head>
+<body class="fpt-page">
+<main class="main-container">
+    <div class="back-button"><a class="button" href="{% url 'dashboard:dashboard' %}">&larr; Volver</a></div>
+    <h1 class="main-header">Simulador FPT</h1>
+    <p class="fpt-subtitle">Programación de sesiones · 120 minutos · 08:00–20:00</p>
+    <div class="buttons-container">
+        <button class="ui-button" id="refresh-calendar" type="button">↻ Actualizar</button>
+        {% if can_manage %}<button class="ui-button" id="new-period" type="button">+ Nuevo periodo</button>{% endif %}
+    </div>
+    <p id="page-message" class="fpt-message" role="status" aria-live="polite" hidden></p>
+    <section class="ui-panel fpt-panel" aria-label="Calendario FPT">
+        <div class="fpt-resource-header"><h2>FPT</h2><span>Simulador de entrenamiento</span></div>
+        <div class="fpt-period-nav">
+            <button class="ui-button" id="previous-period" type="button" aria-label="Periodo anterior" disabled>←</button>
+            <div class="ui-form-row fpt-period-choice"><label for="period-select" class="ui-form-label">Periodo</label><select id="period-select" class="ui-select" disabled><option>Cargando periodos…</option></select></div>
+            <button class="ui-button" id="next-period" type="button" aria-label="Periodo siguiente" disabled>→</button>
+        </div>
+        <div class="fpt-period-summary">
+            <span id="period-state" class="badge" hidden></span>
+            <span>{% if can_manage %}Selecciona una hora libre para reservar o bloquear.{% else %}Solo lectura · Selecciona una sesión para ver los detalles.{% endif %}</span>
+            {% if can_manage %}<button id="edit-period" class="ui-button" type="button" hidden>Gestionar periodo</button>{% endif %}
+        </div>
+        <ul class="fpt-legend" aria-label="Leyenda">
+            <li><span class="fpt-dot fpt-free"></span>Libre</li>
+            <li><span class="fpt-dot fpt-pending"></span>Pendiente de pago</li>
+            <li><span class="fpt-dot fpt-paid"></span>Pagado</li>
+            <li><span class="fpt-dot fpt-locked"></span>Bloqueado</li>
+        </ul>
+        <p class="ui-form-help">Las horas muestran el inicio de cada bloque. La última sesión es de 18:00 a 20:00.</p>
+        <div id="calendar-grid" aria-busy="true"><p class="ui-empty">Cargando calendario…</p></div>
+    </section>
+    <noscript><p class="fpt-message">Activa JavaScript para consultar el calendario y gestionar las sesiones.</p></noscript>
+</main>
+
+<dialog id="detail-dialog" class="fpt-dialog" aria-labelledby="detail-title">
+    <div class="fpt-dialog-header"><h2 id="detail-title">Detalle de sesión</h2><button type="button" data-close class="fpt-close" aria-label="Cerrar">×</button></div>
+    <dl id="session-details" class="fpt-details"></dl>
+    <div class="ui-actions"><button class="ui-button" type="button" data-close>Cerrar</button></div>
+</dialog>
+
+{% if can_manage %}
+<dialog id="period-dialog" class="fpt-dialog" aria-labelledby="period-title">
+    <form id="period-form">
+        {% csrf_token %}
+        <div class="fpt-dialog-header"><h2 id="period-title">Nuevo periodo FPT</h2><button type="button" data-close class="fpt-close" aria-label="Cerrar">×</button></div>
+        <div class="ui-form-grid">
+            <div class="ui-form-row"><label for="period-start" class="ui-form-label">Inicio</label><input id="period-start" name="start_date" class="ui-input" type="date" required></div>
+            <div class="ui-form-row"><label for="period-end" class="ui-form-label">Cierre</label><input id="period-end" name="end_date" class="ui-input" type="date" required></div>
+        </div>
+        <p class="ui-form-help">Entre 7 y 28 días consecutivos, incluyendo las fechas de inicio y cierre.</p>
+        <label class="fpt-checkbox"><input id="period-open" type="checkbox"> Periodo abierto para reservas</label>
+        <p id="period-error" class="fpt-message fpt-error" role="alert" hidden></p>
+        <div class="ui-actions fpt-dialog-actions"><button type="button" id="delete-period" class="ui-button fpt-danger" hidden>Eliminar periodo</button><button type="button" class="ui-button" data-close>Cancelar</button><button type="submit" class="ui-button">Guardar</button></div>
+    </form>
+</dialog>
+
+<dialog id="session-dialog" class="fpt-dialog" aria-labelledby="session-title">
+    <form id="session-form">
+        <div class="fpt-dialog-header"><h2 id="session-title">Nueva sesión FPT</h2><button type="button" data-close class="fpt-close" aria-label="Cerrar">×</button></div>
+        <div class="ui-form-grid">
+            <div class="ui-form-row"><label for="session-period" class="ui-form-label">Periodo</label><select id="session-period" class="ui-select" required></select></div>
+            <div class="ui-form-row"><label for="session-date" class="ui-form-label">Fecha</label><input id="session-date" class="ui-input" type="date" required></div>
+            <div class="ui-form-row"><label for="session-hour" class="ui-form-label">Hora de inicio</label><select id="session-hour" class="ui-select" required></select></div>
+            <div class="ui-form-row"><span class="ui-form-label">Hora de cierre</span><output id="session-end" class="ui-input"></output></div>
+            <div class="ui-form-row"><label for="session-kind" class="ui-form-label">Tipo</label><select id="session-kind" class="ui-select"><option value="reservation">Reserva de entrenamiento</option><option value="locked">Bloqueo administrativo</option></select></div>
+        </div>
+        <fieldset id="training-fields" class="fpt-fieldset">
+            <legend>Participantes y entrenamiento</legend>
+            <div class="ui-form-grid">
+                <div class="ui-form-row"><label for="student-mode" class="ui-form-label">Estudiante</label><select id="student-mode" class="ui-select"><option value="registered">Registrado</option><option value="external">Externo / sesión informal</option></select><label class="fpt-sr-only" for="session-student">Estudiante registrado</label><select id="session-student" class="ui-select"></select><label class="fpt-sr-only" for="external-student">Nombre del estudiante externo</label><input id="external-student" class="ui-input" maxlength="255" placeholder="Nombre del estudiante" hidden></div>
+                <div class="ui-form-row"><label for="instructor-mode" class="ui-form-label">Instructor</label><select id="instructor-mode" class="ui-select"><option value="registered">Registrado</option><option value="external">Externo / sesión informal</option></select><label class="fpt-sr-only" for="session-instructor">Instructor registrado</label><select id="session-instructor" class="ui-select"></select><label class="fpt-sr-only" for="external-instructor">Nombre del instructor externo</label><input id="external-instructor" class="ui-input" maxlength="255" placeholder="Nombre del instructor" hidden></div>
+                <div class="ui-form-row"><label for="session-category" class="ui-form-label">Categoría</label><select id="session-category" class="ui-select" required></select></div>
+                <div class="ui-form-row"><label for="session-payment" class="ui-form-label">Estado de pago</label><select id="session-payment" class="ui-select"><option value="pending">Pendiente de pago</option><option value="paid">Pagado</option></select></div>
+            </div>
+        </fieldset>
+        <div class="ui-form-row"><label for="session-notes" class="ui-form-label">Notas (opcional)</label><textarea id="session-notes" class="ui-textarea" rows="3"></textarea></div>
+        <p id="session-error" class="fpt-message fpt-error" role="alert" hidden></p>
+        <div class="ui-actions fpt-dialog-actions"><button type="button" id="delete-session" class="ui-button fpt-danger" hidden>Eliminar sesión</button><button type="button" class="ui-button" data-close>Cancelar</button><button type="submit" class="ui-button">Guardar</button></div>
+    </form>
+</dialog>
+
+<dialog id="delete-dialog" class="fpt-dialog" aria-labelledby="delete-title">
+    <div class="fpt-dialog-header"><h2 id="delete-title">Confirmar eliminación</h2></div>
+    <p id="delete-description"></p>
+    <p id="delete-error" class="fpt-message fpt-error" role="alert" hidden></p>
+    <div class="ui-actions"><button type="button" class="ui-button" data-close>Cancelar</button><button id="confirm-delete" type="button" class="ui-button fpt-danger">Eliminar</button></div>
+</dialog>
+{% endif %}
+{{ fpt_config|json_script:"fpt-config" }}
+</body>
+</html>

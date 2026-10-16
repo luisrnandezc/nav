@@ -1,9 +1,16 @@
 from django.urls import path
-from . import views
+from . import fpt_views, views
 
 app_name = "scheduler"
 
 urlpatterns = [
+    path('fpt/periods/', fpt_views.periods, name='fpt_periods'),
+    path('fpt/periods/<int:period_id>/', fpt_views.period_detail, name='fpt_period_detail'),
+    path('fpt/periods/<int:period_id>/delete/', fpt_views.delete_period, name='fpt_delete_period'),
+    path('fpt/sessions/create/', fpt_views.create_session, name='fpt_create_session'),
+    path('fpt/sessions/<int:session_id>/', fpt_views.session_detail, name='fpt_session_detail'),
+    path('fpt/sessions/<int:session_id>/delete/', fpt_views.delete_session, name='fpt_delete_session'),
+    path('fpt/participants/', fpt_views.participants, name='fpt_participants'),
     path('', views.staff_flight_requests_dashboard, name='staff_flight_requests_dashboard'),
     path('period/new_period/', views.create_flight_period, name='create_flight_period'),
     path('student_flight_requests_dashboard/', views.student_flight_requests_dashboard, name='student_flight_requests_dashboard'),

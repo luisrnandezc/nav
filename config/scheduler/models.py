@@ -2,11 +2,214 @@ from django.db import models, transaction
 from django.db.models import F
 from django.utils import timezone
 from django.utils.timezone import localdate
-from datetime import timedelta
+from datetime import date as calendar_date, time, timedelta
 from django.core.exceptions import ValidationError
 from accounts.models import StudentProfile
 from fleet.models import Aircraft
 from . import domain_signals
+
+
+class FPTPeriod(models.Model):
+    """Inclusive calendar dates during which the single FPT can be booked."""
+
+    start_date = models.DateField(verbose_name="Inicio")
+    end_date = models.DateField(verbose_name="Cierre")
+    is_active = models.BooleanField(default=False, verbose_name="Abierto")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-start_date']
+        verbose_name = "Periodo FPT"
+        verbose_name_plural = "Periodos FPT"
+        default_permissions = ()
+        permissions = [
+            ('view_fpt_schedule', 'Can view the FPT schedule'),
+            ('manage_fpt_schedule', 'Can manage the FPT schedule'),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(end_date__gte=F('start_date')),
+                name='fpt_period_dates_ordered',
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+        if not isinstance(self.start_date, calendar_date) or not isinstance(self.end_date, calendar_date):
+            return  # Field validation reports missing/invalid dates.
+        if not 7 <= (self.end_date - self.start_date).days + 1 <= 28:
+            raise ValidationError({'end_date': 'El periodo debe durar entre 7 y 28 días.'})
+        periods = type(self).objects.filter(
+            start_date__lte=self.end_date, end_date__gte=self.start_date,
+        ).exclude(pk=self.pk)
+        if periods.exists():
+            raise ValidationError('El periodo se superpone con otro periodo FPT.')
+        if self.pk and self.sessions.exclude(
+            date__gte=self.start_date, date__lte=self.end_date,
+        ).exists():
+            raise ValidationError('El periodo debe incluir todas sus sesiones existentes.')
+
+    def save(self, *args, **kwargs):
+        # The same row lock is taken by session.save(), serializing bookings
+        # against period closure/date changes on PostgreSQL.
+        with transaction.atomic():
+            if self.pk:
+                type(self).objects.select_for_update().get(pk=self.pk)
+            self.full_clean()
+            super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'FPT: {self.start_date} → {self.end_date}'
+
+
+class FPTSession(models.Model):
+    """One two-hour reservation or administrative lock; free slots are derived.
+
+    Local calendar date + integer start hour make duration and hourly alignment
+    intrinsic. Database overlap guards also cover bulk writes and racing saves.
+    """
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'Reservado, pendiente de pago'
+        PAID = 'paid', 'Reservado, pagado'
+        LOCKED = 'locked', 'Bloqueado'
+
+    class Category(models.TextChoices):
+        HVI = 'HVI', 'Inicial HVI'
+        HVI_R = 'HVI-R', 'Recurrente HVI'
+        ENT = 'ENT', 'Entusiasta'
+        CA = 'CA', 'Curso Adicional'
+        PC = 'PC', 'Preparatory Course'
+        OTHER = 'OTHER', 'Otro'
+
+    period = models.ForeignKey(FPTPeriod, on_delete=models.PROTECT, related_name='sessions')
+    date = models.DateField(verbose_name="Fecha")
+    start_hour = models.PositiveSmallIntegerField(verbose_name="Hora de inicio")
+    status = models.CharField(max_length=7, choices=Status.choices, default=Status.PENDING)
+    student = models.ForeignKey(
+        'accounts.User', on_delete=models.PROTECT, related_name='fpt_student_sessions',
+        limit_choices_to={'role': 'STUDENT'}, null=True, blank=True,
+    )
+    external_student_name = models.CharField(max_length=255, blank=True)
+    instructor = models.ForeignKey(
+        'accounts.User', on_delete=models.PROTECT, related_name='fpt_instructor_sessions',
+        limit_choices_to={'role': 'INSTRUCTOR'}, null=True, blank=True,
+    )
+    external_instructor_name = models.CharField(max_length=255, blank=True)
+    category = models.CharField(max_length=5, choices=Category.choices, blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['date', 'start_hour']
+        verbose_name = "Sesión FPT"
+        verbose_name_plural = "Sesiones FPT"
+        default_permissions = ()
+        indexes = [models.Index(fields=['date', 'start_hour'], name='fpt_session_date_hour_idx')]
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(start_hour__gte=8, start_hour__lte=18),
+                name='fpt_session_operating_hours',
+            ),
+            models.CheckConstraint(
+                condition=models.Q(status__in=['pending', 'paid', 'locked']),
+                name='fpt_session_valid_status',
+            ),
+            models.CheckConstraint(
+                condition=(
+                    models.Q(status='locked', student__isnull=True, instructor__isnull=True,
+                             external_student_name='', external_instructor_name='', category='')
+                    | (
+                        models.Q(status__in=['pending', 'paid'],
+                                 category__in=['HVI', 'HVI-R', 'ENT', 'CA', 'PC', 'OTHER'])
+                        & (models.Q(student__isnull=False, external_student_name='')
+                           | (models.Q(student__isnull=True) & ~models.Q(external_student_name='')))
+                        & (models.Q(instructor__isnull=False, external_instructor_name='')
+                           | (models.Q(instructor__isnull=True) & ~models.Q(external_instructor_name='')))
+                    )
+                ),
+                name='fpt_session_assignments',
+            ),
+        ]
+
+    @property
+    def start_time(self):
+        return time(self.start_hour)
+
+    @property
+    def end_time(self):
+        return time(self.start_hour + 2)
+
+    def clean_fields(self, exclude=None):
+        # Django IntegerField.to_python() truncates floats; reject fractional
+        # hours before conversion so 08:30 cannot silently become 08:00.
+        if 'start_hour' not in (exclude or ()) and self.start_hour is not None:
+            try:
+                whole_hour = int(self.start_hour)
+            except (TypeError, ValueError, OverflowError):
+                whole_hour = None
+            if not isinstance(self.start_hour, str) and self.start_hour != whole_hour:
+                raise ValidationError({'start_hour': 'La hora de inicio debe ser una hora entera.'})
+        super().clean_fields(exclude=exclude)
+
+    def clean(self):
+        super().clean()
+        self.external_student_name = (self.external_student_name or '').strip()
+        self.external_instructor_name = (self.external_instructor_name or '').strip()
+        errors = {}
+        for field, role in [('student', 'STUDENT'), ('instructor', 'INSTRUCTOR')]:
+            participant_id = getattr(self, f'{field}_id')
+            external = getattr(self, f'external_{field}_name')
+            if self.status == self.Status.LOCKED:
+                if participant_id or external:
+                    errors[field] = 'Un bloqueo no debe tener participantes.'
+            else:
+                if bool(participant_id) == bool(external):
+                    errors[field] = 'Seleccione un usuario o indique un nombre externo.'
+                if participant_id and not self._meta.get_field(field).remote_field.model.objects.filter(
+                    pk=participant_id, role=role,
+                ).exists():
+                    errors[field] = 'El usuario no tiene el rol requerido.'
+        if self.status == self.Status.LOCKED and self.category:
+            errors['category'] = 'Un bloqueo no debe tener categoría de entrenamiento.'
+        elif self.status != self.Status.LOCKED and not self.category:
+            errors['category'] = 'Seleccione una categoría.'
+        if self.period_id and isinstance(self.date, calendar_date):
+            period = FPTPeriod.objects.filter(pk=self.period_id).first()
+            if period:
+                if not period.start_date <= self.date <= period.end_date:
+                    errors['date'] = 'La sesión debe estar dentro del periodo FPT.'
+                # Closing a period preserves existing sessions and permits notes/
+                # payment corrections, but prevents new or moved occupancy.
+                original = type(self).objects.filter(pk=self.pk).first() if self.pk else None
+                moved = not original or any(
+                    getattr(original, field) != getattr(self, field)
+                    for field in ('period_id', 'date', 'start_hour')
+                )
+                if not period.is_active and (moved or (
+                    original.status == self.Status.LOCKED and self.status != self.Status.LOCKED
+                )):
+                    errors['period'] = 'El periodo FPT no está abierto.'
+        if isinstance(self.date, calendar_date) and isinstance(self.start_hour, int):
+            if type(self).objects.filter(
+                date=self.date, start_hour__gt=self.start_hour - 2,
+                start_hour__lt=self.start_hour + 2,
+            ).exclude(pk=self.pk).exists():
+                errors['start_hour'] = 'El FPT ya está reservado o bloqueado en este horario.'
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            if self.period_id:
+                FPTPeriod.objects.select_for_update().filter(pk=self.period_id).first()
+            self.full_clean()
+            super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'FPT: {self.date} {self.start_time:%H:%M}–{self.end_time:%H:%M}'
 
 class FlightPeriod(models.Model):
     """Periodo de vuelo"""

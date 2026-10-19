@@ -7,7 +7,7 @@ from django.db import OperationalError, connection
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from scheduler.models import FPTPeriod, FPTSession, FlightPeriod, FlightSlot
+from scheduler.models import FPTAuditEntry, FPTPeriod, FPTSession, FlightPeriod, FlightSlot
 from .factories import UserFactory
 
 
@@ -39,7 +39,13 @@ class FPTViewTests(TestCase):
         return reverse(f'scheduler:fpt_{name}', args=args)
 
     def post(self, name, data=None, *args):
-        return self.client.post(self.url(name, *args), data=json.dumps(data or {}),
+        data = dict(data or {})
+        if args and name in ('period_detail', 'delete_period', 'session_detail', 'delete_session'):
+            model = FPTPeriod if name in ('period_detail', 'delete_period') else FPTSession
+            obj = model.objects.filter(pk=args[0]).first()
+            if obj:
+                data.setdefault('expected_updated_at', obj.updated_at.isoformat())
+        return self.client.post(self.url(name, *args), data=json.dumps(data),
                                 content_type='application/json')
 
     def reservation(self, **changes):
@@ -126,7 +132,7 @@ class FPTViewTests(TestCase):
         self.assertEqual(self.post('create_session', self.reservation()).status_code, 201)
 
     def test_period_create_edit_close_reopen_and_delete(self):
-        response = self.post('periods', {'start_date': '2026-11-03', 'end_date': '2026-11-10'})
+        response = self.post('periods', {'start_date': '2026-11-02', 'end_date': '2026-11-08'})
         self.assertEqual(response.status_code, 201, response.content)
         pk = response.json()['period']['id']
         self.assertFalse(response.json()['period']['is_active'])
@@ -134,7 +140,7 @@ class FPTViewTests(TestCase):
             response = self.post('period_detail', {'is_active': active}, pk)
             self.assertEqual(response.status_code, 200, response.content)
             self.assertEqual(response.json()['period']['is_active'], active)
-        self.assertEqual(self.post('period_detail', {'end_date': '2026-11-12'}, pk).status_code, 200)
+        self.assertEqual(self.post('period_detail', {'end_date': '2026-11-15'}, pk).status_code, 200)
         self.assertEqual(self.post('delete_period', {}, pk).status_code, 200)
         self.assertFalse(FPTPeriod.objects.filter(pk=pk).exists())
 
@@ -306,7 +312,7 @@ class FPTViewTests(TestCase):
 
     def test_database_period_conflict_is_safe(self):
         with patch.object(FPTPeriod, 'full_clean'):
-            response = self.post('periods', {'start_date': '2026-10-20', 'end_date': '2026-10-27'})
+            response = self.post('periods', {'start_date': '2026-10-19', 'end_date': '2026-11-01'})
         self.assertEqual(response.status_code, 409, response.content)
         self.assertEqual(FPTPeriod.objects.count(), 1)
 
@@ -317,3 +323,71 @@ class FPTViewTests(TestCase):
         with patch.object(FPTSession, 'save', side_effect=OperationalError('connection failed')):
             with self.assertRaises(OperationalError):
                 self.post('create_session', self.reservation())
+
+    def test_stale_session_cannot_revert_payment_or_delete(self):
+        stale = self.session.updated_at.isoformat()
+        self.assertEqual(self.post('session_detail', {'status': 'paid'}, self.session.pk).status_code, 200)
+        for name, changes in [('session_detail', {'status': 'pending', 'notes': 'Old dialog'}),
+                              ('delete_session', {})]:
+            changes['expected_updated_at'] = stale
+            response = self.post(name, changes, self.session.pk)
+            self.assertEqual(response.status_code, 409, response.content)
+            self.assertEqual(response.json()['code'], 'stale_edit')
+        self.session.refresh_from_db()
+        self.assertEqual(self.session.status, 'paid')
+        self.assertEqual(self.session.notes, '')
+        self.assertEqual(FPTAuditEntry.objects.count(), 1)
+
+    def test_stale_period_cannot_reopen_or_delete(self):
+        stale = self.period.updated_at.isoformat()
+        self.assertEqual(self.post('period_detail', {'is_active': False}, self.period.pk).status_code, 200)
+        for name in ('period_detail', 'delete_period'):
+            response = self.post(name, {'is_active': True, 'expected_updated_at': stale}, self.period.pk)
+            self.assertEqual(response.status_code, 409)
+        self.period.refresh_from_db()
+        self.assertFalse(self.period.is_active)
+
+    def test_revision_is_mandatory_for_all_edit_and_delete_actions(self):
+        for name, pk in [('period_detail', self.period.pk), ('delete_period', self.period.pk),
+                         ('session_detail', self.session.pk), ('delete_session', self.session.pk)]:
+            response = self.client.post(self.url(name, pk), '{}', content_type='application/json')
+            self.assertEqual(response.status_code, 400, response.content)
+            self.assertIn('expected_updated_at', response.json()['errors'])
+
+    def test_week_boundaries_enforced_by_period_endpoints(self):
+        for data in [{'start_date': '2026-11-03', 'end_date': '2026-11-15'},
+                     {'start_date': '2026-11-02', 'end_date': '2026-11-14'}]:
+            self.assertEqual(self.post('periods', data).status_code, 400)
+            self.assertEqual(self.post('period_detail', data, self.period.pk).status_code, 400)
+
+    def test_history_retains_actor_payment_changes_and_deleted_snapshot(self):
+        self.assertEqual(self.post('session_detail', {'status': 'paid'}, self.session.pk).status_code, 200)
+        self.assertEqual(self.post('delete_session', {}, self.session.pk).status_code, 200)
+        history_url = self.url('history') + f'?object_type=session&object_id={self.session.pk}'
+        entries = self.client.get(history_url).json()['entries']
+        self.assertEqual([entry['action'] for entry in entries], ['deleted', 'updated'])
+        self.assertEqual(entries[1]['before']['status'], 'pending')
+        self.assertEqual(entries[1]['after']['status'], 'paid')
+        self.assertEqual(entries[0]['before']['status'], 'paid')
+        self.assertEqual(entries[0]['actor'], str(self.manager))
+        self.client.force_login(self.viewer)
+        self.assertEqual(self.client.get(history_url).status_code, 403)
+        self.manager.delete()
+        entry = FPTAuditEntry.objects.first()
+        self.assertIsNone(entry.actor_id)
+        self.assertTrue(entry.actor_name)
+
+    def test_failed_mutations_do_not_leave_audit_entries(self):
+        self.assertEqual(self.post('delete_period', {}, self.period.pk).status_code, 409)
+        self.assertEqual(FPTAuditEntry.objects.count(), 0)
+        with patch('scheduler.fpt_views.audit', side_effect=RuntimeError('audit failed')):
+            with self.assertRaises(RuntimeError):
+                self.post('create_session', self.reservation())
+        self.assertEqual(FPTSession.objects.count(), 1)
+        self.assertEqual(FPTAuditEntry.objects.count(), 0)
+
+    def test_history_input_is_validated_and_requires_manager(self):
+        for query in ('', '?object_type=session&object_id=bad', '?object_type=aircraft&object_id=1'):
+            self.assertEqual(self.client.get(self.url('history') + query).status_code, 400)
+        self.client.logout()
+        self.assertEqual(self.client.get(self.url('history')).status_code, 302)

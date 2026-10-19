@@ -28,6 +28,8 @@ class FPTPeriod(models.Model):
             ('manage_fpt_schedule', 'Can manage the FPT schedule'),
         ]
         constraints = [
+            models.CheckConstraint(condition=models.Q(start_date__week_day=2), name='fpt_period_starts_monday'),
+            models.CheckConstraint(condition=models.Q(end_date__week_day=1), name='fpt_period_ends_sunday'),
             models.CheckConstraint(
                 condition=models.Q(end_date__gte=F('start_date')),
                 name='fpt_period_dates_ordered',
@@ -40,6 +42,13 @@ class FPTPeriod(models.Model):
             return  # Field validation reports missing/invalid dates.
         if not 7 <= (self.end_date - self.start_date).days + 1 <= 28:
             raise ValidationError({'end_date': 'El periodo debe durar entre 7 y 28 días.'})
+        errors = {}
+        if self.start_date.weekday() != 0:
+            errors['start_date'] = 'El periodo debe comenzar un lunes.'
+        if self.end_date.weekday() != 6:
+            errors['end_date'] = 'El periodo debe terminar un domingo.'
+        if errors:
+            raise ValidationError(errors)
         periods = type(self).objects.filter(
             start_date__lte=self.end_date, end_date__gte=self.start_date,
         ).exclude(pk=self.pk)
@@ -210,6 +219,24 @@ class FPTSession(models.Model):
 
     def __str__(self):
         return f'FPT: {self.date} {self.start_time:%H:%M}–{self.end_time:%H:%M}'
+
+class FPTAuditEntry(models.Model):
+    """Staff action history retained even when the session/period is deleted."""
+
+    actor = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True)
+    actor_name = models.CharField(max_length=500)
+    object_type = models.CharField(max_length=7, choices=[('period', 'Periodo'), ('session', 'Sesión')])
+    object_id = models.PositiveBigIntegerField()
+    action = models.CharField(max_length=7, choices=[('created', 'Creado'), ('updated', 'Actualizado'), ('deleted', 'Eliminado')])
+    before = models.JSONField(default=dict)
+    after = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+        default_permissions = ()
+        indexes = [models.Index(fields=['object_type', 'object_id'], name='fpt_audit_object_idx')]
+
 
 class FlightPeriod(models.Model):
     """Periodo de vuelo"""

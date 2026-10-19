@@ -1,0 +1,3 @@
+-r requirements.txt
+# Test-only browser regression automation; not required by the deployed app.
+playwright==1.62.0

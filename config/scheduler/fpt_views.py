@@ -18,8 +18,27 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from .fpt_forms import FPTPeriodForm, FPTSessionForm
-from .models import FPTPeriod, FPTSession
+from .models import FPTAuditEntry, FPTPeriod, FPTSession
 from .permissions import can_manage_fpt_schedule, can_view_fpt_schedule
+
+
+class StaleFPTEdit(Exception):
+    pass
+
+
+def check_revision(data, instance):
+    expected = data.pop('expected_updated_at', None)
+    if not isinstance(expected, str) or not expected:
+        raise ValidationError({'expected_updated_at': 'Incluya la versión que consultó antes de modificar el registro.'})
+    if expected != instance.updated_at.isoformat():
+        raise StaleFPTEdit
+
+
+def audit(request, object_type, object_id, action, before=None, after=None):
+    FPTAuditEntry.objects.create(
+        actor=request.user, actor_name=str(request.user), object_type=object_type,
+        object_id=object_id, action=action, before=before or {}, after=after or {},
+    )
 
 
 def fpt_access(*, manage=False):
@@ -32,6 +51,11 @@ def fpt_access(*, manage=False):
                 return JsonResponse({'error': 'Acceso denegado'}, status=403)
             try:
                 return view(request, *args, **kwargs)
+            except StaleFPTEdit:
+                return JsonResponse({
+                    'code': 'stale_edit',
+                    'error': 'Otro usuario modificó este registro. Recargue los datos antes de guardar o eliminar.',
+                }, status=409)
             except ValidationError as exc:
                 errors = exc.message_dict if hasattr(exc, 'message_dict') else {'__all__': exc.messages}
                 return JsonResponse({'error': 'Revise los datos de la solicitud.', 'errors': errors}, status=400)
@@ -93,6 +117,7 @@ def period_data(period):
     return {
         'id': period.pk, 'start_date': period.start_date.isoformat(),
         'end_date': period.end_date.isoformat(), 'is_active': period.is_active,
+        'updated_at': period.updated_at.isoformat(),
     }
 
 
@@ -112,6 +137,7 @@ def session_data(session):
         'instructor_name': participant_name(session.instructor, session.external_instructor_name),
         'category': session.category, 'category_label': session.get_category_display(),
         'notes': session.notes,
+        'updated_at': session.updated_at.isoformat(),
     }
 
 
@@ -147,6 +173,7 @@ def periods(request):
         data = request_data(request)
         with transaction.atomic():
             period = save_form(FPTPeriodForm, data)
+            audit(request, 'period', period.pk, 'created', after=period_data(period))
         return JsonResponse({'success': True, 'period': period_data(period)}, status=201)
     return JsonResponse({
         'periods': [period_data(period) for period in FPTPeriod.objects.all()],
@@ -165,7 +192,10 @@ def period_detail(request, period_id):
         data = request_data(request)
         with transaction.atomic():
             period = get_object_or_404(FPTPeriod.objects.select_for_update(), pk=period_id)
+            check_revision(data, period)
+            before = period_data(period)
             period = save_form(FPTPeriodForm, data, instance=period)
+            audit(request, 'period', period.pk, 'updated', before, period_data(period))
         return JsonResponse({'success': True, 'period': period_data(period)})
 
     period = get_object_or_404(FPTPeriod, pk=period_id)
@@ -192,8 +222,11 @@ def period_detail(request, period_id):
 @require_POST
 @fpt_access(manage=True)
 def delete_period(request, period_id):
+    data = request_data(request)
     with transaction.atomic():
         period = get_object_or_404(FPTPeriod.objects.select_for_update(), pk=period_id)
+        check_revision(data, period)
+        audit(request, 'period', period.pk, 'deleted', before=period_data(period))
         period.delete()
     return JsonResponse({'success': True})
 
@@ -207,6 +240,7 @@ def create_session(request):
     with transaction.atomic():
         session = save_form(FPTSessionForm, data)
         result = session_data(session)
+        audit(request, 'session', session.pk, 'created', after=result)
     return JsonResponse({'success': True, 'session': result}, status=201)
 
 
@@ -219,8 +253,11 @@ def session_detail(request, session_id):
         data = request_data(request)
         with transaction.atomic():
             session = get_object_or_404(FPTSession.objects.select_for_update(), pk=session_id)
+            check_revision(data, session)
+            before = session_data(session)
             session = save_form(FPTSessionForm, data, instance=session)
             result = session_data(session)
+            audit(request, 'session', session.pk, 'updated', before, result)
         return JsonResponse({'success': True, 'session': result})
     session = get_object_or_404(FPTSession.objects.select_related('student', 'instructor'), pk=session_id)
     return JsonResponse({'session': session_data(session)})
@@ -231,8 +268,11 @@ def session_detail(request, session_id):
 @require_POST
 @fpt_access(manage=True)
 def delete_session(request, session_id):
+    data = request_data(request)
     with transaction.atomic():
         session = get_object_or_404(FPTSession.objects.select_for_update(), pk=session_id)
+        check_revision(data, session)
+        audit(request, 'session', session.pk, 'deleted', before=session_data(session))
         session.delete()
     return JsonResponse({'success': True})
 
@@ -252,3 +292,22 @@ def participants(request):
             'id': user.pk, 'name': participant_name(user, ''),
         })
     return JsonResponse(choices)
+
+
+@login_required
+@never_cache
+@require_GET
+@fpt_access(manage=True)
+def history(request):
+    object_type = request.GET.get('object_type')
+    try:
+        object_id = int(request.GET.get('object_id', ''))
+    except (TypeError, ValueError):
+        raise ValidationError('Indique el ID del periodo o sesión.')
+    if object_type not in ('period', 'session') or not 0 < object_id < 2**63:
+        raise ValidationError('Indique un periodo o sesión válido.')
+    entries = FPTAuditEntry.objects.filter(object_type=object_type, object_id=object_id)[:100]
+    return JsonResponse({'entries': [{
+        'actor': entry.actor_name, 'action': entry.action, 'created_at': entry.created_at.isoformat(),
+        'before': entry.before, 'after': entry.after,
+    } for entry in entries]})

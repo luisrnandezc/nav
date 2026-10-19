@@ -16,14 +16,38 @@ permissions:
 
 jobs:
   test:
-    name: Test suite
+    name: Test suite (${{ matrix.database }})
+    strategy:
+      fail-fast: false
+      matrix:
+        database: [sqlite, postgresql]
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: nav_ci
+          POSTGRES_USER: nav_ci
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U nav_ci -d nav_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       SECRET_KEY: ci-only-dummy-secret-key-not-used-in-production
       IS_PRODUCTION: 'false'
-      DB_ENGINE: sqlite
+      DB_ENGINE: ${{ matrix.database }}
+      DB_NAME: nav_ci
+      DB_USER: nav_ci
+      DB_PASSWORD: ci-only-password
+      DB_HOST: localhost
+      DB_PORT: '5432'
       SARA_HAZARD_ANALYSIS_PROMPT_PATH: ci_prompts/sara_hazard.txt
       SARA_RER_ANALYSIS_PROMPT_PATH: ci_prompts/sara_rer.txt
       AURA_INDIVIDUAL_REVIEW_PROMPT_PATH: ci_prompts/aura_individual.txt
@@ -39,7 +63,9 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: requirements.txt
+          cache-dependency-path: |
+            requirements.txt
+            requirements-test.txt
 
       - name: Install WeasyPrint system libraries
         run: |
@@ -52,8 +78,11 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+          python -m pip install -r requirements-test.txt
           python -m pip check
+
+      - name: Install browser for FPT regression tests
+        run: python -m playwright install --with-deps chromium
 
       - name: Create CI prompt fixtures
         run: |
@@ -75,3 +104,9 @@ jobs:
       - name: Run test suite
         working-directory: config
         run: python manage.py test --noinput
+
+      - name: Run FPT browser regressions
+        working-directory: config
+        env:
+          RUN_FPT_BROWSER_TESTS: '1'
+        run: python manage.py test scheduler.test.test_fpt_browser --noinput

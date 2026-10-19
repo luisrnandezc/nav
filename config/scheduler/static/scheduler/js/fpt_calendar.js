@@ -36,6 +36,7 @@
                 errors.map(error => `${fieldLabels[field] ? `${fieldLabels[field]}: ` : ''}${error}`));
             const error = new Error(details.length ? details.join('\n') : result.error || 'No se pudo completar la operación.');
             error.status = response.status;
+            error.code = result.code;
             throw error;
         }
         return result;
@@ -170,6 +171,7 @@
             state.session = session;
             $('session-form').reset();
             message('session-error');
+            $('reload-session').hidden = true;
             $('session-title').textContent = session ? 'Gestionar sesión FPT' : 'Nueva sesión FPT';
             $('delete-session').hidden = !session;
             fillSelect($('session-period'), state.periods.filter(p => p.is_active || p.id === session?.period).map(p => [p.id, periodLabel(p)]), session?.period ?? state.current);
@@ -187,7 +189,7 @@
                 participantMode(role);
             }
             trainingMode(); updateEnd();
-            $('session-dialog').showModal();
+            if (!$('session-dialog').open) $('session-dialog').showModal();
         } catch (error) { message('page-message', error.message, true); }
     }
 
@@ -215,30 +217,34 @@
     function openPeriod(period = null) {
         state.editingPeriod = period;
         $('period-form').reset(); message('period-error');
+        $('period-start').setCustomValidity(''); $('period-end').setCustomValidity('');
+        $('reload-period').hidden = true;
         $('period-title').textContent = period ? 'Gestionar periodo FPT' : 'Nuevo periodo FPT';
-        const end = new Date(); end.setDate(end.getDate() + 6);
-        $('period-start').value = period?.start_date ?? localDate(new Date());
+        const start = new Date(); start.setDate(start.getDate() + (8 - start.getDay()) % 7);
+        const end = new Date(start); end.setDate(end.getDate() + 6);
+        $('period-start').value = period?.start_date ?? localDate(start);
         $('period-end').value = period?.end_date ?? localDate(end);
         $('period-open').checked = period ? period.is_active : true;
         $('delete-period').hidden = !period;
-        $('period-dialog').showModal();
+        if (!$('period-dialog').open) $('period-dialog').showModal();
     }
 
     async function submitForm(form, errorId, action) {
         const submit = form.querySelector('[type=submit]');
-        submit.disabled = true; message(errorId);
+        submit.disabled = true; message(errorId); message('page-message');
         try { await action(); }
         catch (error) {
             // Refresh advisory availability after a lost race, preserving inputs.
             if (error.status === 409) await refresh();
             message(errorId, error.message, true);
+            if (error.code === 'stale_edit') $(errorId === 'session-error' ? 'reload-session' : 'reload-period').hidden = false;
         } finally { submit.disabled = false; }
     }
 
     let pendingDelete;
     function confirmDelete(kind) {
         const id = kind === 'session' ? state.session.id : state.editingPeriod.id;
-        pendingDelete = { kind, id };
+        pendingDelete = { kind, id, expected_updated_at: (kind === 'session' ? state.session : state.editingPeriod).updated_at };
         message('delete-error');
         $('delete-description').textContent = kind === 'session' ? 'Se eliminará esta sesión o bloqueo y se liberará el horario. Esta acción no se puede deshacer.' : 'Se eliminará este periodo. Solo se pueden eliminar periodos sin sesiones.';
         $('delete-dialog').showModal();
@@ -255,6 +261,18 @@
         });
     }
     if (config.canManage) {
+        $('reload-session').addEventListener('click', async () => {
+            try {
+                const data = await request(url('session', state.session.id));
+                await openSession(data.session);
+            } catch (error) { message('session-error', error.message, true); }
+        });
+        $('reload-period').addEventListener('click', async () => {
+            try {
+                const data = await request(url('period', state.editingPeriod.id));
+                openPeriod(data.period);
+            } catch (error) { message('period-error', error.message, true); }
+        });
         $('new-period').addEventListener('click', () => openPeriod());
         $('edit-period').addEventListener('click', () => { if (state.detail) openPeriod(state.detail.period); });
         for (const role of ['student', 'instructor']) $(`${role}-mode`).addEventListener('change', () => participantMode(role));
@@ -264,11 +282,18 @@
             sessionDateBounds();
             if ($('session-date').value < $('session-date').min || $('session-date').value > $('session-date').max) $('session-date').value = $('session-date').min;
         });
+        for (const id of ['period-start', 'period-end']) $(id).addEventListener('change', () => {
+            const input = $(id);
+            const day = new Date(`${input.value}T12:00:00`).getDay();
+            input.setCustomValidity(input.value && day !== (id === 'period-start' ? 1 : 0)
+                ? (id === 'period-start' ? 'Seleccione un lunes.' : 'Seleccione un domingo.') : '');
+        });
         $('session-form').addEventListener('submit', event => {
             event.preventDefault();
             submitForm(event.target, 'session-error', async () => {
                 const locked = $('session-kind').value === 'locked';
                 const payload = { period: Number($('session-period').value), date: $('session-date').value, start_hour: Number($('session-hour').value), status: locked ? 'locked' : $('session-payment').value, category: locked ? '' : $('session-category').value, notes: $('session-notes').value };
+                if (state.session) payload.expected_updated_at = state.session.updated_at;
                 for (const role of ['student', 'instructor']) {
                     const external = $(`${role}-mode`).value === 'external';
                     payload[role] = !locked && !external ? Number($(`session-${role}`).value) : null;
@@ -282,7 +307,9 @@
         $('period-form').addEventListener('submit', event => {
             event.preventDefault();
             submitForm(event.target, 'period-error', async () => {
-                const data = await request(state.editingPeriod ? url('period', state.editingPeriod.id) : url('periods'), { start_date: $('period-start').value, end_date: $('period-end').value, is_active: $('period-open').checked });
+                const payload = { start_date: $('period-start').value, end_date: $('period-end').value, is_active: $('period-open').checked };
+                if (state.editingPeriod) payload.expected_updated_at = state.editingPeriod.updated_at;
+                const data = await request(state.editingPeriod ? url('period', state.editingPeriod.id) : url('periods'), payload);
                 $('period-dialog').close(); if (await refresh(data.period.id)) message('page-message', 'Periodo guardado.');
             });
         });
@@ -291,10 +318,17 @@
         $('confirm-delete').addEventListener('click', async () => {
             $('confirm-delete').disabled = true;
             try {
-                await request(url(pendingDelete.kind === 'session' ? 'deleteSession' : 'deletePeriod', pendingDelete.id), {});
+                await request(url(pendingDelete.kind === 'session' ? 'deleteSession' : 'deletePeriod', pendingDelete.id), {expected_updated_at: pendingDelete.expected_updated_at});
                 $('delete-dialog').close(); $(pendingDelete.kind === 'session' ? 'session-dialog' : 'period-dialog').close();
                 if (await refresh()) message('page-message', 'Eliminación completada.');
-            } catch (error) { message('delete-error', error.message, true); }
+            } catch (error) {
+                if (error.code === 'stale_edit') {
+                    $('delete-dialog').close();
+                    const kind = pendingDelete.kind;
+                    message(`${kind}-error`, error.message, true);
+                    $(`reload-${kind}`).hidden = false;
+                } else message('delete-error', error.message, true);
+            }
             finally { $('confirm-delete').disabled = false; }
         });
     }

@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>NAV | Simulador FPT</title>
     {% include "ui/includes/core_css.html" %}
-    <link rel="stylesheet" href="{% static 'scheduler/fpt_calendar.css' %}?v=1">
-    <script src="{% static 'scheduler/js/fpt_calendar.js' %}?v=1" defer></script>
+    <link rel="stylesheet" href="{% static 'scheduler/fpt_calendar.css' %}?v=2">
+    <link rel="stylesheet" href="{% static 'scheduler/shared_components.css' %}">
+    <script src="{% static 'scheduler/js/fpt_calendar.js' %}?v=2" defer></script>
 </head>
 <body class="fpt-page">
 <main class="main-container">
@@ -58,9 +59,10 @@
             <div class="ui-form-row"><label for="period-start" class="ui-form-label">Inicio</label><input id="period-start" name="start_date" class="ui-input" type="date" required></div>
             <div class="ui-form-row"><label for="period-end" class="ui-form-label">Cierre</label><input id="period-end" name="end_date" class="ui-input" type="date" required></div>
         </div>
-        <p class="ui-form-help">Entre 7 y 28 días consecutivos, incluyendo las fechas de inicio y cierre.</p>
+        <p class="ui-form-help">De lunes a domingo: 7, 14, 21 o 28 días, incluyendo inicio y cierre.</p>
         <label class="fpt-checkbox"><input id="period-open" type="checkbox"> Periodo abierto para reservas</label>
         <p id="period-error" class="fpt-message fpt-error" role="alert" hidden></p>
+        <button type="button" id="reload-period" class="ui-button" hidden>Recargar datos actuales</button>
         <div class="ui-actions fpt-dialog-actions"><button type="button" id="delete-period" class="ui-button fpt-danger" hidden>Eliminar periodo</button><button type="button" class="ui-button" data-close>Cancelar</button><button type="submit" class="ui-button">Guardar</button></div>
     </form>
 </dialog>
@@ -86,7 +88,8 @@
         </fieldset>
         <div class="ui-form-row"><label for="session-notes" class="ui-form-label">Notas (opcional)</label><textarea id="session-notes" class="ui-textarea" rows="3"></textarea></div>
         <p id="session-error" class="fpt-message fpt-error" role="alert" hidden></p>
-        <div class="ui-actions fpt-dialog-actions"><button type="button" id="delete-session" class="ui-button fpt-danger" hidden>Eliminar sesión</button><button type="button" class="ui-button" data-close>Cancelar</button><button type="submit" class="ui-button">Guardar</button></div>
+        <button type="button" id="reload-session" class="ui-button" hidden>Recargar datos actuales</button>
+        <div class="ui-actions fpt-dialog-actions"><button type="button" id="delete-session" class="ui-button fpt-danger" hidden>Eliminar</button><button type="button" class="ui-button" data-close>Cancelar</button><button type="submit" class="ui-button">Guardar</button></div>
     </form>
 </dialog>
 

@@ -56,7 +56,6 @@ button.fpt-cell:hover { filter: brightness(1.3); border-color: var(--ui-color-bo
 .fpt-page :focus-visible { outline: 2px solid var(--ui-color-text); outline-offset: 3px; }
 .fpt-page button:disabled { opacity: .5; cursor: not-allowed; }
 @media (max-width: 768px) {
-    .fpt-page .back-button { position: static; align-self: flex-start; }
     .fpt-page .main-header { margin-top: 25px; }
     .fpt-resource-header { align-items: flex-start; flex-direction: column; }
     .fpt-dialog { padding: 18px; }

@@ -263,7 +263,7 @@ def _build_launchpad_apps(request, active_role, user_profile):
             'key': 'fpt_scheduler',
             'label': 'Simulador FPT',
             'description': 'Consultar y coordinar sesiones del simulador FPT.',
-            'icon': 'dashboard/img/calendar.png',
+            'icon': 'dashboard/img/fpt.png',
             'url': reverse('scheduler:fpt_calendar'),
             'roles': {'STAFF', 'INSTRUCTOR'},
             'visible': can_view_fpt_schedule(user),

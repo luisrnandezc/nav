@@ -9,6 +9,7 @@ from django.db.models.deletion import ProtectedError
 from django.test import TestCase, TransactionTestCase
 
 from scheduler.models import FPTPeriod, FPTSession
+from scheduler.db_errors import is_retryable_fpt_conflict
 from scheduler.permissions import can_manage_fpt_schedule, can_view_fpt_schedule
 from .factories import UserFactory
 
@@ -282,11 +283,11 @@ class FPTConcurrencyTests(TransactionTestCase):
             except (IntegrityError, ValidationError):
                 return 'conflict'
             except OperationalError as exc:
-                # Shared in-memory SQLite can reject a concurrent writer before
-                # the trigger runs. PostgreSQL must reject via the exclusion.
-                if connection.vendor != 'sqlite' or 'locked' not in str(exc).lower():
+                # Exclusion checks may deadlock for raw concurrent writes;
+                # PostgreSQL aborts one transaction, preserving non-overlap.
+                if not is_retryable_fpt_conflict(exc, connection.vendor):
                     raise
-                return 'busy'
+                return 'busy' if connection.vendor == 'sqlite' else 'conflict'
             finally:
                 close_old_connections()
 

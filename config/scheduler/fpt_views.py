@@ -18,6 +18,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from .fpt_forms import FPTPeriodForm, FPTSessionForm
+from .db_errors import is_retryable_fpt_conflict
 from .models import FPTAuditEntry, FPTPeriod, FPTSession
 from .permissions import can_manage_fpt_schedule, can_view_fpt_schedule
 
@@ -64,9 +65,10 @@ def fpt_access(*, manage=False):
             except IntegrityError:
                 return occupancy_conflict()
             except OperationalError as exc:
-                # SQLite may reject a concurrent writer before checking overlap.
+                # PostgreSQL may abort a deadlocked writer at the exclusion
+                # constraint; SQLite may reject a busy writer before that check.
                 # Other database failures must remain visible as server errors.
-                if connection.vendor == 'sqlite' and 'locked' in str(exc).lower():
+                if is_retryable_fpt_conflict(exc, connection.vendor):
                     return occupancy_conflict()
                 raise
         return wrapped

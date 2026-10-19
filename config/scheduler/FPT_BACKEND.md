@@ -71,7 +71,9 @@ a refresh/retry message. Deleting a period with sessions also returns 409.
 Period and session edits lock the current row in a transaction on PostgreSQL.
 The model also locks the destination period before saving occupancy. Database
 conflicts are caught outside the transaction, after rollback. SQLite busy-writer
-errors return 409; unrelated database failures are not disguised as conflicts.
+errors return 409. PostgreSQL deadlocks (SQLSTATE `40P01`), including concurrent
+exclusion checks, also return 409 after rollback. The client refreshes and the
+user can retry; unrelated database failures are not disguised as conflicts.
 
 Closing a period prevents new bookings/rescheduling and conversion of locks to
 reservations. Payment/notes corrections and removing occupancy remain allowed.

@@ -391,3 +391,24 @@ class FPTViewTests(TestCase):
             self.assertEqual(self.client.get(self.url('history') + query).status_code, 400)
         self.client.logout()
         self.assertEqual(self.client.get(self.url('history')).status_code, 302)
+
+    def test_postgres_deadlock_rolls_back_and_returns_retryable_conflict(self):
+        class DriverDeadlock(Exception):
+            pgcode = '40P01'
+
+        error = OperationalError('driver message')
+        error.__cause__ = DriverDeadlock()
+
+        def abort_after_insert(*args, **kwargs):
+            raise error
+
+        # Simulate a deadlock after occupancy was written but before the audit
+        # could commit. Both the session and audit must be rolled back.
+        with patch('scheduler.fpt_views.connection') as db, patch('scheduler.fpt_views.audit', side_effect=abort_after_insert):
+            db.vendor = 'postgresql'
+            response = self.post('create_session', self.reservation())
+        self.assertEqual(response.status_code, 409, response.content)
+        self.assertNotIn('driver message', response.content.decode())
+        self.assertEqual(FPTSession.objects.count(), 1)
+        self.assertEqual(FPTAuditEntry.objects.count(), 0)
+        self.assertEqual(self.post('create_session', self.reservation()).status_code, 201)

@@ -134,9 +134,16 @@
                     if (clickable) content.type = 'button';
                     cell.className = `fpt-${session ? session.status : available ? 'free' : 'unavailable'}`;
                     content.className = 'fpt-cell';
-                    const lines = session
-                        ? [hour === session.start_hour ? `${session.start_time}–${session.end_time}` : 'Continuación', session.status_label, session.student_name || 'Bloqueo administrativo']
-                        : [available ? 'Libre' : hour === 19 ? 'Sin inicio' : detail.period.is_active ? 'Sin inicio disponible' : 'Periodo cerrado'];
+                    let lines;
+                    if (session) {
+                        lines = hour === session.start_hour
+                            ? [`${session.start_time}–${session.end_time}`, session.status_label]
+                            : session.status === 'locked'
+                                ? ['Bloqueo administrativo']
+                                : [session.instructor_name, session.student_name, session.category];
+                    } else {
+                        lines = [available ? 'Libre' : hour === 19 ? 'Sin inicio' : detail.period.is_active ? 'Sin inicio disponible' : 'Periodo cerrado'];
+                    }
                     lines.forEach((line, index) => { const text = document.createElement(index === 0 ? 'strong' : 'small'); text.textContent = line; content.append(text); });
                     content.setAttribute('aria-label', `${dateLabel(day.date)}, ${hourLabel(hour)}: ${lines.join(', ')}`);
                     if (session) content.addEventListener('click', () => openSession(session));

@@ -1,8 +1,10 @@
 from datetime import date, timedelta
 from decimal import Decimal
+from io import StringIO
 from unittest.mock import patch
 
 from django.contrib import admin
+from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 
@@ -54,6 +56,26 @@ class MissingFuelEvaluationsTest(TestCase):
         self.assertFalse(model_admin.has_add_permission(None))
         self.assertFalse(model_admin.has_change_permission(None))
         self.assertFalse(model_admin.has_delete_permission(None))
+
+    def test_balance_audit_command_is_read_only_and_reports_difference(self):
+        before = self.student.student_profile.balance
+        output = StringIO()
+
+        call_command(
+            'audit_student_balance',
+            self.student.national_id,
+            details=True,
+            stdout=output,
+        )
+
+        self.student.student_profile.refresh_from_db()
+        self.assertEqual(self.student.student_profile.balance, before)
+        report = output.getvalue()
+        self.assertIn(f'({self.student.national_id})', report)
+        self.assertIn('Stored balance:', report)
+        self.assertIn('Reconstructed balance (zero opening balance):', report)
+        self.assertIn('Unexplained/opening difference:', report)
+        self.assertIn('Movements (newest first):', report)
 
     def setUp(self):
         self.staff = User.objects.create_superuser(
